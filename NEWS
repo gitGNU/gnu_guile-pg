@@ -1,6 +1,23 @@
 NEWS for Guile-PG
 
 
+- version 0.13 released 2002-12-24
+
+  - `terminating' slack
+
+	The heuristic fallback when lacking `scm_terminating' has been
+	replaced w/ a configure.in check for `terminating' in libguile.
+	If neither is available, on lob flush error, guile-pg writes to
+	stderr unconditionally.  This is safer than unconditionally
+	calling scm_syserror (the previous approach), which may crash
+	guile in some circumstances.
+
+  - New (database postgres-types) proc: oid-type-name-cache CONN [FRESH?]
+
+	Documented in the manual, which now sports full extracted
+	docstrings (cheesy Commentary snapshots removed, too).
+
+
 - version 0.12 released 2002-12-21
 
   - PATH/configure where PATH != "./" supported
@@ -18,7 +35,7 @@ NEWS for Guile-PG
 
 - version 0.11 released 2002-12-17
 
-  - InvalidOid declaration slack
+  - `InvalidOid' declaration slack
 
 	This variable is expected to be declared by libpq-fe.h (or one
 	of its sub-#include files).  PostgreSQL 7.0.3, in particular,
@@ -26,7 +43,7 @@ NEWS for Guile-PG
 	Configuration now attempts to include the appropriate additional
 	header.
 
-  - scm_terminating declaration slack
+  - `scm_terminating' declaration slack
 
 	This variable is expected to be declared by libguile.h (or one
 	of its sub-#include files).  Some versions of Guile provide
