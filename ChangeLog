@@ -1,6 +1,14 @@
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* THANKS: Add Russ McManus (moved from AUTHORS).
+	* AUTHORS: Rewrite.
+
 	* gpl-text.scm, gpl-text.c: Update copyright. Remove author blurb.
+
+	* libpostgres.c, libpostgres.h, libpostgres_lo.c,
+	scm/Makefile.am, scm/postgres.scm.in,
+	test/guile-pg-basic-tests.scm, test/guile-pg-lo-tests.scm:
+	Separate author and copyright comments; nfc.
 
 2003-01-30  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
