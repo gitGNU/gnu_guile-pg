@@ -59,7 +59,8 @@
       all any in like))
 
 (define *infix-operations*              ; entry: NAME
-  (map identity *conditional-operations*))
+  (append! '(|| * ~ - +)
+           *conditional-operations*))
 
 (define *display-aliases*               ; entry: (NAME . ALIAS)
   '((null?        . "IS NULL")
@@ -436,14 +437,5 @@
 ;;
 (define (sql-command<-trees . trees)
   (apply sql<-trees trees (list ";")))
-
-
-;;; load-time actions
-
-(for-each (lambda (x)
-            (qcons-declare! #:infix x))
-          '(+ - ~ * ||
-              ;; todo: add here.
-              ))
 
 ;;; postgres-qcons.scm ends here
