@@ -3,6 +3,11 @@ NEWS for Guile-PG
 
 - 0.18 | NOT YET RELEASED
 
+  - Bugfix: pg-lo-unlink returns #f only on error
+
+	This proc used to consider some non-error status cases as erroneous,
+	and return #f as a result.  Now the check is more precise.
+
   - Limitation lifted: `pg-exec' query string size
 
 	The query string sent to `pg-exec' used to be limited to 7999
