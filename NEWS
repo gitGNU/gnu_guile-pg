@@ -9,6 +9,16 @@ NEWS for Guile-PG
 	`dbcoltype-lookup', which takes the type name.  Thus, it is
 	redundant.  Removing it increases encapsulation.
 
+  - New type converters in module (database postgres-types)
+
+	These are the new built-in type converters:
+
+	bigint int2 int8 double float8 bigserial serial4 serial8
+	inet cidr macaddr inet-host
+
+	Additionally, the manual now has a section on the type
+	converters in chapter "Types Conversion".
+
   - New module: (database postgres-qcons)
 
 
