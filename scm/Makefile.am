@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in.
-##
+
 ##      Copyright (C) 1998-2000, 2002, 2003 Free Software Foundation, Inc.
 ##
 ##   This file is part of GUILE-PG.
@@ -18,9 +18,9 @@
 ##   License along with GUILE-PG; see the file COPYING.  If not, write
 ##   to the Free Software Foundation, Inc., 59 Temple Place, Suite
 ##   330, Boston, MA 02111-1307 USA
-##
-##   guile-pg was written by Ian grant <Ian.Grant@cl.cam.ac.uk>
-##
+
+##   Author: Ian grant <Ian.Grant@cl.cam.ac.uk>
+
 AUTOMAKE_OPTIONS = foreign
 
 # These files should be installed and distributed.

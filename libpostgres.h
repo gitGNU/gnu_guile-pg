@@ -12,11 +12,10 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    along with this program; if not, write to the Free Software Foundation,
+    Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA  */
 
-    Guile-pg was written by Ian Grant <Ian.Grant@cl.cam.ac.uk>
-*/
+/* Author: Ian Grant <Ian.Grant@cl.cam.ac.uk> */
 
 /* We fudge this. I wonder why only libguile sources can access this? */
 #define SCM_SYSCALL(line) line
