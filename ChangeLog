@@ -1,5 +1,9 @@
 2004-06-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* configure.in (VERSION): Bump to "0.20" for release.
+
+2004-06-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c
 	(strip_newlines): Fix OBOE: Correctly compute string length.
 	(pg_connectdb): Fix liveness bug: Call `PQerrorMessage'
