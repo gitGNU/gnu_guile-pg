@@ -1,8 +1,6 @@
 
 - Eventually
 
-  - don't use str2symbol all the time; move interning to init
-
   - Fix lob_lo_seek to take into account SCM_N_READY_CHARS if whence
     is SEEK_CUR.
 
@@ -165,9 +163,7 @@
       Note that if the current query is part of a transaction, cancellation
       will abort the whole transaction.
 
-  - Add more examples to the documentation and replace the contrived ones.
-
-  - Write a section giving an overview of using large-objects.
+  - Add to the manual a section giving an overview of using large-objects.
 
     This must explain the ideas of OID's as references to objects.  Also we
     need examples of using lo-streams. Perhaps a scheme implementation of
@@ -187,12 +183,6 @@
 
     UPDATE: 31/1/99 The CVS libtool doesn't work. It is still planned, but it
     may never work for ILD.
-
-  - Change the documentation to use @defun rather than the SYNOPSIS and whatnot
-    @unnumberedsubsections it uses at the moment. This will mean we get a
-    function index for free and the pages won't look nearly so awful.
-
-  - Add the 'concept index' which is currently empty.
 
   - Incorporate (ttn *) higher-level interface in scheme.
 
