@@ -825,7 +825,7 @@ It uses a bonus procedure in this module:
 @section Consulting Existing Type Converters
 
 To see what type converters are already defined, use the @code{dbcoltypes}
-procedure.  To get a @dfn{type-converter object} that encapsulates the name,
+procedure.  To get a @dfn{type-converter object} that encapsulates
 the @dfn{stringifier}, the @dfn{objectifier} and the @dfn{default}, use
 @code{dbcoltype-lookup}.  The components of the returned object can be read
 using the @code{dbcoltype:FOO} procedures.
