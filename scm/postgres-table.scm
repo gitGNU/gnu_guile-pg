@@ -50,13 +50,17 @@
 (define get object-property)
 
 (define (string-append/separator c ls)
-  (with-output-to-string
-    (lambda ()
-      (or (null? ls)
-          (begin
-            (display (car ls))
-            (for-each (lambda (x) (display c) (display x))
-                      (cdr ls)))))))
+  (let* ((len-ls (map string-length ls))
+         (rv (make-string (max 0 (apply + (length len-ls) -1 len-ls)))))
+    (let loop ((put -1) (ls ls) (len-ls len-ls))
+      (if (null? ls)
+          rv
+          (let ((s (car ls))
+                (len (car len-ls)))
+            (or (= -1 put)
+                (string-set! rv put c))
+            (substring-move! s 0 len rv (1+ put))
+            (loop (+ put 1 len) (cdr ls) (cdr len-ls)))))))
 
 (define (string* ls)
   (string-append/separator #\space ls))
