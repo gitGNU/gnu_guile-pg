@@ -1,5 +1,4 @@
 \input texinfo  @c -*-texinfo-*-
-@comment $Id$
 @c %**start of header
 @setfilename guile-pg.info
 @settitle @code{Guile-pg} Command Reference
@@ -9,32 +8,32 @@
 
 @dircategory Guile modules
 @direntry
-* Guile-pg- (guile-pg).           Access to PostgreSQL databases from Guile.
+* Guile-pg: (guile-pg).           Access to PostgreSQL databases from Guile.
 @end direntry
 
 @ifinfo
 This file is the Guile-pg Command Reference
- 
-Copyright @copyright{} 1998 Free Software Foundation, Inc.  
+
+Copyright @copyright{} 1998, 2002 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
 preserved on all copies.
-     
-@ignore 
+
+@ignore
 Permission is granted to process this file through TeX and
 print the results, provided the printed document carries a copying
 permission notice identical to this one except for the removal of this
 paragraph (this paragraph not being relevant to the printed manual).
 
-@end ignore 
+@end ignore
 Permission is granted to copy and distribute modified versions of this
 manual under the conditions for verbatim copying, provided also that the
 sections entitled ``Copying'' and ``GNU General Public License'' are
 included exactly as in the original, and provided that the entire
 resulting derived work is distributed under the terms of a permission
 notice identical to this one.
-     
+
 Permission is granted to copy and distribute translations of this manual
 into another language, under the above conditions for modified versions,
 except that this permission notice may be stated in a translation
@@ -45,66 +44,61 @@ approved by the Free Software Foundation.
 @sp 10
 @comment The title is printed in a large font.
 @center @titlefont{@code{Guile-pg} Command Reference}
-     
+
 @c The following two commands start the copyright page.
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1998 Free Software Foundation, Inc.
+Copyright @copyright{} 1998, 2002 Free Software Foundation, Inc.
 
      Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice are
 preserved on all copies.
-     
+
      Permission is granted to copy and distribute modified versions of
 this manual under the conditions for verbatim copying, provided also
 that the sections entitled ``Copying'' and ``GNU General Public
 License'' are included exactly as in the original, and provided that the
 entire resulting derived work is distributed under the terms of a
 permission notice identical to this one.
-     
+
      Permission is granted to copy and distribute translations of this
 manual into another language, under the above conditions for modified
 versions, except that this permission notice may be stated in a
 translation approved by the Free Software Foundation.
 
 @end titlepage
-@node    Top,       Examples,              ,         (dir)
-@comment node-name,          next,          previous,           up
+@node    Top
 @top Guile-pg
 @chapter Introduction
 
 @code{Guile-pg} is a Guile module providing a set of procedures to allow
 access to the PostgreSQL RDBMS from Scheme programs.
 
-Guile is an interpreter for the Scheme programming language: a dialect of 
-Lisp. PostgreSQL is a free SQL database management system.
+Guile is an interpreter for the Scheme programming language: a dialect of
+Lisp.  PostgreSQL is a free SQL database management system.
 @code{Guile-pg} is intended as but one of the low-level drivers for the
-forthcoming Guile database module which will provide a portable interface 
-to many different SQL database servers. In the mean-time 
+forthcoming Guile database module which will provide a portable interface
+to many different SQL database servers.  In the mean-time
 it will still be a useful module for those who want just a low-level
 interface to PostgreSQL.
 
 The @code{Guile-pg} procedures have an almost one-one correspondence
 with the PostgreSQL @code{libpq} C library interface so those familiar with
-the @code{libpq} library and other similar interfaces like Edmund Mergl's 
+the @code{libpq} library and other similar interfaces like Edmund Mergl's
 @code{Pg} Perl module will find it familiar.
 
 @code{Guile-pg} is based on Russ McManus's ``Sybase glue'' code.
 
 @menu
 
-* Examples::         An overview of Guile-pg and some brief examples.
+* Examples::         Overview and brief examples.
+* Procedures::       Each procedure described.
 
-* Procedures::       A description of each of the procedures provided by 
-                     guile-pg
-
-* Concept Index::    Concepts employed
-
-* Function Index::   Functions
+* Concept Index::
+* Function Index::
 @end menu
 
-@node    Examples,  Procedures,    Top,      Top
-@comment node-name,     next,          previous, up
+@node    Examples
 @chapter Examples
 
 To access a PostgreSQL database from Guile, first load the @code{postgres}
@@ -114,19 +108,19 @@ database module. This is done using the @code{use-modules} syntax:
 @end example
 
 The next step is to make a connection to the database using the
-@code{pg-connectdb} procedure. Then, having created a valid connection to a 
+@code{pg-connectdb} procedure. Then, having created a valid connection to a
 database server, we can use the @code{pg-exec} procedure to execute
 queries and the other @code{pg-} procedures to retrieve the results of the
 queries.
 
-The following Guile session opens a connection and executes an 
-SQL statement on the @code{test} database on the default host (either 
-@code{localhost} or the host specified in the @code{PGHOST} environment 
+The following Guile session opens a connection and executes an
+SQL statement on the @code{test} database on the default host (either
+@code{localhost} or the host specified in the @code{PGHOST} environment
 variable.)
 
 @cartouche
 @example
-guile> (use-modules (database postgres)) 
+guile> (use-modules (database postgres))
 guile> (define test (pg-connectdb "dbname=test"))
 guile> test
 #<PG-CONN:1:test::5432:>
@@ -140,15 +134,15 @@ The @code{test} object is a @code{PG-CONN} type representing the database
 connection.  Displaying the @code{PG-CONN} object shows that the serial number
 of the connection is 1, that the database name is @code{test} on the default
 host (the hostname field is empty) on port number 5432 and that the default
-options were passed to the backend. This object is passed to @code{pg-exec}
+options were passed to the backend.  This object is passed to @code{pg-exec}
 which returns a @code{PG-RESULT} object representing the result of the SQL
-statement executed on the server. In this case, displaying the @code{PG-RESULT}
+statement executed on the server.  In this case, displaying the @code{PG-RESULT}
 object shows us that the serial number of the result is 2, that the return code
 from the database was @code{PGRES_TUPLES_OK} and that we have received 3 tuples
 with 5 fields.
 
 Having obtained a result object from the database we can find out how
-many rows and how many columns are in the result. We can also find out the
+many rows and how many columns are in the result.  We can also find out the
 names of the columns:
 
 @cartouche
@@ -166,7 +160,7 @@ guile> (pg-fname result 1)
 
 To retrieve the data from the result we use the @code{pg-getvalue} procedure.
 This takes a result object along with the row and column numbers and returns a
-string containing that value. @code{pg-getvalue} always returns a string: it
+string containing that value.  @code{pg-getvalue} always returns a string: it
 is up to the caller to convert this to whatever type they require.
 
 @cartouche
@@ -183,9 +177,9 @@ guile> (pg-getvalue result 1 1)
 @end cartouche
 
 @code{Guile-pg} connections are closed when Guile's garbage collector
-collects the discarded object. This only happens when the connection itself 
-and all of the results of @code{pg-exec} are unreachable. So to close the 
-connection we just rebind the results from that connection and the connection 
+collects the discarded object.  This only happens when the connection itself
+and all of the results of @code{pg-exec} are unreachable.  So to close the
+connection we just rebind the results from that connection and the connection
 symbol itself:
 
 @cartouche
@@ -199,16 +193,15 @@ Typically though the result and connection variables will be @code{let}
 bindings so the connection will usually be closed soon after the body of the
 @code{let} returns.
 
-@node    Procedures,   Database Connections,   Examples,     Top
-@comment node-name,    next,                previous,      up
+@node    Procedures
 @chapter Procedures
 This section specifies the procedures that @code{guile-pg} provides to
-access databases. To access the module, Guile programs must either be run
+access databases.  To access the module, Guile programs must either be run
 under the @code{guile-pg} executable, which is a Guile interpreter statically
-linked with the @code{guile-pg} interface and the @code{libpq} library, or 
-they must be run under the ordinary Guile interpreter @code{guile} and 
+linked with the @code{guile-pg} interface and the @code{libpq} library, or
+they must be run under the ordinary Guile interpreter @code{guile} and
 dynamically load the shared library @code{libpostgres.so} which implements
-the module. To do this, use the @code{(use-modules ...)} procedure as follows:
+the module.  To do this, use the @code{(use-modules ...)} procedure as follows:
 
 @lisp
 (use-modules (database postgres))
@@ -234,16 +227,16 @@ After which the @code{pg-} procedures will be accessable.
 
 @end menu
 
-@node    Database Connections, Miscellaneous,  Procedures,    Procedures
+@node    Database Connections
 @section Functions for managing connections
 
 @defun pg-connectdb connect-string
-Open a connection to a database. 
+Open a connection to a database.
 @var{connect-string} should be
 a string consisting of zero or more space-separated @code{name=value} pairs.
 If the value contains spaces it must be enclosed in single quotes and any
 single quotes appearing in the value must be escaped using backslashes.
-Backslashes appearing in the value must similarly be escaped. Note that
+Backslashes appearing in the value must similarly be escaped.  Note that
 if the @code{connect-string} is a Guile string literal then all the backslashes
 will themselves require to be escaped a second time.
 The @code{name} strings can be any of:
@@ -251,40 +244,40 @@ The @code{name} strings can be any of:
 @table @code
 @item host
 The host-name or dotted-decimal IP address of the host on which the postmaster
-is running. If no @code{host=} sub-string is given then the host is assumed
+is running.  If no @code{host=} sub-string is given then the host is assumed
 to be the value of the environment variable @code{PGHOST} or the local
-host if @code{PGHOST} is not defined. 
+host if @code{PGHOST} is not defined.
 @item port
-The TCP or Unix socket on which the backend is listening. If this is not
-specified then the value of the @code{PGHOST} environment variable is used. 
+The TCP or Unix socket on which the backend is listening.  If this is not
+specified then the value of the @code{PGHOST} environment variable is used.
 If that too is not defined then the default port 5432 is assumed.
 @item options
-A string containing the options to the backend server. The options given
+A string containing the options to the backend server.  The options given
 here are in addition to the options given by the environment variable
-@code{PGOPTIONS}. The options string should be a set of command line
-switches as would be passed to the backend. See the @code{postgres (1)}
+@code{PGOPTIONS}.  The options string should be a set of command line
+switches as would be passed to the backend.  See the @code{postgres (1)}
 man page for more details.
 @item tty
 A string defining the file or device on which error messages from the backend
-are to be displayed. If this is empty (@code{""}) then the environment variable
-@code{PGTTY} is checked. If the specified @code{tty} is a file then the file
-will be readable only by the user the postmaster runs as (usually 
-@code{postgres}). Similarly, if the specified @code{tty} is a device then it 
+are to be displayed.  If this is empty (@code{""}) then the environment variable
+@code{PGTTY} is checked.  If the specified @code{tty} is a file then the file
+will be readable only by the user the postmaster runs as (usually
+@code{postgres}).  Similarly, if the specified @code{tty} is a device then it
 must have permissions allowing the postmaster user to write to it.
 @item dbname
-The name of the database. If no @code{dbname=} sub-string is given then the
+The name of the database.  If no @code{dbname=} sub-string is given then the
 database name is assumed to be that given by the value of the @code{PGDATABASE}
 environment variable, or the @code{USER} environment variable if the
-@code{PGDATABASE} environment variable is not defined. If the @code{USER}
+@code{PGDATABASE} environment variable is not defined.  If the @code{USER}
 environment variable is not specified either then the value of the
 @code{user} option is taken as the database name.
 @item user
-The login name of the user to authenticate. If none is given then the 
-@code{PGUSER} environment variable is checked. If that is not given then the
+The login name of the user to authenticate.  If none is given then the
+@code{PGUSER} environment variable is checked.  If that is not given then the
 login of the user owning the process is used.
 @item password
-The password. Whether or not this is used depends upon the contents of the
-@code{pg_hba.conf} file. See the @code{pg_hba.conf (5)} man page for details.
+The password.  Whether or not this is used depends upon the contents of the
+@code{pg_hba.conf} file.  See the @code{pg_hba.conf (5)} man page for details.
 @item authtype
 This must be set to @code{password} if password authentication is in use,
 otherwise it must not be specified.
@@ -295,20 +288,20 @@ otherwise it must not be specified.
 (define (user-count host)
   (let* ((conn (pg-connectdb
                   (string-append
-                     "host=" host 
+                     "host=" host
                      " port=5432 dbname=template1")))
          (result (pg-exec conn
                     "SELECT COUNT(*) FROM pg_user")))
-        (if (and result 
-                 (eq? (pg-result-status result) 
-                      'PGRES_TUPLES_OK)) 
+        (if (and result
+                 (eq? (pg-result-status result)
+                      'PGRES_TUPLES_OK))
             (string->number (pg-getvalue result 0 0))
             #f)))
 @end lisp
 @end defun
 
 @defun pg-reset conn
-Resets the connection with the backend. Equivalent to closing the connection
+Resets the connection with the backend.  Equivalent to closing the connection
 and re-opening it again with the same connect options as given to
 @code{pg-connectdb}.
 @var{conn} must be a valid @code{PG_CONN} object returned by @code{pg-connectdb}.
@@ -366,7 +359,7 @@ connection object that logs all the SQL statements it executes.
 
 (define (pg-exec-logged conn sql)
   (pg-set-client-data! conn
-                       (append 
+                       (append
                          (pg-get-client-data conn)
                          (list sql)))
   (pg-exec conn sql))
@@ -376,7 +369,7 @@ connection object that logs all the SQL statements it executes.
 @end lisp
 @end defun
 
-@node    Miscellaneous, Retrieving Data, Database Connections, Procedures
+@node    Miscellaneous
 @section Miscellaneous Functions
 
 @defun pg-guile-pg-loaded
@@ -392,7 +385,7 @@ This function is guaranteed to be present in all future versions of
 @end defun
 
 @defun pg-guile-pg-version
-Returns a string giving the version of @code{guile-pg}. The string is
+Returns a string giving the version of @code{guile-pg}.  The string is
 always of the form "M.m" giving major and minor versions.
 @end defun
 
@@ -410,12 +403,12 @@ was configured (this is probably the build time.)
 
 @defun pg-trace conn port
 Starts outputting low-level trace information on the connection @var{conn} to
-@var{port}, which must have been opened for writing. This trace
+@var{port}, which must have been opened for writing.  This trace
 is more useful for debugging Postgres than it is for debugging applications.
 The return value is unspecified.
 
 @heading Example
-This example defines a pair of procedures @code{pg-trace-on} and 
+This example defines a pair of procedures @code{pg-trace-on} and
 @code{pg-trace-off} which implement a higher-level trace function which
 opens the required file and starts/stops the trace.
 
@@ -427,7 +420,7 @@ opens the required file and starts/stops the trace.
 
 (define (pg-trace-off conn)
   (let ((port (pg-get-client-data conn)))
-    (if port 
+    (if port
         (begin
            (close-port port)
            (pg-untrace conn))
@@ -436,10 +429,10 @@ opens the required file and starts/stops the trace.
 @end defun
 
 @defun pg-untrace conn
-Stops tracing on a given connection. The return value is unspecified.
+Stops tracing on a given connection.  The return value is unspecified.
 @end defun
 
-@node    Retrieving Data, Writing/Reading Data,  Miscellaneous,    Procedures
+@node    Retrieving Data
 @section Functions for Retrieving Data
 
 @defun pg-exec conn statement
@@ -447,12 +440,12 @@ Executes the SQL string @var{statement} on a given connection (@var{conn},)
 returning either a @code{PG_RESULT} object containing a @code{pg-result-status}
 or @code{#f} if an error occurred, in which case the error message can be
 obtained using @code{pg-error-message}, passing it the @code{PG_CONN} object on
-which the statement was attempted. Note that the error message is available
+which the statement was attempted.  Note that the error message is available
 only until the next call to @code{pg-exec} on this connection.
 
 @heading Example
-This example defines a function @code{pg-execute} which wraps @code{pg-exec} 
-so that a @code{misc-error} is thrown instead of returning false. There are
+This example defines a function @code{pg-execute} which wraps @code{pg-exec}
+so that a @code{misc-error} is thrown instead of returning false.  There are
 numerous other examples of @code{pg-exec} calls throughout this chapter.
 
 @lisp
@@ -464,11 +457,11 @@ numerous other examples of @code{pg-exec} calls throughout this chapter.
 
 @heading Notes
 The entire result set is returned at once from a call to to @code{pg-exec}.
-If a @code{SELECT} results in a very large number of tuples then this can be 
-a problem because it requires a large amount of memory. In these cases it is
-better to @code{DECLARE} a cursor over the @code{SELECT} and retrive small 
-numbers of rows at a time using @code{FETCH}. These commands can only be
-issued between @code{BEGIN TRANSACTION/END TRANSACTION} pairs. See the 
+If a @code{SELECT} results in a very large number of tuples then this can be
+a problem because it requires a large amount of memory.  In these cases it is
+better to @code{DECLARE} a cursor over the @code{SELECT} and retrive small
+numbers of rows at a time using @code{FETCH}.  These commands can only be
+issued between @code{BEGIN TRANSACTION/END TRANSACTION} pairs.  See the
 PostgreSQL @code{declare (l)} and @code{fetch (l)} man pages for more details.
 
 @end defun
@@ -484,46 +477,46 @@ Returns the symbolic status of a @code{PG_RESULT} object returned by
 
 @table @code
 @item PGRES_TUPLES_OK
-The statement returned zero or more tuples. The number of fields and tuples
-returned can be determined from calls to @code{pg-nfields} and 
-@code{pg-ntuples} respectively. The value of a given attribute (field)
+The statement returned zero or more tuples.  The number of fields and tuples
+returned can be determined from calls to @code{pg-nfields} and
+@code{pg-ntuples} respectively.  The value of a given attribute (field)
 of a given tuple can be determined by calling @code{pg-getvalue}.
 @item PGRES_COMMAND_OK
 The statement was a command (@code{INSERT}, @code{UPDATE}, @code{DELETE}
 @code{CREATE TABLE}, @code{DROP TABLE} etc.),
-which was executed without error. The number of tuples affected by the 
+which was executed without error.  The number of tuples affected by the
 command can be determined by a call to @code{pg-cmdtuples}.
 @item PGRES_EMPTY_QUERY
 It is not known under which circumstances this result-status is returned.
 @item PGRES_COPY_OUT
-The statement was a @code{COPY <table> TO stdout}. The data can be read using 
+The statement was a @code{COPY <table> TO stdout}.  The data can be read using
 @code{pg-getline}.
 @item PGRES_COPY_IN
-The statement was a @code{COPY <table> FROM stdin}. The rows should be written
+The statement was a @code{COPY <table> FROM stdin}.  The rows should be written
 using @code{pg-putline}.
 @item PGRES_BAD_RESPONSE
 This occurs when the @code{libpq} interface receives an unexpected response
-from the backend. It indicates a problem with Postgres.
+from the backend.  It indicates a problem with Postgres.
 @item PGRES_NONFATAL_ERROR
 It is not known under which circumstances this result-status is returned.
 @item PGRES_FATAL_ERROR
-The command was not executable for some reason. This is the returned status
+The command was not executable for some reason.  This is the returned status
 when a syntax error is detected in the command, for example.
 @end table
 
 @heading Example
-This contrived example defines a procedure to insert records into a given 
+This contrived example defines a procedure to insert records into a given
 table, returning the number of tuples inserted (always one) or @code{#f} if an
 error occurred.
 
 @lisp
-(define (pg-insert conn table record)  
-  (let ((result (pg-exec conn 
+(define (pg-insert conn table record)
+  (let ((result (pg-exec conn
                   (string-append "INSERT INTO "
                                  table
                                  " VALUES "
                                  record))))
-       (if (and result 
+       (if (and result
                 (eq? (pg-result-status result)
                      'PGRES_COMMAND_OK))
            (string->number (pg-cmdtuples result))
@@ -561,7 +554,7 @@ Returns the number of fields in @var{result}.
 @end defun
 
 @defun pg-cmdtuples result
-Returns the number of tuples affected by a command. This is a string
+Returns the number of tuples affected by a command.  This is a string
 which is empty in the case of commands like @code{CREATE TABLE}, @code{GRANT},
 @code{REVOKE} etc. which don't affect tuples.
 @end defun
@@ -581,7 +574,7 @@ returns the integer OID of the inserted tuple, otherwise it returns @code{#f}.
 
 @defun pg-fname result field-number
 Returns a string containing the canonical lower-case name of the field
-@var{field-number} in @var{result}. SQL variables and field names are not
+@var{field-number} in @var{result}.  SQL variables and field names are not
 case-sensitive.
 @end defun
 
@@ -592,11 +585,11 @@ exists in @var{result}, or @code{-1} otherwise.
 
 @defun pg-getvalue result tuple field-number
 Returns a string containing the value of the attribute @var{field-number},
-tuple @var{tuple} of @var{result}. It is up to the caller to
+tuple @var{tuple} of @var{result}.  It is up to the caller to
 convert this to the required type.
 
 This example defines a procedure @code{pg-gettuple} which returns a given
-tuple as an alist, keyed on the field name. It's not an especially efficient
+tuple as an alist, keyed on the field name.  It's not an especially efficient
 procedure because it constructs the list of field-names afresh each time it's
 called.
 
@@ -641,7 +634,7 @@ iterates through the tuples returned from a given @code{SELECT} query:
     (iter 0)))
 @end lisp
 
-This implementation of @code{pg-for-each} inherits inefficiency from the 
+This implementation of @code{pg-for-each} inherits inefficiency from the
 @code{pg-gettuple} procedure.
 
 @heading Notes
@@ -656,7 +649,7 @@ Returns @code{#t} if the attribute is @code{NULL}, @code{#f} otherwise.
 
 @defun pg-ftype result field-number
 Returns the PostgreSQL internal integer representation of the type of
-the given attribute. The integer is actually an OID (object ID) which
+the given attribute.  The integer is actually an OID (object ID) which
 can be used as the primary key to reference a tuple from the system table
 @code{pg_type}.  A @code{misc-error} is thrown if the @code{field-number}
 is not valid for the given @code{result}.
@@ -666,14 +659,14 @@ name of a given attribute in a string.
 
 A more efficient implementation would be to define
 a type of connection which, when opened, issued the query to retrieve the
-@code{pg_type} system table once. An alist for looking up type names could 
+@code{pg_type} system table once.  An alist for looking up type names could
 then be associated with each connection using @code{pg-set-client-data!}.
 
 @lisp
 (define (pg-ftype-name result fnum)
   (let ((result (pg-exec
                   (pg-get-connection result)
-                  (string-append 
+                  (string-append
                     "SELECT typname FROM pg_type WHERE oid = "
                     (number->string
                        (pg-ftype result fnum))))))
@@ -695,13 +688,13 @@ variable-length.
 The size of the datum in bytes.
 @end defun
 
-@node Writing/Reading Data, Large Objects, Retrieving Data, Procedures
+@node    Writing/Reading Data
 @section Functions for Copying Data
 
 @defun pg-getline conn
 Reads a line from a connection on which a @code{COPY <table> TO STDOUT} has
 been issued.
-Returns a string from the connection. If the returned string consists of only
+Returns a string from the connection.  If the returned string consists of only
 a backslash followed by a full stop, then the results
 from the @code{COPY} command have all been read and @code{pg-endcopy} should
 be called to resynchronise the connection before any further calls to
@@ -730,9 +723,9 @@ that connection.
 
 @defun pg-putline conn string
 Writes a line to the connection on which a @code{COPY <table> FROM STDIN} has
-been issued. The lines written should include the final newline characters.
+been issued.  The lines written should include the final newline characters.
 
-The last line should be a backslash, followed by a full-stop. After this,
+The last line should be a backslash, followed by a full-stop.  After this,
 the @code{pg-endcopy} procedure should be called for this connection before
 any further @code{pg-exec} call is made.
 The return value is undefined.
@@ -758,17 +751,17 @@ to supply data to a @code{COPY <table> TO STDIN} command.
 @end defun
 
 @defun pg-endcopy conn
-Resynchronises with the backend process. This procedure must be called after
+Resynchronises with the backend process.  This procedure must be called after
 the last line of a table has been transferred using @code{pg-getline} or
 Returns an integer: zero if successful, non-zero otherwise.
 @end defun
 
-@node Large Objects, Concept Index, Writing/Reading Data, Procedures
+@node    Large Objects
 @section Functions for Managing Large Objects
 
 @heading Note
 All of the operations on large objects must be carried out inside a
-@code{BEGIN TRANSACTION/END TRANSACTION} pair. Failure to do this
+@code{BEGIN TRANSACTION/END TRANSACTION} pair.  Failure to do this
 will result in a loss of synchronisation between the backend and the
 @code{libpq} library, resulting in an unusable connection to the
 database, and possible corruption of data.
@@ -784,20 +777,20 @@ write data to/from the object, or @code{#f} on failure in which case
 happened.
 
 In addition to returning @code{#f} on failure this procedure throws a
-@code{misc-error} if the @code{modes} string is invalid.  
+@code{misc-error} if the @code{modes} string is invalid.
 @end defun
 
 @defun pg-lo-open conn oid modes
-Opens a port over an existing large object. The port can be used to read or
+Opens a port over an existing large object.  The port can be used to read or
 write data from/to the object.
 @var{oid} should be an integer identifier representing the large object.
 @var{modes} must be a string describing the mode in which the port is to be
-opened. The mode
+opened.  The mode
 string must include one of @code{r} for reading, @code{w} for writing,
 @code{a} for append or @code{+} with any of the above indicating both
-reading and writing/appending. @code{A} is equivalent to opening the port
-for writing and immediately doing a @code{(pg-lo-seek)} to the end. 
-The return value is either an open large object port 
+reading and writing/appending.  @code{A} is equivalent to opening the port
+for writing and immediately doing a @code{(pg-lo-seek)} to the end.
+The return value is either an open large object port
 or @code{#f} on failure in which case @code{pg-error-message}
 from the connection should give some idea of what happened.
 @heading Notes
@@ -826,7 +819,7 @@ Returns the integer identifier of the object to which a given port applies.
 Returns the position of the file pointer for the given large object port.
 @var{Port} must be a large object port returned from @code{pg-lo-creat} or @code{pg-lo-open}.
 The return value is either an integer greater than or equal to zero or @code{#f} if an error
-occurred. In the latter case @code{pg-error-message} applied to @code{conn}
+occurred.  In the latter case @code{pg-error-message} applied to @code{conn}
 should explain what went wrong.
 @end defun
 
@@ -834,7 +827,7 @@ should explain what went wrong.
 Sets the position of the next read or write to/from the given large object
 port.
 @var{Port} must be a large object port returned from @code{pg-lo-creat} or @code{pg-lo-open}.
-@var{Where} is the position to set the pointer. @var{Whence} must be one of
+@var{Where} is the position to set the pointer.  @var{Whence} must be one of
 @table @code
 @item SEEK_SET
 Relative to the beginning of the file.
@@ -846,7 +839,7 @@ Relative to the end of the file.
 The return value is an integer which is the new position relative to the
 beginning of the object, or a number less than zero if an error occurred.
 @heading Notes
-It is possible to seek beyond the end of file opened only for reading. In 
+It is possible to seek beyond the end of file opened only for reading.  In
 which case subsequent reads of the port will return an EOF object.
 @end defun
 
@@ -870,22 +863,19 @@ Write the contents of a given large object to a file.
 @var{Oid} is the integer identifying the large object to be exported and
 @var{filename} the name of the file to contain the object data.
 The function returns @code{#t} on success, @code{#f} otherwise, in which case
-@code{pg-error-message} may offer an explanation of the failure. 
+@code{pg-error-message} may offer an explanation of the failure.
 @end defun
 
-@node    Concept Index, Function Index,  Large Objects,      Top
-@comment node-name,    next,  previous,      up
+@node       Concept Index
 @unnumbered Concept Index
-     
+
 @printindex cp
 
-@node    Function Index, ,  Concept Index,      Top
-@comment node-name,    next,  previous,      up
+@node       Function Index
 @unnumbered Function Index
-     
+
 @printindex fn
-     
+
 @contents
 
 @bye
-
