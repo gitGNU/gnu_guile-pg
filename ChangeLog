@@ -1,5 +1,12 @@
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-gxrepl.scm From module (database postgres-qcons), no
+	longer select `make-SELECT/COLS-tree' or `parse+make-SELECT/tail-tree'.
+	Instead, select `parse+make-SELECT-tree'.
+	(sqlsel): Use `parse+make-SELECT-tree'.
+
+2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm
 	(parse+make-SELECT/tail-tree): No longer cons null trees.
 
