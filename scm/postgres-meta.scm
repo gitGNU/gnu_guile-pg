@@ -54,7 +54,12 @@
 ;; otherwise.
 ;;
 ;; In the returned defs, the column names are exact.  The column types and
-;; options are only as exact as @var{psql} can produce.
+;; options are only as exact as @var{psql} can produce.  Options are returned
+;; as a list, each element of which is either a string (possibly with embedded
+;; spaces), or a sub-list of symbols and/or numbers.  Typically the sub-list,
+;; if any, will be the first option.  For example, if the column is specified
+;; as @code{amount numeric(9,2) not null}, the returned def is the four-element
+;; list: @code{(amount numeric (9 2) "not null")}.
 ;;
 (define (defs-from-psql psql db-name table-name)
 
@@ -83,7 +88,8 @@
         (let drain ((c (read-char p)) (acc '()))
           (if (char=? #\newline c)
               (stb (list->string (reverse acc)))
-              (drain (read-char p) (cons c acc)))))
+              (drain (read-char p)
+                     (cons (if (char=? #\, c) #\space c) acc)))))
 
       (define (eol-if-null-string s)
         (and (string-null? s) '()))
