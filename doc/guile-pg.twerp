@@ -1119,6 +1119,7 @@ In this example, we use the @code{#:renamer} clause to systematically prefix
 @twerpdoc (column-name)
 @twerpdoc (type-name)
 @twerpdoc (type-options)
+@twerpdoc (validate-def)
 
 There are two more convenience procedures, the first one useful in
 transforming the results of a query into Scheme objects (@pxref{Result
