@@ -271,7 +271,7 @@
 
 ;;; Load-time actions
 
-(load-from-path "./testing.scm")
+(load-from-path (string-append *srcdir* "/testing.scm"))
 ;;(set! verbose #t)
 (test-init "abstraction-scm-tests"      ; manularity sucks
            (+ 7
