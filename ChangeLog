@@ -1,5 +1,13 @@
 2005-02-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm (*infix-operations*):
+	Rename from `*binary-infix-operations*'.
+	Add `+' and `-' in load-time actions.
+	(qcons-declare!): Use `*infix-operations*'. Rename key likewise.
+	(expr): Likewise. Also, handle arity greater than 2 for infix ops.
+
+2005-02-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm (qcons-declare!): Fix omission bug:
 	For #:sql-function, add the entire entry, not just the name.
 	(make-SELECT/OUT-tree): Stringify and double-quote plain symbols.
