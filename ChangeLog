@@ -1,5 +1,9 @@
 2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm (*infix-operations*): Add `/'.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-resx.scm (result->object-rows): New proc, exported.
 
 	* doc/guile-pg.twerp (Result Transforms):
