@@ -1,6 +1,34 @@
 NEWS for Guile-PG
 
 
+- 0.16 | 2003-08-13
+
+  - New (database postgres) proc: `pg-print'
+  - New (database postgres) proc: `pg-make-print-options'
+
+	These are documented in the manual.
+
+  - "make check" now passes for PostgreSQL 7.3.3
+
+	As of PostgreSQL 7.2, the output representation of arrays has
+	changed to conditionally use double-quotes (only when "needed").
+	Here is a short table using type `text[]':
+
+	                   needed               unneeded
+        prior to 7.2       {",a","{}","c'c"}    {"d","e","f"}
+        7.2 and later      {",a","{}","c'c"}    {d,e,f}
+
+	Although the module (database postgres-types) has been able to
+	handle these cases all along, one of the "make check" tests was
+	previously failing because it checked the representation before
+	the conversion to scheme objects.  This has now been corrected
+	and verified to work against a stock-install PostgreSQL 7.3.3.
+
+  - Script to share the good news publicized
+
+	The README now mentions the test/show-platform script.
+
+
 - 0.15 | 2003-01-15
 
   - New (database postgres) proc: `pg-connection?'
