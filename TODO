@@ -1,3 +1,5 @@
+* don't use str2symbol all the time; move interning to init
+
 * Fix lob_lo_seek to take into account SCM_N_READY_CHARS if whence
   is SEEK_CUR.
 
@@ -180,10 +182,10 @@ abort the whole transaction.
 
 * Add the 'concept index' which is currently empty.
 
-* Write the higher-level interface in scheme. This should provide query-level
-  functions like (pg:for-each) which iterates over a set of tuples returned
-  from a query. Also provide a streams interface so that (pg:stream-cdr)
-  and (pg:stream-car) return tuples.
+* Incorporate (ttn *) higher-level interface in scheme. This should provide
+  query-level functions like (pg:for-each) which iterates over a set of tuples
+  returned from a query. Also provide a streams interface so that
+  (pg:stream-cdr) and (pg:stream-car) return tuples.
 
 * Add a (pg:quote-sql-string-literal) procedure. This should take an arbitrary
   scheme string and return it suitably quoted so that it can appear safely
