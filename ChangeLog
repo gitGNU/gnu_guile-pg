@@ -1,5 +1,13 @@
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm (*conditional-operations*): Add a bunch.
+	(*infix-operations*): Likewise.
+	(*postfix-display-aliases*): New var.
+	(*display-aliases*): Use `*postfix-display-aliases*'.
+	(*postfix-operations*): Add `!'. Use `*postfix-display-aliases*'.
+
+2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-meta.scm:
 	From module (database postgres-qcons), no longer select
 	`make-SELECT/FROM/COLS-tree' or `parse+make-SELECT/tail-tree'.
