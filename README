@@ -15,7 +15,8 @@ Welcome!
 
 	To build Guile-PG you need to have installed both the PostgreSQL
 	frontend library libpq, and a version of Guile that can load
-	binary module (a b c) from file a/b/c.so under `%load-path'.
+	binary module (a b c) from file a/b/c.so or a/b/c/libc.la under
+	`%load-path'.
 
 	This version of Guile-PG has been tested with PostgreSQL 7.3.5
 	and Guile 1.4.1.98, but you may find that it works with other
