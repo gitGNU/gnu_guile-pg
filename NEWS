@@ -19,6 +19,7 @@ NEWS for Guile-PG
 	Additionally, the manual now has a section on the type
 	converters in chapter "Types Conversion".
 
+  - New module: (database postgres-resdisp)
   - New module: (database postgres-qcons)
 
 
