@@ -314,59 +314,55 @@ If SET is omitted display the current value for PART."
        (for-display "No such part, try \",help fix\""))))
 
   (defcc (fsel . etc)
-    "Do a \"fixed-part select\", overriding #:cols and other clauses from ETC.
-ETC is a series of zero or more EXPR optionally followed by an alternating
-series of keywords and EXPR.  EXPR indicates a prefix-style SQL expression."
-    (let* ((fixed (map (lambda (part)
-                         (cons part (conn-get part)))
-                       '(#:limit #:cols #:from #:where
-                                 #:group-by #:having #:order-by)))
-           (cut (let loop ((ls etc) (n 0))
-                  (if (or (null? ls) (keyword? (car ls)))
-                      n
-                      (loop (cdr ls) (1+ n)))))
-           (cols (if (< 0 cut)
-                     (list-head etc cut)
-                     (assq-ref fixed #:cols)))
-           (over (let loop ((ls (list-tail etc cut)) (acc '()))
-                   (if (null? ls)
-                       (reverse! acc)
-                       (let ((k (car ls))
-                             (v (and (not (null? (cdr ls)))
-                                     (cadr ls))))
-                         (if v
-                             (loop (cddr ls) (acons k v acc))
-                             k))))))
+    "Do a \"select\", merging fixed elements and those from ETC.
+ETC is a series of zero or more column expressions, optionally followed
+by a series of keywords and related expressions.  These override those
+specified by \",fix\".  Keywords without related expressions are ignored."
+    (define (collect-keys ls)
+      (let loop ((ls ls) (acc (list)))
+        (if (null? ls)
+            (reverse! acc)              ; rv
+            (let ((kw (car ls)))
+              (let collect-one ((ls (cdr ls)) (partial (list)))
+                (if (or (null? ls) (keyword? (car ls)))
+                    (loop ls (if (null? partial)
+                                 acc
+                                 (acons kw (reverse! partial) acc)))
+                    (collect-one (cdr ls) (cons (car ls) partial))))))))
+    (let ((fixed (map (lambda (part)
+                        (cons part (conn-get part)))
+                      '(#:limit #:cols #:from #:where
+                                #:group-by #:having #:order-by)))
+          (oride (collect-keys (cons #:cols etc))))
       (define (o/f part)
-        (or (and=> (assq-ref over part) list)
+        (or (assq-ref oride part)
             (assq-ref fixed part)))
-      (define (decide part . massage)
-        (let ((v (o/f part))
-              (proc (if (null? massage)
-                        identity
-                        (car massage))))
-          (if v
-              (list part (proc v))
-              '())))
-      (cond ((keyword? over)
-             (for-display (fs "ERROR: missing value for: ~A" over)))
-            ((not cols)
-             (for-display "No columns selected"))
+      (cond ((o/f #:cols)
+             => (lambda (cols)
+                  (define (decide part . massage)
+                    (cond ((o/f part)
+                           => (lambda (v)
+                                (list part (if (null? massage)
+                                               v
+                                               ((car massage) v)))))
+                          (else
+                           '())))
+                  (sql-command<-trees
+                   (make-SELECT/FROM/COLS-tree (o/f #:from) cols)
+                   (parse+make-SELECT/tail-tree
+                    (append (decide #:where
+                                    (lambda (v)
+                                      (if (= 1 (length v))
+                                          (car v)
+                                          (cons (or (conn-get #:where/combiner)
+                                                    'and)
+                                                v))))
+                            (decide #:group-by)
+                            (decide #:having)
+                            (decide #:order-by)
+                            (decide #:limit))))))
             (else
-             (sql-command<-trees
-              (make-SELECT/FROM/COLS-tree (o/f #:from) cols)
-              (parse+make-SELECT/tail-tree
-               (append (decide #:where
-                               (lambda (v)
-                                 (if (= 1 (length v))
-                                     (car v)
-                                     (cons (or (conn-get #:where/combiner)
-                                               'and)
-                                           v))))
-                       (decide #:group-by)
-                       (decide #:having)
-                       (decide #:order-by)
-                       (decide #:limit))))))))
+             (for-display "No columns selected")))))
 
   ;; do it!
   (cond ((pg-connection? conn))
@@ -382,6 +378,7 @@ series of keywords and EXPR.  EXPR indicates a prefix-style SQL expression."
               (error "connection failed")))
 
   (conn-put #:gxrepl-echo #f)
+  (conn-put #:cols '(*))
 
   (call-with-current-continuation
    (lambda (return)
