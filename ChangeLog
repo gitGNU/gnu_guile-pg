@@ -1,3 +1,13 @@
+2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-table.scm (select-cmd): Delete proc.
+	(compile-outspec): New proc, exported.
+	(select-proc): Rewrite to use `compile-outspec'.
+	(pgtable-manager): Doc munging; nfc.
+
+	* doc/guile-pg.twerp (Single-Table Abstraction):
+	Add @twerpdoc for `compile-outspec'.
+
 2004-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm (select-cmd): Take additional
