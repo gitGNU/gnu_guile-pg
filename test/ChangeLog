@@ -1,3 +1,11 @@
+2004-11-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* drop.sh.in: Handle DEBUG=1. Handle option `--no-worries'.
+	* create.sh.in: Handle DEBUG=1.
+	* basic-tests.sh: Pass `--no-worries' for first drop.
+	* lo-tests.sh: Likewise.
+	* abstraction-scm-tests.sh: Likewise.
+
 2004-11-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (test:set-notice-out!-1):
