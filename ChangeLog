@@ -1,5 +1,11 @@
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm (pgtable-manager):
+	No longer support #:help or #:menu.
+	(pgtable-worker): Update docstring; nfc.
+
+2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-table.scm (pgdb-connection): Delete proc.
 	(pgtable-manager): Incorporate `pgdb-connection'.
 
