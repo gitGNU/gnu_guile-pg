@@ -4,6 +4,9 @@
 	* scm/Makefile.am (guile_postgres_sources): Add postgres-resdisp.scm.
 	* Makefile.am (DOTDOCFILES): Add scm/postgres-resdisp.doc.
 
+	* doc/guile-pg.twerp (Top): Add to menu "Displaying Results".
+	(Displaying Results): New node/chapter.
+
 2005-02-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-qcons.scm (*infix-operations*):
