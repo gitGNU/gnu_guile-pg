@@ -1,3 +1,8 @@
+2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:getlineasync): New test proc.
+	(main): Use it; update expected-pass number.
+
 2004-07-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* config.scm.in (*VERSION*): Delete var.
