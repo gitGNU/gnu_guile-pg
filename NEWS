@@ -16,6 +16,11 @@ NEWS for Guile-PG
 
 	See also "Removing Misguided Prior Installations" in README.
 
+  - Distribution bugfix: .x files no longer included
+
+	The truth is out there, but you really don't want it cluttering
+	things, especially since it precludes build-time snarfing.
+
   - Bugfix: incorrect objectifiers selection bug in pgtable-manager
 
 	For `tuples-result->object-alist' and `tuples-result->alists'
