@@ -14,6 +14,12 @@
 	(sql<-trees): Likewise.
 	(sql-command<-trees): Likewise.
 
+	* doc/guile-pg.twerp (Query Construction): Expand. Add sections.
+	Add @twerpdoc for `qcons-declare!', `make-WHERE-tree',
+	`make-GROUP-BY-tree', `make-HAVING-tree', `make-ORDER-BY-tree',
+	`make-SELECT/OUT-tree', `make-FROM-tree', `make-SELECT/FROM/OUT-tree',
+	`sql<-trees' and `sql-command<-trees'.
+
 2005-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-meta.scm (fs): New proc.
