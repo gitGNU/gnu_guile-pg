@@ -129,7 +129,7 @@
       (list (case type
               ((url) ((if (= 3 (length form)) caddr cadr) form))
               ((email) (cadr form))
-              (else (error (format #f "bad form: ~A" form))))
+              (else (error "bad form:" form)))
             (symbol->string (car form))
             ((case type
                ((url) cadr)
@@ -160,7 +160,7 @@
     (case mtype
       ((url) (list "<A HREF=\"" mdata "\">" raw "</A>"))
       ((email) (list "<A HREF=\"mailto:" mdata "\">" raw "</A>"))
-      (else (error (format #f "bad markup type: ~A" mtype)))))
+      (else (error "bad markup type:" mtype))))
 
   (define (>>html name)
     (format #t "spew: (~A) -- " name)
@@ -191,7 +191,7 @@
                  (list mtype raw)
                  (list mtype mdata raw)))
       ((email) (list mtype raw mdata))
-      (else (error (format #f "unexpected mtype: ~A" mtype)))))
+      (else (error "unexpected mtype:" mtype))))
 
   (define (dump-project name)
     (let* ((get (find-proj name))
