@@ -9,6 +9,8 @@
 	Also, no longer use diff(1) to check invariance;
 	instead, compare character-by-character.
 
+	* config.scm.in (*DIFF-PATH*): Delete var.
+
 2004-03-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* testing.scm (*all-tests*): New var.
