@@ -1,3 +1,52 @@
+2002-12-11  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* libpostgres.c: Update copyright.
+	No longer #include <postgres.h>.
+	Include libpostgres.h using "" instead of <>.
+
+	(rcsid): Delete.
+	(ser_status_str_count): New var.
+	(pg_guile_pg_rcsid): Delete.
+	(str2symbol): New macro.
+	(pg_result_status): Return symbol if available.
+
+	* libpostgres_lo.c: Update copyright.
+
+	(rcsid): Delete.
+	(pg_guile_pg_lo_rcsid): Delete.
+	(TTN_COERCE_INT): New macro.
+	(lob_mklobport): Use SCM_INPUT_PORT_P instead of SCM_INPORTP.
+	Use SCM_OUTPUT_PORT_P instead of SCM_OUTPORTP.
+	Use TTN_COERCE_INT.
+	(terminating): Make static.
+	(lob_write): Use TTN_COERCE_INT.
+
+	* scm/postgres.scm.in: Update copyright.
+	Rework loading to use `make-app-module-loader' if available,
+	emulating it if not.
+
+	(pg-setdb): New export.
+	(pg-guile-pg-module-rcsid, pg-guile-pg-rcsid): Delete.
+
+	* scm/Makefile.am: Update copyright.
+
+	(install-data-hook): New target.
+
+	* test/basic-tests.sh, test/lo-tests.sh: Use dropdb if available,
+	otherwise destroydb.
+	No longer user guile-pg interpreter; instead use guile directly.
+
+	* test/guile-pg-basic-tests.scm.in, test/guile-pg-lo-tests.scm.in:
+	Update copyright.
+	Use module (database postgres).
+	Convert PGRES_foo references to symbols.
+
+	* test/Makefile.am: Update copyright.
+	(TESTS): Add alive.sh.
+	(TESTS_ENVIRONMENT): New directive.
+
+	* test/alive.sh: New file.
+
 2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* acinclude.m4 (GUILE_MODULE): Delete.
