@@ -548,6 +548,15 @@ to supply data to a @code{COPY <table> TO STDIN} command.
 
 @twerpdoc (pg-endcopy)
 
+Although not readily apparent, another form of data copying is @dfn{formatted
+output}, which is supported by Guile-PG via the @code{pg-print} procedure and
+the accompanying @code{pg-make-print-options}.  Together these loosely mimic
+the @code{PQprint} functionality provided by libpq.
+
+@twerpdoc (pg-make-print-options)
+
+@twerpdoc (pg-print)
+
 @c ---------------------------------------------------------------------------
 @node    Large Objects
 @chapter Procedures for Managing Large Objects
