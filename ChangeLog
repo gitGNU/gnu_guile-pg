@@ -1,5 +1,9 @@
 2004-02-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* ltconfig: Delete.
+
+2004-02-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c (pg_sym_envvar): New global var.
 	(pg_sym_compiled, pg_sym_val, pg_sym_label,
 	pg_sym_dispchar, pg_sym_dispsize): Likewise.
