@@ -1,5 +1,14 @@
 2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* configure.in (VERSION): Bump to "0.26" for release.
+
+2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-table.scm (tuples-result->table): Document expiration.
+	(where-clausifier): Likewise. Also, pass result through `sql-pre'.
+
+2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Top): Move "Query Construction"
 	to head of second block of chapters.
 	(Query Construction): Expand "Prefix-Style Expressions".
