@@ -69,8 +69,8 @@ static SCM strip_newlines (char *str);
 void scm_init_database_postgres_module (void);
 
 typedef struct _smob_tag {
-    long  type_tag; /* type tag */
-    int   count;
+  long  type_tag; /* type tag */
+  int   count;
 } smob_tag;
 
 static smob_tag pg_conn_tag, pg_result_tag;
@@ -99,7 +99,7 @@ static int pgrs_count = sizeof (pgrs) / sizeof (pgrs_t);
 int
 xc_p (SCM obj)
 {
-  return (SCM_NIMP (obj) && gh_car (obj) == pg_conn_tag.type_tag);
+  return SCM_SMOB_PREDICATE (pg_conn_tag.type_tag, obj);
 }
 
 xc_t *
@@ -189,7 +189,7 @@ typedef struct  /* extended result */
 static int
 xr_p (SCM obj)
 {
-  return (SCM_NIMP (obj) && gh_car (obj) == pg_result_tag.type_tag);
+  return SCM_SMOB_PREDICATE (pg_result_tag.type_tag, obj);
 }
 
 static xr_t *
@@ -1428,7 +1428,7 @@ static long sepo_type_tag;
 static int
 sepo_p (SCM obj)
 {
-  return (SCM_NIMP (obj) && gh_car (obj) == sepo_type_tag);
+  return SCM_SMOB_PREDICATE (sepo_type_tag, obj);
 }
 
 static SCM
