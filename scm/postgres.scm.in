@@ -19,89 +19,14 @@
 
 ;;    Author: Ian Grant <Ian.Grant@cl.cam.ac.uk>
 
-;; Load the C interface functions
+(define-module (database postgres)
+  #:use-module (database postgres-sup))
 
-(define-module (database postgres))
+;; first things first: jump in the air a little and forget to hit the ground
 
-(cond
- ;; maybe this is already done
- ((and (defined? 'pg-guile-pg-loaded) pg-guile-pg-loaded))
- ;; use app-module loader if there
- ((defined? 'make-app-module-loader)
-  ((make-app-module-loader
-    (lambda (name)
-      (car (list
-            '("@top_builddir_absolute@") ; DELETE ME ON INSTALL
-            `("~A/@PACKAGE@/@VERSION@" ,(assq-ref %guile-build-info 'libdir)))))
-    (lambda (name)
-      `("lib~A" ,name))
-    (lambda (name)
-      `("init_~A" ,name)))
-   "postgres"))
- ;; primitive way
- (else (dynamic-call
-        "init_postgres"
-        (dynamic-link
-         (car (list
-               "@top_builddir_absolute@/libpostgres" ; DELETE ME ON INSTALL
-               (format #f "~A/@PACKAGE@/@VERSION@/libpostgres.so"
-                       (assq-ref %guile-build-info 'libdir))))))))
-
-(export pg-guile-pg-loaded)             ; ugh
-
-(export pg-connectdb)
-(export pg-connection?)
-(export pg-setdb)
-(export pg-reset)
-(export pg-get-client-data)
-(export pg-set-client-data!)
-(export pg-exec)
-(export pg-result?)
-(export pg-error-message)
-(export pg-get-db)
-(export pg-get-user)
-(export pg-get-pass)
-(export pg-get-host)
-(export pg-get-port)
-(export pg-get-tty)
-(export pg-get-options)
-(export pg-get-connection)
-(export pg-backend-pid)
-(export pg-result-status)
-(export pg-ntuples)
-(export pg-nfields)
-(export pg-cmdtuples)
-(export pg-oid-status)
-(export pg-oid-value)
-(export pg-fname)
-(export pg-fnumber)
-(export pg-ftype)
-(export pg-fsize)
-(export pg-getvalue)
-(export pg-getlength)
-(export pg-getisnull)
-(export pg-binary-tuples?)
-(export pg-fmod)
-(export pg-guile-pg-version)
-(export pg-getline)
-(export pg-putline)
-(export pg-endcopy)
-(export pg-trace)
-(export pg-untrace)
-
-(export pg-make-print-options)
-(export pg-print)
-
-(export pg-lo-creat)
-(export pg-lo-open)
-(export pg-lo-unlink)
-(export pg-lo-get-connection)
-(export pg-lo-get-oid)
-(export pg-lo-tell)
-(export pg-lo-seek)
-(export pg-lo-read)
-(export pg-lo-import)
-(export pg-lo-export)
+(set-module-public-interface!
+ (current-module)
+ (module-public-interface (resolve-module '(database postgres-sup))))
 
 (define-public (pg-guile-pg-module-config-stamp) "@GUILE_PG_STAMP@")
 (define-public (pg-guile-pg-module-version) "@VERSION@")
