@@ -1,5 +1,10 @@
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/guile-pg.twerp (Writing/Reading Data):
+	Add example proc `copy-to-port-async'.
+
+2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp: Spacing fixups. Use "PostgreSQL".
 
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
