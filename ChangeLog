@@ -1,5 +1,18 @@
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-gxrepl.scm: From module (database postgres-qcons),
+	no long select `sql-quote' or `make-SELECT/OUT-tree'.
+	(obvious): For this comma-command, use `make-SELECT/FROM/OUT-tree'.
+	(dt, fsel): Likewise.
+
+2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (make-FROM-tree):
+	If given #f, return the null tree.
+	Also, pass all symbols through `maybe-dq'.
+
+2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-gxrepl.scm: From module (database
 	postgres-qcons), no longer select `make-WHERE-tree'.
 	(fix, fsel): Rewrite these comma-commands.
