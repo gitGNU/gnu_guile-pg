@@ -20,6 +20,12 @@
     - Write/document proc that updates *class-defs*.
     - Also use it at "make" time.
 
+  - Avoid usage of external programs createdb, dropdb, and psql.
+
+    The first two are easy to replace, since they are simple wrappers for SQL
+    commands "CREATE DATABASE" and "DROP DATABASE".  The third is used in proc
+    `defs-from-psql' in (database postgres-meta) and is more challenging.
+
   - Add to the manual a section giving an overview of using large-objects.
 
     This must explain the ideas of OID's as references to objects.  Also we
