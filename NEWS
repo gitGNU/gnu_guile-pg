@@ -1,6 +1,29 @@
 NEWS for Guile-PG
 
 
+- version 0.11 released 2002-12-17
+
+  - InvalidOid declaration slack
+
+	This variable is expected to be declared by libpq-fe.h (or one
+	of its sub-#include files).  PostgreSQL 7.0.3, in particular,
+	fails to do this, but provides `InvalidOid' in another header.
+	Configuration now attempts to include the appropriate additional
+	header.
+
+  - scm_terminating declaration slack
+
+	This variable is expected to be declared by libguile.h (or one
+	of its sub-#include files).  Some versions of Guile provide
+	"terminating" but not "scm_terminating".  Configuration now
+	detects lack of scm_terminating and arranges (heuristically) for
+	the latter to be an alias of the former.
+
+  - New file: THANKS
+
+	A good place to find fellow guile-pg users!
+
+
 - version 0.10 released 2002-12-14
 
   - Bugfix: pg-lo-tell
