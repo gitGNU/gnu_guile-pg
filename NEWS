@@ -18,8 +18,9 @@ NEWS for Guile-PG
 	`call-with-output-file', `set-current-output-port', etc).
 
   - New (database postgres) proc: `pg-set-notice-out!'
+  - New (database postgres) proc: `pg-notifies'
 
-	This is documented in the manual under "Database Connections".
+	These are documented in the manual under "Database Connections".
 
 
 - 0.16 | 2003-08-13
