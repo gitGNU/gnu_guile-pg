@@ -330,13 +330,41 @@
 ;; 5.7.5        -- polygon
 ;; 5.7.6        -- circle
 ;; 5.8          -- network address data types
+
+(define (n+m-stringifier n+m)           ; n+m is #(NUMBER MASKCOUNT)
+  (simple-format #f "~A/~A"
+                 (inet-ntoa (vector-ref n+m 0))
+                 (vector-ref n+m 1)))
+
+(define (n+m-objectifier s)
+  (let ((cut (string-index s #\/)))
+    (if cut
+        (vector (inet-aton (substring s 0 cut))
+                (string->number (substring s (1+ cut))))
+        (vector (inet-aton s) 32))))
+
 ;; 5.8.1        -- inet
 
 (define-db-col-type 'inet "0.0.0.0"
-  inet-ntoa
-  inet-aton)
+  n+m-stringifier
+  n+m-objectifier)
 
 ;; 5.8.2        -- cidr
+
+(define-db-col-type 'cidr "0.0.0.0"
+  n+m-stringifier
+  n+m-objectifier)
+
+(define (host-stringifier n)
+  (simple-format #f "~A/32" (inet-ntoa n)))
+
+(define (host-objectifier s)
+  (vector-ref (n+m-objectifier s) 0))
+
+(define-db-col-type 'inet-host "127.0.0.1"
+  host-stringifier
+  host-objectifier)
+
 ;; 5.8.3        -- inet vs cidr
 ;; 5.8.4        -- macaddr
 ;; 5.9          -- bit string types
