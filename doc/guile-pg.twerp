@@ -883,7 +883,7 @@ have the same signature but return the data differently.
 
 @heading Example
 @lisp
-(use-modules ((database postgres-col-types) :select (objectifiers)))
+(use-modules ((database postgres-col-defs) :select (objectifiers)))
 
 (define odefs (objectifiers defs))
 
