@@ -1,3 +1,7 @@
+2004-11-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/Makefile.am (install-data-hook): Ignore ls(1) errors.
+
 2004-11-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in (VERSION): Bump to "0.24" for release.
