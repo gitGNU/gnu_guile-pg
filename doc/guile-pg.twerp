@@ -247,6 +247,10 @@ bindings so the connection will usually be closed soon after the body of the
 
 @twerpdoc (pg-backend-pid)
 
+The libpq interface upon which Guile-PG is built supports assocation of
+arbitrary data with a connection.  You can use these @dfn{client data}
+procedures or the more general @dfn{object property} procedures in Guile.
+
 @twerpdoc (pg-get-client-data)
 
 @twerpdoc (pg-set-client-data!)
@@ -256,20 +260,40 @@ The following is a set of three procedures which implement a database
 connection object that logs all the SQL statements it executes.
 
 @lisp
-(define (pg-connectdb-logged options)
+(define (pg-connectdb/logged options)
   (let ((conn (pg-connectdb options)))
-    (if conn
-        (begin (pg-set-client-data! conn '())
-               conn)
-        #f)))
+    (and conn
+         (begin (pg-set-client-data! conn '())
+                conn))))
 
-(define (pg-exec-logged conn sql)
+(define (pg-exec/logged conn sql)
   (pg-set-client-data! conn (append (pg-get-client-data conn)
                                     (list sql)))
   (pg-exec conn sql))
 
-(define (pg-conn-log conn)
+(define (conn-log conn)
   (pg-get-client-data conn))
+@end lisp
+
+Here are implementations using object properties, using the symbol @code{log}
+as the key.
+
+@lisp
+(define put set-object-property!)
+(define get object-property)
+
+(define (pg-connectdb/logged options)
+  (let ((conn (pg-connectdb options)))
+    (put conn 'log '())
+    conn))
+
+(define (pg-exec/logged conn sql)
+  (put conn 'log (append (get conn 'log)
+                         (list sql)))
+  (pg-exec conn sql))
+
+(define (conn-log conn)
+  (get conn 'log))
 @end lisp
 
 @c ---------------------------------------------------------------------------
@@ -279,15 +303,15 @@ connection object that logs all the SQL statements it executes.
 @twerpdoc (pg-exec)
 
 @heading Example
-This example defines a procedure @code{pg-execute} which wraps @code{pg-exec}
-so that a @code{misc-error} is thrown instead of returning false.  There are
-numerous other examples of @code{pg-exec} calls throughout this chapter.
+This example defines a procedure @code{pg-exec/no-false} which wraps
+@code{pg-exec} so that a @code{misc-error} is thrown instead of returning
+false.  There are numerous other examples of @code{pg-exec} calls throughout
+this chapter.
 
 @lisp
-(define (pg-execute conn sql)
-  (let ((result (pg-exec conn sql)))
-    (or result
-        (error (pg-error-message conn)))))
+(define (pg-exec/no-false conn sql)
+  (or (pg-exec conn sql)
+      (error (pg-error-message conn))))
 @end lisp
 
 @heading Notes
@@ -343,12 +367,12 @@ when a syntax error is detected in the command, for example.
 @end table
 
 @heading Example
-This contrived example defines a procedure to insert records into a given
+This contrived example defines a procedure to insert a record into a given
 table, returning the number of tuples inserted (always one) or @code{#f} if an
 error occurred.
 
 @lisp
-(define (pg-insert conn table record)
+(define (insert-one-record conn table record)
   (let ((result (pg-exec conn
                          (format #f "INSERT INTO ~A VALUES ~A"
                                  table record))))
@@ -360,7 +384,7 @@ error occurred.
 The procedure could be called as follows
 
 @lisp
-(pg-insert conn "people" "('Warbucks', 'Oliver')")
+(insert-one-record conn "people" "('Warbucks', 'Oliver')")
 @end lisp
 
 @twerpdoc (pg-get-connection)
@@ -387,54 +411,47 @@ The procedure could be called as follows
 
 @twerpdoc (pg-getvalue)
 
-This example defines a procedure @code{pg-gettuple} which returns a given
+This example defines a procedure @code{tuple->alist} which returns a given
 tuple as an alist, keyed on the field name.  It's not an especially efficient
 procedure because it constructs the list of field-names afresh each time it's
 called.
 
 @lisp
-(define (pg-fnames result)
-  (let ((nfields (pg-nfields result)))
-    (define (iter i)
-      (if (= i nfields) '()
-          (cons (pg-fname result i) (iter (+ i 1)))))
-    (iter 0)))
+(define (field-names result)
+  (map (lambda (field)
+         (pg-fname result field))
+       (iota (pg-nfields result))))
 
-(define (pg-getvalues result tuple)
-  (let ((nfields (pg-nfields result)))
-    (define (iter i)
-      (if (= i nfields) '()
-          (cons (pg-getvalue result tuple i) (iter (+ i 1)))))
-    (iter 0)))
+(define (get-values result tuple)
+  (map (lambda (field)
+         (pg-getvalue result tuple field))
+       (iota (pg-nfields result))))
 
-(define (pg-gettuple result tuple)
+(define (tuple->alist result tuple)
   (map (lambda (n v) (cons (string->symbol n) v))
-       (pg-fnames result)
-       (pg-getvalues result tuple)))
+       (field-names result)
+       (get-values result tuple)))
 @end lisp
 
 Field values can be extracted from the tuple using @code{assq-ref}, eg:
 
 @lisp
-(define tup (pg-gettuple result 0))
-(assq-ref tup 'firstname)
+(assq-ref (tuple->alist result 0) 'firstname)
 @end lisp
 
 Using this procedure we can define a version of @code{for-each} which
 iterates through the tuples returned from a given @code{SELECT} query:
 
 @lisp
-(define (pg-for-each proc result)
-  (let ((ntuples (pg-ntuples result)))
-    (define (iter i)
-      (cond ((= i ntuples) ntuples)
-            (else (proc (pg-gettuple result i))
-                  (iter (+ i 1)))))
-    (iter 0)))
+(define (for-each-tuple proc result)
+  (let ((end (pg-ntuples result)))
+    (do ((tuple 0 (1+ tuple)))
+        ((= tuple end))
+      (proc (tuple->alist result tuple)))))
 @end lisp
 
-This implementation of @code{pg-for-each} inherits inefficiency from the
-@code{pg-gettuple} procedure.
+This implementation of @code{for-each-tuple} inherits inefficiency from the
+@code{tuple->alist} procedure.
 
 @heading Notes
 The @code{pg-getvalue} procedure throws
@@ -446,7 +463,7 @@ arguments are out of range.
 @twerpdoc (pg-ftype)
 
 @heading Example
-This defines a procedure @code{pg-ftype-name} which returns the type
+This defines a procedure @code{field-type-name} which returns the type
 name of a given attribute in a string.
 
 A more efficient implementation would be to define
@@ -455,14 +472,14 @@ a type of connection which, when opened, issued the query to retrieve the
 then be associated with each connection using @code{pg-set-client-data!}.
 
 @lisp
-(define (pg-ftype-name result fnum)
+(define (field-type-name result fnum)
   (let ((result (pg-exec
                  (pg-get-connection result)
                  (format #f "SELECT typname FROM pg_type WHERE oid = ~A"
                          (pg-ftype result fnum)))))
     (or (and result
              (eq? 'PGRES_TUPLES_OK (pg-result-status result))
-             (> (pg-ntuples result) 0)
+             (< 0 (pg-ntuples result))
              (pg-getvalue result 0 0))
         "")))
 @end lisp
@@ -478,18 +495,16 @@ then be associated with each connection using @code{pg-set-client-data!}.
 @twerpdoc (pg-getline)
 
 @heading Example
-This example defines a procedure @code{pg-copy-to-port} which can be used
+This example defines a procedure @code{copy-to-port} which can be used
 to retrieve the results of a @code{COPY <table> TO STDOUT} command.
 
 @lisp
-(define (pg-copy-to-port conn port)
-  (define (iter)
-    (let ((line (pg-getline conn)))
-      (if (string=? line "\\.")
-          (pg-endcopy conn)
-          (begin (write-line line port)
-                 (iter)))))
-  (iter))
+(define (copy-to-port conn port)
+  (let loop ((line (pg-getline conn)))
+    (if (string=? line "\\.")
+        (pg-endcopy conn)
+        (begin (write-line line port)
+               (loop (pg-getline conn))))))
 @end lisp
 @heading Notes
 It is an error to call @code{pg-getline} on a connection without first
@@ -501,22 +516,20 @@ that connection.
 @twerpdoc (pg-putline)
 
 @heading Example
-This example defines a procedure @code{pg-copy-from-port} which can be used
+This example defines a procedure @code{copy-from-port} which can be used
 to supply data to a @code{COPY <table> TO STDIN} command.
 
 @lisp
-(define (pg-copy-from-port conn port)
-  (define (iter)
-    (let ((line (read-line port)))
-      (if (eof-object? line)
-          (begin (pg-putline conn "\\.\n")
-                 (pg-endcopy conn))
-          (begin (pg-putline conn line)
-                 (pg-putline conn "\n")
-                 (if (string=? line "\\.")
-                     (pg-endcopy conn)
-                     (iter))))))
-  (iter))
+(define (copy-from-port conn port)
+  (let loop ((line (read-line port)))
+    (if (eof-object? line)
+        (begin (pg-putline conn "\\.\n")
+               (pg-endcopy conn))
+        (begin (pg-putline conn line)
+               (pg-putline conn "\n")
+               (if (string=? line "\\.")
+                   (pg-endcopy conn)
+                   (loop (read-line port)))))))
 @end lisp
 
 @twerpdoc (pg-endcopy)
@@ -605,20 +618,21 @@ was configured (this is probably the build time).
 @end deffn
 
 @twerpdoc (pg-trace)
+
 @twerpdoc (pg-untrace)
 
 @heading Example
-This example defines a pair of procedures @code{pg-trace-on} and
-@code{pg-trace-off} which implement a higher-level trace procedure which
+This example defines a pair of procedures @code{trace-on} and
+@code{trace-off} which implement a higher-level trace procedure which
 opens the required file and starts/stops the trace.
 
 @lisp
-(define (pg-trace-on conn filename)
+(define (trace-on conn filename)
   (let ((port (open-file filename "w")))
     (pg-set-client-data! conn port)
     (pg-trace conn port)))
 
-(define (pg-trace-off conn)
+(define (trace-off conn)
   (let ((port (pg-get-client-data conn)))
     (and port
          (begin
