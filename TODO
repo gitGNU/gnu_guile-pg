@@ -32,7 +32,7 @@
 
   - Implement these calls:
 
-    - Asynchronous version of PQgetline
+    + Asynchronous version of PQgetline
 
           int      PQgetlineAsync(PGconn *conn, char *buffer, int bufsize)
 
