@@ -1,5 +1,16 @@
 2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c (pg_sym_envvar): Delete symbol.
+	(pg_sym_compiled, pg_sym_val, pg_sym_label,
+	pg_sym_dispchar, pg_sym_dispsize): Likewise.
+	(SIMPLE_KEYWORD, KWD): New macros.
+	(kwd_envvar): New keyword.
+	(kwd_compiled, kwd_val, kwd_label,
+	kwd_dispchar, kwd_dispsize): Likewise.
+	(pg_conndefaults): Use keywords instead of symbols.
+
+2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.h (scm_extended_dbconn): Rename to `xc_t'.
 	(scm_extended_result): Move to libpostgres.c.
 	(guile_pg_sec_p): Rename to `xc_p'.
