@@ -193,9 +193,26 @@
              (close-port lo-port)
              data)))))
 
+;; Test pg-lo-tell
+;; expect #t
+
+(define (test:lo-tell)
+  (pg-transaction conn
+    (lambda (conn)
+      (let ((lo-port (pg-lo-open conn new-oid "r")))
+        (and lo-port
+             (eq? 0 (pg-lo-tell lo-port))
+             (let ((data (pg-lo-read 1 1 lo-port)))
+               (and (string? data)
+                    (= 1 (string-length data))
+                    (string=? "a" data)))
+             (let ((location-after-read (pg-lo-tell lo-port)))
+               (close-port lo-port)
+               (eq? 1 location-after-read)))))))
+
 (load-from-path "testing.scm")
 (set! verbose #t)
-(test-init "lo-tests" 12)
+(test-init "lo-tests" 13)
 (test "@VERSION@" pg-guile-pg-version)
 (test #t test:make-connection)
 (test #t test:make-data)
@@ -208,6 +225,7 @@
 (test #t test:read-line)
 (test #t test:lo-seek)
 (test "ababaa" test:lo-seek2)
+(test #t test:lo-tell)
 (for-each delete-file '("lo-tests-data-1" "lo-tests-data-2"))
 (set! conn #f)
 (test-report)
