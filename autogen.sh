@@ -34,7 +34,7 @@ done
 ######################################################################
 # Header: <guile/modsup.h>
 
-fresh_modsup_h="`guile-config info includedir`/guile/modsup.h`"
+fresh_modsup_h="`guile-config info includedir`/guile/modsup.h"
 test -f $fresh_modsup_h || fresh_modsup_h="modsup.h.snap"
 ln -sf $fresh_modsup_h modsup.h
 
