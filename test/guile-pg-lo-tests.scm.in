@@ -208,6 +208,7 @@
 (test #t test:read-line)
 (test #t test:lo-seek)
 (test "ababaa" test:lo-seek2)
+(for-each delete-file '("lo-tests-data-1" "lo-tests-data-2"))
 (set! conn #f)
 (test-report)
 
