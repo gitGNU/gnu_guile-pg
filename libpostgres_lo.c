@@ -60,12 +60,12 @@ typedef struct lob_stream_tag {
 
 #define LOB_CONN(x) (XCONN ((x)->conn))
 
-#define SCM_LOBPORTP(x) (SCM_TYP16 (x)==lob_ptype)
+#define LOBPORTP(x) (SCM_TYP16 (x)==lob_ptype)
 
-#define SCM_OPLOBPORTP(x) \
+#define OPLOBPORTP(x) \
   (((0xffff | SCM_OPN) & (int) gh_car (x)) == (lob_ptype | SCM_OPN))
 
-#define SCM_OPINLOBPORTP(x)                           \
+#define OPINLOBPORTP(x)                           \
   (((0xffff | SCM_OPN | SCM_RDNG) & (int) gh_car (x)) \
    == (lob_ptype | SCM_OPN | SCM_RDNG))
 
@@ -289,7 +289,7 @@ PG_DEFINE (lob_lo_get_connection, "pg-lo-get-connection", 1, 0, 0,
            "@code{pg-lo-creat} or @code{pg-lo-open}.")
 {
 #define FUNC_NAME s_lob_lo_get_connection
-  SCM_ASSERT (SCM_NIMP (port) && SCM_OPLOBPORTP (port),
+  SCM_ASSERT (SCM_NIMP (port) && OPLOBPORTP (port),
               port, SCM_ARG1, FUNC_NAME);
 
   return ((lob_stream *)SCM_STREAM (port))->conn;
@@ -303,7 +303,7 @@ PG_DEFINE (lob_lo_get_oid, "pg-lo-get-oid", 1, 0, 0,
            "from @code{pg-lo-creat} or @code{pg-lo-open}.")
 {
 #define FUNC_NAME s_lob_lo_get_oid
-  SCM_ASSERT (SCM_NIMP (port) && SCM_LOBPORTP (port),
+  SCM_ASSERT (SCM_NIMP (port) && LOBPORTP (port),
               port, SCM_ARG1, FUNC_NAME);
   return gh_int2scm (((lob_stream *)SCM_STREAM (port))->oid);
 #undef FUNC_NAME
@@ -320,7 +320,7 @@ PG_DEFINE (lob_lo_tell, "pg-lo-tell", 1, 0, 0,
            "explain what went wrong.")
 {
 #define FUNC_NAME s_lob_lo_tell
-  SCM_ASSERT (SCM_NIMP (port)&&SCM_OPLOBPORTP (port),port,SCM_ARG1,FUNC_NAME);
+  SCM_ASSERT (SCM_NIMP (port)&&OPLOBPORTP (port),port,SCM_ARG1,FUNC_NAME);
 
   return scm_seek (port, SCM_INUM0, gh_int2scm (SEEK_CUR));
 #undef FUNC_NAME
@@ -445,7 +445,7 @@ PG_DEFINE (lob_lo_seek, "pg-lo-seek", 3, 0, 0,
            "zero if an error occurred.")
 {
 #define FUNC_NAME s_lob_lo_seek
-  SCM_ASSERT (SCM_NIMP (port) && SCM_OPLOBPORTP (port),
+  SCM_ASSERT (SCM_NIMP (port) && OPLOBPORTP (port),
               port, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_INUMP (where), where, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (SCM_INUMP (whence), whence, SCM_ARG3, FUNC_NAME);
@@ -576,7 +576,7 @@ PG_DEFINE (lob_lo_read, "pg-lo-read", 3, 0, 0,
 
   SCM_ASSERT (SCM_INUMP (siz), siz, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT (SCM_NIMP (port) && SCM_OPINLOBPORTP (port),
+  SCM_ASSERT (SCM_NIMP (port) && OPINLOBPORTP (port),
               port, SCM_ARG3, FUNC_NAME);
 
   len = gh_scm2int (siz) * gh_scm2int (num);
