@@ -1,5 +1,14 @@
 2004-06-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres.scm.in: Delete file.
+
+	* scm/Makefile.am (guile_postgres_generated): Delete var.
+	(d_DATA): Delete $(guile_postgres_generated).
+	(EXTRA_DIST): Delete postgres.scm.in.
+	(install-data-hook): In any postgres.scm from $(ddir).
+
+2004-06-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c (pg_oid_status): Delete PG_DEFINE func.
 
 	* doc/guile-pg.twerp (Processing Results): Remove @twerpdoc
