@@ -1,5 +1,9 @@
 2004-11-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* drop.sh.in: Sleep for one second before exit.
+
+2004-11-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* create.sh.in: When DEBUG=1,
 	display createdb command before executing.
 
