@@ -1365,7 +1365,7 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
            "@item align: Fill align the fields.\n"
            "@item standard: Old brain-dead format.\n"
            "@item html3: Output HTML tables.\n"
-           "@item expand: Expand tables.\n"
+           "@item expanded: Expand tables.\n"
            "@end itemize\n\n"
            "To specify a disabled flag, use @dfn{no-FLAG}, e.g.,"
            "@code{no-header}.  Recognized keys:\n\n"
@@ -1472,7 +1472,10 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
 #define FUNC_NAME s_pg_print
 {
   SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT (sepo_p (options), options, SCM_ARG2, FUNC_NAME);
+  if (options == SCM_UNDEFINED)
+    options = pg_make_print_options (SCM_EOL);
+  else
+    SCM_ASSERT (sepo_p (options), options, SCM_ARG2, FUNC_NAME);
 
   PQprint (stdout, ser_unbox (result)->result, sepo_unbox (options));
 
