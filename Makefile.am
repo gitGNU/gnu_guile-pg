@@ -112,4 +112,13 @@ destroy-nonmodule-guile-pg-prior-install:
 	  sed '/database postgres/d' $$cat > TMP ;		\
 	  mv TMP $$cat ; fi
 
+if MAINTAINER_MODE
+
+cvs-state-summary:
+	cd $(top_srcdir) ;			\
+	ttn-do display-cvs-state-summary	\
+	  `find . -name CVS -printf ' %h'`
+
+endif # MAINTAINER_MODE
+
 ## Makefile.am ends here
