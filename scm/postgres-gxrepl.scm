@@ -102,7 +102,11 @@ is normal."
               (for-display
                (with-output-to-string
                  (lambda ()
-                   (pretty-print (procedure-source proc)))))))
+                   (pretty-print (let ((all (procedure-source proc)))
+                                   (list* (car all)
+                                          (cadr all)
+                                          ;; skip docstring
+                                          (cdddr all)))))))))
         (else
          (sql-command<-trees
           #:SELECT (make-SELECT/OUT-tree
@@ -118,17 +122,24 @@ extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
   (sql-command<-trees
    (make-SELECT/FROM/OUT-tree
     '((c . pg_class) (a . pg_attribute) (t . pg_type))
-    '(("name"     . a.attname)
-      ("type"     . t.typname)
-      ("bytes"    . a.attlen)
-      ("mod??"    . a.atttypmod)
-      ("not null" . a.attnotnull)
-      ("hasdefs"  . a.atthasdef)))
+    '(("name"   . a.attname)
+      ("type"   . t.typname)
+      (" bytes" . (#:q* (if (< 0 a.attlen)
+                            (to_char a.attlen "99999")
+                            "varies")))
+      ("mod"    . (to_char a.atttypmod "999"))
+      ("etc"    . (#:q* (|| (if a.attnotnull
+                                "NOT NULL"
+                                "NULL ok")
+                            ", "
+                            (if a.atthasdef
+                                "has defs"
+                                "no defs"))))))
    (make-WHERE-tree
-    `(and (= c.relname ,(sql-quote (symbol->string table-name)))
-          (> a.attnum 0)
-          (= a.attrelid c.oid)
-          (= a.atttypid t.oid)))
+    `(#:q* (and (= c.relname ,(symbol->string table-name))
+                (> a.attnum 0)
+                (= a.attrelid c.oid)
+                (= a.atttypid t.oid))))
    (make-ORDER-BY-tree
     '((< a.attnum)))))
 
@@ -194,6 +205,67 @@ Optional arg SETTING turns on echoing if a positive number."
                      (else #f))))
       (conn-put #:gxrepl-echo new)
       (for-display (fs "SQL command echoing now ~A." (if new "ON" "OFF")))))
+
+  (defcc (fix part . set)
+    "Fix query PART to be SET..., or clear that part if SET is 0 (zero).
+PART is a symbol, one of `froms', `outs', `where'.  SET is a space-separated
+list of elements.  When a part is fixed, it is used (unless overridden) in
+the \",fsel\" comma-command.
+
+If PART is `froms', each element of SET is either the name of a table,
+or a pair in the form (ALIAS . TABLE-NAME), e.g., `(t . pg_type)'.  The
+alias can be used in `outs' and `where' sets.
+
+If PART is `outs', each element of SET is either a column name, possibly
+qualified by the table name with a dot), e.g., `t.oid'; a prefix-style
+SQL expression, e.g., `(to_char 42 \"999\")'; or pair with the cdr one
+of the previous options and the car a string, e.g., `(\"id\" . t.oid)'.
+
+If PART is `where', each element of SET is prefix-style SQL expression,
+.e.g, `(= t.oid 42)', and there is an implicit \"and\" clause surrounding
+SET.  For \"or\" behavior, specify it, e.g., `(or (= t.oid 42) (= t.oid 0))'."
+    (let* ((prop (case part
+                   ((froms) #:gxrepl-froms)
+                   ((outs) #:gxrepl-outs)
+                   ((where) #:gxrepl-wheres)
+                   (else #f)))
+           (cur (and prop (conn-get prop))))
+      (if (not prop)
+          (for-display "No such part, try \",help fix\"")
+          (conn-put prop (cond ((null? set) cur)
+                               ((equal? 0 (car set)) #f)
+                               (else set))))))
+
+  (defcc (fsel . etc)
+    "Do a \"fixed-part select\", overriding `outs' and `where' from ETC.
+You must have done at least a \",fix froms TABLENAME\" before using \"fsel\".
+ETC is a series of zero or more EXPR optionally followed by a where-clause
+comprising the keyword #:where followed by a single EXPR.  EXPR is a prefix-
+style SQL expression."
+    (cond ((conn-get #:gxrepl-froms)
+           => (lambda (tables)
+                (let ((outs '())
+                      (where (and=> (conn-get #:gxrepl-wheres)
+                                    (lambda (ls)
+                                      (make-WHERE-tree
+                                       `(#:q* (and ,@ls)))))))
+                  (let loop ((ls etc))
+                    (cond ((null? ls))
+                          ((keyword? (car ls))
+                           (if (eq? #:where (car ls))
+                               (set! where (make-WHERE-tree
+                                            (list #:q* (cadr ls))))))
+                          (else
+                           (set! outs (append! outs (list (car ls))))
+                           (loop (cdr ls)))))
+                  (sql-command<-trees
+                   (make-SELECT/FROM/OUT-tree
+                    tables (cond ((not (null? outs)) outs)
+                                 ((conn-get #:gxrepl-outs))
+                                 (else '*)))
+                   (or where '())))))
+          (else
+           (for-display "Sorry, no `froms' fixed, try \",help fix\""))))
 
   ;; do it!
   (cond ((pg-connection? conn))
