@@ -5,6 +5,7 @@
 
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* README: Mention test/show-platform and how to use it.
 	* test/Makefile.am (EXTRA_DIST): Add show-platform.
 
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
