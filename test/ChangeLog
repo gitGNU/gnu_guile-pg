@@ -1,5 +1,12 @@
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* guile-pg-basic-tests.scm
+	(test:getline): Update return value check for `pg-endcopy'.
+	(test:getlineasync): Likewise.
+	(test:putline): Likewise.
+
+2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* guile-pg-basic-tests.scm (test:set-notice-out!-1): New test proc.
 	(test:set-notice-out!-2): Likewise.
 	(main): Use new test procs; update expected-pass number.

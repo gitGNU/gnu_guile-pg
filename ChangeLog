@@ -1,5 +1,9 @@
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c (pg_endcopy): Return bool.
+
+2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c: Throughout, add explicit `(void)' casts
 	for void return values from PQ functions.  For each unused non-void
 	return value, add also a comment explaining why we "don't care".
