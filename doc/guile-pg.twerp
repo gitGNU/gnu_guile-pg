@@ -1156,6 +1156,7 @@ transformations.  You can add to them using proc @code{qcons-declare!}.
 @section Tree Construction
 
 @twerpdoc (sql-quote)
+@twerpdoc (make-comma-separated-tree)
 @twerpdoc (make-WHERE-tree)
 @twerpdoc (make-GROUP-BY-tree)
 @twerpdoc (make-HAVING-tree)
