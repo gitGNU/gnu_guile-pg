@@ -1,0 +1,22 @@
+#!/bin/sh
+# usage: cov [PATH/TO/guile-pg.info]
+# display coverage check of documented procs
+
+if [ x"$1" = x ] ; then
+    info="../doc/guile-pg.info"
+else
+    info="$1"
+fi
+
+all=`sed '/* pg/!d;s/^..//;s/:.*//' $info`
+
+for p in $all ; do
+    if grep -q "$p" *.scm.in ; then
+        echo -n 'yes'
+    else
+        echo -n ' no'
+    fi
+    echo "     $p"
+done
+
+# cov ends here
