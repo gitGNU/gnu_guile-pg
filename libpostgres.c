@@ -164,7 +164,7 @@ xc_free (SCM obj)
 
   /* close connection to postgres */
   if (xc->dbconn)
-    PQfinish (xc->dbconn);
+    (void) PQfinish (xc->dbconn);
 
   /* free this object itself */
   free (xc);
@@ -261,7 +261,7 @@ xr_free (SCM obj)
 
   /* clear the result */
   if (xr->result)
-    PQclear (xr->result);
+    (void) PQclear (xr->result);
 
   /* free this object itself */
   free (xr);
@@ -405,7 +405,7 @@ PG_DEFINE (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
 #undef MAYBEFALSE
 
   if (head)
-    PQconninfoFree (head);
+    (void) PQconninfoFree (head);
 
   return rv;
 }
@@ -522,7 +522,7 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
     {
       /* Get error message before PQfinish, which zonks dbconn storage.  */
       pgerrormsg = strip_newlines (PQerrorMessage (dbconn));
-      PQfinish (dbconn);
+      (void) PQfinish (dbconn);
     }
   SCM_ALLOW_INTS;
 
@@ -538,7 +538,9 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
   xc->notice = SCM_BOOL_T;
   xc->fptrace = (FILE *) NULL;
 
-  PQsetNoticeProcessor (dbconn, &notice_processor, xc);
+  /* Whatever the default was before, we don't care.  */
+  (void) PQsetNoticeProcessor (dbconn, &notice_processor, xc);
+
   return z;
 #undef FUNC_NAME
 }
@@ -562,7 +564,7 @@ PG_DEFINE (pg_reset, "pg-reset", 1, 0, 0,
 #define FUNC_NAME s_pg_reset
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_DEFER_INTS;
-  PQreset (XCONN (conn));
+  (void) PQreset (XCONN (conn));
   SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1298,7 +1300,10 @@ PG_DEFINE (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
   SCM_ASSERT (SCM_STRINGP (buf), buf, SCM_ARG2, FUNC_NAME);
 
   if (tickle != SCM_UNDEFINED && SCM_NFALSEP (tickle))
-    PQconsumeInput (XCONN (conn));
+    /* We don't care if there was an error consuming input; caller can use
+       `pg_error_message' to find out afterwards, or simply avoid tickling in
+       the first place.  */
+    (void) PQconsumeInput (XCONN (conn));
 
   return SCM_MAKINUM (PQgetlineAsync (XCONN (conn),
                                       SCM_ROCHARS (buf),
@@ -1382,7 +1387,7 @@ PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
     scm_syserror (FUNC_NAME);
 
   SCM_DEFER_INTS;
-  PQtrace (XCONN (conn), fpout);
+  (void) PQtrace (XCONN (conn), fpout);
   xc_unbox (conn)->fptrace = fpout;
   SCM_ALLOW_INTS;
 
@@ -1400,7 +1405,7 @@ PG_DEFINE (pg_untrace, "pg-untrace", 1, 0, 0,
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  PQuntrace (XCONN (conn));
+  (void) PQuntrace (XCONN (conn));
   SCM_SYSCALL (ret = fclose (xc_unbox (conn)->fptrace));
   xc_unbox (conn)->fptrace = (FILE *) NULL;
   SCM_ALLOW_INTS;
@@ -1677,7 +1682,7 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
   if (fout == NULL)
     scm_syserror (FUNC_NAME);
 
-  PQprint (fout, RESULT (result), sepo_unbox (options));
+  (void) PQprint (fout, RESULT (result), sepo_unbox (options));
 
   if (redir_p)
     {
@@ -1754,7 +1759,10 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   if (tickle != SCM_UNDEFINED && SCM_NFALSEP (tickle))
-    PQconsumeInput (XCONN (conn));
+    /* We don't care if there was an error consuming input; caller can use
+       `pg_error_message' to find out afterwards, or simply avoid tickling in
+       the first place.  */
+    (void) PQconsumeInput (XCONN (conn));
   n = PQnotifies (XCONN (conn));
   if (n)
     {
