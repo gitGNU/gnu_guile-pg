@@ -33,11 +33,6 @@
 #include <libguile.h>
 #include <guile/gh.h>
 
-#ifndef HAVE_SCM_TERMINATING
-extern int terminating;
-#define scm_terminating terminating
-#endif
-
 #include <libpq-fe.h>
 #include <libpq/libpq-fs.h>
 
@@ -276,6 +271,18 @@ lob_lo_tell (SCM port)
   return scm_seek (port, SCM_INUM0, SCM_MAKINUM (SEEK_CUR));
 }
 
+/* During lob_flush error, we decide whether to use scm_syserror ("normal"
+   error mechanism) or to write directly to stderr, depending on libguile's
+   variable: scm_terminating.  If it's not available in some form (see
+   configure.in comments), we arrange to unconditionally write to stderr
+   instead of risking further muck-up.  */
+#ifndef HAVE_SCM_TERMINATING
+# ifdef HAVE_LIBGUILE_TERMINATING
+    extern int terminating;
+#   define scm_terminating terminating
+# endif /* HAVE_LIBGUILE_TERMINATING */
+#endif /* !HAVE_SCM_TERMINATING */
+
 static void
 lob_flush (SCM port)
 {
@@ -310,18 +317,21 @@ lob_flush (SCM port)
         }
         pt->write_pos = pt->write_buf + remaining;
       }
+#if defined (HAVE_SCM_TERMINATING) || defined (HAVE_LIBGUILE_TERMINATING)
       if (! scm_terminating)
         scm_syserror ("lob_flush");
-      else {
-        const char *msg = "Error: could not flush large object file descriptor ";
-        char buf[11];
+      else
+#endif /* HAVE_LIBGUILE_TERMINATING || HAVE_LIBGUILE_TERMINATING */
+        {
+          const char *msg = "Error: could not flush large object file descriptor ";
+          char buf[11];
 
-        write (2, msg, strlen (msg));
-        sprintf (buf, "%d\n", lobp->fd);
-        write (2, buf, strlen (buf));
+          write (2, msg, strlen (msg));
+          sprintf (buf, "%d\n", lobp->fd);
+          write (2, buf, strlen (buf));
 
-        count = remaining;
-      }
+          count = remaining;
+        }
     }
     ptr += count;
     remaining -= count;
