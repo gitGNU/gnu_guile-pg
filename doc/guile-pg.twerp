@@ -101,6 +101,8 @@ the @code{libpq} library and other similar interfaces like Edmund Mergl's
 * Miscellaneous::               Everything else starting with "pg-".
 
 * Types Conversion::            Module: (database postgres-types).
+* Column Definitions::          Module: (database postgres-col-defs).
+* Result Transforms::           Module: (database postgres-resx).
 * Single-Table Abstraction::    Module: (database postgres-table).
 * Introspection::               Module: (database postgres-meta).
 
@@ -736,22 +738,11 @@ types, use the @code{define-db-col-type-array-variant} procedure.
 @twerpdoc (define-db-col-type-array-variant)
 
 @c ---------------------------------------------------------------------------
-@node    Single-Table Abstraction
-@chapter Single-Table Abstraction
+@node    Column Definitions
+@chapter Column Definitions
 
-For some database usages, it is convenient to focus on a single table, adding
-rows to it or drawing queries from it exclusively of any other tables in the
-database.  This chapter describes Guile-PG facilities for this kind of use.
-
-To get started, load the @code{postgres-table} module:
-
-@lisp
-(use-modules (database postgres-table))
-@end lisp
-
-Basically, the @code{pgtable-manager} procedure encapsulates specification,
-query and mutation (including create/delete) of a PostgreSQL table.  The
-@var{defs} are a list of the columns, each element having the form:
+A column definition, or @dfn{def} for short, associates a column name, its
+type and any additional options.  It has the form:
 
 @lisp
 (NAME TYPE [OPTIONS...])
@@ -776,12 +767,144 @@ form:
           (etc             int4[])))
 @end lisp
 
-Note that there are no options in this example.  The components of a def can
-be read using the @code{def:FOO} procedures.
+Likewise, here is an example that might be useful in keeping a table of
+expenses (although probably using @code{float4} is not a good idea for
+monetary values):
 
-@twerpdoc (def:col-name)
-@twerpdoc (def:type-name)
-@twerpdoc (def:type-options)
+@lisp
+(define expense-ledger-defs
+        '((i       serial)
+          (date    timestamp)
+          (amount  float4)
+          (details text[])))
+@end lisp
+
+Note that there are no options in these examples.  The components of a def can
+be extracted with procedures in the @code{postgres-col-defs} module, which can
+be loaded like so:
+
+@lisp
+(use-modules ((database postgres-col-defs)
+              :renamer (symbol-prefix-proc 'def:)))
+@end lisp
+
+In this example, we use the @code{:renamer} clause to systematically prefix
+"def:" to the names that the client module would see (resulting in
+@code{def:column-name} and so on).
+
+@twerpdoc (column-name)
+@twerpdoc (type-name)
+@twerpdoc (type-options)
+
+There are two more convenience procedures, the first one useful in
+transforming the results of a query into Scheme objects (@pxref{Result
+Transforms}):
+
+@twerpdoc (objectifiers)
+@twerpdoc (stringifiers)
+
+@c ---------------------------------------------------------------------------
+@node    Result Transforms
+@chapter Result Transforms
+
+To support handling of query results in the @dfn{Scheme domain}, Guile-PG
+provides various procedures to walk the result object, to extract Scheme
+objects from the result object, and to collect these in idiomatic data
+structures (such as the association list).
+
+To get started, load the @code{postgres-resx} module:
+
+@lisp
+(use-modules (database postgres-resx))
+@end lisp
+
+The most basic procedure is @code{for-each-tuple}, useful for quick searches
+on the unconverted result strings.
+
+@twerpdoc (for-each-tuple)
+
+The rest of the procedures in this chapter combine conversion of the raw
+result strings to Scheme objects, with different collection methods.
+@xref{Types Conversion}.  The examples are based upon a result object that can
+briefly described as:
+
+@itemize
+@item two tuples each with two fields
+@item field names: "date" and "note"
+@item first tuple's date: "2003-01-14 00:00:00-08"
+@c                         1042531200
+@item first tuple's note: "now", "the present"
+@item second tuple's date: "2003-01-13 00:00:00-08"
+@c                          1042444800
+@item second tuple's note: "yesterday", "the past"
+@end itemize
+
+The defs (@pxref{Column Definitions}) for the examples are:
+
+@lisp
+(define defs '((date timestamp) (note text[])))
+@end lisp
+
+Actually the @code{note} field in its raw form involves curly braces and extra
+quoting, but we omit that to reduce clutter.
+
+The @code{result-field->object-list} procedure is useful for single-column
+queries.
+
+@twerpdoc (result-field->object-list)
+
+@heading Example
+@lisp
+(define (1-col result fn type)
+  (let ((objectifier (dbcoltype:objectifier (dbcoltype-lookup type))))
+    (result-field->object-list result fn objectifier)))
+
+(1-col result 0 'timestamp)
+@result{} (1042531200 1042444800)
+
+(1-col result 1 'text[])
+@result{} (("now" "the present") ("yesterday" "the past"))
+@end lisp
+
+The @code{result->object-alist} and @code{result->object-alists} procedures
+have the same signature but return the data differently.
+
+@twerpdoc (result->object-alist)
+@twerpdoc (result->object-alists)
+
+@heading Example
+@lisp
+(use-modules ((database postgres-col-types) :select (objectifiers)))
+
+(define odefs (objectifiers defs))
+
+(result->object-alist result odefs)
+@result{}
+((date 1042531200 1042444800)
+ (note ("now" "the present") ("yesterday" "the past")))
+
+(result->object-alists result odefs)
+@result{}
+(((date . 1042531200) (note "now" "the present"))
+ ((date . 1042444800) (note "yesterday" "the past")))
+@end lisp
+
+@c ---------------------------------------------------------------------------
+@node    Single-Table Abstraction
+@chapter Single-Table Abstraction
+
+For some database usages, it is convenient to focus on a single table, adding
+rows to it or drawing queries from it exclusively of any other tables in the
+database.  This chapter describes Guile-PG facilities for this kind of use.
+
+To get started, load the @code{postgres-table} module:
+
+@lisp
+(use-modules (database postgres-table))
+@end lisp
+
+Basically, the @code{pgtable-manager} procedure encapsulates specification,
+query and mutation (including create/delete) of a PostgreSQL table.
 
 @twerpdoc (pgtable-manager)
 
@@ -853,6 +976,11 @@ To get started, load the @code{postgres-meta} module:
 (use-modules (database postgres-meta))
 @end lisp
 
+The column definitions of an existing table can be discovered to some extent by
+the @code{infer-defs} and @code{describe-table!} procedures, the latter also
+displaying details on field/column innards.
+
+@twerpdoc (infer-defs)
 @twerpdoc (describe-table!)
 
 @c ---------------------------------------------------------------------------
