@@ -287,18 +287,19 @@
         (and (tuples-ok? res)
              (eq? 1 (pg-nfields res)))))))
 
-(define test:oid-status
+(define test:oid-value-was-oid-status
   (add-test #t
     (lambda ()
       (let ((res (cexec "INSERT INTO test VALUES (10000, 'Column 10000')"))
             (oid #f))
         (and (command-ok? res)
              (begin
-               (set! oid (pg-oid-status res))
+               (set! oid (pg-oid-value res))
                (set! res (cexec "DELETE FROM test WHERE col1 = 10000"))
                (and (command-ok? res)
-                    (string? oid)
-                    (> (string->number oid) 0)
+                    oid
+                    (number? oid)
+                    (> oid 0)
                     (eq? (string->number (pg-cmdtuples res)) 1))))))))
 
 (define test:oid-value
@@ -312,6 +313,7 @@
                (set! res (cexec "DELETE FROM test WHERE col1 = 10000"))
                (and (command-ok? res)
                     oid
+                    (number? oid)
                     (> oid 0)
                     (eq? (string->number (pg-cmdtuples res)) 1))))))))
 
@@ -417,7 +419,7 @@
          test:get-connection
          test:ntuples
          test:nfields
-         test:oid-status
+         test:oid-value-was-oid-status
          test:oid-value
          test:fnumber
          test:getvalue
