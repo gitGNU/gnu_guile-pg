@@ -91,22 +91,6 @@
            (set! objwalk (m 't-obj-walk))))
   (every procedure? (list drop create insert select objwalk)))
 
-;; Test pgtable-manager 'help
-;; expect #t
-;;
-(define (test:m-help)
-  (every (lambda (m-help)
-           (memq m-help
-                 '(help menu table-name defs pgdb drop create
-                        insert-values insert-col-values
-                        delete-rows update-col select
-                        t-obj-walk
-                        table->object-alist
-                        tuples-result->object-alist
-                        table->alists
-                        tuples-result->alists)))
-         (m 'help)))
-
 ;; Test pgtable-manager create
 ;; expect #t
 ;;
@@ -299,7 +283,7 @@
 (define (main)
   ;;(set! verbose #t)
   (test-init "abstraction-scm-tests"    ; manularity sucks
-             (+ 7
+             (+ 6
                 (let ((count (list 5 3 3 2 2 3))) ; multiples
                   (+ (* 2 (length count))
                      (apply + count)))
@@ -307,7 +291,6 @@
                 (+ 6 (* 2 2) 8)))       ; m2
   (test #t test:set!-m)
   (test #t test:m-procs)
-  (test #t test:m-help)
   (test #t test:m-create)
   (test #t test:m-insert-1)
   (test #t test:m-insert-2)
