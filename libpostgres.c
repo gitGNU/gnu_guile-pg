@@ -908,25 +908,6 @@ PG_DEFINE (pg_cmdtuples, "pg-cmdtuples", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_oid_status, "pg-oid-status", 1, 0, 0,
-           (SCM result),
-           "Return a string which contains the integer OID (greater than\n"
-           "or equal to 0) of the tuple inserted, or is empty if the\n"
-           "command to which @var{result} pertains was not @code{INSERT}.")
-{
-#define FUNC_NAME s_pg_oid_status
-  const char *oid_status;
-
-  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
-
-  SCM_DEFER_INTS;
-  oid_status = PQoidStatus (RESULT (result));
-  SCM_ALLOW_INTS;
-
-  return scm_makfrom0str (oid_status);
-#undef FUNC_NAME
-}
-
 PG_DEFINE (pg_oid_value, "pg-oid-value", 1, 0, 0,
            (SCM result),
            "If the @var{result} is that of an SQL @code{INSERT} command,\n"
