@@ -475,8 +475,7 @@
 ;; for it will go away in a future release.
 ;;
 ;; The closure accepts a single arg CHOICE (a symbol or keyword) and returns
-;; either the variable or procedure associated with CHOICE.  When CHOICE is
-;; `help' or `menu', return a list of accepted choices, currently one of:
+;; the associated variable or procedure.  Recognized CHOICE:
 ;;
 ;; @example
 ;;   table-name
@@ -579,16 +578,6 @@
       (case (if (keyword? choice)
                 (keyword->symbol choice)
                 choice)
-        ((help menu) '(help menu
-                            table-name defs
-                            pgdb
-                            drop create insert-values insert-col-values
-                            delete-rows update-col select
-                            t-obj-walk
-                            table->object-alist
-                            tuples-result->object-alist
-                            table->alists
-                            tuples-result->alists))
         ((table-name) table-name)
         ((defs) defs)
         ((pgdb) conn)
@@ -610,7 +599,7 @@
 ;; Take @var{db-spec}, @var{table-name} and @var{defs} (exactly the same as
 ;; for @code{pgtable-manager}) and return a procedure @var{worker} similar to
 ;; that returned by @code{pgtable-manager} except that the @dfn{data} choices
-;; @code{help}, @code{menu}, @code{table-name}, @code{defs} and @code{pgdb}
+;; @code{table-name}, @code{defs} and @code{pgdb}
 ;; result in error (only those choices which return a procedure remain),
 ;; and more importantly, @var{worker} actually @emph{does} the actions
 ;; (applying the chosen procedure to its args).  For example:
