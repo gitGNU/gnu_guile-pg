@@ -578,8 +578,10 @@ connection before any further calls to @code{pg-exec} on this connection.
 @twerpdoc (pg-getlineasync)
 
 @heading Example
-This example defines a procedure @code{copy-to-port} which can be used
-to retrieve the results of a @code{COPY <table> TO STDOUT} command.
+This example defines two functionally identical procedures that can be used
+to retrieve the results of a @code{COPY <table> TO STDOUT} command.  The
+second procedure optionally displays a list of received chunk sizes, if
+passed a third arg.
 
 @lisp
 (define (copy-to-port conn port)
@@ -588,7 +590,22 @@ to retrieve the results of a @code{COPY <table> TO STDOUT} command.
         (pg-endcopy conn)
         (begin (format port "~A\n" line)
                (loop (pg-getline conn))))))
+
+(define (copy-to-port-async conn port . show-chunk-sizes?)
+  (let ((buf (make-string 32)))
+    (let loop ((count (pg-getlineasync conn buf))
+               (chunks '()))
+      (if (< count 0)
+          (begin
+            (or (null? show-chunk-sizes?)
+                (format port "chunk sizes: ~S\n" chunks))
+            (pg-endcopy conn))
+          (begin
+            (display (substring buf 0 count) port)
+            (loop (pg-getlineasync conn buf #t)
+                  (cons count chunks)))))))
 @end lisp
+
 @heading Notes
 It is an error to call @code{pg-getline} on a connection without first
 executing a @code{COPY <table> TO STDOUT} command on that connection.
