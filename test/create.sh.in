@@ -8,10 +8,15 @@ if [ -z "$create" -o "$create" = no ] ; then
 fi
 if [ -z "$PGDATABASE" ] ; then echo PGDATABASE not set. ; exit 1 ; fi
 
-$create $PGDATABASE >/dev/null 2>&1 || {
-   echo ERROR: $create failed. Giving up. 1>&2
-   exit 1
-}
-exit 0
+if [ x"$DEBUG" = x ] ; then
+    $create $PGDATABASE >/dev/null 2>&1
+else
+    $create $PGDATABASE
+fi
+rv=$?
+
+test $rv = 0 || echo ERROR: $create failed. Giving up. 1>&2
+
+exit $rv
 
 # create.sh ends here
