@@ -1,7 +1,7 @@
 
 - 0.18
 
-  + Removal of variables
+  + Remove variables
       PGRES_EMPTY_QUERY
       PGRES_COMMAND_OK
       PGRES_TUPLES_OK
@@ -12,7 +12,7 @@
       PGRES_FATAL_ERROR
     Code should be using the symbols (by the same name) instead by now.
 
-  + Removal of "def:" procs from (database postgres-table)
+  + Remove "def:" procs from (database postgres-table)
       def:col-name
       def:type-name
       def:type-options
@@ -23,6 +23,11 @@
     Garbage collection can zonk intermediate values leading to loss of
     integrity (and thus bugs).  Better to use strictly imperative style
     and use C auto vars for intermediate values, even if it is ugly.
+
+  - Review SCM_ROSTRINGs used as null-terminated strings
+
+    We need to make sure they aren't substrings.
+
 
 
 - Eventually
@@ -41,9 +46,6 @@
 
     Users who want to track changes should check features directly instead
     of version numbers.
-
-  - Fix places where SCM_ROSTRINGs are treated as null-terminated strings.
-    We need to make sure they aren't substrings.
 
   - Implement these calls:
 
