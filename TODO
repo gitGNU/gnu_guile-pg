@@ -1,3 +1,10 @@
+- 0.20
+
+  + Review for dangerous construct: return scm_cons (scm_cons (...))
+
+    Garbage collection can zonk intermediate values leading to loss of
+    integrity (and thus bugs).  Better to use strictly imperative style
+    and use C auto vars for intermediate values, even if it is ugly.
 
 
 - Eventually
@@ -6,12 +13,6 @@
 
     This will make it easier to port Guile-PG to other versions of Guile
     and even other scheme implementations (long term).
-
-  - Review for dangerous construct: return scm_cons (scm_cons (...)).
-
-    Garbage collection can zonk intermediate values leading to loss of
-    integrity (and thus bugs).  Better to use strictly imperative style
-    and use C auto vars for intermediate values, even if it is ugly.
 
   - Write tests for non-blocking query support.
 
