@@ -123,53 +123,49 @@ is normal."
 Output includes the name, type, length, mod (?), and other information
 extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
   (if (null? which)
-      (sql-command<-trees
-       #:SELECT (make-SELECT/COLS-tree
-                 '(("schema" . n.nspname)
-                   ("name"   . c.relname)
-                   ("type"   . (case c.relkind
-                                 ("r" "table")
-                                 ("v" "view")
-                                 ("i" "index")
-                                 ("S" "sequence")
-                                 ("s" "special")
-                                 (else "huh?")))
-                   ("owner"  . u.usename)))
-       (parse+make-SELECT/tail-tree
-        '(#:from
-          ((#:left-join (#:on (= n.oid c.relnamespace))
-                        (#:left-join (#:on (= u.usesysid c.relowner))
-                                     (c . pg_catalog.pg_class)
-                                     (u . pg_catalog.pg_user))
-                        (n . pg_catalog.pg_namespace)))
-          #:where
-          (and (not (= n.nspname "pg_catalog"))
-               (not (= n.nspname "pg_toast")))
-          #:order-by
-          ((< 1) (< 2)))))
-      (let ((table-name (symbol->string (car which))))
-        (sqlsel '(("name"   . a.attname)
-                  ("type"   . t.typname)
-                  (" bytes" . (if (< 0 a.attlen)
-                                  (to_char a.attlen "99999")
-                                  "varies"))
-                  ("mod"    . (to_char a.atttypmod "999"))
-                  ("etc"    . (|| (if a.attnotnull
-                                      "NOT NULL"
-                                      "NULL ok")
-                                  ", "
-                                  (if a.atthasdef
-                                      "has defs"
-                                      "no defs"))))
-                #:from
-                '((c . pg_class) (a . pg_attribute) (t . pg_type))
-                #:where
-                `(and (= c.relname ,table-name)
-                      (> a.attnum 0)
-                      (= a.attrelid c.oid)
-                      (= a.atttypid t.oid))
-                #:order-by
-                '((< a.attnum))))))
+      (sqlsel '(("schema" . n.nspname)
+                ("name"   . c.relname)
+                ("type"   . (case c.relkind
+                              ("r" "table")
+                              ("v" "view")
+                              ("i" "index")
+                              ("S" "sequence")
+                              ("s" "special")
+                              (else "huh?")))
+                ("owner"  . u.usename))
+              #:from
+              '((#:left-join (#:on (= n.oid c.relnamespace))
+                             (#:left-join (#:on (= u.usesysid c.relowner))
+                                          (c . pg_catalog.pg_class)
+                                          (u . pg_catalog.pg_user))
+                             (n . pg_catalog.pg_namespace)))
+              #:where
+              '(and (not (= n.nspname "pg_catalog"))
+                    (not (= n.nspname "pg_toast")))
+              #:order-by
+              '((< 1) (< 2)))
+      (sqlsel '(("name"   . a.attname)
+                ("type"   . t.typname)
+                (" bytes" . (if (< 0 a.attlen)
+                                (to_char a.attlen "99999")
+                                "varies"))
+                ("mod"    . (to_char a.atttypmod "999"))
+                ("etc"    . (|| (if a.attnotnull
+                                    "NOT NULL"
+                                    "NULL ok")
+                                ", "
+                                (if a.atthasdef
+                                    "has defs"
+                                    "no defs"))))
+              #:from
+              '((c . pg_class) (a . pg_attribute) (t . pg_type))
+              #:where
+              `(and (= c.relname ,(symbol->string (car which)))
+                    (> a.attnum 0)
+                    (= a.attrelid c.oid)
+                    (= a.atttypid t.oid))
+              #:order-by
+              '((< a.attnum)))))
 
 (defcc (gxrepl conn)
   "Run a recursive repl, talking to database CONN.
