@@ -73,9 +73,9 @@ typedef struct _pgrs { ExecStatusType n; char *s; SCM sym; } pgrs_t;
 
 #define _PGRES(s) { s, #s, SCM_BOOL_F } /* `sym' field set below */
 static pgrs_t pgrs[] = {
+  _PGRES (PGRES_TUPLES_OK),
   _PGRES (PGRES_EMPTY_QUERY),
   _PGRES (PGRES_COMMAND_OK),
-  _PGRES (PGRES_TUPLES_OK),
   _PGRES (PGRES_COPY_OUT),
   _PGRES (PGRES_COPY_IN),
   _PGRES (PGRES_BAD_RESPONSE),
