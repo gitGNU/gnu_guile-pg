@@ -6,7 +6,7 @@
 # - libtool 1.5.6 (1.1220.2.94 2004/04/10 16:27:27)
 # - autoconf 2.59
 # - automake 1.7.6
-# - guile 1.4.1.98
+# - guile 1.4.1.99
 
 #############################################################################
 # Autotools (except automake)
@@ -14,11 +14,14 @@
 test x"$1" = x--libtoolize && libtoolize --force
 test -f ltmain.sh || libtoolize --force
 
-# guile.m4.snap is from unreleased guile 1.4.1.99, so for now we use it
-# explicitly; after guile 1.4.1.99 is released, this part should be rewritten
-# in similar style to the modsup.h wrangling below.
-fresh_guile_m4="guile.m4.snap"
+fresh_guile_m4="`guile-config info datadir`/aclocal/guile.m4"
+test -f $fresh_guile_m4 || fresh_guile_m4="guile.m4.snap"
 ln -sf $fresh_guile_m4 guile.m4
+diff -i guile.m4.snap guile.m4 > TMP 2>&1
+if [ -s TMP ] ; then
+    echo "WARNING: guile.m4.snap out of date, diff follows:"
+    cat TMP
+fi
 
 aclocal -I . --output=- | sed '$raclocal-suffix' > aclocal.m4
 
