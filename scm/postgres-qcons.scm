@@ -207,6 +207,9 @@
 (define (as one two)
   (list one #:AS two))
 
+(define (paren . x)
+  `("(" ,@x ")"))
+
 ;; Return a tree made by mapping @var{proc} over list @var{ls},
 ;; w/ elements separated by commas.  Optional third arg @var{parens?}
 ;; non-#f includes surrounding parentheses.  The rest of the args
@@ -216,11 +219,12 @@
 ;;-sig: (proc ls [parens? [more-ls...]])
 ;;
 (define (make-comma-separated-tree proc ls . opts)
-  (let* ((parens? (and (not (null? opts)) (car opts)))
-         (more-ls (and (not (null? opts)) (cdr opts)))
-         (L (if parens? "(" ""))
-         (R (if parens? ")" "")))
-    (list L (apply commasep proc ls more-ls) R)))
+  ((if (and (not (null? opts)) (car opts))
+       paren
+       identity)
+   (if (and (not (null? opts)) (not (null? (cdr opts))))
+       (apply commasep proc ls (cdr opts))
+       (commasep proc ls))))
 
 (define (expr tree)
 
@@ -233,9 +237,6 @@
             (list #:ELSE (expr res))
             (list #:WHEN (expr val)
                   #:THEN (expr res)))))
-
-    (define (paren . x)
-      (list "(" x ")"))
 
     (case op
       ((and)
