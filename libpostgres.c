@@ -124,7 +124,7 @@ xc_box (xc_t *xc)
   return z;
 }
 
-static int
+int
 xc_display (SCM exp, SCM port, scm_print_state *pstate)
 {
   xc_t *xc = xc_unbox (exp);
