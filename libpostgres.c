@@ -108,7 +108,12 @@ xc_unbox (SCM obj)
   return ((xc_t *) gh_cdr (obj));
 }
 
-#define XCONN(x)  (xc_unbox (x)->dbconn)
+#define ASSERT_CONNECTION(n,arg) \
+  SCM_ASSERT (xc_p (arg), arg, SCM_ARG ## n, FUNC_NAME)
+
+#define CONN_NOTICE(conn)   (xc_unbox (conn)->notice)
+#define CONN_CLIENT(conn)   (xc_unbox (conn)->client)
+#define CONN_FPTRACE(conn)  (xc_unbox (conn)->fptrace)
 
 static SCM
 xc_box (xc_t *xc)
@@ -584,9 +589,11 @@ PG_DEFINE (pg_reset, "pg-reset", 1, 0, 0,
            "@code{pg-connectdb}.")
 {
 #define FUNC_NAME s_pg_reset
-  ASSERT_CONNECTION (1, conn);
+  PGconn *dbconn;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_DEFER_INTS;
-  (void) PQreset (XCONN (conn));
+  (void) PQreset (dbconn);
   SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -599,7 +606,7 @@ PG_DEFINE (pg_get_client_data, "pg-get-client-data", 1, 0, 0,
 {
 #define FUNC_NAME s_pg_get_client_data
   ASSERT_CONNECTION (1, conn);
-  return (xc_unbox (conn)->client);
+  return CONN_CLIENT (conn);
 #undef FUNC_NAME
 }
 
@@ -610,7 +617,7 @@ PG_DEFINE (pg_set_client_data, "pg-set-client-data!", 2, 0, 0,
 #define FUNC_NAME s_pg_set_client_data
   ASSERT_CONNECTION (1, conn);
   SCM_DEFER_INTS;
-  xc_unbox (conn)->client = data;
+  CONN_CLIENT (conn) = data;
   SCM_ALLOW_INTS;
   return (data);
 #undef FUNC_NAME
@@ -632,13 +639,12 @@ PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
   PGconn *dbconn;
   PGresult *result;
 
-  ASSERT_CONNECTION (1, conn);
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_ASSERT (SCM_NIMP (statement) && SCM_ROSTRINGP (statement),
               statement, SCM_ARG2, FUNC_NAME);
   ROZT_X (statement);
 
   SCM_DEFER_INTS;
-  dbconn = XCONN (conn);
   result = PQexec (dbconn, ROZT (statement));
 
   z = (result
@@ -676,7 +682,7 @@ PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
 #ifdef HAVE_PQRESULTERRORMESSAGE
   if (xc_p (obj))
 #endif
-    pgerrormsg = PQerrorMessage (XCONN (obj));
+    pgerrormsg = PQerrorMessage (xc_unbox (obj)->dbconn);
 #ifdef HAVE_PQRESULTERRORMESSAGE
   else
     pgerrormsg = PQresultErrorMessage (RESULT (obj));
@@ -694,11 +700,12 @@ PG_DEFINE (pg_get_db, "pg-get-db", 1, 0, 0,
            "to which @var{conn} represents a connection.")
 {
 #define FUNC_NAME s_pg_get_db
+  PGconn *dbconn;
   const char *rv;
-  ASSERT_CONNECTION (1, conn);
 
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_DEFER_INTS;
-  rv = PQdb (XCONN (conn));
+  rv = PQdb (dbconn);
   SCM_ALLOW_INTS;
 
   return gh_str02scm (rv);
@@ -711,11 +718,12 @@ PG_DEFINE (pg_get_user, "pg-get-user", 1, 0, 0,
            "authenticate the connection @var{conn}.")
 {
 #define FUNC_NAME s_pg_get_user
+  PGconn *dbconn;
   const char *rv;
-  ASSERT_CONNECTION (1, conn);
 
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_DEFER_INTS;
-  rv = PQuser (XCONN (conn));
+  rv = PQuser (dbconn);
   SCM_ALLOW_INTS;
 
   return gh_str02scm (rv);
@@ -731,11 +739,12 @@ PG_DEFINE (pg_get_pass, "pg-get-pass", 1, 0, 0,
 #ifdef HAVE_PQPASS
 
 #define FUNC_NAME s_pg_get_pass
+  PGconn *dbconn;
   const char *rv;
-  ASSERT_CONNECTION (1, conn);
 
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_DEFER_INTS;
-  rv = PQpass (XCONN (conn));
+  rv = PQpass (dbconn);
   SCM_ALLOW_INTS;
 
   return gh_str02scm (rv);
@@ -754,11 +763,12 @@ PG_DEFINE (pg_get_host, "pg-get-host", 1, 0, 0,
            "@var{conn} represents a connection.")
 {
 #define FUNC_NAME s_pg_get_host
+  PGconn *dbconn;
   const char *rv;
-  ASSERT_CONNECTION (1, conn);
 
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_DEFER_INTS;
-  rv = PQhost (XCONN (conn));
+  rv = PQhost (dbconn);
   SCM_ALLOW_INTS;
 
   return gh_str02scm (rv);
@@ -771,11 +781,12 @@ PG_DEFINE (pg_get_port,"pg-get-port", 1, 0, 0,
            "@var{conn} represents a connection.")
 {
 #define FUNC_NAME s_pg_get_port
+  PGconn *dbconn;
   const char *rv;
-  ASSERT_CONNECTION (1, conn);
 
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_DEFER_INTS;
-  rv = PQport (XCONN (conn));
+  rv = PQport (dbconn);
   SCM_ALLOW_INTS;
 
   return gh_str02scm (rv);
@@ -788,11 +799,12 @@ PG_DEFINE (pg_get_tty, "pg-get-tty", 1, 0, 0,
            "diagnostic tty for @var{conn}.")
 {
 #define FUNC_NAME s_pg_get_tty
+  PGconn *dbconn;
   const char *rv;
-  ASSERT_CONNECTION (1, conn);
 
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_DEFER_INTS;
-  rv = PQtty (XCONN (conn));
+  rv = PQtty (dbconn);
   SCM_ALLOW_INTS;
 
   return gh_str02scm (rv);
@@ -804,11 +816,12 @@ PG_DEFINE (pg_get_options, "pg-get-options", 1, 0, 0,
            "Return a string containing the the options string for @var{conn}.")
 {
 #define FUNC_NAME s_pg_get_options
+  PGconn *dbconn;
   const char *rv;
-  ASSERT_CONNECTION (1, conn);
 
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_DEFER_INTS;
-  rv = PQoptions (XCONN (conn));
+  rv = PQoptions (dbconn);
   SCM_ALLOW_INTS;
 
   return gh_str02scm (rv);
@@ -837,12 +850,12 @@ PG_DEFINE (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
 #ifdef HAVE_PQBACKENDPID
 
 #define FUNC_NAME s_pg_backend_pid
+  PGconn *dbconn;
   int pid;
 
-  ASSERT_CONNECTION (1, conn);
-
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_DEFER_INTS;
-  pid = PQbackendPID (XCONN (conn));
+  pid = PQbackendPID (dbconn);
   SCM_ALLOW_INTS;
 
   return gh_int2scm (pid);
@@ -1220,15 +1233,16 @@ PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
            "stop signifies an end-of-copy marker.")
 {
 #define FUNC_NAME s_pg_getline
+  PGconn *dbconn;
   char buf[BUF_LEN];
   int ret = 1;
   SCM str = SCM_UNDEFINED;
 
-  ASSERT_CONNECTION (1, conn);
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   while (ret != 0 && ret != EOF)
     {
       SCM_DEFER_INTS;
-      ret = PQgetline (XCONN (conn), buf, BUF_LEN);
+      ret = PQgetline (dbconn, buf, BUF_LEN);
       SCM_ALLOW_INTS;
       if (str == SCM_UNDEFINED)
         str = gh_str02scm (buf);
@@ -1251,16 +1265,18 @@ PG_DEFINE (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
            "\"consume input\" operation prior to the read.")
 {
 #define FUNC_NAME s_pg_getlineasync
-  ASSERT_CONNECTION (1, conn);
+  PGconn *dbconn;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_ASSERT (SCM_STRINGP (buf), buf, SCM_ARG2, FUNC_NAME);
 
   if (tickle != SCM_UNDEFINED && NOT_FALSEP (tickle))
     /* We don't care if there was an error consuming input; caller can use
        `pg_error_message' to find out afterwards, or simply avoid tickling in
        the first place.  */
-    (void) PQconsumeInput (XCONN (conn));
+    (void) PQconsumeInput (dbconn);
 
-  return gh_int2scm (PQgetlineAsync (XCONN (conn),
+  return gh_int2scm (PQgetlineAsync (dbconn,
                                      SCM_ROCHARS (buf),
                                      SCM_ROLENGTH (buf)));
 #undef FUNC_NAME
@@ -1277,16 +1293,17 @@ PG_DEFINE (pg_putline, "pg-putline", 2, 0, 0,
            "Return #t if successful.")
 {
 #define FUNC_NAME s_pg_putline
+  PGconn *dbconn;
   int status;
 
-  ASSERT_CONNECTION (1, conn);
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_ASSERT (SCM_NIMP (str)&&SCM_ROSTRINGP (str), str, SCM_ARG2, FUNC_NAME);
   SCM_DEFER_INTS;
 #ifdef HAVE_PQPUTNBYTES
-  status = PQputnbytes (XCONN (conn), SCM_ROCHARS (str), SCM_ROLENGTH (str));
+  status = PQputnbytes (dbconn, SCM_ROCHARS (str), SCM_ROLENGTH (str));
 #else
   ROZT_X (str);
-  status = PQputline (XCONN (conn), ROZT (str));
+  status = PQputline (dbconn, ROZT (str));
 #endif
   SCM_ALLOW_INTS;
   return (0 == status ? SCM_BOOL_T : SCM_BOOL_F);
@@ -1301,11 +1318,12 @@ PG_DEFINE (pg_endcopy, "pg-endcopy", 1, 0, 0,
            "or @code{pg-putline}.  Return #t if successful.")
 {
 #define FUNC_NAME s_pg_endcopy
+  PGconn *dbconn;
   int ret;
 
-  ASSERT_CONNECTION (1, conn);
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_DEFER_INTS;
-  ret = PQendcopy (XCONN (conn));
+  ret = PQendcopy (dbconn);
   SCM_ALLOW_INTS;
 
   return (0 == ret ? SCM_BOOL_T : SCM_BOOL_F);
@@ -1321,13 +1339,13 @@ PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
            "The return value is unspecified.")
 {
 #define FUNC_NAME s_pg_trace
+  PGconn *dbconn;
   struct scm_fport *fp = SCM_FSTREAM (port);
   int fd;
   FILE *fpout;
 
-  ASSERT_CONNECTION (1, conn);
-  SCM_ASSERT (xc_unbox (conn)->fptrace == NULL,
-              conn, SCM_ARG1, FUNC_NAME);
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+  SCM_ASSERT (CONN_FPTRACE (conn) == NULL, conn, SCM_ARG1, FUNC_NAME);
   port = SCM_COERCE_OUTPORT (port);
   SCM_ASSERT (SCM_NIMP (port) && SCM_OPOUTFPORTP (port),
               port, SCM_ARG2, FUNC_NAME);
@@ -1340,8 +1358,8 @@ PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
     scm_syserror (FUNC_NAME);
 
   SCM_DEFER_INTS;
-  (void) PQtrace (XCONN (conn), fpout);
-  xc_unbox (conn)->fptrace = fpout;
+  (void) PQtrace (dbconn, fpout);
+  CONN_FPTRACE (conn) = fpout;
   SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1354,13 +1372,15 @@ PG_DEFINE (pg_untrace, "pg-untrace", 1, 0, 0,
            "The return value is unspecified.")
 {
 #define FUNC_NAME s_pg_untrace
+  PGconn *dbconn;
   int ret;
-  ASSERT_CONNECTION (1, conn);
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
   SCM_DEFER_INTS;
-  (void) PQuntrace (XCONN (conn));
-  SCM_SYSCALL (ret = fclose (xc_unbox (conn)->fptrace));
-  xc_unbox (conn)->fptrace = (FILE *) NULL;
+  (void) PQuntrace (dbconn);
+  SCM_SYSCALL (ret = fclose (CONN_FPTRACE (conn)));
+  CONN_FPTRACE (conn) = (FILE *) NULL;
   SCM_ALLOW_INTS;
   if (ret)
     scm_syserror (FUNC_NAME);
@@ -1371,7 +1391,7 @@ PG_DEFINE (pg_untrace, "pg-untrace", 1, 0, 0,
 
 
 /*
- * printing -- this is arguably more trouble than it's worth
+ * printing -- this is arguably more trouble than its worth
  */
 
 static long sepo_type_tag;
@@ -1686,7 +1706,7 @@ PG_DEFINE (pg_set_notice_out_x, "pg-set-notice-out!", 2, 0, 0,
       EXACTLY_FALSEP (out) ||
       SCM_OUTPORTP (out) ||
       NOT_FALSEP (scm_procedure_p (out)))
-    xc_unbox (conn)->notice = out;
+    CONN_NOTICE (conn) = out;
   else
     SCM_WTA (SCM_ARG2, out);
 
@@ -1708,16 +1728,18 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
            "\"consume input\" operation prior to the query.")
 {
 #define FUNC_NAME s_pg_notifies
+  PGconn *dbconn;
   PGnotify *n;
   SCM rv = SCM_BOOL_F;
-  ASSERT_CONNECTION (1, conn);
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
   if (tickle != SCM_UNDEFINED && NOT_FALSEP (tickle))
     /* We don't care if there was an error consuming input; caller can use
        `pg_error_message' to find out afterwards, or simply avoid tickling in
        the first place.  */
-    (void) PQconsumeInput (XCONN (conn));
-  n = PQnotifies (XCONN (conn));
+    (void) PQconsumeInput (dbconn);
+  n = PQnotifies (dbconn);
   if (n)
     {
       rv = gh_str02scm (n->relname);
@@ -1741,12 +1763,11 @@ PG_DEFINE (pg_client_encoding, "pg-client-encoding", 1, 0, 0,
            "Return the current client encoding for @var{conn}.")
 {
 #define FUNC_NAME s_pg_client_encoding
+  PGconn *dbconn;
   SCM enc;
-  ASSERT_CONNECTION (1, conn);
 
-  enc = gh_str02scm (pg_encoding_to_char
-                     (PQclientEncoding
-                      (XCONN (conn))));
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+  enc = gh_str02scm (pg_encoding_to_char (PQclientEncoding (dbconn)));
   return enc;
 #undef FUNC_NAME
 }
@@ -1757,11 +1778,13 @@ PG_DEFINE (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
            "Return #t if successful, #f otherwise.")
 {
 #define FUNC_NAME s_pg_set_client_encoding_x
-  ASSERT_CONNECTION (1, conn);
+  PGconn *dbconn;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_ASSERT (SCM_STRINGP (encoding), encoding, SCM_ARG2, FUNC_NAME);
   ROZT_X (encoding);
 
-  return (0 == (PQsetClientEncoding (XCONN (conn), ROZT (encoding)))
+  return (0 == (PQsetClientEncoding (dbconn, ROZT (encoding)))
           ? SCM_BOOL_T
           : SCM_BOOL_F);
 #undef FUNC_NAME
@@ -1781,10 +1804,12 @@ PG_DEFINE (pg_set_nonblocking_x, "pg-set-nonblocking!", 2, 0, 0,
            "@code{PQSETNONBLOCKING}, do nothing and return #f.")
 {
 #define FUNC_NAME s_pg_set_nonblocking_x
-  ASSERT_CONNECTION (1, conn);
+  PGconn *dbconn;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
 #ifdef HAVE_PQSETNONBLOCKING
-  return (0 == PQsetnonblocking (XCONN (conn), ! EXACTLY_FALSEP (mode))
+  return (0 == PQsetnonblocking (dbconn, ! EXACTLY_FALSEP (mode))
           ? SCM_BOOL_T
           : SCM_BOOL_F);
 #else
@@ -1800,10 +1825,12 @@ PG_DEFINE (pg_is_nonblocking_p, "pg-is-nonblocking?", 1, 0, 0,
            "@code{PQISNONBLOCKING}, do nothing and return #f.")
 {
 #define FUNC_NAME s_pg_is_nonblocking_p
-  ASSERT_CONNECTION (1, conn);
+  PGconn *dbconn;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
 #ifdef HAVE_PQISNONBLOCKING
-  return (PQisnonblocking (XCONN (conn))
+  return (PQisnonblocking (dbconn)
           ? SCM_BOOL_T
           : SCM_BOOL_F);
 #else
@@ -1824,11 +1851,13 @@ PG_DEFINE (pg_send_query, "pg-send-query", 2, 0, 0,
            "message is retrievable with @code{pg-error-message}.")
 {
 #define FUNC_NAME s_pg_send_query
-  ASSERT_CONNECTION (1, conn);
+  PGconn *dbconn;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_ASSERT (SCM_STRINGP (query), query, SCM_ARG2, FUNC_NAME);
   ROZT_X (query);
 
-  return (PQsendQuery (XCONN (conn), ROZT (query))
+  return (PQsendQuery (dbconn, ROZT (query))
           ? SCM_BOOL_T
           : SCM_BOOL_F);
 #undef FUNC_NAME
@@ -1839,13 +1868,14 @@ PG_DEFINE (pg_get_result, "pg-get-result", 1, 0, 0,
            "Return a result from @var{conn}, or #f.")
 {
 #define FUNC_NAME s_pg_send_query
+  PGconn *dbconn;
   PGresult *result;
   SCM z;
 
-  ASSERT_CONNECTION (1, conn);
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
   SCM_DEFER_INTS;
-  result = PQgetResult (XCONN (conn));
+  result = PQgetResult (dbconn);
   z = (result
        ? make_xr (result, conn)
        : SCM_BOOL_F);
@@ -1859,9 +1889,10 @@ PG_DEFINE (pg_consume_input, "pg-consume-input", 1, 0, 0,
            "Consume input from @var{conn}.  Return #t iff successful.")
 {
 #define FUNC_NAME s_pg_consume_input
-  ASSERT_CONNECTION (1, conn);
+  PGconn *dbconn;
 
-  return (PQconsumeInput (XCONN (conn))
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+  return (PQconsumeInput (dbconn)
           ? SCM_BOOL_T
           : SCM_BOOL_F);
 #undef FUNC_NAME
@@ -1873,9 +1904,10 @@ PG_DEFINE (pg_is_busy_p, "pg-is-busy?", 1, 0, 0,
            "@code{pg-consume-input}, otherwise #f.")
 {
 #define FUNC_NAME s_pg_is_busy_p
-  ASSERT_CONNECTION (1, conn);
+  PGconn *dbconn;
 
-  return (PQisBusy (XCONN (conn))
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+  return (PQisBusy (dbconn)
           ? SCM_BOOL_T
           : SCM_BOOL_F);
 #undef FUNC_NAME
@@ -1900,9 +1932,10 @@ PG_DEFINE (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
            "cancellation will abort the whole transaction.")
 {
 #define FUNC_NAME s_pg_is_busy_p
-  ASSERT_CONNECTION (1, conn);
+  PGconn *dbconn;
 
-  return (PQrequestCancel (XCONN (conn))
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+  return (PQrequestCancel (dbconn)
           ? SCM_BOOL_T
           : SCM_BOOL_F);
 #undef FUNC_NAME
