@@ -1,0 +1,21 @@
+#!/bin/sh
+# invoked by $(top_srcdir)/autogen.sh in this directory
+
+TAB=`echo Z | tr Z '\t'`
+
+spew_twerp_stuff ()
+{
+all_twerps=`awk '{print $1".twerp"}' .twerp-list`
+echo ALL_TWERPS = $all_twerps
+for twerp in $all_twerps ; do
+    echo `basename $twerp .twerp`.texi : $twerp
+done
+echo remove-twerp-shadowed-texi:
+for twerp in $all_twerps ; do
+    echo "$TAB"'rm -f $(distdir)/'`basename $twerp .twerp`.texi
+done
+}
+
+spew_twerp_stuff > twerp.mk-am-frag
+
+# .make-automake-frags ends here
