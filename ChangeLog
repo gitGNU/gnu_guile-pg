@@ -1,5 +1,9 @@
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/guile-pg.twerp: Fix typo.
+
+2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* test/guile-pg-abstraction-scm-tests.scm
 	(mtest:select-*-error_condition): Handle array output
 	representation for cases both prior to, as well as, starting from,
