@@ -145,7 +145,7 @@ AC_CHECK_DECL([scm_gc_protect_object],[
 ],,[#include "libguile.h"])
 
 AC_MSG_CHECKING([if libguile.h provides macro SCM_OUTPORTP])
-AC_COMPILE_IFELSE([
+AC_LINK_IFELSE([
 #include <libguile.h>
 int main (void) { return SCM_FALSEP (SCM_OUTPORTP (SCM_BOOL_F)); }
 ],[
