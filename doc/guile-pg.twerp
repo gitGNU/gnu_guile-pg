@@ -326,6 +326,14 @@ with the commands @code{LISTEN} and @code{NOTIFY}.  You can use
 
 @twerpdoc (pg-notifies)
 
+@section Character Encoding
+
+The client's character encoding, represented by a string such as
+"UNICODE", can be queried and set.
+
+@twerpdoc (pg-client-encoding)
+@twerpdoc (pg-set-client-encoding!)
+
 @c ---------------------------------------------------------------------------
 @node    Retrieving Data
 @chapter Procedures for Retrieving Data
