@@ -4,6 +4,9 @@
 	(lob_lo_seek): No longer construct args for, or
 	call, `lo_lseek'; use `lob_seek' instead.
 
+	* test/guile-pg-lo-tests.scm.in (test:lo-tell): Also check
+	equivalency of "seek 0 SEEK_CUR".
+
 2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* autogen.sh: Invoke "libtoolize --force" if no ltmain.sh in cwd.
