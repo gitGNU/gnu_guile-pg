@@ -68,8 +68,7 @@
 
 static char *strncpy0 (char *dest, const char *source, int maxlen);
 static char *strip_newlines (char *str);
-void init_postgres (void);
-void scm_init_database_interface_postgres_module (void);
+void scm_init_database_postgres_sup_module (void);
 
 typedef struct _smob_tag {
     long  type_tag; /* type tag */
@@ -1523,8 +1522,9 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
  * init
  */
 
+static
 void
-init_postgres (void)
+init_module (void)
 {
 #ifdef USE_OLD_SMOB_INTERFACE
   static scm_smobfuns type_rec;
@@ -1575,7 +1575,7 @@ init_postgres (void)
 
 #endif /* !USE_OLD_SMOB_INTERFACE */
 
-#include <libpostgres.x>
+#include "libpostgres.x"
 
   valid_print_option_keys
     = (scm_protect_object (SCM_LIST4 (pg_sym_field_sep,
@@ -1608,12 +1608,8 @@ init_postgres (void)
   return;
 }
 
-void
-scm_init_database_interface_postgres_module (void)
-{
-  INIT_PRINT (fprintf (stderr, "calling scm_register_module_xxx.\n"));
-  scm_register_module_xxx ("database interface postgres",
-                           (void *) init_postgres);
-}
+GH_MODULE_LINK_FUNC ("database postgres-sup"
+                     ,database_postgres_sup
+                     ,init_module)
 
 /* libpostgres.c ends here */
