@@ -1,5 +1,11 @@
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c (pg_make_print_options): Doc fix; nfc.
+	(pg_print): If `options' is not specified (undefined), set
+	it to a pg-print-option object derived from the '() spec.
+
+2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* AUTHORS: Mention doc/guile-pg.texi
 	explicitly (it was folded into doc/guile-pg.twerp).
 
