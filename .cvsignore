@@ -20,3 +20,4 @@ config.cache
 wily-guile
 pre-inst.merged-module-catalog
 .last-release
+.ttn.*
