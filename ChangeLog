@@ -1,5 +1,21 @@
 2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.h (ROZT_X, ROZT): New macros.
+
+	* libpostgres.c (maybe_strcpy): Delete func.
+	Rework callers to use `ROZT_X' and `ROZT'.
+	(strip_newlines): Return SCM string. Update callers.
+	(pg_getlineasync): Fix bug: Use SCM_ROCHARS.
+	(pg_putline): Likewise.
+
+	* libpostgres_lo.c (lob_lo_creat): No longer unconditionally
+	coerce substring.  Instead, use `ROZT_X' and `ROZT'.
+	(lob_lo_open): Likewise.
+	(lob_lo_import): Likewise.
+	(lob_lo_export): Likewise.
+
+2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* gpl-text.c, gpl-text.scm: Delete files.
 
 2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
