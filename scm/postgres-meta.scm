@@ -36,6 +36,10 @@
   #:use-module ((database postgres)
                 #:select (pg-exec
                           pg-print))
+  #:use-module ((database postgres-qcons)
+                #:select (sql-command<-trees
+                          make-SELECT/FROM/COLS-tree
+                          parse+make-SELECT/tail-tree))
   #:use-module ((database postgres-types)
                 #:select (dbcoltype-lookup
                           define-db-col-type-array-variant))
@@ -206,18 +210,22 @@
 
 (define (table-info M:pg-class name)
   ((M:pg-class 'select) (force *table-info-selection*)
-   (string-append "where relname = '" name "'")))
+   #:where `(= relname ,name)))
 
 (define (table-fields-info conn table-name)
-  (pg-exec conn (string-append
-                 "   SELECT a.attname, t.typname, a.attlen, a.atttypmod,"
-                 "          a.attnotnull, a.atthasdef, a.attnum"
-                 "     FROM pg_class c, pg_attribute a, pg_type t"
-                 "    WHERE c.relname = '" table-name "'"
-                 "      AND a.attnum > 0"
-                 "      AND a.attrelid = c.oid"
-                 "      AND a.atttypid = t.oid"
-                 " ORDER BY a.attnum")))
+  (pg-exec conn (sql-command<-trees
+                 (make-SELECT/FROM/COLS-tree
+                  '((c . pg_class) (a . pg_attribute) (t . pg_type))
+                  '(a.attname t.typname a.attlen a.atttypmod
+                              a.attnotnull a.atthasdef a.attnum))
+                 (parse+make-SELECT/tail-tree
+                  `(#:where
+                    (and (= c.relname ,table-name)
+                         (> a.attnum 0)
+                         (= a.attrelid c.oid)
+                         (= a.atttypid t.oid))
+                    #:order-by
+                    ((< a.attnum)))))))
 
 ;; Return a @dfn{defs} form suitable for use with @code{pgtable-manager} for
 ;; connection @var{conn} and @var{table-name}.  The column names are exact.
