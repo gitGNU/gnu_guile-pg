@@ -1,5 +1,11 @@
 2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* ANONCVS: New file.
+	* Makefile.am: Update copyright.
+	(EXTRA_DIST): Add ANONCVS.
+
+2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Database Connections): Add section and @twerpdoc
 	entries for `pg-client-encoding' and `pg-set-client-encoding!'.
 
