@@ -116,10 +116,35 @@ is normal."
                             (fs "~A" (car something)))
                        . (+ 6 (* 6 6)))))))))
 
-(defcc (dt table-name)
+(defcc (dt . which)
   "Describe columns in table TABLE-NAME.
 Output includes the name, type, length, mod (?), and other information
 extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
+  (if (null? which)
+      (sql-command<-trees
+       #:SELECT (make-SELECT/OUT-tree
+                 '(("schema" . n.nspname)
+                   ("name"   . c.relname)
+                   ("type"   . (#:q* (case c.relkind
+                                       ("r" "table")
+                                       ("v" "view")
+                                       ("i" "index")
+                                       ("S" "sequence")
+                                       ("s" "special")
+                                       (else "huh?"))))
+                   ("owner"  . u.usename)))
+       ;; todo: arrive at this via tree build call, not manually
+       '(#:FROM               pg_catalog.pg_class c
+                #:LEFT #:JOIN pg_catalog.pg_user u
+                #:ON                             u.usesysid = c.relowner
+                #:LEFT #:JOIN pg_catalog.pg_namespace n
+                #:ON                                  n.oid = c.relnamespace)
+       (make-WHERE-tree
+        '(#:q* (and (not (= n.nspname "pg_catalog"))
+                    (not (= n.nspname "pg_toast")))))
+       (make-ORDER-BY-tree
+        '((< 1) (< 2))))
+      (let ((table-name (symbol->string (car which))))
   (sql-command<-trees
    (make-SELECT/FROM/OUT-tree
     '((c . pg_class) (a . pg_attribute) (t . pg_type))
@@ -137,12 +162,12 @@ extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
                                 "has defs"
                                 "no defs"))))))
    (make-WHERE-tree
-    `(#:q* (and (= c.relname ,(symbol->string table-name))
+          `(#:q* (and (= c.relname ,table-name)
                 (> a.attnum 0)
                 (= a.attrelid c.oid)
                 (= a.atttypid t.oid))))
    (make-ORDER-BY-tree
-    '((< a.attnum)))))
+          '((< a.attnum)))))))
 
 (defcc (gxrepl conn)
   "Run a recursive repl, talking to database CONN.
