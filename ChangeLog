@@ -1,5 +1,14 @@
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* Makefile.am (CLEANFILES): Add $(noinst_DATA).
+
+2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (twerp-prep): For this AC_CONFIG_COMMANDS
+	entry, fix skew bug: look for command `prep-Ptexi'.
+
+2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* Makefile.am (postgres_sup_la_LDFLAGS): Bump version info to "6:1:4".
 
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
