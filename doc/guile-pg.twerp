@@ -583,7 +583,7 @@ Guile-pg.
 
 @c leave in for now --ttn
 @c + @twerpdoc (pg-guile-pg-version)
-@deffn pg-guile-pg-version
+@deffn {Scheme Procedure} pg-guile-pg-version
 Return a string giving the version of @code{guile-pg}.
 The form is "M.m" giving major and minor versions.
 @end deffn
