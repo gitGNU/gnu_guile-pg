@@ -1,3 +1,9 @@
+2004-06-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* Makefile.am: Update copyright.
+	* guile-pg-basic-tests.scm: Likewise.
+	* guile-pg-lo-tests.scm: Likewise.
+
 2004-06-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* alive.sh: No longer load $top_builddir/scm/postgres.scm.
