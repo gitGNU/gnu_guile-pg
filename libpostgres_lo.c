@@ -116,7 +116,7 @@ PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
     pg_modes |= INV_WRITE;
 
   if (pg_modes == 0)
-    scm_misc_error (FUNC_NAME, "Invalid mode specification %s",
+    scm_misc_error (FUNC_NAME, "Invalid mode specification: ~S",
                     scm_listify (modes, SCM_UNDEFINED));
   SCM_DEFER_INTS;
   if ((oid = lo_creat (dbconn, INV_READ | INV_WRITE)) != 0)
@@ -176,7 +176,7 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
     pg_modes |= INV_WRITE;
 
   if (pg_modes == 0)
-    scm_misc_error (FUNC_NAME, "Invalid mode specification %s",
+    scm_misc_error (FUNC_NAME, "Invalid mode specification: ~S",
                     scm_listify (modes, SCM_UNDEFINED));
   pg_oid = SCM_INUM (oid);
   SCM_DEFER_INTS;
@@ -421,7 +421,7 @@ lob_end_input (SCM port, int offset)
       ret = lo_lseek (conn, lobp->fd, -offset, SEEK_CUR);
       SCM_ALLOW_INTS;
       if (ret == -1)
-        scm_misc_error ("lob_end_input", "Error seeking on lo port %s",
+        scm_misc_error ("lob_end_input", "Error seeking on lo port ~S",
                         scm_listify (port, SCM_UNDEFINED));
     }
   pt->rw_active = SCM_PORT_NEITHER;
@@ -487,7 +487,7 @@ lob_fill_input (SCM port)
       if (ret == 0)
         return EOF;
       else if (ret < 0)
-        scm_misc_error ("lob_fill_buffer","Error (%s) reading from lo port %s",
+        scm_misc_error ("lob_fill_buffer", "Error (~S) reading from lo port ~S",
                         scm_listify (SCM_MAKINUM (ret), port, SCM_UNDEFINED));
     }
   pt->read_pos = pt->read_buf;
@@ -546,7 +546,7 @@ lob_seek (SCM port, off_t offset, int whence)
   ret = lo_lseek (conn, lobp->fd, offset, whence);
   SCM_ALLOW_INTS;
   if (ret == -1)
-    scm_misc_error ("lob_seek", "Error (%s) seeking on lo port %s",
+    scm_misc_error ("lob_seek", "Error (~S) seeking on lo port ~S",
                     scm_listify (SCM_MAKINUM (ret), port, SCM_UNDEFINED));
 
   /* Adjust return value to account for guile port buffering.  */
