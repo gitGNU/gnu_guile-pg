@@ -37,8 +37,9 @@
 
 #include "libpostgres.h"
 
-#define sec_p guile_pg_sec_p
-#define sec_unbox guile_pg_sec_unbox
+#define sec_p(x)      (guile_pg_sec_p (x))
+#define sec_unbox(x)  (guile_pg_sec_unbox (x))
+#define XCONN(x)      (sec_unbox (x)->dbconn)
 
 #define LOB_READING 1
 #define LOB_WRITING 2
@@ -59,7 +60,7 @@ typedef struct lob_stream_tag {
    macro cannot be used inside SCM_DEFER/ALLOW_INTS. FIXME: Is this still true?
 */
 
-#define LOB_CONN(x) (sec_unbox ((x)->conn)->dbconn)
+#define LOB_CONN(x) (XCONN ((x)->conn))
 
 #define SCM_LOBPORTP(x) (SCM_TYP16 (x)==lob_ptype)
 
@@ -111,7 +112,7 @@ PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
     modes = scm_makfromstr (SCM_ROCHARS (modes), SCM_ROLENGTH (modes), 0);
 
   mode_bits = scm_mode_bits (SCM_ROCHARS (modes));
-  dbconn = sec_unbox (conn)->dbconn;
+  dbconn = XCONN (conn);
 
   if (mode_bits & SCM_RDNG)
     pg_modes |= INV_READ;
@@ -173,7 +174,7 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
     modes = scm_makfromstr (SCM_ROCHARS (modes), SCM_ROLENGTH (modes), 0);
 
   mode_bits = scm_mode_bits (SCM_ROCHARS (modes));
-  dbconn = sec_unbox (conn)->dbconn;
+  dbconn = XCONN (conn);
 
   if (mode_bits & SCM_RDNG)
     pg_modes |= INV_READ;
@@ -280,7 +281,7 @@ PG_DEFINE (lob_lo_unlink, "pg-lo-unlink", 2, 0, 0,
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
 
-  dbconn = sec_unbox (conn)->dbconn;
+  dbconn = XCONN (conn);
 
   SCM_DEFER_INTS;
   ret = lo_unlink (dbconn, SCM_INUM (oid));
@@ -685,7 +686,7 @@ PG_DEFINE (lob_lo_import, "pg-lo-import", 2, 0, 0,
   SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename),
               filename, SCM_ARG2, FUNC_NAME);
 
-  dbconn = sec_unbox (conn)->dbconn;
+  dbconn = XCONN (conn);
 
   SCM_DEFER_INTS;
   ret = lo_import (dbconn, SCM_ROCHARS (filename));
@@ -716,7 +717,7 @@ PG_DEFINE (lob_lo_export, "pg-lo-export", 3, 0, 0,
   SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename), filename,
               SCM_ARG3, FUNC_NAME);
-  dbconn = sec_unbox (conn)->dbconn;
+  dbconn = XCONN (conn);
   pg_oid = SCM_INUM (oid);
 
   SCM_DEFER_INTS;
