@@ -110,6 +110,7 @@
 
 (define (test expect fun . args)
   ((lambda (res)
+     (cond ((procedure-name fun) => (lambda (name) (set! fun name))))
      (cond ((equal? expect res)
 	    (if fail-expected
 		(set! xpass-count (+ xpass-count 1))
