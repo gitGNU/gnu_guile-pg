@@ -1,5 +1,23 @@
 2004-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm (select-cmd): Take additional
+	caller-allocated arg `obh-box', a list.  For symbolic
+	selections, either singular or a list, pass back through the
+	`obh-box' the ordered list of objectifier procs associated with
+	the selection type(s).
+	(select-proc): Update call to `select-cmd'.  Capture `pg-exec'
+	return value and set its `objectifier-hints' property to the
+	list computed by `select-cmd', or #f.
+	(pgtable-manager): For `tuples-result->object-alist' and
+	`tuples-result->object-alists', prefer the result's
+	`objectifier-hints' property if available, over the full
+	list of objectifiers.
+
+	* test/guile-pg-abstraction-scm-tests.scm: For `m2',
+	also test `tuples-result->object-alist'.
+
+2004-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* test/testing.scm: Update copyright.
 	(test-report): Return #f on count mismatch,
 	non-zero `xpass-count', or non-zero `fail-count'.
