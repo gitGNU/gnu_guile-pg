@@ -1,0 +1,11 @@
+Thanks go to these people for their help in improving guile-pg.
+
+- Ian Grant
+  - wrote guile-pg originally
+  - transferred maintenance to others w/ more time
+
+- Joost Helberg
+  - pointed out `terminating' is actually part of libguile
+
+- Martin Rodgers
+  - pointed out missing `InvalidOid' decl for PostgreSQL 7.0.3
