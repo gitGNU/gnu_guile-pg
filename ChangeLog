@@ -1,5 +1,10 @@
 2004-07-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* configure.in: For Guile checks using the C compiler,
+	save/restore env var `CPPFLAGS' instead of `CFLAGS'.
+
+2004-07-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* configure.in: Move "fill_input in struct scm_ptob_descriptor"
 	check into acinclude.m4 AC_GUILE_PG_BCOMPAT.
 	Likewise w/ `scm_terminating' check.
