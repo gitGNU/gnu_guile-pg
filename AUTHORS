@@ -16,6 +16,7 @@ and modified:
     configure.in
     libpostgres.h    libpostgres.c    libpostgres_lo.c
     scm/postgres.scm.in
+    doc/guile-pg.texi
     test/basic-tests.sh		test/guile-pg-basic-tests.scm
     test/lo-tests.sh		test/guile-pg-lo-tests.scm
 
@@ -24,6 +25,7 @@ Ian Grant <Ian.Grant@cl.cam.ac.uk> wrote:
     configure.in
     libpostgres.h    libpostgres.c    libpostgres_lo.c
     scm/postgres.scm.in
+    doc/guile-pg.texi
     test/basic-tests.sh		test/guile-pg-basic-tests.scm
     test/lo-tests.sh		test/guile-pg-lo-tests.scm
 
