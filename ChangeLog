@@ -1,5 +1,24 @@
 2005-02-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-gxrepl.scm (fsel): For this
+	comma-command, no longer do #f to null-list conversion;
+	let `parse+make-SELECT/tail-tree' handle it.  Also,
+	for #:where/combiner, no longer special-case singular condition.
+
+2005-02-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (make-FROM-tree): No longer handle #f.
+	Also, use `as' instead of simple list.
+	(make-SELECT/FROM/COLS-tree): Handle `froms' as #f here.
+	(parse+make-SELECT/tail-tree): Handle associated value of #f.
+
+2005-02-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (as): New proc.
+	(expr, make-SELECT/COLS-tree): Use `as'.
+
+2005-02-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Query Construction):
 	Expand section "Prefix-Style Expressions".
 
