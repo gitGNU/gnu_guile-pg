@@ -1,5 +1,15 @@
 2004-02-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c (pg_sym_envvar): New global var.
+	(pg_sym_compiled, pg_sym_val, pg_sym_label,
+	pg_sym_dispchar, pg_sym_dispsize): Likewise.
+	(pg_conndefaults): New PG_DEFINE func.
+
+	* doc/guile-pg.twerp (Database Connections): Mention default
+	values in blurb.  Add @twerpdoc for `pg-conndefaults'.
+
+2004-02-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c: Curly-brace placement munging; nfc.
 	* libpostgres_lo.c: Likewise.
 
