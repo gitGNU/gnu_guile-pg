@@ -14,7 +14,9 @@ createdb guile_pg_test || {
 PGDATABASE=guile_pg_test
 export PGDATABASE
 
-${GUILE-guile} -l $top_builddir/scm/postgres.scm -s guile-pg-basic-tests.scm
+${GUILE-guile} -l $top_builddir/scm/postgres.scm \
+               -l config.scm \
+               -s guile-pg-basic-tests.scm
 rv=$?
 
 $dropdb guile_pg_test
