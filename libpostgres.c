@@ -1156,7 +1156,7 @@ PG_DEFINE (pg_getisnull, "pg-getisnull", 3, 0, 0,
 #define FUNC_NAME s_pg_getisnull
   int maxtuple, tuple;
   int maxfield, field;
-  SCM scm_bool;
+  SCM rv;
 
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (stuple) && SCM_INUMP (stuple), stuple, SCM_ARG2,
@@ -1177,12 +1177,12 @@ PG_DEFINE (pg_getisnull, "pg-getisnull", 3, 0, 0,
               FUNC_NAME);
   SCM_DEFER_INTS;
   if (PQgetisnull (RESULT (result), tuple, field))
-    scm_bool = SCM_BOOL_T;
+    rv = SCM_BOOL_T;
   else
-    scm_bool = SCM_BOOL_F;
+    rv = SCM_BOOL_F;
   SCM_ALLOW_INTS;
 
-  return scm_bool;
+  return rv;
 #undef FUNC_NAME
 }
 
