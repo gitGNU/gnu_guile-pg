@@ -1,5 +1,17 @@
 2004-11-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* configure.in (PQsetnonblocking): Check for this func.
+	(PQisnonblocking): Likewise.
+
+	* libpostgres.c (pg_set_nonblocking_x): New PG_DEFINE.
+	(pg_is_nonblocking_p): Likewise.
+
+	* doc/guile-pg.twerp (Database Connections): Add @twerpdoc
+	for `pg-set-nonblocking!' and `pg-is-nonblocking?' in new
+	section "Non-Blocking Mode".
+
+2004-11-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Database Connections):
 	Add xref to "Asynchronous Retrieval".
 	(Asynchronous Retrieval): Add intro blurb.
