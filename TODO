@@ -1,7 +1,7 @@
 
 - 0.17
 
-  - Fix incorrect objectifiers selection bug in pgtable-manager.
+  + Fix incorrect objectifiers selection bug in pgtable-manager.
 
     For `tuples-result->object-alist' and `tuples-result->alists'
     sub-procs, the `objectifiers' passed to `result->object-alist'
