@@ -1,6 +1,13 @@
 
 - 0.17
 
+  - Fix incorrect objectifiers selection bug in pgtable-manager.
+
+    For `tuples-result->object-alist' and `tuples-result->alists'
+    sub-procs, the `objectifiers' passed to `result->object-alist'
+    and `result->object-alists', respectively, is not trimmed or
+    otherwise qualified to match the selected columns.
+
   - Add tests for pg-print and pg-make-print-options.
 
   - Use tmpfile(3), if available, as fallback for dup(3).
