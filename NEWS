@@ -11,6 +11,24 @@ NEWS for Guile-PG
 	been changed to use "Ian Grant" for years up through 2000, and
 	"Thien-Thi Nguyen" for years afterwards.
 
+  - Installation change: scheme wrappers eliminated
+
+	The module (database postgres) used to be a scheme wrapper for
+	compiled module (database postgres-sup).  Now it is the compiled
+	module itself.
+
+	On "make install" files $(GUILE_LIBSITE)/database/postgres-sup.*
+	are unconditionally deleted.
+
+  - Installation change: all modules installed under $(GUILE_LIBSITE)
+
+	Both compiled (binary) and uncompiled (text) modules are now
+	installed in the same place.  See README.
+
+	On "make install" if files $(GUILE_SITE)/database/postgres*
+	exist, they are deleted.  If the dir $(GUILE_SITE)/database is
+	empty as a result, it is also deleted.
+
   - Proc removed: pg-oid-status
 
 	The first mention of imminent removal of `pg-oid-status' was in
