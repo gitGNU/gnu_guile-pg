@@ -1,5 +1,19 @@
 2005-02-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-gxrepl.scm: From module (database postgres-qcons),
+	no longer select `make-SELECT/FROM/COLS-tree'.
+	Instead, select `make-SELECT/COLS-tree'.
+	(sqlsel): New proc.
+	(obvious): For this comma-command, use `sqlsel'.
+	(fsel): Likewise.
+	(dt): Likewise.  Also, use `make-SELECT/COLS-tree'.
+
+2005-02-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (parse+make-SELECT/tail-tree): Handle #:from.
+
+2005-02-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-gxrepl.scm (fsel): For this
 	comma-command, no longer do #f to null-list conversion;
 	let `parse+make-SELECT/tail-tree' handle it.  Also,
