@@ -73,6 +73,8 @@ snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS)
 
 install-data-hook:
 	rm -f $(ddir)/postgres-sup.*
+	cd $(ddir) ; for f in $(d_LTLIBRARIES) ; do \
+	   test -f lib$$f && rm -f lib$$f ; $(LN_S) $$f lib$$f ; done
 	if guile-tools | grep -q make-module-catalog ; then \
 	   guile-tools make-module-catalog $(GUILE_LIBSITE) ; fi
 
