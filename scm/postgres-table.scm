@@ -476,6 +476,7 @@
 ;;   #:tuples-result->object-alist RES
 ;;   #:table->alists TABLE
 ;;   #:tuples-result->alists RES
+;;   #:trace-exec OPORT
 ;; @end example
 ;;
 ;; VAR is a keyword: #:table-name, #:col-defs, #:connection.  DATA is one
@@ -486,7 +487,9 @@
 ;; older versions of `pgtable-manager' also accept a string for OUTSPEC.
 ;; DO NOT rely on this; string support WILL BE REMOVED after 2005-12-31.
 ;; REST-CLAUSES are zero or more strings.  TABLE and RES are the same
-;; types as for proc `tuples-result->table', q.v.
+;; types as for proc `tuples-result->table', q.v.  OPORT specifies an
+;; output port to write the `pg-exec' command to immediately prior to
+;; executing it, or #f to disable tracing.
 ;;
 ;; PROC-O is #f, or a procedure that is called by the table walker like so:
 ;;  (PROC-O TABLE TN FN STRING OBJ)
@@ -518,9 +521,12 @@
                                 "dbname=~A")
                             db-spec)))
                      (else (error "bad db-spec:" db-spec))))
+         (trace-exec #f)
          (objectifiers (def:objectifiers defs))
          (pp (lambda (proc-proc)
                (proc-proc (lambda (s)   ; beex (back-end exec)
+                            (cond (trace-exec (display s trace-exec)
+                                              (newline trace-exec)))
                             (pg-exec conn s))
                           table-name
                           defs)))
@@ -582,6 +588,11 @@
         ((#:tuples-result->object-alist) tuples-result->object-alist)
         ((#:table->alists) table->alists)
         ((#:tuples-result->alists) tuples-result->alists)
+        ((#:trace-exec) (lambda (op)
+                          (or (not op)
+                              (output-port? op)
+                              (error "not an output port:" op))
+                          (set! trace-exec op)))
         (else (error "bad choice:" choice))))))
 
 ;; Take @var{db-spec}, @var{table-name} and @var{defs} (exactly the same as
