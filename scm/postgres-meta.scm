@@ -33,10 +33,17 @@
 ;;; Code:
 
 (define-module (database postgres-meta)
-  #:use-module (database postgres)
-  #:use-module (database postgres-types)
-  #:use-module (database postgres-resx)
-  #:use-module (database postgres-table)
+  #:use-module ((database postgres)
+                #:select (pg-exec
+                          pg-print))
+  #:use-module ((database postgres-types)
+                #:select (dbcoltype-lookup
+                          define-db-col-type-array-variant))
+  #:use-module ((database postgres-resx)
+                #:select (result-field->object-list))
+  #:use-module ((database postgres-table)
+                #:select (pgtable-manager
+                          compile-outspec))
   #:autoload (srfi srfi-13) (string-trim-both)
   #:autoload (ice-9 popen) (open-input-pipe)
   #:export (defs-from-psql

@@ -31,16 +31,34 @@
 ;;; Code:
 
 (define-module (database postgres-table)
-  #:use-module (ice-9 common-list)
-  #:use-module (database postgres)
-  #:use-module (database postgres-types)
+  #:use-module ((ice-9 common-list)
+                #:select (every
+                          find-if
+                          remove-if
+                          pick-mappings))
+  #:use-module ((database postgres)
+                #:select (pg-connection?
+                          pg-connectdb
+                          pg-exec pg-ntuples pg-nfields
+                          pg-fname pg-getvalue))
+  #:use-module ((database postgres-types)
+                #:select (dbcoltype-lookup
+                          dbcoltype:stringifier
+                          dbcoltype:default
+                          dbcoltype:objectifier))
   #:use-module ((database postgres-col-defs)
+                #:select (column-name
+                          type-name
+                          type-options
+                          objectifiers)
                 #:renamer (symbol-prefix-proc 'def:))
   #:use-module ((database postgres-qcons)
                 #:select (sql-quote
                           make-SELECT/FROM/OUT-tree
                           sql-command<-trees))
-  #:use-module (database postgres-resx)
+  #:use-module ((database postgres-resx)
+                #:select (result->object-alist
+                          result->object-alists))
   #:export (sql-pre
             tuples-result->table
             pgtable-manager

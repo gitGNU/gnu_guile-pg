@@ -24,7 +24,14 @@
 ;;; Code:
 
 (define-module (database postgres-resdisp)
-  #:use-module (database postgres)
+  #:use-module ((database postgres)
+                #:select (pg-result?
+                          pg-result-status
+                          pg-ntuples
+                          pg-nfields
+                          pg-fname
+                          pg-getlength
+                          pg-getvalue))
   #:export (display-result))
 
 (define (intersection-style name)

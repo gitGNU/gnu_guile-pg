@@ -29,7 +29,11 @@
 ;;; Code:
 
 (define-module (database postgres-resx)
-  #:use-module (database postgres)
+  #:use-module ((database postgres)
+                #:select (pg-nfields
+                          pg-ntuples
+                          pg-getvalue
+                          pg-fname))
   #:export (for-each-tuple
             result-field->object-list
             result->object-alist
