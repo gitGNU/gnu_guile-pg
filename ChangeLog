@@ -1,5 +1,10 @@
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres_lo.c (lob_lo_unlink):
+	Fix bug: Return #f only on error.
+
+2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Legalities): Update.
 
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
