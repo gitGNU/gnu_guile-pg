@@ -29,7 +29,7 @@ NEWS for Guile-PG
 
 	string: "a,b,c.d"
 	symbol: (a b c.d)
-	result: SELECT a, b, c.d ...
+	result: SELECT "a", "b", c.d ...
 
 	string: "count(*),avg(*)"
 	symbol: ((integer #f (count *)) (real "average" (avg *)))
@@ -43,8 +43,13 @@ NEWS for Guile-PG
 	symbol: ((integer #f (+ 6 (* 6 6))))
 	result: SELECT (6 + (6 * 6)) ...
 
-	Note that the result is for the most part the same as you would
+	Note that for the most part the result is the same as you would
 	achieve using a string (if not, that's a bug, please report it!).
+
+  - Expiration date set for two (database postegres-table) procs
+
+	The procs `tuples-result->table' and `where-clausifier'
+	WILL BE REMOVED after 2005-08-13; DO NOT rely on them.
 
   - Dropped (database postgres-types) proc: dbcoltype:name
 
@@ -62,8 +67,8 @@ NEWS for Guile-PG
 	Additionally, the manual now has a section on the type
 	converters in chapter "Types Conversion".
 
-  - New module: (database postgres-resdisp)
   - New module: (database postgres-qcons)
+  - New module: (database postgres-resdisp)
   - New module: (database postgres-gxrepl)
 
 
