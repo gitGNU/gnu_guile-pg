@@ -1,5 +1,13 @@
 2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm (expr): Handle `::' as SQL `CAST'.
+
+2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-table.scm (pgtable-manager): Handle #:trace-exec.
+
+2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm (expr): Add/use internal proc `paren'.
 
 2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
