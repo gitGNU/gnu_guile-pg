@@ -223,7 +223,19 @@
   number->string
   string->number)
 
+(define-db-col-type 'bigint "0"
+  number->string
+  string->number)
+
+(define-db-col-type 'int2 "0"
+  number->string
+  string->number)
+
 (define-db-col-type 'int4 "0"
+  number->string
+  string->number)
+
+(define-db-col-type 'int8 "0"
   number->string
   string->number)
 
@@ -234,7 +246,16 @@
   number->string
   string->number)
 
+(define-db-col-type 'double "0.0"
+  ;; NOTE: PostgreSQL uses the name: "double precision"
+  number->string
+  string->number)
+
 (define-db-col-type 'float4 "0.0"
+  number->string
+  string->number)
+
+(define-db-col-type 'float8 "0.0"
   number->string
   string->number)
 
@@ -244,10 +265,21 @@
   ;; This is a magic PostgreSQL type that actually causes the backend
   ;; to create a sequence `SEQ' w/ the column typed `serial' doing a
   ;; nextval('SEQ').  The sequence name is TABLENAME_COLNAME_seq,
-  ;; where TABLENAME and COLNAME are not defined here.  Arguably, this
-  ;; simplistic stringification/objectification is insufficient.
-  (lambda (val) (number->string val))
-  (lambda (string) (string->number string)))
+  ;; where TABLENAME and COLNAME are not defined here.
+  number->string
+  string->number)
+
+(define-db-col-type 'bigserial "0"
+  number->string
+  string->number)
+
+(define-db-col-type 'serial4 "0"
+  number->string
+  string->number)
+
+(define-db-col-type 'serial8 "0"
+  number->string
+  string->number)
 
 ;; 5.2          -- monetary type
 ;; 5.3          -- character types
@@ -261,7 +293,8 @@
   identity)
 
 (define-db-col-type 'name "???"
-  (lambda (val) (substring val 0 31))   ; PostgreSQL's User's Guide 3.3
+  ;; NOTE: User's Guide sez "not intended for use by the general user"
+  (lambda (val) (if (< 63 (string-length val)) (substring val 0 62) val))
   identity)
 
 ;; 5.4          -- binary strings
@@ -300,8 +333,8 @@
 ;; 5.8.1        -- inet
 
 (define-db-col-type 'inet "0.0.0.0"
-  (lambda (val) (inet-ntoa val))
-  (lambda (string) (inet-aton string)))
+  inet-ntoa
+  inet-aton)
 
 ;; 5.8.2        -- cidr
 ;; 5.8.3        -- inet vs cidr
