@@ -39,42 +39,48 @@
 (define put set-object-property!)
 (define get object-property)
 
+(define *class-defs*
+  ;; todo: Either mine from "psql \d pg_class", or verify at "make install"
+  ;;       time, and invalidate this with external psql fallback.
+  '((relname      name)
+    (reltype      oid)
+    (relowner     integer)
+    (relam        oid)
+    (relpages     integer)
+    (reltuples    integer)
+    (rellongrelid oid)
+    (relhasindex  boolean)
+    (relisshared  boolean)
+    (relkind      char)
+    (relnatts     smallint)
+    (relchecks    smallint)
+    (reltriggers  smallint)
+    (relukeys     smallint)
+    (relfkeys     smallint)
+    (relrefs      smallint)
+    (relhaspkey   boolean)
+    (relhasrules  boolean)
+    (relacl       aclitem[])))
+
 (define (make-M:pg-class db-name)
-  (pgtable-manager db-name "pg_class"
-                   '((relname      name)
-                     (reltype      oid)
-                     (relowner     integer)
-                     (relam        oid)
-                     (relpages     integer)
-                     (reltuples    integer)
-                     (rellongrelid oid)
-                     (relhasindex  boolean)
-                     (relisshared  boolean)
-                     (relkind      char)
-                     (relnatts     smallint)
-                     (relchecks    smallint)
-                     (reltriggers  smallint)
-                     (relukeys     smallint)
-                     (relfkeys     smallint)
-                     (relrefs      smallint)
-                     (relhaspkey   boolean)
-                     (relhasrules  boolean)
-                     (relacl       aclitem[]))))
+  (pgtable-manager db-name "pg_class" *class-defs*))
+
+(define *table-info-selection*
+  (delay (compile-outspec
+          (map (lambda (field)
+                 (list #t (symbol->string field) (symbol-append 'rel field)))
+               '(name
+                 kind
+                 natts
+                 hasindex
+                 checks
+                 triggers
+                 hasrules))
+          *class-defs*)))
 
 (define (table-info M:pg-class name)
-  ((M:pg-class 'select)
-   (string-join (map (lambda (field)
-                       (let ((s (symbol->string field)))
-                         (simple-format #f "rel~A as ~A" s s)))
-                     '(name
-                       kind
-                       natts
-                       hasindex
-                       checks
-                       triggers
-                       hasrules))
-                ",")
-   (string-append "where relname='" name "'")))
+  ((M:pg-class 'select) (force *table-info-selection*)
+   (string-append "where relname = '" name "'")))
 
 (define (table-fields-info conn table-name)
   (pg-exec conn (string-append
