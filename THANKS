@@ -9,3 +9,6 @@ Thanks go to these people for their help in improving guile-pg.
 
 - Martin Rodgers
   - pointed out missing `InvalidOid' decl for PostgreSQL 7.0.3
+
+- Stan Pinte
+  - bug report: configure runs twerp2texi unconditionally
