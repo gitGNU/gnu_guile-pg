@@ -33,7 +33,7 @@ subpkgdatadir = $(datadir)/guile/database
 subpkgdata_DATA = $(guile_postgres_sources) $(guile_postgres_generated)
 ETAGS_ARGS = $(subpkgdata_DATA)
 
-EXTRA_DIST = postgres.scm.in TODO
+EXTRA_DIST = postgres.scm.in $(guile_postgres_sources) TODO
 
 
 install-data-hook:
