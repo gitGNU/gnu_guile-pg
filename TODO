@@ -9,6 +9,8 @@
 
   - Write tests for non-blocking query support.
 
+  - Review examples in documentation.
+
   - Scan libpq-fe.h for coverage.
 
 
