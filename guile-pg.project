@@ -1,4 +1,4 @@
-((name "guile-pg")
+((name "Guile-PG")
  (location (url "http://www.glug.org/people/ttn/software/guile-pg/"))
  (category "Libraries/Database")
  (description "An interface to PostgreSQL from guile.")

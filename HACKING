@@ -3,7 +3,7 @@ If there are any violations of them then please let us know.
 
 One exception is the provision of non-ANSI function prototypes, which
 Guile doesn't do.  Since you can't build a working Guile without an ANSI
-C compiler it's no great problem that you can't build guile-pg either.
+C compiler it's no great problem that you can't build Guile-PG either.
 
 Quick start:
 
