@@ -1,3 +1,20 @@
+2005-02-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-gxrepl.scm (dt): Convert `table-name' to string.
+	(gxrepl): New comma-command.
+	(q): Delete comma-command.
+
+2005-02-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (*conditional-operations*): Add `!='.
+	(*sql-functions*): Delete var and associated load-time actions.
+	(qcons-declare!): Remove handling for `*sql-functions*'.
+	(sql-quote): No longer accept symbols.
+	(expr): For op, if not recognized, handle as a function application.
+	Add special handling for `#:q*', `case', `cond', `if', #t and #f.
+	(make-SELECT/OUT-tree): For symbolic elements,
+	do not double-quote if table name is included.
+
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm (help): For this comma-command,
