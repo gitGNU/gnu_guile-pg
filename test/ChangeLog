@@ -1,3 +1,7 @@
+2004-07-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* config.scm.in (*VERSION*): Delete var.
+
 2004-06-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* Makefile.am: Update copyright.
