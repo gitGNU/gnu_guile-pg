@@ -27,6 +27,7 @@
 	(CLEANFILES): New directive.
 
 	* configure.in: Update copyright.
+	(top_builddir_absolute): New var, AC_SUBST'd.
 	(AC_INIT): Look for libpostgres.c instead of guile-pg.c.
 	(AC_INIT_AUTOMAKE): Use version 0.07u8 to indicate "under development".
 
