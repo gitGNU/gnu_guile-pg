@@ -1,6 +1,7 @@
 2004-11-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* drop.sh.in: Sleep for one second before exit.
+	Reported by Greg Troxel for NetBSD.
 
 2004-11-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
