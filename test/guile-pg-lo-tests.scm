@@ -19,7 +19,7 @@
 (load-from-path (in-vicinity *srcdir* "testing.scm"))
 (reset-all-tests!)
 
-(use-modules (database postgres))
+(use-modules (ice-9 rdelim) (database postgres))
 
 ;; We use one connection for all the tests.
 
@@ -45,16 +45,6 @@
                (res-end (cexec "END TRANSACTION")))
           (and res-end res-apply))))
 
-;; eval-port PORT
-;; Like (eval-string) but reads from PORT
-(define (eval-port port)
-  (define (iter result)
-    (let ((form (read port)))
-      (if (eof-object? form)
-          result
-          (iter (eval-in-module form (current-module))))))
-  (iter #f))
-
 ;; Here we define procedures to carry out the tests.
 
 (define test:make-connection
@@ -68,11 +58,11 @@
       (cexec "CREATE TABLE test (col1 int4, col2 oid)"))))
 
 (define some-test-data '("
-;; This is a data file for use by guile-pg-lo-tests.scm
-;;   it will be imported to a large onject and then
-;;   evaluated directly from the large object
+;; This is a data file for use by guile-pg-lo-tests.scm;
+;;   it will be imported to a large object and then
+;;   `read' directly from the large object.
 
-'(testing testing one two three)
+   (testing testing one two three)
 
 ;; End of test data"))
 
@@ -123,7 +113,8 @@
        (let ((lo-port (pg-lo-open *C* *O* "r")))
          (and lo-port
               (eq? *C* (pg-lo-get-connection lo-port))
-              (equal? (eval-port lo-port) '(testing testing one two three))
+              (equal? (read lo-port) '(testing testing one two three))
+              (eof-object? (read lo-port))
               (close-port lo-port)))))))
 
 (define nchars 100)
