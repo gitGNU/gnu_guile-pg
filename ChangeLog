@@ -1,3 +1,8 @@
+2003-11-27  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* bugtest/testloseek.scm (pg-exec-cmd): Use symbol
+	`PGRES_COMMAND_OK' instead of variable by same name.
+
 2003-11-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.c (init_module): Rename from `init_postgres'.
