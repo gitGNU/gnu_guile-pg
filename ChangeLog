@@ -1,3 +1,9 @@
+2004-11-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres_lo.c (TTN_COERCE_INT): Delete macro.
+	(lob_mklobport): No longer use `TTN_COERCE_INT'.
+	(lob_write): Likewise.
+
 2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres_lo.c (LOBPORTP): Rename from `SCM_LOBPORTP'.
