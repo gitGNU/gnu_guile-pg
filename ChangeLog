@@ -1,5 +1,9 @@
 2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* autogen.sh: Invoke "libtoolize --force" if no ltmain.sh in cwd.
+
+2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* libpostgres_lo.c (lob_seek): Adjust return value by the amount
 	in the port's read-buffer between the read_pos and read_end.
 
