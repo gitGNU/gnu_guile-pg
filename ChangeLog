@@ -1,5 +1,13 @@
 2003-11-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c (init_module): Rename from `init_postgres'.
+	Make static.
+	(scm_init_database_postgres_sup_module): Rename from
+	`scm_init_database_interface_postgres_module'.
+	Re-implement as macro call to `GH_MODULE_LINK_FUNC'.
+
+2003-11-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* autogen.sh: Update tool version comments.
 	Use "guile-config info datadir" to compute aclocal include dir.
 	Append override for macro `_LT_AC_TAGCONFIG' to aclocal.m4.
