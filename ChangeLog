@@ -1,3 +1,15 @@
+2004-07-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in: Move "fill_input in struct scm_ptob_descriptor"
+	check into acinclude.m4 AC_GUILE_PG_BCOMPAT.
+	Likewise w/ `scm_terminating' check.
+	Move save/restore of env vars CFLAGS and LDFLAGS
+	to be immediately prior/after AC_GUILE_PG_*COMPAT calls.
+
+	* acinclude.m4 (AC_GUILE_PG_BCOMPAT): Add checks
+	for "fill_input in struct scm_ptob_descriptor"
+	and `scm_terminating', formerly in configure.in.
+
 2004-07-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* Makefile.am (install-data-hook): In $(ddir),
