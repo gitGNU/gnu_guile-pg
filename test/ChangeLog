@@ -1,5 +1,9 @@
 2004-03-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* Makefile.am (XFAIL_TESTS): New var/directive.
+
+2004-03-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* guile-pg-abstraction-scm-tests.scm (main):
 	New proc. Call it from top-level.
 
