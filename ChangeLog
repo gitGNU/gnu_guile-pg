@@ -1,5 +1,9 @@
 2003-08-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* guile-pg.project (authors): Expand ttn email addr.
+
+2003-08-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostres.c (pg_print): Expand docstring; nfc.
 
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
