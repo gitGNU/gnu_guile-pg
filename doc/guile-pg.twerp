@@ -384,7 +384,7 @@ It is not known under which circumstances this result-status is returned.
 
 @item PGRES_COPY_OUT
 The statement was a @code{COPY <table> TO stdout}.  The data can be read using
-@code{pg-getline}.
+@code{pg-getline} or @code{pg-getlineasync}.
 
 @item PGRES_COPY_IN
 The statement was a @code{COPY <table> FROM stdin}.  The rows should be written
@@ -533,7 +533,14 @@ then be associated with each connection using @code{pg-set-client-data!}.
 @node    Writing/Reading Data
 @chapter Procedures for Copying Data
 
+There are two procedures for reading a line of data associated with the
+command @code{COPY <table> TO STDOUT}.  For both, when the @dfn{end-of-copy
+marker} is recognized, that means the results from the @code{COPY} command
+have all been read and @code{pg-endcopy} should be called to resynchronize the
+connection before any further calls to @code{pg-exec} on this connection.
+
 @twerpdoc (pg-getline)
+@twerpdoc (pg-getlineasync)
 
 @heading Example
 This example defines a procedure @code{copy-to-port} which can be used
