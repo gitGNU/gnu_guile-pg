@@ -1,3 +1,13 @@
+2004-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-table.scm (pgtable-manager): Make
+	returned proc also accept keyword for `choice'.
+	(pgtable-worker): New proc, exported.
+
+	* doc/guile-pg.twerp (Single-Table Abstraction):
+	Mention views in intro.
+	Add @twerpdoc for `pgtable-worker'.
+
 2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-meta.scm (*class-defs*): Update, from PostgreSQL 7.3.5.
