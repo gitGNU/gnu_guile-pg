@@ -36,6 +36,9 @@
   #:export (infer-defs
             describe-table!))
 
+(define put set-object-property!)
+(define get object-property)
+
 (define (make-M:pg-class db-name)
   (pgtable-manager db-name "pg_class"
                    '((relname      name)
@@ -139,8 +142,8 @@
                       (cond ((procedure? style) style)
                             ((symbol? style) (styler style))
                             (else (error "bad style:" style))))))
-         (names  (object-property table 'names))
-         (widths (object-property table 'widths))
+         (names  (get table 'names))
+         (widths (get table 'widths))
          (tuples (iota (car  (array-dimensions table))))
          (fields (iota (cadr (array-dimensions table)))))
 

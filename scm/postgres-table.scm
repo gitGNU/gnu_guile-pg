@@ -51,6 +51,9 @@
 
 ;;; support
 
+(define put set-object-property!)
+(define get object-property)
+
 (define (string-append/separator c ls)
   (with-output-to-string
     (lambda ()
@@ -101,7 +104,7 @@
 ;; @end lisp
 ;;
 (define (sql-pre string)
-  (set-object-property! string 'ttn-pgtable-sql-pre #t)
+  (put string 'ttn-pgtable-sql-pre #t)
   string)
 
 ;;; connection
@@ -116,7 +119,7 @@
         (else (error (fmt "bad db-spec: ~A" db)))))
 
 (define (validate-def def)
-  (or (object-property def 'validated)
+  (or (get def 'validated)
       (and (pair? def)
            (let ((col-name (def:column-name def)))
              (and (symbol? col-name)
@@ -126,15 +129,15 @@
                                (char=? c #\_)))
                          (string->list (symbol->string col-name)))))
            (dbcoltype-lookup (def:type-name def))
-           (set-object-property! def 'validated #t)) ; cache
+           (put def 'validated #t)) ; cache
       (error "malformed def:" def)))
 
 (define (validate-defs defs)
-  (or (object-property defs 'validated)
+  (or (get defs 'validated)
       (and (list? defs)
            (not (null? defs))
            (for-each validate-def defs)
-           (set-object-property! defs 'validated #t)) ; cache
+           (put defs 'validated #t)) ; cache
       (error "malformed defs:" defs)))
 
 (define (col-defs defs cols)
@@ -194,7 +197,7 @@
 ;;; inserts
 
 (define (->db-insert-string db-col-type x)
-  (or (and (object-property x 'ttn-pgtable-sql-pre) x)
+  (or (and (get x 'ttn-pgtable-sql-pre) x)
       (let ((def (dbcoltype-lookup db-col-type)))
         (sql-quote (or (false-if-exception ((dbcoltype:stringifier def) x))
                        (dbcoltype:default def))))))
@@ -332,15 +335,15 @@
                           fn-range))
               tn-range)
     ;; save some info
-    (set-object-property! table 'names (list->vector names))
-    (set-object-property! table 'widths widths)
+    (put table 'names (list->vector names))
+    (put table 'widths widths)
     table))
 
 (define (t-obj-walk-proc defs)
   (lambda (table proc-o proc-non-o)
     (let ((tn-range (iota (car  (array-dimensions table))))
           (fn-range (iota (cadr (array-dimensions table))))
-          (names (object-property table 'names)))
+          (names (get table 'names)))
       (for-each (lambda (fn)
                   (let* ((type (cond ((assq-ref defs (string->symbol
                                                       (vector-ref names fn)))
@@ -372,7 +375,7 @@
   (lambda (table)
     (let* ((ret (map list (map string->symbol
                                (vector->list
-                                (object-property table 'names)))))
+                                (get table 'names)))))
            (lsfn 0)                     ; last-seen field number
            (place ret)                  ; advances every time lsfn changes
            (stash (lambda (fn x)
