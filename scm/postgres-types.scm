@@ -214,9 +214,12 @@
 (define (double-quote s)
   (string-append "\"" s "\""))
 
-;; non-array (simple) types
+;; non-array (simple) types -- X.Y.Z is from PostgreSQL User's Guide
 
-(define-db-col-type 'oid "-1"
+;; 5.1          -- numeric types
+;; 5.1.1        -- the integer types
+
+(define-db-col-type 'smallint "0"
   number->string
   string->number)
 
@@ -224,23 +227,22 @@
   number->string
   string->number)
 
-(define-db-col-type 'char "?"
-  (lambda (c) (make-string 1 c))
-  (lambda (s) (string-ref s 0)))
-
-(define-db-col-type 'smallint "0"
+(define-db-col-type 'int4 "0"
   number->string
   string->number)
 
-(define-db-col-type 'bool "f"
-  ;; see also `boolean' below
-  (lambda (x) (if x "t" "f"))
-  (lambda (s) (not (string=? "f" s))))
+;; 5.1.2        -- arbitrary precision numbers
+;; 5.1.3        -- floating-point types
 
-(define-db-col-type 'boolean "f"
-  ;; see also `bool' above
-  (lambda (x) (if x "t" "f"))
-  (lambda (s) (not (string=? "f" s))))
+(define-db-col-type 'real "0.0"
+  number->string
+  string->number)
+
+(define-db-col-type 'float4 "0.0"
+  number->string
+  string->number)
+
+;; 5.1.4        -- the serial types
 
 (define-db-col-type 'serial "0"
   ;; This is a magic PostgreSQL type that actually causes the backend
@@ -251,6 +253,24 @@
   (lambda (val) (number->string val))
   (lambda (string) (string->number string)))
 
+;; 5.2          -- monetary type
+;; 5.3          -- character types
+
+(define-db-col-type 'char "?"
+  (lambda (c) (make-string 1 c))
+  (lambda (s) (string-ref s 0)))
+
+(define-db-col-type 'text ""
+  identity
+  identity)
+
+(define-db-col-type 'name "???"
+  (lambda (val) (substring val 0 31))   ; PostgreSQL's User's Guide 3.3
+  identity)
+
+;; 5.4          -- binary strings
+;; 5.5          -- date/time types
+
 (define-db-col-type 'timestamp "1970-01-01 00:00:00"
   (lambda (time)
     (cond ((string? time) time)
@@ -259,33 +279,49 @@
   (lambda (string)
     (car (mktime (car (strptime "%Y-%m-%d %H:%M:%S" string))))))
 
-(define-db-col-type 'text ""
-  identity
-  identity)
+;; 5.5.1        -- date/time input
+;; 5.5.2        -- date/time output
+;; 5.5.3        -- time zones
+;; 5.5.4        -- internals
+;; 5.6          -- boolean type
 
-(define-db-col-type 'int4 "0"
-  number->string
-  string->number)
+(define-db-col-type 'boolean "f"
+  (lambda (x) (if x "t" "f"))
+  (lambda (s) (not (string=? "f" s))))
 
-(define-db-col-type 'float4 "0.0"
-  number->string
-  string->number)
+(define-db-col-type 'bool "f"
+  (lambda (x) (if x "t" "f"))
+  (lambda (s) (not (string=? "f" s))))
 
-(define-db-col-type 'real "0.0"
-  number->string
-  string->number)
+;; 5.7          -- geometric types
+;; 5.7.1        -- point
+;; 5.7.2        -- line segment
+;; 5.7.3        -- box
+;; 5.7.4        -- path
+;; 5.7.5        -- polygon
+;; 5.7.6        -- circle
+;; 5.8          -- network address data types
+;; 5.8.1        -- inet
 
 (define-db-col-type 'inet "0.0.0.0"
   (lambda (val) (inet-ntoa val))
   (lambda (string) (inet-aton string)))
 
-(define-db-col-type 'name "???"
-  (lambda (val) (substring val 0 31))   ; PostgreSQL's User's Guide 3.3
-  identity)
+;; 5.8.2        -- cidr
+;; 5.8.3        -- inet vs cidr
+;; 5.8.4        -- macaddr
+;; 5.9          -- bit string types
+;; 5.10         -- object identifier types
+
+(define-db-col-type 'oid "-1"
+  number->string
+  string->number)
 
 (define-db-col-type 'aclitem "?"
   identity
   identity)
+
+;; 5.11         -- pseudo-types
 
 ;; array variants
 
