@@ -33,7 +33,7 @@
   (let* ((key-names (map (lambda (n)
                            (string->symbol (format #f "k~A" n)))
                          (iota (length key-types))))
-         (key-match-proc (lambda (keys)
+         (key-match-pexp (lambda (keys)
                            `(and ,@(map (lambda (name key)
                                           `(= ,name ,key))
                                         key-names
@@ -64,7 +64,7 @@
               (loop (cdr ls) (1+ count))))))
 
     (define (del keys)
-      ((m #:delete-rows) (key-match-proc keys)))
+      ((m #:delete-rows) (key-match-pexp keys)))
 
     (define (upd ls keys . canonicalize)
       (del keys)                        ; ugh
@@ -72,7 +72,7 @@
 
     (define (->tree keys render)
       (let ((res ((m #:select) #t
-                  #:where (key-match-proc keys)
+                  #:where (key-match-pexp keys)
                   #:order-by '((< seq)))))
         (and (not (= 0 (pg-ntuples res)))
              (let ((alist ((m #:tuples-result->object-alist) res)))
