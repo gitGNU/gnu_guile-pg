@@ -1,3 +1,8 @@
+2005-01-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (ok?):
+	Check `pg-result-error-message' return value.
+
 2004-11-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (test:asynchronous-retrieval): Fix bug:
