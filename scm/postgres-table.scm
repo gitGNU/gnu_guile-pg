@@ -360,6 +360,8 @@
 ;; as one, instead, which ensures that the returned array has consistent
 ;; rank.  (This might not be such a hot idea, long-run; still evaluating.)
 ;;
+;; NOTE: This procedure WILL BE REMOVED after 2005-08-13; DO NOT rely on it.
+;;
 (define (tuples-result->table res)
   (let* ((ntuples (pg-ntuples res))
          (nfields (pg-nfields res))
@@ -615,7 +617,9 @@
 
 ;; Return an SQL "where clause" from STRING.
 ;;
+;; NOTE: This procedure WILL BE REMOVED after 2005-08-13; DO NOT rely on it.
+;;
 (define (where-clausifier string)
-  (fmt "WHERE ~A" string))
+  (sql-pre (fmt "WHERE ~A" string)))
 
 ;;; postgres-table.scm ends here
