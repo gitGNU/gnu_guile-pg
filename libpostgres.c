@@ -879,15 +879,15 @@ PG_DEFINE (pg_nfields, "pg-nfields", 1, 0, 0,
            "Return the number of fields in @var{result}.")
 {
 #define FUNC_NAME s_pg_nfields
-  SCM scm_inum;
+  SCM rv;
 
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  scm_inum = gh_int2scm (PQnfields (RESULT (result)));
+  rv = gh_int2scm (PQnfields (RESULT (result)));
   SCM_ALLOW_INTS;
 
-  return scm_inum;
+  return rv;
 #undef FUNC_NAME
 }
 
@@ -1007,7 +1007,7 @@ PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
 #define FUNC_NAME s_pg_ftype
   int field;
   int ftype;
-  SCM scm_inum;
+  SCM rv;
 
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
@@ -1025,8 +1025,8 @@ PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
     }
   SCM_ALLOW_INTS;
 
-  scm_inum = gh_int2scm (ftype);
-  return scm_inum;
+  rv = gh_int2scm (ftype);
+  return rv;
 #undef FUNC_NAME
 }
 
@@ -1038,7 +1038,7 @@ PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
 #define FUNC_NAME s_pg_fsize
   int field;
   int fsize;
-  SCM scm_inum;
+  SCM rv;
 
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
@@ -1056,8 +1056,8 @@ PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
     }
   SCM_ALLOW_INTS;
 
-  scm_inum = gh_int2scm (fsize);
-  return scm_inum;
+  rv = gh_int2scm (fsize);
+  return rv;
 #undef FUNC_NAME
 }
 
@@ -1228,7 +1228,7 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
 #define FUNC_NAME s_pg_fmod
   int field;
   int fmod;
-  SCM scm_inum;
+  SCM rv;
 
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
@@ -1246,8 +1246,8 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
     }
   SCM_ALLOW_INTS;
 
-  scm_inum = gh_int2scm (fmod);
-  return scm_inum;
+  rv = gh_int2scm (fmod);
+  return rv;
 #undef FUNC_NAME
 
 #else /* !HAVE_PQFMOD */
