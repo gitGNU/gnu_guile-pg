@@ -91,12 +91,23 @@ endif # MAINTAINER_MODE
 
 ## bonus target
 destroy-nonmodule-guile-pg-prior-install:
-	dirs="$(libdir)/guile-pg $(datadir)/guile/database" ;	\
-	for d in $$dirs ; do if test -d $$d ; then		\
-	  echo NOTE: deleting $$d ... ; rm -rf $$d ; fi ; done
+	dir="$(libdir)/guile-pg" ;				\
+	if test -d $$dir ; then					\
+	  echo NOTE: deleting $$dir ;				\
+	  rm -rf $$dir ; fi ;					\
+	dir="$(datadir)/guile/database" ;			\
+	if test -d $$dir ; then cd $$dir ;			\
+	  files="`ls postgres*.scm 2>/dev/null`" ;		\
+	  if test -n "$$files" ; then				\
+	    for f in $$files ; do				\
+	      echo NOTE: deleting $$dir/$$f ;			\
+	      rm -f $$f ; done ; fi ;				\
+	  if test "`ls`" = "" ; then cd .. ;			\
+	    echo NOTE: deleting $$dir ;				\
+	    rmdir database ; fi ; fi ;				\
 	dir="$(datadir)/guile" ; cat=".module-catalog" ;	\
 	if test -f $$dir/$$cat ; then cd $$dir ;		\
-	  echo NOTE: modifying $$dir/$$cat ... ;		\
+	  echo NOTE: modifying $$dir/$$cat ;			\
 	  sed '/database postgres/d' $$cat > TMP ;		\
 	  mv TMP $$cat ; fi
 
