@@ -1,3 +1,8 @@
+2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (make-SELECT/OUT-tree):
+	Handle string expressions.
+
 2005-02-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm (make-v): New proc.
