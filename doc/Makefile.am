@@ -26,7 +26,7 @@ guile_pg_TEXINFOS = guile-pg.texi qcons-tables.texi
 qcons-tables.texi: $(top_srcdir)/scm/postgres-qcons.scm
 	$(srcdir)/mkinc $< > $@
 
-CLEANFILES = guile-pg.info guile-pg.dvi guile-pg_toc.html guile-pg.html
+CLEANFILES = guile-pg.info guile-pg.html
 
 EXTRA_DIST = cov guile-pg.twerp twerp.mk-am-frag mkinc
 
