@@ -32,10 +32,8 @@
 
 (define-module (database postgres-table)
   #:use-module ((ice-9 common-list)
-                #:select (every
-                          find-if
-                          remove-if
-                          pick-mappings))
+                #:select (find-if
+                          remove-if))
   #:use-module ((database postgres)
                 #:select (pg-connection?
                           pg-connectdb
@@ -50,6 +48,7 @@
                 #:select (column-name
                           type-name
                           type-options
+                          validate-def
                           objectifiers)
                 #:renamer (symbol-prefix-proc 'def:))
   #:use-module ((database postgres-qcons)
@@ -131,28 +130,6 @@
                                 "dbname=~A")
                             db)))
         (else (error "bad db-spec:" db))))
-
-(define (validate-def def)
-  (or (get def 'validated)
-      (and (pair? def)
-           (let ((col-name (def:column-name def)))
-             (and (symbol? col-name)
-                  (every (lambda (c)
-                           (or (char-alphabetic? c)
-                               (char-numeric? c)
-                               (char=? c #\_)))
-                         (string->list (symbol->string col-name)))))
-           (dbcoltype-lookup (def:type-name def))
-           (put def 'validated #t))     ; cache
-      (error "malformed def:" def)))
-
-(define (validate-defs defs)
-  (or (get defs 'validated)
-      (and (list? defs)
-           (not (null? defs))
-           (for-each validate-def defs)
-           (put defs 'validated #t))    ; cache
-      (error "malformed defs:" defs)))
 
 (define (col-defs defs cols)
   (map (lambda (col)
@@ -554,7 +531,11 @@
 ;; of procedure.  See guile-pg info page for details.
 ;;
 (define (pgtable-manager db-spec table-name defs)
-  (validate-defs defs)
+  (or (and (pair? defs) (not (null? defs)))
+      (error "malformed defs:" defs))
+  (for-each (lambda (def)
+              (def:validate-def def dbcoltype-lookup))
+            defs)
   (let* ((conn (pgdb-connection db-spec))
          (objectifiers (def:objectifiers defs))
          (pp (lambda (proc-proc)
