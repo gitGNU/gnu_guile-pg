@@ -37,9 +37,7 @@
 
 #include "libpostgres.h"
 
-#define sec_p(x)      (guile_pg_sec_p (x))
-#define sec_unbox(x)  (guile_pg_sec_unbox (x))
-#define XCONN(x)      (sec_unbox (x)->dbconn)
+#define XCONN(x)      (xc_unbox (x)->dbconn)
 
 #define LOB_READING 1
 #define LOB_WRITING 2
@@ -56,7 +54,7 @@ typedef struct lob_stream_tag {
 
 
 /* LOB_CONN takes a lob_stream pointer and returns the PGconn pointer for
-   that stream. Because SCM_DEFER/ALLOW_INTS are used in sec_unbox, this
+   that stream. Because SCM_DEFER/ALLOW_INTS are used in xc_unbox, this
    macro cannot be used inside SCM_DEFER/ALLOW_INTS. FIXME: Is this still true?
 */
 
@@ -104,7 +102,7 @@ PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
   Oid oid;
   int pg_modes = 0;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (modes) && SCM_ROSTRINGP (modes),
               modes, SCM_ARG2, FUNC_NAME);
   ROZT_X (modes);
@@ -163,7 +161,7 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
   Oid pg_oid;
   int pg_modes = 0;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (modes) && SCM_ROSTRINGP (modes),
               modes, SCM_ARG3, FUNC_NAME);
@@ -274,7 +272,7 @@ PG_DEFINE (lob_lo_unlink, "pg-lo-unlink", 2, 0, 0,
   int ret;
   PGconn *dbconn;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
 
   dbconn = XCONN (conn);
@@ -678,7 +676,7 @@ PG_DEFINE (lob_lo_import, "pg-lo-import", 2, 0, 0,
   PGconn *dbconn;
   int ret;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename),
               filename, SCM_ARG2, FUNC_NAME);
   ROZT_X (filename);
@@ -710,7 +708,7 @@ PG_DEFINE (lob_lo_export, "pg-lo-export", 3, 0, 0,
   Oid pg_oid;
   int ret;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename), filename,
               SCM_ARG3, FUNC_NAME);
@@ -739,7 +737,7 @@ lob_printpt (SCM exp, SCM port, scm_print_state *pstate)
   if (SCM_OPENP (exp))
     {
       lob_stream *lobp = (lob_stream *) SCM_STREAM (exp);
-      scm_extended_dbconn *sec = sec_unbox (lobp->conn);
+      xc_t *sec = xc_unbox (lobp->conn);
       char *dbstr = PQdb (sec->dbconn);
       char *hoststr = PQhost (sec->dbconn);
       char *portstr = PQport (sec->dbconn);
