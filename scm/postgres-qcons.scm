@@ -202,13 +202,13 @@
 
 (define andsep   (list-sep-proc #:AND))
 (define orsep    (list-sep-proc #:OR))
-(define commasep (list-sep-proc ","))
+(define commasep (list-sep-proc #:%COMMA))
 
 (define (as one two)
   (list one #:AS two))
 
 (define (paren . x)
-  `("(" ,@x ")"))
+  `(#:%LPAREN ,@x #:%RPAREN))
 
 ;; Return a tree made by mapping @var{proc} over list @var{ls},
 ;; w/ elements separated by commas.  Optional third arg @var{parens?}
@@ -475,6 +475,10 @@
     (cond ((keyword? x)
            (display
             (case x
+              ((#:%LPAREN) "(")
+              ((#:%RPAREN) ")")
+              ((#:%COMMA)  ",")
+              ((#:%SEMIC)  ";")
               ((#:ORDER-BY) "\nORDER BY")
               ((#:GROUP-BY) "\nGROUP BY")
               ((#:FROM #:WHERE) (fs "\n~A" (keyword->symbol x)))
@@ -485,7 +489,10 @@
            (display x))
           ((pair? x)
            (out (car x))
-           (out " ")
+           (or (null? (cdr x))
+               (eq? #:%LPAREN (car x))
+               (memq (cadr x) '(#:%RPAREN #:%COMMA #:%SEMIC))
+               (display " "))
            (out (cdr x)))
           ((null? x))
           (else
@@ -502,6 +509,6 @@
 ;; by @code{sql-pre}.
 ;;
 (define (sql-command<-trees . trees)
-  (apply sql<-trees trees (list ";")))
+  (apply sql<-trees trees (list #:%SEMIC)))
 
 ;;; postgres-qcons.scm ends here
