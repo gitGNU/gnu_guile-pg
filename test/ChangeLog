@@ -1,3 +1,8 @@
+2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-abstraction-scm-tests.scm:
+	No longer use strings for first arg to `select'.
+
 2005-01-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm
