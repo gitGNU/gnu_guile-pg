@@ -1,5 +1,9 @@
 2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* guile-pg.project (location, status): Update.
+
+2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* Makefile.am (EXTRA_DIST): Add modsup.h.
 
 2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
