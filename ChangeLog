@@ -4,6 +4,11 @@
 	(pg_connectdb): Doc fix; nfc.
 	(pg_cmdtuples): Doc munging; nfc.
 
+	* libpostgres_lo.c: Update copyright.
+	(lob_lo_get_connection): Doc fix; nfc.
+	(lob_lo_get_oid, lob_lo_tell, lob_lo_seek,
+	lol_lo_import, lol_lo_export): Likewise.
+
 2004-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* test/show-platform (go): Also include guile-pg version.
