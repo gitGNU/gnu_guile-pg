@@ -1597,6 +1597,37 @@ PG_DEFINE (pg_set_notice_out_x, "pg-set-notice-out!", 2, 0, 0,
 #undef FUNC_NAME
 
 
+/* Fetch asynchronous notifications.  */
+
+PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
+           (SCM conn, SCM tickle),
+           "Return the next as-yet-unhandled notification\n"
+           "from @var{conn}, or #f if there are none available.\n"
+           "The notification is a pair (RELNAME . PID), where\n"
+           "@var{relname} is a string and @var{pid} is the pid\n"
+           "of the backend delivering the notification.\n"
+           "Optional arg @var{tickle} non-#f means to do a\n"
+           "\"consume input\" operation prior to the query.")
+#define FUNC_NAME s_pg_notifies
+{
+  PGnotify *n;
+  SCM rv = SCM_BOOL_F;
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+
+  if (tickle != SCM_UNDEFINED && SCM_NFALSEP (tickle))
+    PQconsumeInput (sec_unbox (conn)->dbconn);
+  n = PQnotifies (sec_unbox (conn)->dbconn);
+  if (n)
+    {
+      rv = scm_makfrom0str (n->relname);
+      rv = scm_cons (rv, SCM_MAKINUM (n->be_pid));
+      free (n);
+    }
+  return rv;
+}
+#undef FUNC_NAME
+
+
 /*
  * init
  */
