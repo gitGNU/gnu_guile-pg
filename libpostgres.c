@@ -1,6 +1,5 @@
-/* $Id$
-    Guile-pg - A Guile interface to PostgreSQL
-    Copyright (C) 1999 The Free Software Foundation
+/*  Guile-pg - A Guile interface to PostgreSQL
+    Copyright (C) 1999, 2002 Free Software Foundation, Inc.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,8 +18,6 @@
     Guile-pg was written by Ian Grant <Ian.Grant@cl.cam.ac.uk>
 */
 
-static char rcsid[] = "$Id$";
-
 #include <config.h>
 
 #include <stdio.h>
@@ -37,10 +34,9 @@ static char rcsid[] = "$Id$";
 #include <guile/gh.h>
 
 #include <libpq-fe.h>
-#include <postgres.h>
 #include <libpq/libpq-fs.h>
 
-#include <libpostgres.h>
+#include "libpostgres.h"
 
 #define BUF_LEN 256
 #define QUERY_BUF_LEN 8000
@@ -80,8 +76,12 @@ static char *ser_status_str[] = {
    "PGRES_BAD_RESPONSE",
    "PGRES_NONFATAL_ERROR",
    "PGRES_FATAL_ERROR",
-   "UNKNOWN RESULT STATUS"
+   "UNKNOWN RESULT STATUS"              /* see "- 1" immed below */
 };
+
+static int ser_status_str_count = ((sizeof (ser_status_str) /
+                                    sizeof (char *))
+                                   - 1);
 
 static int ser_status[] = {
    PGRES_EMPTY_QUERY,
@@ -264,13 +264,13 @@ ser_free(SCM obj)
 static char *strncpy0(char *dest, const char *source, int maxlen)
 {
    int len;
- 
+
    (void) strncpy(dest, source, maxlen);
    if ((len = strlen(source)) < maxlen)
       *(dest + len) = '\0';
    else
       *(dest + maxlen - 1) = '\0';
-   
+
    return dest;
 }
 
@@ -289,14 +289,6 @@ static SCM
 pg_guile_pg_loaded(void)
 {
     return SCM_BOOL_T;
-}
-
-SCM_PROC(s_pg_guile_pg_rcsid, "pg-guile-pg-rcsid", 0, 0, 0, pg_guile_pg_rcsid);
-
-static SCM
-pg_guile_pg_rcsid(void)
-{
-    return scm_makfrom0str(rcsid);
 }
 
 SCM_PROC(s_pg_connectdb, "pg-connectdb", 1, 0, 0, pg_connectdb);
@@ -631,10 +623,15 @@ pg_backend_pid (SCM obj)
 
 SCM_PROC(s_pg_result_status, "pg-result-status",1,0,0, pg_result_status);
 
-static SCM 
+/* fixme: move to init */
+#undef str2symbol
+#define str2symbol(s) (SCM_CAR (scm_intern (s, strlen (s))))
+
+static SCM
 pg_result_status (SCM obj)
 {
     int result_status;
+    char **names = ser_status_str;
 
     SCM_ASSERT(ser_p(obj), obj, SCM_ARG1, s_pg_result_status);
 
@@ -642,7 +639,9 @@ pg_result_status (SCM obj)
     result_status = PQresultStatus(ser_unbox(obj)->result);
     SCM_ALLOW_INTS;
 
-    return SCM_MAKINUM(result_status);
+    return ((0 <= result_status && result_status < ser_status_str_count)
+            ? str2symbol (names[result_status])
+            : SCM_MAKINUM(result_status));
 }
 
 SCM_PROC(s_pg_ntuples, "pg-ntuples",1,0,0, pg_ntuples);
@@ -857,7 +856,7 @@ pg_getvalue (SCM obj, SCM stuple, SCM sfield)
     maxfield = PQnfields(ser_unbox(obj)->result);
     SCM_ALLOW_INTS;
 
-    SCM_ASSERT(tuple < maxtuple && tuple >= 0, stuple, SCM_OUTOFRANGE, 
+    SCM_ASSERT(tuple < maxtuple && tuple >= 0, stuple, SCM_OUTOFRANGE,
                                                             s_pg_getvalue);
     SCM_ASSERT(field < maxfield && field >= 0, sfield, SCM_OUTOFRANGE,
                                                             s_pg_getvalue);
@@ -902,7 +901,7 @@ pg_getlength (SCM obj, SCM stuple, SCM sfield)
     maxfield = PQnfields(ser_unbox(obj)->result);
     SCM_ALLOW_INTS;
 
-    SCM_ASSERT(tuple < maxtuple && tuple >= 0, stuple, SCM_OUTOFRANGE, 
+    SCM_ASSERT(tuple < maxtuple && tuple >= 0, stuple, SCM_OUTOFRANGE,
                                                             s_pg_getlength);
     SCM_ASSERT(field < maxfield && field >= 0, sfield, SCM_OUTOFRANGE,
                                                             s_pg_getlength);
@@ -962,7 +961,7 @@ pg_binary_tuples (SCM obj)
 
     SCM_DEFER_INTS;
     if (PQbinaryTuples(ser_unbox(obj)->result))
-       rv = SCM_BOOL_T; 
+       rv = SCM_BOOL_T;
     else
        rv = SCM_BOOL_F;
     SCM_ALLOW_INTS;
@@ -1151,14 +1150,14 @@ init_postgres(void)
 
 #include <libpostgres.x>
 
-    scm_sysintern("PGRES_TUPLES_OK", SCM_MAKINUM(PGRES_TUPLES_OK));
-    scm_sysintern("PGRES_COMMAND_OK", SCM_MAKINUM(PGRES_COMMAND_OK));
-    scm_sysintern("PGRES_EMPTY_QUERY", SCM_MAKINUM(PGRES_EMPTY_QUERY));
-    scm_sysintern("PGRES_COPY_OUT", SCM_MAKINUM(PGRES_COPY_OUT));
-    scm_sysintern("PGRES_COPY_IN", SCM_MAKINUM(PGRES_COPY_IN));
-    scm_sysintern("PGRES_BAD_RESPONSE", SCM_MAKINUM(PGRES_BAD_RESPONSE));
-    scm_sysintern("PGRES_NONFATAL_ERROR", SCM_MAKINUM(PGRES_NONFATAL_ERROR));
-    scm_sysintern("PGRES_FATAL_ERROR", SCM_MAKINUM(PGRES_FATAL_ERROR));
+    scm_sysintern ("PGRES_TUPLES_OK",      SCM_MAKINUM (PGRES_TUPLES_OK));
+    scm_sysintern ("PGRES_COMMAND_OK",     SCM_MAKINUM (PGRES_COMMAND_OK));
+    scm_sysintern ("PGRES_EMPTY_QUERY",    SCM_MAKINUM (PGRES_EMPTY_QUERY));
+    scm_sysintern ("PGRES_COPY_OUT",       SCM_MAKINUM (PGRES_COPY_OUT));
+    scm_sysintern ("PGRES_COPY_IN",        SCM_MAKINUM (PGRES_COPY_IN));
+    scm_sysintern ("PGRES_BAD_RESPONSE",   SCM_MAKINUM (PGRES_BAD_RESPONSE));
+    scm_sysintern ("PGRES_NONFATAL_ERROR", SCM_MAKINUM (PGRES_NONFATAL_ERROR));
+    scm_sysintern ("PGRES_FATAL_ERROR",    SCM_MAKINUM (PGRES_FATAL_ERROR));
 
     init_libpostgres_lo();
 
@@ -1171,3 +1170,5 @@ scm_init_database_interface_postgres_module(void)
     INIT_PRINT(fprintf(stderr, "calling scm_register_module_xxx.\n"));
     scm_register_module_xxx("database interface postgres",(void*)init_postgres);
 }
+
+/* libpostgres.c ends here */
