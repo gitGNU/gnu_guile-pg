@@ -1,5 +1,6 @@
 NEWS for Guile-PG
 
+
 - version 0.12 [[ NOT YET RELEASED ]]
 
   - PATH/configure where PATH != "./" supported

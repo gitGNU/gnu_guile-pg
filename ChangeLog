@@ -1,5 +1,11 @@
 2002-12-18  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* test/alive.sh: Use guile exit val for script exit val.
+	* test/basic-tests.sh: Likewise.
+	* test/lo-tests.sh: Likewise.
+
+2002-12-18  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* test/guile-pg-lo-tests.scm.in: Look for testing.scm in @srcdir@.
 	* test/guile-pg-basic-tests.scm.in: Likewise.
 
