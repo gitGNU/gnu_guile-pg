@@ -1,5 +1,13 @@
 2002-12-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* test/Makefile.am (TESTS_ENVIRONMENT): Add `top_srcdir' and `srcdir'.
+
+	* test/abstraction-scm-tests.sh:
+	Look for guile-pg-abstraction-scm-tests.scm under $srcdir.
+	Look for postgres-types.scm and postgres-table.scm under $top_srcdir.
+
+2002-12-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* libpostgres.c (guile_pg_sec_p): Rename from `sec_p'.
 	(guile_pg_sec_unbox): Rename from `sec_unbox'.
 	* libpostgres.h: Likewise.
