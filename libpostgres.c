@@ -104,7 +104,7 @@ guile_pg_sec_p (SCM obj)
   return (SCM_NIMP (obj) && SCM_CAR (obj) == pg_conn_tag.type_tag);
 }
 
-#define sec_p guile_pg_sec_p
+#define sec_p(x)  (guile_pg_sec_p (x))
 
 scm_extended_dbconn *
 guile_pg_sec_unbox (SCM obj)
@@ -112,7 +112,8 @@ guile_pg_sec_unbox (SCM obj)
   return ((scm_extended_dbconn *) SCM_CDR (obj));
 }
 
-#define sec_unbox guile_pg_sec_unbox
+#define sec_unbox(x)  (guile_pg_sec_unbox (x))
+#define XCONN(x)      (guile_pg_sec_unbox (x)->dbconn)
 
 static SCM
 sec_box (scm_extended_dbconn *sec)
@@ -190,6 +191,8 @@ ser_unbox (SCM obj)
 {
   return ((scm_extended_result*)SCM_CDR (obj));
 }
+
+#define RESULT(x)  (ser_unbox (x)->result)
 
 static SCM
 ser_box (scm_extended_result *ser)
@@ -581,7 +584,7 @@ PG_DEFINE (pg_reset, "pg-reset", 1, 0, 0,
 {
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_DEFER_INTS;
-  PQreset (sec_unbox (conn)->dbconn);
+  PQreset (XCONN (conn));
   SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -635,7 +638,7 @@ PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
   SCM_DEFER_INTS;
 
   pgquery = maybe_strcpy (statement, &pgquery_freshp);
-  dbconn = sec_unbox (conn)->dbconn;
+  dbconn = XCONN (conn);
   result = PQexec (dbconn, pgquery);
   if (pgquery_freshp)
     free (pgquery);
@@ -677,10 +680,10 @@ PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
 #ifdef HAVE_PQRESULTERRORMESSAGE
   if (sec_p (obj))
 #endif
-    pgerrormsg = strdup (PQerrorMessage (sec_unbox (obj)->dbconn));
+    pgerrormsg = strdup (PQerrorMessage (XCONN (obj)));
 #ifdef HAVE_PQRESULTERRORMESSAGE
   else
-    pgerrormsg = strdup (PQresultErrorMessage (ser_unbox (obj)->result));
+    pgerrormsg = strdup (PQresultErrorMessage (RESULT (obj)));
 #endif
   rv = scm_makfrom0str (strip_newlines (pgerrormsg));
   free (pgerrormsg);
@@ -700,7 +703,7 @@ PG_DEFINE (pg_get_db, "pg-get-db", 1, 0, 0,
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  rv = PQdb (sec_unbox (conn)->dbconn);
+  rv = PQdb (XCONN (conn));
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
@@ -717,7 +720,7 @@ PG_DEFINE (pg_get_user, "pg-get-user", 1, 0, 0,
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  rv = PQuser (sec_unbox (conn)->dbconn);
+  rv = PQuser (XCONN (conn));
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
@@ -735,7 +738,7 @@ PG_DEFINE (pg_get_pass, "pg-get-pass", 1, 0, 0,
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  rv = PQpass (sec_unbox (conn)->dbconn);
+  rv = PQpass (XCONN (conn));
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
@@ -753,7 +756,7 @@ PG_DEFINE (pg_get_host, "pg-get-host", 1, 0, 0,
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  rv = PQhost (sec_unbox (conn)->dbconn);
+  rv = PQhost (XCONN (conn));
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
@@ -770,7 +773,7 @@ PG_DEFINE (pg_get_port,"pg-get-port", 1, 0, 0,
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  rv = PQport (sec_unbox (conn)->dbconn);
+  rv = PQport (XCONN (conn));
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
@@ -787,7 +790,7 @@ PG_DEFINE (pg_get_tty, "pg-get-tty", 1, 0, 0,
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  rv = PQtty (sec_unbox (conn)->dbconn);
+  rv = PQtty (XCONN (conn));
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
@@ -803,7 +806,7 @@ PG_DEFINE (pg_get_options, "pg-get-options", 1, 0, 0,
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  rv = PQoptions (sec_unbox (conn)->dbconn);
+  rv = PQoptions (XCONN (conn));
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
@@ -833,7 +836,7 @@ PG_DEFINE (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  pid = PQbackendPID (sec_unbox (conn)->dbconn);
+  pid = PQbackendPID (XCONN (conn));
   SCM_ALLOW_INTS;
 
   return SCM_MAKINUM (pid);
@@ -853,7 +856,7 @@ PG_DEFINE (pg_result_status, "pg-result-status", 1, 0, 0,
   SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  result_status = PQresultStatus (ser_unbox (result)->result);
+  result_status = PQresultStatus (RESULT (result));
   SCM_ALLOW_INTS;
 
   for (pgrs_index = 0; pgrs_index < pgrs_count; pgrs_index++)
@@ -876,7 +879,7 @@ PG_DEFINE (pg_ntuples, "pg-ntuples", 1, 0, 0,
   SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  ntuples = PQntuples (ser_unbox (result)->result);
+  ntuples = PQntuples (RESULT (result));
   SCM_ALLOW_INTS;
 
   return SCM_MAKINUM (ntuples);
@@ -893,7 +896,7 @@ PG_DEFINE (pg_nfields, "pg-nfields", 1, 0, 0,
   SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  scm_inum = SCM_MAKINUM (PQnfields (ser_unbox (result)->result));
+  scm_inum = SCM_MAKINUM (PQnfields (RESULT (result)));
   SCM_ALLOW_INTS;
 
   return scm_inum;
@@ -913,7 +916,7 @@ PG_DEFINE (pg_cmdtuples, "pg-cmdtuples", 1, 0, 0,
   SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  cmdtuples = PQcmdTuples (ser_unbox (result)->result);
+  cmdtuples = PQcmdTuples (RESULT (result));
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (cmdtuples);
@@ -932,7 +935,7 @@ PG_DEFINE (pg_oid_status, "pg-oid-status", 1, 0, 0,
   SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  oid_status = PQoidStatus (ser_unbox (result)->result);
+  oid_status = PQoidStatus (RESULT (result));
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (oid_status);
@@ -952,7 +955,7 @@ PG_DEFINE (pg_oid_value, "pg-oid-value", 1, 0, 0,
   SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  oid_value = PQoidValue (ser_unbox (result)->result);
+  oid_value = PQoidValue (RESULT (result));
   SCM_ALLOW_INTS;
 
   if (oid_value == InvalidOid)
@@ -979,9 +982,9 @@ PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
   field = SCM_INUM (num);
 
   SCM_DEFER_INTS;
-  if (field < PQnfields (ser_unbox (result)->result) && field >= 0)
+  if (field < PQnfields (RESULT (result)) && field >= 0)
     {
-      fname = PQfname (ser_unbox (result)->result, field);
+      fname = PQfname (RESULT (result), field);
       SCM_ALLOW_INTS;
     }
   else
@@ -1011,7 +1014,7 @@ PG_DEFINE (pg_fnumber, "pg-fnumber", 2, 0, 0,
   name = maybe_strcpy (fname, &name_freshp);
 
   SCM_DEFER_INTS;
-  fnum = PQfnumber (ser_unbox (result)->result, name);
+  fnum = PQfnumber (RESULT (result), name);
   SCM_ALLOW_INTS;
   if (name_freshp)
     free (name);
@@ -1040,8 +1043,8 @@ PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
   field = SCM_INUM (num);
 
   SCM_DEFER_INTS;
-  if (field < PQnfields (ser_unbox (result)->result) && field >= 0)
-    ftype = PQftype (ser_unbox (result)->result, field);
+  if (field < PQnfields (RESULT (result)) && field >= 0)
+    ftype = PQftype (RESULT (result), field);
   else
     {
       SCM_ALLOW_INTS;
@@ -1071,8 +1074,8 @@ PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
   field = SCM_INUM (num);
 
   SCM_DEFER_INTS;
-  if (field < PQnfields (ser_unbox (result)->result) && field >= 0)
-    fsize = PQfsize (ser_unbox (result)->result, field);
+  if (field < PQnfields (RESULT (result)) && field >= 0)
+    fsize = PQfsize (RESULT (result), field);
   else
     {
       SCM_ALLOW_INTS;
@@ -1110,8 +1113,8 @@ PG_DEFINE (pg_getvalue, "pg-getvalue", 3, 0, 0,
   field = SCM_INUM (sfield);
 
   SCM_DEFER_INTS;
-  maxtuple = PQntuples (ser_unbox (result)->result);
-  maxfield = PQnfields (ser_unbox (result)->result);
+  maxtuple = PQntuples (RESULT (result));
+  maxfield = PQnfields (RESULT (result));
   SCM_ALLOW_INTS;
 
   SCM_ASSERT (tuple < maxtuple && tuple >= 0, stuple, SCM_OUTOFRANGE,
@@ -1119,10 +1122,10 @@ PG_DEFINE (pg_getvalue, "pg-getvalue", 3, 0, 0,
   SCM_ASSERT (field < maxfield && field >= 0, sfield, SCM_OUTOFRANGE,
               FUNC_NAME);
   SCM_DEFER_INTS;
-  val = PQgetvalue (ser_unbox (result)->result, tuple, field);
+  val = PQgetvalue (RESULT (result), tuple, field);
 #ifdef HAVE_PQBINARYTUPLES
-  if ((isbinary = PQbinaryTuples (ser_unbox (result)->result)) != 0)
-    veclen = PQgetlength (ser_unbox (result)->result, tuple, field);
+  if ((isbinary = PQbinaryTuples (RESULT (result))) != 0)
+    veclen = PQgetlength (RESULT (result), tuple, field);
 #endif
   SCM_ALLOW_INTS;
 
@@ -1156,8 +1159,8 @@ PG_DEFINE (pg_getlength, "pg-getlength", 3, 0, 0,
   field = SCM_INUM (sfield);
 
   SCM_DEFER_INTS;
-  maxtuple = PQntuples (ser_unbox (result)->result);
-  maxfield = PQnfields (ser_unbox (result)->result);
+  maxtuple = PQntuples (RESULT (result));
+  maxfield = PQnfields (RESULT (result));
   SCM_ALLOW_INTS;
 
   SCM_ASSERT (tuple < maxtuple && tuple >= 0, stuple, SCM_OUTOFRANGE,
@@ -1165,7 +1168,7 @@ PG_DEFINE (pg_getlength, "pg-getlength", 3, 0, 0,
   SCM_ASSERT (field < maxfield && field >= 0, sfield, SCM_OUTOFRANGE,
               FUNC_NAME);
   SCM_DEFER_INTS;
-  len = PQgetlength (ser_unbox (result)->result, tuple, field);
+  len = PQgetlength (RESULT (result), tuple, field);
   SCM_ALLOW_INTS;
 
   ret = SCM_MAKINUM (len);
@@ -1192,8 +1195,8 @@ PG_DEFINE (pg_getisnull, "pg-getisnull", 3, 0, 0,
   field = SCM_INUM (sfield);
 
   SCM_DEFER_INTS;
-  maxtuple = PQntuples (ser_unbox (result)->result);
-  maxfield = PQnfields (ser_unbox (result)->result);
+  maxtuple = PQntuples (RESULT (result));
+  maxfield = PQnfields (RESULT (result));
   SCM_ALLOW_INTS;
 
   SCM_ASSERT (tuple < maxtuple && tuple >= 0, stuple, SCM_OUTOFRANGE,
@@ -1201,7 +1204,7 @@ PG_DEFINE (pg_getisnull, "pg-getisnull", 3, 0, 0,
   SCM_ASSERT (field < maxfield && field >= 0, sfield, SCM_OUTOFRANGE,
               FUNC_NAME);
   SCM_DEFER_INTS;
-  if (PQgetisnull (ser_unbox (result)->result, tuple, field))
+  if (PQgetisnull (RESULT (result), tuple, field))
     scm_bool = SCM_BOOL_T;
   else
     scm_bool = SCM_BOOL_F;
@@ -1223,7 +1226,7 @@ PG_DEFINE (pg_binary_tuples, "pg-binary-tuples?", 1, 0, 0,
   SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  if (PQbinaryTuples (ser_unbox (result)->result))
+  if (PQbinaryTuples (RESULT (result)))
     rv = SCM_BOOL_T;
   else
     rv = SCM_BOOL_F;
@@ -1251,8 +1254,8 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
   field = SCM_INUM (num);
 
   SCM_DEFER_INTS;
-  if (field < PQnfields (ser_unbox (result)->result) && field >= 0)
-    fmod = PQfmod (ser_unbox (result)->result, field);
+  if (field < PQnfields (RESULT (result)) && field >= 0)
+    fmod = PQfmod (RESULT (result), field);
   else
     {
       SCM_ALLOW_INTS;
@@ -1293,7 +1296,7 @@ PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
   while (ret != 0 && ret != EOF)
     {
       SCM_DEFER_INTS;
-      ret = PQgetline (sec_unbox (conn)->dbconn, buf, BUF_LEN);
+      ret = PQgetline (XCONN (conn), buf, BUF_LEN);
       SCM_ALLOW_INTS;
       if (str == SCM_UNDEFINED)
         str = scm_makfrom0str (buf);
@@ -1320,9 +1323,9 @@ PG_DEFINE (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
   SCM_ASSERT (SCM_STRINGP (buf), buf, SCM_ARG2, FUNC_NAME);
 
   if (tickle != SCM_UNDEFINED && SCM_NFALSEP (tickle))
-    PQconsumeInput (sec_unbox (conn)->dbconn);
+    PQconsumeInput (XCONN (conn));
 
-  return SCM_MAKINUM (PQgetlineAsync (sec_unbox (conn)->dbconn,
+  return SCM_MAKINUM (PQgetlineAsync (XCONN (conn),
                                       SCM_CHARS (buf),
                                       SCM_ROLENGTH (buf)));
 }
@@ -1343,9 +1346,16 @@ PG_DEFINE (pg_putline, "pg-putline", 2, 0, 0,
   SCM_ASSERT (SCM_NIMP (str)&&SCM_ROSTRINGP (str), str, SCM_ARG2, FUNC_NAME);
   SCM_DEFER_INTS;
 #ifdef HAVE_PQPUTNBYTES
-  PQputnbytes (sec_unbox (conn)->dbconn, SCM_CHARS (str), SCM_ROLENGTH (str));
+  PQputnbytes (XCONN (conn), SCM_CHARS (str), SCM_ROLENGTH (str));
 #else
-  PQputline (sec_unbox (conn)->dbconn, SCM_CHARS (str));
+  {
+    char *s; int s_freshp;
+
+    s = maybe_strcpy (str, &s_freshp);
+    PQputline (XCONN (conn), s);
+    if (s_freshp)
+      free (s);
+  }
 #endif
   SCM_ALLOW_INTS;
   return SCM_UNSPECIFIED;
@@ -1365,7 +1375,7 @@ PG_DEFINE (pg_endcopy, "pg-endcopy", 1, 0, 0,
 
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_DEFER_INTS;
-  ret = PQendcopy (sec_unbox (conn)->dbconn);
+  ret = PQendcopy (XCONN (conn));
   SCM_ALLOW_INTS;
 
   scm_inum = SCM_MAKINUM (ret);
@@ -1401,7 +1411,7 @@ PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
     scm_syserror (FUNC_NAME);
 
   SCM_DEFER_INTS;
-  PQtrace (sec_unbox (conn)->dbconn, fpout);
+  PQtrace (XCONN (conn), fpout);
   sec_unbox (conn)->fptrace = fpout;
   SCM_ALLOW_INTS;
 
@@ -1419,7 +1429,7 @@ PG_DEFINE (pg_untrace, "pg-untrace", 1, 0, 0,
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  PQuntrace (sec_unbox (conn)->dbconn);
+  PQuntrace (XCONN (conn));
   SCM_SYSCALL (ret = fclose (sec_unbox (conn)->fptrace));
   sec_unbox (conn)->fptrace = (FILE *) NULL;
   SCM_ALLOW_INTS;
@@ -1696,7 +1706,7 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
   if (fout == NULL)
     scm_syserror (FUNC_NAME);
 
-  PQprint (fout, ser_unbox (result)->result, sepo_unbox (options));
+  PQprint (fout, RESULT (result), sepo_unbox (options));
 
   if (redir_p)
     {
@@ -1773,8 +1783,8 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   if (tickle != SCM_UNDEFINED && SCM_NFALSEP (tickle))
-    PQconsumeInput (sec_unbox (conn)->dbconn);
-  n = PQnotifies (sec_unbox (conn)->dbconn);
+    PQconsumeInput (XCONN (conn));
+  n = PQnotifies (XCONN (conn));
   if (n)
     {
       rv = scm_makfrom0str (n->relname);
@@ -1803,7 +1813,7 @@ PG_DEFINE (pg_client_encoding, "pg-client-encoding", 1, 0, 0,
 
   enc = scm_makfrom0str (pg_encoding_to_char
                          (PQclientEncoding
-                          (sec_unbox (conn)->dbconn)));
+                          (XCONN (conn))));
   return enc;
 }
 #undef FUNC_NAME
@@ -1814,13 +1824,19 @@ PG_DEFINE (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
            "Return #t if successful, #f otherwise.")
 #define FUNC_NAME s_pg_set_client_encoding_x
 {
+  SCM rv;
+  char *enc; int enc_freshp;
+
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_STRINGP (encoding), encoding, SCM_ARG2, FUNC_NAME);
 
-  return (0 == (PQsetClientEncoding
-                (sec_unbox (conn)->dbconn, SCM_CHARS (encoding)))
-          ? SCM_BOOL_T
-          : SCM_BOOL_F);
+  enc = maybe_strcpy (encoding, &enc_freshp);
+  rv = (0 == (PQsetClientEncoding (XCONN (conn), enc))
+        ? SCM_BOOL_T
+        : SCM_BOOL_F);
+  if (enc_freshp)
+    free (enc);
+  return rv;
 }
 #undef FUNC_NAME
 
@@ -1843,7 +1859,7 @@ PG_DEFINE (pg_send_query, "pg-send-query", 2, 0, 0,
   SCM_ASSERT (SCM_STRINGP (query), query, SCM_ARG2, FUNC_NAME);
 
   q = maybe_strcpy (query, &q_freshp);
-  rv = (PQsendQuery (sec_unbox (conn)->dbconn, q)
+  rv = (PQsendQuery (XCONN (conn), q)
         ? SCM_BOOL_T
         : SCM_BOOL_F);
   if (q_freshp)
@@ -1863,7 +1879,7 @@ PG_DEFINE (pg_get_result, "pg-get-result", 1, 0, 0,
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  result = PQgetResult (sec_unbox (conn)->dbconn);
+  result = PQgetResult (XCONN (conn));
   z = (result
        ? make_ser (result, conn)
        : SCM_BOOL_F);
@@ -1879,7 +1895,7 @@ PG_DEFINE (pg_consume_input, "pg-consume-input", 1, 0, 0,
 {
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
-  return (PQconsumeInput (sec_unbox (conn)->dbconn)
+  return (PQconsumeInput (XCONN (conn))
           ? SCM_BOOL_T
           : SCM_BOOL_F);
 }
@@ -1893,7 +1909,7 @@ PG_DEFINE (pg_is_busy_p, "pg-is-busy?", 1, 0, 0,
 {
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
-  return (PQisBusy (sec_unbox (conn)->dbconn)
+  return (PQisBusy (XCONN (conn))
           ? SCM_BOOL_T
           : SCM_BOOL_F);
 }
@@ -1920,7 +1936,7 @@ PG_DEFINE (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
 {
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
-  return (PQrequestCancel (sec_unbox (conn)->dbconn)
+  return (PQrequestCancel (XCONN (conn))
           ? SCM_BOOL_T
           : SCM_BOOL_F);
 }
