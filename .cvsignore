@@ -18,3 +18,4 @@ config.cache
 .doc-index
 *.doc
 wily-guile
+pre-inst.merged-module-catalog
