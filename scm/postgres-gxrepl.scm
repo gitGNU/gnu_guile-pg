@@ -261,21 +261,55 @@ where ORDFUNC is either `<', '>' or the name of an SQL function that
 takes two args and returns their ordering; and EXPR is a prefix-style
 SQL expression.
 
-If PART is #:limit, the first element of SET specifies an integer."
+If PART is #:limit, the first element of SET specifies an integer.
+
+If PART is `?' display all the parts and their related expressions.
+If SET is omitted display the current value for PART."
+    (define (new-val! check)
+      (conn-put part (cond ((null? set) (conn-get part))
+                           ((equal? 0 (car set)) #f)
+                           ((check))
+                           (else (conn-get part)))))
     (case part
       ((#:where/combiner)
-       (conn-put part (and (not (null? set))
-                           (memq (car set) '(and or))
-                           (car set))))
+       (new-val! (lambda () (and (memq (car set) '(and or))
+                                 (car set)))))
       ((#:limit)
-       (conn-put part (and (not (null? set))
-                           (integer? (car set))
-                           (car set))))
+       (new-val! (lambda () (and (integer? (car set))
+                                 (car set)))))
       ((#:cols #:from #:where #:group-by #:having #:order-by)
-       (let ((cur (and part (conn-get part))))
-         (conn-put part (cond ((null? set) cur)
-                              ((equal? 0 (car set)) #f)
-                              (else set)))))
+       (new-val! (lambda () set)))
+      ((?)
+       (for-display
+        (let* ((all (list #:cols #:from #:where #:where/combiner
+                          #:group-by #:having #:order-by #:limit))
+               ;; do this here to avoid potential arg-eval-order issue...
+               (set (map (lambda (part)
+                           (cond ((conn-get part)
+                                  => (lambda (v)
+                                       ;; ...introduced by this side effect
+                                       (set! all (delq! part all))
+                                       (list part
+                                             (make-string
+                                              (- 16 (string-length
+                                                     (symbol->string
+                                                      (keyword->symbol
+                                                       part))))
+                                              #\space)
+                                             (map (lambda (x)
+                                                    (fs " ~S" x))
+                                                  (if (pair? v)
+                                                      v
+                                                      (list v)))
+                                             "\n")))
+                                 (else '())))
+                         all)))
+          (list set (cons (if (null? all)
+                              "(no unset parts)"
+                              "unset:")
+                          (map (lambda (part)
+                                 (list " " part))
+                               all))))))
       (else
        (for-display "No such part, try \",help fix\""))))
 
