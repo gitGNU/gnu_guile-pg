@@ -1,3 +1,7 @@
+2002-12-19  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* HACKING: Mention test/cov.
+
 2002-12-18  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* test/alive.sh: Use guile exit val for script exit val.
