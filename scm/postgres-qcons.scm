@@ -401,7 +401,7 @@
 ;; Return a string made from flattening @var{trees} (a list).
 ;; Each element of @var{trees} is either a string, symbol, number,
 ;; or keyword; or a tree as returned by one of the @code{make-*-tree}
-;; procedures.
+;; procedures.  The returned string is marked by @code{sql-pre}.
 ;;
 (define (sql<-trees . trees)
   (define (out x)
@@ -424,13 +424,15 @@
           (else
            (error "bad tree component:" x))))
   ;; do it!
-  (with-output-to-string
-    (lambda ()
-      (out trees))))
+  (sql-pre
+   (with-output-to-string
+     (lambda ()
+       (out trees)))))
 
 ;; Return a string made from flattening @var{trees} (a list).
 ;; See @code{sql<-trees} for a description of @var{trees}.
-;; The returned string ends with a semicolon.
+;; The returned string ends with a semicolon, and is marked
+;; by @code{sql-pre}.
 ;;
 (define (sql-command<-trees . trees)
   (apply sql<-trees trees (list ";")))
