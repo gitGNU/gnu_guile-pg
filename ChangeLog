@@ -1,3 +1,10 @@
+2004-06-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (pg_oid_status): Delete PG_DEFINE func.
+
+	* doc/guile-pg.twerp (Processing Results): Remove @twerpdoc
+	and associated "deprecated" blurb for `pg-oid-status'.
+
 2004-06-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in: Use macro GUILE_C2X_METHOD.
