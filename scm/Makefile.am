@@ -44,7 +44,7 @@ install-data-hook:
 	for f in $(guile_postgres_sources) ; do	\
 	  if [ -f $(retired)/$$f ] ; then	\
 	    rm -f $(retired)/$$f ; fi ; done
-	if [ -d $(retired) -a "`ls $(retired)`" = "" ] ; then \
+	if [ -d $(retired) -a "`ls $(retired) 2>/dev/null`" = "" ] ; then \
 	  rmdir $(retired) ; fi
 	if guile-tools | grep -q make-module-catalog ; then \
 	   guile-tools make-module-catalog $(GUILE_SITE) ; fi
