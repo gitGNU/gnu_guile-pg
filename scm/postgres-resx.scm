@@ -25,6 +25,7 @@
 ;;  (result-field->object-list RESULT FN OBJECTIFIER) => list
 ;;  (result->object-alist RESULT OBJECTIFIERS) => alist
 ;;  (result->object-alists RESULT OBJECTIFIERS) => list of alists
+;;  (result->object-rows RESULT OBJECTIFIERS) => list of lists
 
 ;;; Code:
 
@@ -37,7 +38,8 @@
   #:export (for-each-tuple
             result-field->object-list
             result->object-alist
-            result->object-alists))
+            result->object-alists
+            result->object-rows))
 
 ;; Apply @var{proc} to each tuple in @var{result}.  Return #t to indicate
 ;; success, or #f if either the tuple count or the field count is zero.
@@ -88,5 +90,20 @@
       (apply map (lambda slice
                    (map cons names slice))
              (map cdr oa)))))
+
+;; Return a list from extracting @var{result} using @var{objectifiers}.
+;; Each element of the list is a sublist representing one row.
+;;
+(define (result->object-rows result objectifiers)
+  (let* ((acc (list #f))
+         (tp acc))
+    (for-each-tuple (lambda ls
+                      (set-cdr! tp (list (map (lambda (proc string)
+                                                (proc string))
+                                              objectifiers
+                                              ls)))
+                      (set! tp (cdr tp)))
+                    result)
+    (cdr acc)))
 
 ;;; postgres-resx.scm ends here
