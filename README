@@ -125,7 +125,7 @@ Removing Misguided Prior Installations
 
 	There are three ways to delete these old files and directories:
 	- Manually.
-	- Using "make uninstall" in the old guile-pg build tree.
+	- Using "make uninstall" in the old Guile-PG build tree.
 	- Using "make destroy-nonmodule-guile-pg-prior-install".
 
 	The last method is recommended because everything is automatic
