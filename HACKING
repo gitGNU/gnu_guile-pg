@@ -23,7 +23,7 @@ can use with "cvs diff" like so:
 
 To be able to extract (and build) documentation automatically from the source
 you need a Guile that installs "guile-tools twerp2texi", such as those in the
-1.4.1.x series (http://www.glug.org/alt/).
+1.4.x series (http://www.glug.org/people/ttn/software/guile/).
 
 Please add test cases to the tests in the test/ directory, and run 'make check'
 to test them.  Use script "cov" to see what new tests need to be written.
