@@ -23,10 +23,11 @@
 #define IFNULL(x,y) ((x) == NULL ? (y) : (x))
 
 typedef struct _scm_extended_dbconn {
-    SCM          client;
-    int          count;         /* which dbconn is this? */
-    PGconn      *dbconn;        /* Postgres data structure */
-    FILE        *fptrace;       /* The current trace stream */
+  SCM          notice;        /* port to send notices to */
+  SCM          client;
+  int          count;         /* which dbconn is this? */
+  PGconn      *dbconn;        /* Postgres data structure */
+  FILE        *fptrace;       /* The current trace stream */
 } scm_extended_dbconn;
 
 typedef struct _scm_extended_result {
