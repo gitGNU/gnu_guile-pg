@@ -5,7 +5,7 @@
 
 (define (pg-exec-cmd conn sql)
   (let ((res (pg-exec conn sql)))
-    (and res (eq? (pg-result-status res) PGRES_COMMAND_OK))))
+    (and res (eq? (pg-result-status res) 'PGRES_COMMAND_OK))))
 
 (define (write-chars n c lop)
   (define (iter n)
