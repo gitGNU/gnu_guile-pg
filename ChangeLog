@@ -2,6 +2,8 @@
 
 	* doc/guile-pg.twerp (Column Definitions): Fix typo.
 
+	* scm/postgres-col-defs.scm: Doc munging; nfc.
+
 2004-05-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-meta.scm (defs-from-psql): When
