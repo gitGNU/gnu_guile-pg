@@ -340,23 +340,18 @@ specified by \",fix\".  Keywords without related expressions are ignored."
       (cond ((o/f #:cols)
              => (lambda (cols)
                   (define (decide part . massage)
-                    (cond ((o/f part)
-                           => (lambda (v)
-                                (list part (if (null? massage)
-                                               v
-                                               ((car massage) v)))))
-                          (else
-                           '())))
+                    (list part (and=> (o/f part)
+                                      (if (null? massage)
+                                          identity
+                                          (car massage)))))
                   (sql-command<-trees
                    (make-SELECT/FROM/COLS-tree (o/f #:from) cols)
                    (parse+make-SELECT/tail-tree
                     (append (decide #:where
                                     (lambda (v)
-                                      (if (= 1 (length v))
-                                          (car v)
-                                          (cons (or (conn-get #:where/combiner)
-                                                    'and)
-                                                v))))
+                                      (cons (or (conn-get #:where/combiner)
+                                                'and)
+                                            v)))
                             (decide #:group-by)
                             (decide #:having)
                             (decide #:order-by)
