@@ -1,5 +1,9 @@
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* test/Makefile.am (EXTRA_DIST): Add show-platform.
+
+2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c (pg_make_print_options):
 	Add newline in docstring; nfc.
 
