@@ -441,8 +441,9 @@
 ;; Pass @var{sexp} to @code{make-ORDER-BY-tree}.
 ;;
 ;; @item #:limit n
-;; Arrange for the tree to include @code{LIMIT n}.
-;; @var{n} is an integer.
+;; @itemx #:offset n
+;; Arrange for the tree to include @code{LIMIT n}
+;; or @code{OFFSET n}.  @var{n} is an integer.
 ;; @end table
 ;;
 (define (parse+make-SELECT/tail-tree plist)
@@ -458,6 +459,7 @@
                        ((#:having)   make-HAVING-tree)
                        ((#:order-by) make-ORDER-BY-tree)
                        ((#:limit)    (lambda (n) (list #:LIMIT n)))
+                       ((#:offset)   (lambda (n) (list #:OFFSET n)))
                        (else         (error "bad keyword:" kw)))))
             (set-cdr! tp (list (cond ((null? (cdr ls))
                                       (error "lonely keyword:" kw))
