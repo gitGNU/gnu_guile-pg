@@ -26,7 +26,7 @@
 #define scm_protect_object(x)  (scm_gc_protect_object (x))
 #endif
 
-#ifdef HAVE_SCM_OUTPUT_PORT_P
+#ifndef HAVE_SCM_OUTPORTP
 #define SCM_OUTPORTP(x)  (SCM_OUTPUT_PORT_P (x))
 #endif
 
