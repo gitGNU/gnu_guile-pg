@@ -25,7 +25,7 @@
 
 	* acconfig.h, aclocal.m4, configure, Makefile.in, INSTALL,
 	config.guess, config.h.in, config.sub, install-sh, ltmain.sh,
-	missing, mkinstalldirs, doc/Makefile.in, doc/texinfo.tex,
+	missing, mkinstalldirs, stamp-h.in, doc/Makefile.in, doc/texinfo.tex,
 	scm/Makefile.in, test/Makefile.in: Delete.
 
 	* autogen.sh: Take "--libtoolize" option;
