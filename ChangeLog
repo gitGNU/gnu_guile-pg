@@ -9,6 +9,8 @@
 	Update "I" to "we".
 	Remove hints available elsewhere.
 
+	* README: Update tested PostgreSQL version number.
+
 2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* guile-pg.h, guile-pg.c: Delete.
