@@ -1,0 +1,68 @@
+#!/bin/sh
+exec ${GUILE-guile} -s $0 "$@" # -*- scheme -*-
+!#
+;;; mkinc --- Generate texi @include fragment
+
+;;	Copyright (C) 2005 Thien-Thi Nguyen
+;;
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2 of the License, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program; if not, write to the Free Software
+;; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+;;; Commentary:
+
+;; Usage: mkinc QCONS
+;;
+;; Write to stdout a texinfo fragment comprising some built-in lookup
+;; tables in QCONS, typically `$(top_srcdir)/scm/postgres-qcons.scm'.
+;; Render each as a small blurb followed by a texinfo example block.
+
+;;; Code:
+
+(load-from-path (list-ref (command-line) 1))
+
+(define-module (database postgres-qcons))
+
+(define (fln s . args)
+  (apply simple-format #t (string-append s "\n") args))
+
+(define (pp-ls ls blurb)
+  (fln blurb)
+  (fln "@example")
+  (let loop ((col 0) (ls ls))
+    (if (null? ls)
+        (newline)
+        (let* ((str (symbol->string (car ls)))
+               (len (string-length str)))
+          (cond ((< 30 (+ col len))
+                 (set! col (1- (- len)))
+                 (newline)))
+          (display str)
+          (display #\space)
+          (loop (+ col 1 len) (cdr ls)))))
+  (fln "@end example"))
+
+;; do it!
+(pp-ls *infix-operations* '#{
+These are the infix operators.
+}#)
+
+(pp-ls *postfix-operations* '#{
+These are the postfix operators.
+}#)
+
+(pp-ls (map car *display-aliases*) '#{
+Display aliases exist for these symbols.
+}#)
+
+;;; mkinc ends here
