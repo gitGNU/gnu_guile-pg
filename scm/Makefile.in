@@ -89,13 +89,13 @@ subpkgdatadir = $(datadir)/guile/database
 subpkgdata_DATA = $(guile_postgres_sources) $(guile_postgres_generated)
 ETAGS_ARGS = $(subpkgdata_DATA)
 
-EXTRA_DIST = postgres.scm.in
+EXTRA_DIST = postgres.scm.in TODO
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES =  postgres.scm
 DATA =  $(subpkgdata_DATA)
 
-DIST_COMMON =  Makefile.am Makefile.in postgres.scm.in
+DIST_COMMON =  Makefile.am Makefile.in TODO postgres.scm.in
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)

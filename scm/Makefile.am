@@ -33,6 +33,5 @@ subpkgdatadir = $(datadir)/guile/database
 subpkgdata_DATA = $(guile_postgres_sources) $(guile_postgres_generated)
 ETAGS_ARGS = $(subpkgdata_DATA)
 
-## guile-pg-test.scm and testing.scm are not currently installed.
-EXTRA_DIST = postgres.scm.in
+EXTRA_DIST = postgres.scm.in TODO
 

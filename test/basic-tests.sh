@@ -5,5 +5,7 @@ createdb guile_pg_test || {
    echo test.sh: error: createdb failed. Giving up. 1>&2
    exit 1
 }
-export PGDATABASE=guile_pg_test
-GUILE_LOAD_PATH=$srcdir ../guile-pg -s guile-pg-basic-tests.scm
+PGDATABASE=guile_pg_test
+GUILE_LOAD_PATH=$srcdir
+export PGDATABASE GUILE_LOAD_PATH
+../guile-pg -s guile-pg-basic-tests.scm
