@@ -20,7 +20,11 @@
 
 ;; This module exports the procedures:
 ;;   (qcons-declare! category x . extra)
+;;   (sql-pre string) => string
+;;   (sql-pre? string) => boolean
+;;   (sql-unpre string) => string
 ;;   (sql-quote string) => string
+;;   (make-comma-separated-tree proc ls [parens? [more-ls...]]) => tree
 ;;   (make-WHERE-tree condition) => tree
 ;;   (make-GROUP-BY-tree expressions) => tree
 ;;   (make-HAVING-tree conditions) => tree
@@ -28,6 +32,8 @@
 ;;   (make-SELECT/COLS-tree cols) => tree
 ;;   (make-FROM-tree froms) => tree
 ;;   (make-SELECT/FROM/COLS-tree froms cols) => tree
+;;   (parse+make-SELECT/tail-tree plist) => tree
+;;   (parse+make-SELECT-tree composition cols/subs [tail...]) => tree
 ;;   (sql<-trees . trees) => string
 ;;   (sql-command<-trees . trees) => string
 
