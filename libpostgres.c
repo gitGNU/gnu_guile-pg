@@ -212,9 +212,6 @@ xr_unbox (SCM obj)
     cvar2 = cvar1->result;                                      \
   } while (0)
 
-#define ASSERT_CONNECTION_OR_RESULT(n,arg) \
-  SCM_ASSERT ((xc_p (arg) || xr_p (arg)), arg, SCM_ARG ## n, FUNC_NAME)
-
 static SCM
 xr_box (xr_t *xr)
 {
@@ -663,34 +660,58 @@ PG_DEFINE (pg_result_p, "pg-result?", 1, 0, 0,
   return xr_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
+PG_DEFINE (pg_result_error_message, "pg-result-error-message", 1, 0, 0,
+           (SCM result),
+           "Return the error message associated with @var{result},\n"
+           "or the empty string if there was no error.\n"
+           "If the installation does not support\n"
+           "@code{PQRESULTERRORMESSAGE}, return the empty string.")
+{
+#ifdef HAVE_PQRESULTERRORMESSAGE
+
+#define FUNC_NAME s_pg_result_error_message
+  xr_t *xr; PGresult *res;
+  char *msg;
+
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  msg = PQresultErrorMessage (res);
+  return strip_newlines (msg);
+#undef FUNC_NAME
+
+#else /* !HAVE_PQRESULTERRORMESSAGE */
+
+  return gh_str2scm ("", 0);
+
+#endif /* !HAVE_PQRESULTERRORMESSAGE */
+}
+
 PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
-           (SCM obj),
-           "Return the most-recent error message that occurred on this\n"
-           "connection, or an empty string if the previous @code{pg-exec}\n"
-           "succeeded.")
+           (SCM conn),
+           "Return the most-recent error message that occurred on the\n"
+           "connection @var{conn}, or an empty string.\n"
+           "For backward compatability, if @var{conn} is actually\n"
+           "a result object returned from calling @code{pg-exec},\n"
+           "delegate the call to @code{pg-result-error-message}\n"
+           "transparently (new code should call that procedure\n"
+           "directly).")
 {
 #define FUNC_NAME s_pg_error_message
-  SCM rv = SCM_BOOL_F;
-  char *pgerrormsg;
+  if (xr_p (conn))
+    return pg_result_error_message (conn);
 
-#ifdef HAVE_PQRESULTERRORMESSAGE
-  ASSERT_CONNECTION_OR_RESULT (1, obj);
-#else
-  ASSERT_CONNECTION (1, obj);
-#endif
-  SCM_DEFER_INTS;
-#ifdef HAVE_PQRESULTERRORMESSAGE
-  if (xc_p (obj))
-#endif
-    pgerrormsg = PQerrorMessage (xc_unbox (obj)->dbconn);
-#ifdef HAVE_PQRESULTERRORMESSAGE
-  else
-    pgerrormsg = PQresultErrorMessage (RESULT (obj));
-#endif
-  rv = strip_newlines (pgerrormsg);
-  SCM_ALLOW_INTS;
+  {
+    PGconn *dbconn;
+    SCM rv;
+    char *msg;
 
-  return rv;
+    VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+    SCM_DEFER_INTS;
+    msg = PQerrorMessage (dbconn);
+    rv = strip_newlines (msg);
+    SCM_ALLOW_INTS;
+
+    return rv;
+  }
 #undef FUNC_NAME
 }
 
@@ -1755,7 +1776,7 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
 
 /* Hmmm, `pg_encoding_to_char' is not in the headers.  However, it is
    mentioned in the Multibyte Support chapter (section 7.2.2 -- Setting
-   the Encoding), and seems to work w/ PostgreSQL 7.3.3.  */
+   the Encoding), and seems to work w/ PostgreSQL 7.3.8.  */
 extern char * pg_encoding_to_char (int encoding);
 
 PG_DEFINE (pg_client_encoding, "pg-client-encoding", 1, 0, 0,
@@ -1951,6 +1972,9 @@ PG_DEFINE (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
 
 #define SYM(s)  (pg_sym_ ## s)
 
+#ifdef HAVE_PQRESULTERRORMESSAGE
+SIMPLE_SYMBOL (PQRESULTERRORMESSAGE);
+#endif
 #ifdef HAVE_PQPASS
 SIMPLE_SYMBOL (PQPASS);
 #endif
@@ -2065,6 +2089,9 @@ init_module (void)
 
 #define PUSH(x)  goodies = gh_cons (SYM (x), goodies)
 
+#ifdef HAVE_PQRESULTERRORMESSAGE
+  PUSH (PQRESULTERRORMESSAGE);
+#endif
 #ifdef HAVE_PQPASS
   PUSH (PQPASS);
 #endif
