@@ -86,7 +86,7 @@ AC_CHECK_LIB(pq, PQconnectdb, ,[
 ])
 AC_CHECK_FUNCS(PQfmod PQbinaryTuples PQbackendPID               dnl
                PQresultErrorMessage PQpass PQputnbytes          dnl
-               PQoidValue)
+               PQoidValue PQsetnonblocking PQisnonblocking)
 
 AC_CHECK_DECL([InvalidOid],,
               [pg_ac_need_invalidoid=true],
