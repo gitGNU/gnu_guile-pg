@@ -1,3 +1,7 @@
+2002-12-22  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* doc/guile-pg.texi (Miscellaneous): Add intro blurb.
+
 2002-12-21  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* configure.in: Add check for `terminating' in libguile; define
