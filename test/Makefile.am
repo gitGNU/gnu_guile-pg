@@ -19,15 +19,23 @@
 ##   to the Free Software Foundation, Inc., 59 Temple Place, Suite
 ##   330, Boston, MA 02111-1307 USA
 
-EXTRA_DIST = guile-pg-basic-tests.scm.in guile-pg-lo-tests.scm.in \
-             alive.sh basic-tests.sh lo-tests.sh testing.scm cov
-
-TESTS = alive.sh basic-tests.sh lo-tests.sh
 TESTS_ENVIRONMENT = top_builddir=$(top_builddir_absolute)
 
-CLEANFILES = basic-tests.log lo-tests.log lo-tests-data-1 lo-tests-data-2 \
+TESTS = alive.sh                                \
+        basic-tests.sh                          \
+        lo-tests.sh                             \
+        abstraction-scm-tests.sh
+
+CLEANFILES = basic-tests.log                    \
+             lo-tests.log                       \
+             abstraction-scm-tests.log          \
+             lo-tests-data-1                    \
+             lo-tests-data-2                    \
              test-lo-seek.log
-DISTCLEANFILES = guile-pg-basic-tests.scm guile-pg-lo-tests.scm
+
+EXTRA_DIST = $(TESTS)                           \
+             testing.scm                        \
+             cov
 
 dist-hook:
 	if [ -x $(srcdir)/cov ] ; then \
