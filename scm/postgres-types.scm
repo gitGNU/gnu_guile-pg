@@ -111,8 +111,8 @@
   ;; output.
   (let ((next (lambda () (peek-char port))))
     (let loop ((c (next)) (acc '()))
-      (cond ((eof-object? c) (reverse acc))                     ;;; retval
-            ((char=? #\} c) (read-char port) (reverse acc))     ;;; retval
+      (cond ((eof-object? c) (reverse! acc))                    ;;; retval
+            ((char=? #\} c) (read-char port) (reverse! acc))    ;;; retval
             ((char=? #\{ c)
              (read-char port)
              (let ((sub (read-pgarray-1 objectifier port)))
@@ -127,7 +127,7 @@
                              (case ic
                                ((#\} #\,)
                                 (unread-char ic port)
-                                (objectifier (list->string (reverse iacc))))
+                                (objectifier (list->string (reverse! iacc))))
                                (else
                                 (iloop (read-char port) (cons ic iacc)))))))
                     (loop (next) (cons o acc))))))))
