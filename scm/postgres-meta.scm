@@ -122,7 +122,7 @@
 ;; Check @var{type}, a symbol.  If it not an array variant, return non-#f only
 ;; if its type converters are already registered with Guile-PG.  If @var{type}
 ;; is an array variant, check the base (non-array) type first, and if needed,
-;; is it to ensure the array variant type is registered.  Return non-#f if
+;; ensure that the array variant type is registered.  Return non-#f if
 ;; successful.
 ;;
 (define (check-type/elaborate type)
