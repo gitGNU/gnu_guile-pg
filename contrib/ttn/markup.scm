@@ -168,14 +168,14 @@
 
   (define (>>html name)
     (format #t "spew: (~A) -- " name)
-    (let ((get (find-proj name)))
+    (let ((:: (find-proj name)))
       (display-tree
        (let* ((-tr (lambda x (list "<TR>" x "</TR>")))
               (-td (lambda x (list "<TD>" x "</TD>")))
               (-pair (lambda (x y) (-tr (-td x) (-td y)))))
          (list (-tr name)
                (map (lambda (field)
-                      (if (get field)
+                      (if (:: field)
                           (let ((sf (symbol->string field)))
                             (-pair sf ((m #:->tree) (list sf name)
                                        htmlize-markup)))
@@ -198,13 +198,13 @@
       (else (error "unexpected mtype:" mtype))))
 
   (define (dump-project name)
-    (let* ((get (find-proj name))
-           (name (get 'name)))
+    (let* ((:: (find-proj name))
+           (name (:: 'name)))
       (pretty-print
        `((name ,name)
          ,@(apply append
                   (map (lambda (field)
-                         (if (get field)
+                         (if (:: field)
                              (cons field
                                    ((m #:->tree)
                                     (list (symbol->string field) name)
