@@ -238,6 +238,12 @@ All sessions with a PostgreSQL database require a connection to be opened with
          (string->number (pg-getvalue result 0 0)))))
 @end lisp
 
+Notices are messages sent from the back- to the front-end, sometimes prefixed
+with the word @code{NOTICE}, and always followed by a trailing newline.  By
+default, they are sent to the current output port.
+
+@twerpdoc (pg-set-notice-out!)
+
 @twerpdoc (pg-reset)
 
 @twerpdoc (pg-get-db)
