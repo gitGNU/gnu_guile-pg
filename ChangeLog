@@ -1,5 +1,13 @@
 2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostres_lo.c (XCONN): New macro. Use throughout.
+
+	* libpostgres.c (XCONN, RESULT): New macros. Use throughout.
+	(pg_putline) [!HAVE_PQPUTNBYTES]: Use `maybe_strcpy'.
+	(pg_set_client_encoding_x): Use `maybe_strcpy'.
+
+2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c (make_ser): New static func.
 	(pg_exec): Use `make_ser'.
 	(pg_send_query): New PG_DEFINE func.
