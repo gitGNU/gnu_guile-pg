@@ -1,5 +1,10 @@
 2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* doc/Makefile.am (dist-hook): New directive.
+	* test/Makefile.am: Likewise
+
+2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* configure.in (VERSION): Bump to 0.11 for release.
 
 2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
