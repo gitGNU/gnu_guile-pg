@@ -247,7 +247,7 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *caller)
     }
   pt->write_end = pt->write_buf + pt->write_buf_size;
 
-  SCM_SETCAR (port, gh_car (port) & ~SCM_BUF0);
+  SCM_SETCAR (port, SCM_CELL_WORD_0 (port) & ~SCM_BUF0);
 
   SCM_ALLOW_INTS;
 
@@ -522,7 +522,7 @@ lob_write (SCM port, const void *data, size_t size)
             lob_flush (port);
         }
       /* handle line buffering.  */
-      if ((gh_car (port) & SCM_BUFLINE)
+      if ((SCM_CELL_WORD_0 (port) & SCM_BUFLINE)
           && memchr (data, '\n', size))
         lob_flush (port);
     }
