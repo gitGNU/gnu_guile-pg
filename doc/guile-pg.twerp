@@ -230,6 +230,21 @@ All sessions with a PostgreSQL database require a connection to be opened with
 you don't need to specify them.  Default values are also useful in creating a
 connection dialog (user-interface element).
 
+Guile-PG displays connection objects in the following format:
+
+@example
+#<PG-CONN:N:DB:HOST:PORT:OPTIONS>
+@end example
+
+@var{n} is the serial number of the connection, valid only for the current
+session; @var{db} is the database name, or @code{?}; @var{host} is the host
+name, empty in the case of unix-domain connections; @var{port} is the TCP port
+where the server is listening, empty in the case of unix-domain connections;
+and @var{options} is the same as would be returned by @code{pg-get-options}.
+Everything else appears literally as shown here.  It is very strange to have
+@var{db} be @code{?}; usually that indicates a bug either in Guile-PG or in
+PostgreSQL.
+
 @twerpdoc (pg-connection?)
 @erindex due to bad connection
 @twerpdoc (pg-connectdb)
@@ -396,6 +411,18 @@ PostgreSQL @code{declare(l)} and @code{fetch(l)} man pages for more details.
 The @dfn{result} of a command or query placed by @code{pg-exec} satisfies
 predicate @code{pg-result?}.  It may encapsulate an error, row data, or other
 status.  @xref{Retrieving Data}.
+
+Guile-PG displays result objects in the following format:
+
+@example
+#<PG-RESULT:N:STATUS:NTUPLES:NFIELDS>
+@end example
+
+@var{n} is the serial number of the result, valid only for the current
+connection; @var{status} is the same as would be returned by
+@code{pg-result-status}; @var{ntuples} and @var{nfields} are integers,
+the same as would be returned by @code{pg-ntuples} and @code{pg-nfields},
+respectively.  Everything else appears literally as shown here.
 
 @twerpdoc (pg-result?)
 
@@ -673,6 +700,20 @@ and @dfn{fport_write}; these are normal (scheme world) errors.
 @erindex memory error
 Additionally, both @code{pg-lo-creat} and @code{pg-lo-open} can throw
 @dfn{Invalid mode specification} and @dfn{memory} errors.
+
+Guile-PG displays large-object port objects in the following format:
+
+@example
+#<PG-LO-PORT:MODE: ALOD:OID:CONN>
+@end example
+
+@var{mode} is one of @code{closed}, @code{input-output}, @code{input},
+@code{output} or @code{bogus}; @var{alod} is a large-object descriptor (small
+integer similar to a file descriptor); @var{oid} is the OID (integer); and
+@var{conn} is the printed representation of the connection (@pxref{Database
+Connections}).  Everything else appears literally as shown here (including the
+space in front of @var{alod}, unfortunately).  This format will likely change
+by the time Guile-PG 1.0 is released.
 
 @twerpdoc (pg-lo-creat)
 
