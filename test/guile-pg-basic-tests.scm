@@ -168,10 +168,18 @@
                   (pg-set-notice-out! *C* port)
                   (cexec "CREATE TABLE unused (ser serial, a int);")))))
         (and (string? n)
-             (string=? n (string-append
-                          "NOTICE:  CREATE TABLE will create"
-                          " implicit sequence 'unused_ser_seq'"
-                          " for SERIAL column 'unused.ser'\n")))))))
+             (member n (map (lambda (output-format)
+                              (string-append
+                               "NOTICE:  CREATE TABLE will create"
+                               " implicit sequence "
+                               (format #f output-format
+                                       "unused_ser_seq"
+                                       "unused.ser")
+                               "\n"))
+                            '("'~A' for SERIAL column '~A'"
+                              ;; postgresql 7.4.5
+                              "~S for \"serial\" column ~S")))
+             #t)))))
 
 (define test:reset
   (add-test #t
