@@ -46,18 +46,11 @@ GUILE_FLAGS
 GUILE_SITE_DIR
 GUILE_LIBSITE_DIR
 
-GUILE_C2X_METHOD([c2x])
-
-AC_CHECK_HEADERS([guile/modsup.h])
-
+AC_GUILE_PG_BCOMPAT
 AC_GUILE_PG_FCOMPAT
 
 AH_BOTTOM([
-#ifdef HAVE_GUILE_MODSUP_H
-#include <guile/modsup.h>
-#else
-#include "modsup.h"
-#endif
+#include "bcruft.h"
 #include "fcruft.h"
 ])
 
