@@ -115,6 +115,10 @@
 ;; and info about each field in the table (typname, attlen, atttypmod,
 ;; attnotnull, atthasdef, attnum).
 ;;
+;; Note that the scheme-defs output is incorrect for array types.  PostgreSQL
+;; describes those types as @code{_FOO}; there is currently no way to infer
+;; whether this means @code{FOO[]} or @code{FOO[][]}, etc.
+;;
 (define (describe-table! db-name table-name)
   (let ((M:pg-class (make-M:pg-class db-name)))
     (for-each write-line (fields-as-scheme-defs M:pg-class table-name))
