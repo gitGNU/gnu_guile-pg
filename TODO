@@ -76,6 +76,12 @@
       PGRES_FATAL_ERROR
     Code should be using the symbols (by the same name) instead by now.
 
+  - Review for dangerous construct: return scm_cons (scm_cons (...))
+
+    Garbage collection can zonk intermediate values leading to loss of
+    integrity (and thus bugs).  Better to use strictly imperative style
+    and use C auto vars for intermediate values, even if it is ugly.
+
 
 - Eventually
 
