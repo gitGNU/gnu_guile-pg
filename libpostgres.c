@@ -1398,6 +1398,12 @@ PG_DEFINE (pg_untrace, "pg-untrace", 1, 0, 0,
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
+  if (! CONN_FPTRACE (conn))
+    /* We could throw an error here but that's not cool.  An error would be
+       warranted in the future, however, if tracing state were to become
+       nestable (with fluids, say) -- a relatively unlikely scenario.  */
+    return SCM_UNSPECIFIED;
+
   SCM_DEFER_INTS;
   (void) PQuntrace (dbconn);
   SCM_SYSCALL (ret = fclose (CONN_FPTRACE (conn)));
