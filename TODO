@@ -1,5 +1,7 @@
 - 1.x
 
+  - Provide builtin converters for all PostgreSQL "native" types.
+
   - Regularize error handling.
 
   - Use gh_/GH_ abstractions.
