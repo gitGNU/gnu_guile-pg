@@ -1,5 +1,11 @@
 2005-02-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm (parse+make-SELECT/tail-tree):
+	Avoid #:q* application for #:group-by clauses.
+	(sql<-trees): Handle #:GROUP-BY.
+
+2005-02-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm (make-ORDER-BY-tree): Signal
 	error if ordering item is neither an integer nor a symbol.
 	Also, fix bug: Call `maybe-dq' only if ordering item is a symbol.
