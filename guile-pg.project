@@ -3,7 +3,8 @@
  (category "Libraries/Database")
  (description "An interface to PostgreSQL from guile.")
  (status "version 0.15 released 2003-01-15")
- (authors (email "Ian Grant" "iang@pobox.com") " and ttn")
+ (authors (email "Ian Grant" "iang@pobox.com") " and "
+	  (email "Thien-Thi Nguyen" "ttn@glug.org"))
  (maintainer (email "ttn" "ttn@glug.org"))
  (help-wanted "See TODO file in the distribution.")
  (testers-wanted "Send bug reports to bug-guile-pg@glug.org")
