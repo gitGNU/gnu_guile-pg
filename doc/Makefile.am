@@ -24,6 +24,8 @@ guile_pg_TEXINFOS = version.texi
 
 CLEANFILES = guile-pg.info guile-pg.dvi guile-pg_toc.html guile-pg.html
 
+EXTRA_DIST = cov
+
 dist-hook:
 	if [ -x $(srcdir)/cov ] ; then \
 	  ( cd $(srcdir) && ./cov ) > $(distdir)/doc.coverage ; fi
