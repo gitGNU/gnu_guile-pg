@@ -37,6 +37,7 @@
                           pg-result?
                           pg-result-status
                           pg-error-message
+                          pg-result-error-message
                           pg-connectdb
                           pg-print))
   #:use-module ((database postgres-qcons)
@@ -331,12 +332,12 @@ style SQL expression."
      (define (-print res)
        (cond ((pg-result? res)
               (let ((status (pg-result-status res)))
+                (if (eq? 'PGRES_TUPLES_OK status)
+                    (pg-print res)
+                    (let ((msg (pg-result-error-message res)))
                 (display status) (newline)
-                (let ((msg (pg-error-message res)))
                   (or (string=? "" msg)
-                      (begin (display msg) (newline))))
-                (and (eq? 'PGRES_TUPLES_OK status)
-                     (pg-print res))))
+                          (begin (display msg) (newline)))))))
              ((and (string? res) (object-property res #:display))
               (display res)
               (newline))
