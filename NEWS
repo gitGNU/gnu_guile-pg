@@ -9,12 +9,41 @@ NEWS for Guile-PG
 	${GUILE_LIBSITE}/database, while the other non-compiled modules
 	are installed in ${GUILE_SITE}/database.  Both site dirs are
 	determined by the configure script, usually something like
-	${libdir}/guile/site and ${datadir}/guile/site.
+	${libdir}/guile/site and ${datadir}/guile/site, respectively.
 
 	Additionally, if the system supports it, "make install" updates
 	each site dir's module catalog.
 
-  - Error output bugfix for pg-fname, pg-ftype, pg-fsize, pg-fmod
+	See also "Removing Misguided Prior Installations" in README.
+
+  - Bugfix: incorrect objectifiers selection bug in pgtable-manager
+
+	For `tuples-result->object-alist' and `tuples-result->alists'
+	sub-procs, the `objectifiers' passed to `result->object-alist'
+	and `result->object-alists', respectively, were not qualified to
+	match the selected columns.  Here is an example to demonstrate
+	the bug:
+
+	(define M (pgtable-manager "ttn" "t42" '((a int4) (b text))))
+	(define SHOW (M 'tuples-result->object-alist))
+	(define SEL (M 'select))
+
+	(SHOW (SEL '(b a) "limit 2"))
+	=> ((b #f #f) (a "42" "19"))	; wrong
+
+	Once corrected, we see the expected result:
+
+	(SHOW (SEL '(b a) "limit 2"))
+	=> ((b "nothing is real" "deadly") (a 42 19))
+
+	The implementation introduces a restriction: If you intend to
+	pass the result of SEL to either `tuples-result->object-alist'
+	or `tuples-result->alists', the first arg to SEL cannot be a
+	string, since there is no outspec-as-string parsing support.
+	To ameliorate this restriction somewhat, `compile-outspec' is
+	now exported (see below).
+
+  - Error output bugfix: pg-fname, pg-ftype, pg-fsize, pg-fmod
 
 	For an invalid field number argument, these procs used to
 	display "Invalid field number %s".  They now display the
@@ -44,13 +73,13 @@ NEWS for Guile-PG
 
 	A bug was fixed in the "make check" flow whereby test failures
 	were reported but in fact did not cause "make check" to fail.
-	See README for info on how to clean up the test db should this
-	situation arise.
+	See README for info on how to clean up the db "make check" uses
+	should this situation arise.
 
   - Info page title now "The (database postgres*) Modules"
 
 	This reflects the evolution of Guile-PG beyond its single
-	low-level module origins into a collection of modules.
+	module origins into a collection of related modules.
 
 
 - 0.16 | 2003-08-13
