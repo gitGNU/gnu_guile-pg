@@ -276,6 +276,10 @@
   number->string
   string->number)
 
+(define-db-col-type 'inet "0.0.0.0"
+  (lambda (val) (inet-ntoa val))
+  (lambda (string) (inet-aton string)))
+
 (define-db-col-type 'name "???"
   (lambda (val) (substring val 0 31))   ; PostgreSQL's User's Guide 3.3
   identity)
