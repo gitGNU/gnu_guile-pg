@@ -26,7 +26,7 @@ EXTRA_DIST = THANKS TODO HACKING ANONCVS \
 
 BUILT_SOURCES = libpostgres.x libpostgres_lo.x
 
-INCLUDES = -I. $(GUILE_CFLAGS) $(PQ_CFLAGS)
+INCLUDES = -I. -I$(srcdir) $(GUILE_CFLAGS) $(PQ_CFLAGS)
 
 ddir = $(GUILE_LIBSITE)/database
 d_LTLIBRARIES = postgres-sup.la
@@ -38,19 +38,26 @@ postgres_sup_la_LDFLAGS = -export-dynamic -module -version-info 6:0:4 \
 noinst_DATA = pre-inst.merged-module-catalog
 
 pre-inst.merged-module-catalog:
-	guile-tools make-module-catalog -d lo,o -X '~$$' -X CVS \
-	  `pwd` `test "$(srcdir)" = "." || { cd $(srcdir) ; pwd ; }`
-	if [ x"$(srcdir)" = x"." ] ; then		\
-	  mv .module-catalog $@ ;			\
-	else						\
-	  guile-tools merge-module-catalogs -o $@	\
-	              .module-catalog			\
-	    $(srcdir)/.module-catalog ;			\
-	fi
-	rm -f .module-catalog $(srcdir)/.module-catalog
-	( echo $@ : \\ ; \
-	  sed '\,((.*).*"/.*"),!d;s/"[^"]*$$/ \\/;s/^.*"/ /' $@ ; \
-	  echo ' # elephant' ) > .deps/pre-inst.Pmerged-module-catalog
+	if guile-tools | grep -q mkpimmc ; then				\
+	  guile-tools mkpimmc -d $(DEPDIR) $@ "$(srcdir)"		\
+	    -- -d in,lo,o -X '~$$' -X CVS ;				\
+	elif guile-tools | grep -q make-module-catalog ; then		\
+	  guile-tools make-module-catalog -d in,lo,o -X '~$$' -X CVS	\
+	    `pwd`							\
+	    `test "$(srcdir)" = "." || { cd $(srcdir) ; pwd ; }` ;	\
+	  if [ x"$(srcdir)" = x"." ] ; then				\
+	    mv .module-catalog $@ ;					\
+	  else								\
+	    guile-tools merge-module-catalogs -o $@			\
+	                .module-catalog					\
+	      $(srcdir)/.module-catalog ;				\
+	  fi ;								\
+	  rm -f .module-catalog $(srcdir)/.module-catalog ;		\
+	  ( echo $@ : \\ ;						\
+	    sed '\,((.*).*"/.*"),!d;s/"[^"]*$$/ \\/;s/^.*"/ /' $@ ;	\
+	    echo ' # elephant' )					\
+	  > .deps/pre-inst.Pmerged-module-catalog ;			\
+	else echo '()' > $@ ; fi
 
 SUFFIXES = .x .doc
 
