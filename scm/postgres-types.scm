@@ -91,14 +91,14 @@
 ;; Return #f if no such t-c object by that name exists.
 ;;
 (define (dbcoltype-lookup type-name)
-  (assq type-name *db-col-types*))
+  (assq-ref *db-col-types* type-name))
 
 ;; Extract stringifier from the type-converter object @var{tc}.
-(define (dbcoltype:stringifier tc) (vector-ref (cdr tc) 0))
+(define (dbcoltype:stringifier tc) (vector-ref tc 0))
 ;; Extract default string from the type-converter object @var{tc}.
-(define (dbcoltype:default tc) (vector-ref (cdr tc) 1))
+(define (dbcoltype:default tc) (vector-ref tc 1))
 ;; Extract objectifier from the type-converter object @var{tc}.
-(define (dbcoltype:objectifier tc) (vector-ref (cdr tc) 2))
+(define (dbcoltype:objectifier tc) (vector-ref tc 2))
 
 (define (read-pgarray-1 objectifier port)
   ;; ugh, i hate parsing...  the right thing to do would be find out if
