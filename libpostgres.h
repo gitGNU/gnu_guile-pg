@@ -1,5 +1,4 @@
-/* $Id$
-    Guile-pg - A Guile interface to PostgreSQL
+/*  Guile-pg - A Guile interface to PostgreSQL
     Copyright (C) 1999-2000 The Free Software Foundation
 
     This program is free software; you can redistribute it and/or modify
@@ -44,3 +43,10 @@ extern int ser_p(SCM obj);
 extern scm_extended_result *ser_unbox(SCM obj);
 extern SCM ser_box(scm_extended_result *ser);
 extern void init_libpostgres_lo(void);
+
+/* SCM_DEFINE alone doesn't declare static, so we prefix that decl.  */
+#define PG_DEFINE(FNAME, PRIMNAME, REQ, OPT, VAR, ARGLIST, DOCSTRING) \
+  SCM_SNARF_HERE(static SCM FNAME ARGLIST;) \
+  SCM_DEFINE (FNAME, PRIMNAME, REQ, OPT, VAR, ARGLIST, DOCSTRING)
+
+/* libpostgres.h ends here */
