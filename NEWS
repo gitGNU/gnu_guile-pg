@@ -1,7 +1,7 @@
 NEWS for Guile-PG
 
 
-- 0.22 | NOT YET RELEASED
+- 0.22 | 2004-08-07
 
   - Experimental configure script option: --enable-pq-rpath
 
