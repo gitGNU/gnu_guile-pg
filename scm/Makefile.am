@@ -24,7 +24,10 @@
 AUTOMAKE_OPTIONS = foreign
 
 # These should be installed and distributed.
-guile_postgres_sources = postgres-types.scm postgres-table.scm
+guile_postgres_sources = 			\
+  postgres-types.scm 				\
+  postgres-table.scm				\
+  postgres-meta.scm
 
 # These should be installed, but not distributed.
 guile_postgres_generated = postgres.scm
@@ -33,7 +36,7 @@ subpkgdatadir = $(datadir)/guile/database
 subpkgdata_DATA = $(guile_postgres_sources) $(guile_postgres_generated)
 ETAGS_ARGS = $(subpkgdata_DATA)
 
-EXTRA_DIST = postgres.scm.in $(guile_postgres_sources) TODO
+EXTRA_DIST = postgres.scm.in $(guile_postgres_sources)
 
 
 install-data-hook:
