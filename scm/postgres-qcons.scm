@@ -335,7 +335,7 @@
 (define (parse+make-SELECT/tail-tree plist . opts)
   (define (q-ok? kw)
     (case kw
-      ((#:order-by) #f)
+      ((#:order-by #:group-by) #f)
       (else #t)))
   (let ((quote? (and (not (null? opts)) (car opts)))
         (acc (list '())))
@@ -365,6 +365,7 @@
            (display
             (case x
               ((#:ORDER-BY) "\nORDER BY")
+              ((#:GROUP-BY) "\nGROUP BY")
               ((#:FROM #:WHERE) (fs "\n~A" (keyword->symbol x)))
               (else (keyword->symbol x)))))
           ((or (string? x) (symbol? x) (number? x))
