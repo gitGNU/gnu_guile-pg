@@ -38,7 +38,7 @@ doc-index-prep:
 	( cd .. ; $(MAKE) .doc-index )
 
 .twerp.texi:
-	$(GUILE_TOOLS) twerp2texi	\
+	guile-tools twerp2texi		\
 	  -I $(top_builddir)/.doc-index	\
 	  -d .deps/$*.Ptexi		\
 	  -o $(srcdir)/$*.texi		\
