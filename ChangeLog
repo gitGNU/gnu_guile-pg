@@ -1,5 +1,21 @@
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm
+	(make-SELECT/COLS-tree, make-SELECT/FROM/COLS-tree):
+	Rename from `make-SELECT/OUT-tree' and `make-SELECT/FROM/OUT-tree',
+	respectively.  Update export list and callers.
+
+	* doc/guile-pg.twerp (Query Construction): Rename @twerpdoc
+	for `make-SELECT/OUT-tree' and `make-SELECT/FROM/OUT-tree'
+	to `make-SELECT/COLS-tree' and `make-SELECT/FROM/COLS-tree',
+	respectively.
+
+	* scm/postgres-table.scm: Throughout, use `make-SELECT/FROM/COLS-tree'.
+
+	* scm/postgres-gxrepl.scm: Likewise.
+
+2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-gxrepl.scm: From module (database postgres-qcons),
 	no long select `sql-quote' or `make-SELECT/OUT-tree'.
 	(obvious): For this comma-command, use `make-SELECT/FROM/OUT-tree'.
