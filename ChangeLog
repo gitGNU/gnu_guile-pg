@@ -12,6 +12,7 @@
 	(pg_print): Remove "undefined" branch of HAVE_TMPFILE,
 	since we will always have `tmpfile' available.
 	Add check for NULL `fout'; call `scm_syserror' in that case.
+	Remove dire warnings from docstring.
 
 2003-09-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
