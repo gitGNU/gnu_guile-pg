@@ -6,6 +6,7 @@ Thanks go to these people for their help in improving guile-pg.
 
 - Joost Helberg
   - pointed out `terminating' is actually part of libguile
+  - supplied patch for `scm_misc_error' format string bug
 
 - Martin Rodgers
   - pointed out missing `InvalidOid' decl for PostgreSQL 7.0.3
