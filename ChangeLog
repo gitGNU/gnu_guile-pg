@@ -1,5 +1,23 @@
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c (goodies): New file-static var.
+	(pg_guile_pg_loaded): Return `goodies'.
+	(pg_get_pass) [HAVE_PQPASS]: Convert from conditional definition
+	to unconditional definition w/ conditional return value.
+	(pg_backend_pid) [HAVE_PQBACKENDPID]: Likewise.
+	(pg_oid_value) [HAVE_PQOIDVALUE]: Likewise.
+	(pg_binary_tuples) [HAVE_PQBINARYTUPLES]: Likewise.
+	(pg_fmod) [HAVE_PQFMOD]: Likewise.
+	(SIMPLE_SYMBOL, SYM): New macros.
+	(pg_sym_PQPASS) [HAVE_PQPASS]: New SIMPLE_SYMBOL.
+	(pg_sym_PQBACKENDPID) [HAVE_PQBACKENDPID]: Likewise.
+	(pg_sym_PQOIDVALUE) [HAVE_PQOIDVALUE]: Likewise.
+	(pg_sym_PQBINARYTUPLES) [HAVE_PQBINARYTUPLES]: Likewise.
+	(pg_sym_PQFMOD) [HAVE_PQFMOD]: Likewise.
+	(init_module): Initialize `goodies'.
+
+2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* configure.in (CREATEDB): New AC_CHECK_PROGS var.
 	Warn if createdb not found.
 	(AC_CONFIG_FILES): Add test/drop.sh and test/create.sh.
