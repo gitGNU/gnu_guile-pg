@@ -56,8 +56,7 @@
 
 (define *conditional-operations*        ; entry: NAME
   '(= < <= > >= <> !=
-      all any in like
-      ALL ANY IN LIKE))
+      all any in like))
 
 (define *infix-operations*              ; entry: NAME
   (map identity *conditional-operations*))
