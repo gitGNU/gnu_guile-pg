@@ -1,5 +1,14 @@
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-gxrepl.scm: New file.
+	* scm/Makefile.am (guile_postgres_sources): Add postgres-gxrepl.scm.
+	* Makefile.am (DOTDOCFILES): Add scm/postgres-gxrepl.doc.
+
+	* doc/guile-pg.twerp (Top): Add to menu "Easy Interaction".
+	(Easy Interaction): New node/chapter.
+
+2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-table.scm: From module (database postgres-qcons),
 	select also `make-SELECT/FROM/OUT-tree' and `sql-command<-trees'.
 	(compile-outspec): No longer use `symbol->qstring'.
