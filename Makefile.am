@@ -27,13 +27,12 @@ BUILT_SOURCES = libpostgres.x libpostgres_lo.x
 
 INCLUDES = -I. $(GUILE_CFLAGS) $(PQ_CFLAGS)
 
-pkglibversdir = $(pkglibdir)/$(VERSION)
-
-pkglibvers_LTLIBRARIES = libpostgres.la
-libpostgres_la_SOURCES = libpostgres.c libpostgres_lo.c libpostgres.h \
-                         tmpfile.c
-libpostgres_la_LDFLAGS = -export-dynamic -version-info 4:0:2 \
-                         @LDFLAGS@ @PQ_LDFLAGS@
+ddir = $(GUILE_LIBSITE)/database
+d_LTLIBRARIES = postgres-sup.la
+postgres_sup_la_SOURCES = libpostgres.c libpostgres_lo.c libpostgres.h \
+				tmpfile.c
+postgres_sup_la_LDFLAGS = -export-dynamic -module -version-info 4:0:2 \
+				$(LDFLAGS) $(PQ_LDFLAGS)
 
 noinst_DATA = pre-inst.merged-module-catalog
 
@@ -62,6 +61,10 @@ snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS)
 	guile-tools c2doc -o $@ $< -- $(snarfcppopts)
 .scm.doc:
 	guile-tools doc-snarf -D -o $@ $<
+
+install-data-hook:
+	if guile-tools | grep -q make-module-catalog ; then \
+	   guile-tools make-module-catalog $(GUILE_LIBSITE) ; fi
 
 DISTCLEANFILES = *.x *.doc
 
