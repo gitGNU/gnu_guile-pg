@@ -14,6 +14,9 @@
 
 	* scm/postgres.scm.in (pg-make-print-options, pg-print): New exports.
 
+	* doc/guile-pg.twerp (Writing/Reading Data): Add info on
+	pg-print and pg-make-print-options.
+
 2003-01-15  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* configure.in (VERSION): Bump to 0.15 for release.
