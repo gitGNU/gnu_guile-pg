@@ -1,3 +1,6 @@
 Makefile
 Makefile.in
 *.info*
+.deps
+guile-pg.texi
+*.mk-am-frag
