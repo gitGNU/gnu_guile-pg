@@ -304,7 +304,7 @@ strip_newlines (char *str)
   while (str <= lc && *lc == '\n')
     lc--;
 
-  return scm_makfromstr (str, lc + 1 - str, 0);
+  return gh_str2scm (str, lc + 1 - str);
 }
 
 
@@ -1103,7 +1103,7 @@ PG_DEFINE (pg_getvalue, "pg-getvalue", 3, 0, 0,
 
 #ifdef HAVE_PQBINARYTUPLES
   if (isbinary)
-    srv = scm_makfromstr (val, veclen, 0);
+    srv = gh_str2scm (val, veclen);
   else
 #endif
     srv = gh_str02scm (val);
