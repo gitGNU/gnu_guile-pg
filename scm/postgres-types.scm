@@ -22,7 +22,6 @@
 ;;  (oid-type-name-cache CONN . FRESH?) => ((OID . TYPE-NAME) ...)
 ;;  (dbcoltypes) => list of names
 ;;  (dbcoltype-lookup NAME) => tobj
-;;  (dbcoltype:name TOBJ) => symbol
 ;;  (dbcoltype:stringifier TOBJ) => proc
 ;;  (dbcoltype:objectifier TOBJ) => proc
 ;;  (dbcoltype:default) => string
@@ -52,7 +51,6 @@
   #:export (oid-type-name-cache
             dbcoltypes
             dbcoltype-lookup
-            dbcoltype:name
             dbcoltype:stringifier
             dbcoltype:default
             dbcoltype:objectifier
@@ -95,8 +93,6 @@
 (define (dbcoltype-lookup type-name)
   (assq type-name *db-col-types*))
 
-;; Extract type name from the type-converter object @var{tc}.
-(define (dbcoltype:name tc) (car tc))
 ;; Extract stringifier from the type-converter object @var{tc}.
 (define (dbcoltype:stringifier tc) (vector-ref (cdr tc) 0))
 ;; Extract default string from the type-converter object @var{tc}.
