@@ -372,7 +372,7 @@ PG_DEFINE (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
     {
       pdl = SCM_EOL;
 
-      tem = SCM_MAKINUM (opt->dispsize);
+      tem = gh_int2scm (opt->dispsize);
       tem = gh_cons (KWD (dispsize), tem);
       PUSH ();
 
@@ -822,12 +822,12 @@ PG_DEFINE (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
   pid = PQbackendPID (XCONN (conn));
   SCM_ALLOW_INTS;
 
-  return SCM_MAKINUM (pid);
+  return gh_int2scm (pid);
 #undef FUNC_NAME
 
 #else /* !HAVE_PQBACKENDPID */
 
-  return SCM_MAKINUM (-1);
+  return gh_int2scm (-1);
 
 #endif /* !HAVE_PQBACKENDPID */
 }
@@ -853,7 +853,7 @@ PG_DEFINE (pg_result_status, "pg-result-status", 1, 0, 0,
 
   /* FIXME: Although we should never get here, be slackful for now.  */
   /* abort(); */
-  return SCM_MAKINUM (result_status);
+  return gh_int2scm (result_status);
 #undef FUNC_NAME
 }
 
@@ -870,7 +870,7 @@ PG_DEFINE (pg_ntuples, "pg-ntuples", 1, 0, 0,
   ntuples = PQntuples (RESULT (result));
   SCM_ALLOW_INTS;
 
-  return SCM_MAKINUM (ntuples);
+  return gh_int2scm (ntuples);
 #undef FUNC_NAME
 }
 
@@ -884,7 +884,7 @@ PG_DEFINE (pg_nfields, "pg-nfields", 1, 0, 0,
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  scm_inum = SCM_MAKINUM (PQnfields (RESULT (result)));
+  scm_inum = gh_int2scm (PQnfields (RESULT (result)));
   SCM_ALLOW_INTS;
 
   return scm_inum;
@@ -932,7 +932,7 @@ PG_DEFINE (pg_oid_value, "pg-oid-value", 1, 0, 0,
   if (oid_value == InvalidOid)
     return SCM_BOOL_F;
 
-  return SCM_MAKINUM (oid_value);
+  return gh_int2scm (oid_value);
 #undef FUNC_NAME
 
 #else /* !HAVE_PQOIDVALUE */
@@ -991,7 +991,7 @@ PG_DEFINE (pg_fnumber, "pg-fnumber", 2, 0, 0,
   fnum = PQfnumber (RESULT (result), ROZT (fname));
   SCM_ALLOW_INTS;
 
-  return SCM_MAKINUM (fnum);
+  return gh_int2scm (fnum);
 #undef FUNC_NAME
 }
 
@@ -1025,7 +1025,7 @@ PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
     }
   SCM_ALLOW_INTS;
 
-  scm_inum = SCM_MAKINUM (ftype);
+  scm_inum = gh_int2scm (ftype);
   return scm_inum;
 #undef FUNC_NAME
 }
@@ -1056,7 +1056,7 @@ PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
     }
   SCM_ALLOW_INTS;
 
-  scm_inum = SCM_MAKINUM (fsize);
+  scm_inum = gh_int2scm (fsize);
   return scm_inum;
 #undef FUNC_NAME
 }
@@ -1143,7 +1143,7 @@ PG_DEFINE (pg_getlength, "pg-getlength", 3, 0, 0,
   len = PQgetlength (RESULT (result), tuple, field);
   SCM_ALLOW_INTS;
 
-  ret = SCM_MAKINUM (len);
+  ret = gh_int2scm (len);
   return ret;
 #undef FUNC_NAME
 }
@@ -1246,13 +1246,13 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
     }
   SCM_ALLOW_INTS;
 
-  scm_inum = SCM_MAKINUM (fmod);
+  scm_inum = gh_int2scm (fmod);
   return scm_inum;
 #undef FUNC_NAME
 
 #else /* !HAVE_PQFMOD */
 
-  return SCM_MAKINUM (-1);
+  return gh_int2scm (-1);
 
 #endif /* !HAVE_PQFMOD */
 }
@@ -1305,9 +1305,9 @@ PG_DEFINE (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
        the first place.  */
     (void) PQconsumeInput (XCONN (conn));
 
-  return SCM_MAKINUM (PQgetlineAsync (XCONN (conn),
-                                      SCM_ROCHARS (buf),
-                                      SCM_ROLENGTH (buf)));
+  return gh_int2scm (PQgetlineAsync (XCONN (conn),
+                                     SCM_ROCHARS (buf),
+                                     SCM_ROLENGTH (buf)));
 #undef FUNC_NAME
 }
 
@@ -1765,7 +1765,7 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
   if (n)
     {
       rv = gh_str02scm (n->relname);
-      rv = gh_cons (rv, SCM_MAKINUM (n->be_pid));
+      rv = gh_cons (rv, gh_int2scm (n->be_pid));
       free (n);
     }
   return rv;
