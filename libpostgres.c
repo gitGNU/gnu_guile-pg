@@ -98,30 +98,27 @@ static int pgrs_count = sizeof (pgrs) / sizeof (pgrs_t);
  * boxing, unboxing, gc functions
  */
 int
-guile_pg_sec_p (SCM obj)
+xc_p (SCM obj)
 {
   return (SCM_NIMP (obj) && SCM_CAR (obj) == pg_conn_tag.type_tag);
 }
 
-#define sec_p(x)  (guile_pg_sec_p (x))
-
-scm_extended_dbconn *
-guile_pg_sec_unbox (SCM obj)
+xc_t *
+xc_unbox (SCM obj)
 {
-  return ((scm_extended_dbconn *) SCM_CDR (obj));
+  return ((xc_t *) SCM_CDR (obj));
 }
 
-#define sec_unbox(x)  (guile_pg_sec_unbox (x))
-#define XCONN(x)      (guile_pg_sec_unbox (x)->dbconn)
+#define XCONN(x)  (xc_unbox (x)->dbconn)
 
 static SCM
-sec_box (scm_extended_dbconn *sec)
+xc_box (xc_t *xc)
 {
   SCM z;
 
   SCM_ENTER_A_SECTION;
   SCM_NEWCELL (z);
-  SCM_SETCDR (z, (SCM)sec);
+  SCM_SETCDR (z, (SCM)xc);
   SCM_SETCAR (z, pg_conn_tag.type_tag);
   SCM_EXIT_A_SECTION;
 
@@ -129,16 +126,16 @@ sec_box (scm_extended_dbconn *sec)
 }
 
 static int
-sec_display (SCM exp, SCM port, scm_print_state *pstate)
+xc_display (SCM exp, SCM port, scm_print_state *pstate)
 {
-  scm_extended_dbconn *sec = sec_unbox (exp);
-  char *dbstr = PQdb (sec->dbconn);
-  char *hoststr = PQhost (sec->dbconn);
-  char *portstr = PQport (sec->dbconn);
-  char *optionsstr = PQoptions (sec->dbconn);
+  xc_t *xc = xc_unbox (exp);
+  char *dbstr = PQdb (xc->dbconn);
+  char *hoststr = PQhost (xc->dbconn);
+  char *portstr = PQport (xc->dbconn);
+  char *optionsstr = PQoptions (xc->dbconn);
 
   scm_puts ("#<PG-CONN:", port);
-  scm_intprint (sec->count, 10, port); scm_putc (':', port);
+  scm_intprint (xc->count, 10, port); scm_putc (':', port);
   scm_puts (IFNULL (dbstr,"db?"), port); scm_putc (':', port);
   scm_puts (IFNULL (hoststr,"localhost"), port); scm_putc (':', port);
   scm_puts (IFNULL (portstr,"port?"), port); scm_putc (':', port);
@@ -149,29 +146,29 @@ sec_display (SCM exp, SCM port, scm_print_state *pstate)
 }
 
 static SCM
-sec_mark (SCM obj)
+xc_mark (SCM obj)
 {
-  scm_extended_dbconn *sec = sec_unbox (obj);
+  xc_t *xc = xc_unbox (obj);
 
-  GC_PRINT (fprintf (stderr, "marking PG-CONN %d\n", sec->count));
-  scm_gc_mark (sec->notice);
-  return sec->client;
+  GC_PRINT (fprintf (stderr, "marking PG-CONN %d\n", xc->count));
+  scm_gc_mark (xc->notice);
+  return xc->client;
 }
 
 static scm_sizet
-sec_free (SCM obj)
+xc_free (SCM obj)
 {
-  scm_extended_dbconn *sec = sec_unbox (obj);
-  scm_sizet size = sizeof (scm_extended_dbconn);
+  xc_t *xc = xc_unbox (obj);
+  scm_sizet size = sizeof (xc_t);
 
-  GC_PRINT (fprintf (stderr, "sweeping PG-CONN %d\n", sec->count));
+  GC_PRINT (fprintf (stderr, "sweeping PG-CONN %d\n", xc->count));
 
   /* close connection to postgres */
-  if (sec->dbconn)
-    PQfinish (sec->dbconn);
+  if (xc->dbconn)
+    PQfinish (xc->dbconn);
 
   /* free this object itself */
-  free (sec);
+  free (xc);
 
   /* set extension data to NULL */
   SCM_SETCDR (obj, (SCM)NULL);
@@ -179,28 +176,35 @@ sec_free (SCM obj)
   return size;
 }
 
+typedef struct  /* extended result */
+{
+  SCM          conn;          /* Connection */
+  int          count;         /* Which result is this? */
+  PGresult    *result;        /* Postgres result structure */
+} xr_t;
+
 static int
-ser_p (SCM obj)
+xr_p (SCM obj)
 {
   return (SCM_NIMP (obj) && SCM_CAR (obj) == pg_result_tag.type_tag);
 }
 
-static scm_extended_result *
-ser_unbox (SCM obj)
+static xr_t *
+xr_unbox (SCM obj)
 {
-  return ((scm_extended_result*)SCM_CDR (obj));
+  return ((xr_t*)SCM_CDR (obj));
 }
 
-#define RESULT(x)  (ser_unbox (x)->result)
+#define RESULT(x)  (xr_unbox (x)->result)
 
 static SCM
-ser_box (scm_extended_result *ser)
+xr_box (xr_t *xr)
 {
   SCM z;
 
   SCM_ENTER_A_SECTION;
   SCM_NEWCELL (z);
-  SCM_SETCDR (z, (SCM)ser);
+  SCM_SETCDR (z, (SCM)xr);
   SCM_SETCAR (z, pg_result_tag.type_tag);
   SCM_EXIT_A_SECTION;
 
@@ -208,20 +212,20 @@ ser_box (scm_extended_result *ser)
 }
 
 static int
-ser_display (SCM exp, SCM port, scm_print_state *pstate)
+xr_display (SCM exp, SCM port, scm_print_state *pstate)
 {
-  scm_extended_result *ser = ser_unbox (exp);
+  xr_t *xr = xr_unbox (exp);
   ExecStatusType status;
   int ntuples = 0;
   int nfields = 0;
   int pgrs_index;
 
   SCM_DEFER_INTS;
-  status = PQresultStatus (ser->result);
+  status = PQresultStatus (xr->result);
   if (status == PGRES_TUPLES_OK)
     {
-      ntuples = PQntuples (ser->result);
-      nfields = PQnfields (ser->result);
+      ntuples = PQntuples (xr->result);
+      nfields = PQnfields (xr->result);
     }
   SCM_ALLOW_INTS;
 
@@ -230,7 +234,7 @@ ser_display (SCM exp, SCM port, scm_print_state *pstate)
       break;
 
   scm_puts ("#<PG-RESULT:", port);
-  scm_intprint (ser->count, 10, port); scm_putc (':', port);
+  scm_intprint (xr->count, 10, port); scm_putc (':', port);
   scm_puts (pgrs[pgrs_index].s, port); scm_putc (':', port);
   scm_intprint (ntuples, 10, port); scm_putc (':', port);
   scm_intprint (nfields, 10, port);
@@ -240,28 +244,28 @@ ser_display (SCM exp, SCM port, scm_print_state *pstate)
 }
 
 static SCM
-ser_mark (SCM obj)
+xr_mark (SCM obj)
 {
-  scm_extended_result *ser = ser_unbox (obj);
+  xr_t *xr = xr_unbox (obj);
 
-  GC_PRINT (fprintf (stderr, "marking PG-RESULT %d\n", ser->count));
-  return ser->conn;
+  GC_PRINT (fprintf (stderr, "marking PG-RESULT %d\n", xr->count));
+  return xr->conn;
 }
 
 static scm_sizet
-ser_free (SCM obj)
+xr_free (SCM obj)
 {
-  scm_extended_result *ser = ser_unbox (obj);
-  scm_sizet size = sizeof (scm_extended_result);
+  xr_t *xr = xr_unbox (obj);
+  scm_sizet size = sizeof (xr_t);
 
-  GC_PRINT (fprintf (stderr, "sweeping PG-RESULT %d\n", ser->count));
+  GC_PRINT (fprintf (stderr, "sweeping PG-RESULT %d\n", xr->count));
 
   /* clear the result */
-  if (ser->result)
-    PQclear (ser->result);
+  if (xr->result)
+    PQclear (xr->result);
 
   /* free this object itself */
-  free (ser);
+  free (xr);
 
   /* set extension data to NULL */
   SCM_SETCDR (obj, (SCM)NULL);
@@ -270,21 +274,21 @@ ser_free (SCM obj)
 }
 
 static SCM
-make_ser (PGresult *result, SCM conn)
+make_xr (PGresult *result, SCM conn)
 {
-  scm_extended_result *ser;
+  xr_t *xr;
   SCM z;
 
-  /* This looks weird, but they're SCM_DEFERred in ser_box.  */
+  /* This looks weird, but they're SCM_DEFERred in xr_box.  */
   SCM_ALLOW_INTS;
-  z = ser_box ((scm_extended_result *)
-               scm_must_malloc (sizeof (scm_extended_result), "PG-RESULT"));
-  ser = ser_unbox (z);
+  z = xr_box ((xr_t *)
+              scm_must_malloc (sizeof (xr_t), "PG-RESULT"));
+  xr = xr_unbox (z);
   SCM_DEFER_INTS;
 
-  ser->result = result;
-  ser->count = ++pg_result_tag.count;
-  ser->conn = conn;
+  xr->result = result;
+  xr->count = ++pg_result_tag.count;
+  xr->conn = conn;
   return z;
 }
 
@@ -319,7 +323,7 @@ PG_DEFINE (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
            "@end lisp")
 #define FUNC_NAME s_pg_guile_pg_loaded
 {
-  return SCM_BOOL_T;                    /* todo: other checks */
+  return SCM_BOOL_T;
 }
 #undef FUNC_NAME
 
@@ -355,7 +359,7 @@ PG_DEFINE (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
   PQconninfoOption *opt, *head;
   SCM tem, pdl, rv = SCM_EOL;
 
-#define MAYBEFALSE(field,exp) \
+#define MAYBEFALSE(field,exp)                                   \
   ((!opt->field || '\0' == opt->field[0]) ? SCM_BOOL_F : (exp))
 #define PUSH() pdl = scm_cons (tem, pdl)
   for (head = opt = PQconndefaults (); opt && opt->keyword; opt++)
@@ -402,9 +406,9 @@ PG_DEFINE (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
 #undef FUNC_NAME
 
 static void
-notice_processor (void *sec, const char *message)
+notice_processor (void *xc, const char *message)
 {
-  SCM out = ((scm_extended_dbconn *) sec)->notice;
+  SCM out = ((xc_t *) xc)->notice;
   SCM msg;
 
   if (SCM_FALSEP (out))
@@ -496,7 +500,7 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
            "need to be escaped a second time.")
 #define FUNC_NAME s_pg_connectdb
 {
-  scm_extended_dbconn *sec;
+  xc_t *xc;
   SCM z;
   PGconn *dbconn;
   ConnStatusType connstat;
@@ -521,17 +525,17 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
     }
   free (pgerrormsg);
 
-  z = sec_box ((scm_extended_dbconn*)
-               scm_must_malloc (sizeof (scm_extended_dbconn), "PG-CONN"));
-  sec = sec_unbox (z);
+  z = xc_box ((xc_t*)
+               scm_must_malloc (sizeof (xc_t), "PG-CONN"));
+  xc = xc_unbox (z);
 
-  sec->dbconn = dbconn;
-  sec->count = ++pg_conn_tag.count;
-  sec->client = SCM_BOOL_F;
-  sec->notice = SCM_BOOL_T;
-  sec->fptrace = (FILE *) NULL;
+  xc->dbconn = dbconn;
+  xc->count = ++pg_conn_tag.count;
+  xc->client = SCM_BOOL_F;
+  xc->notice = SCM_BOOL_T;
+  xc->fptrace = (FILE *) NULL;
 
-  PQsetNoticeProcessor (dbconn, &notice_processor, sec);
+  PQsetNoticeProcessor (dbconn, &notice_processor, xc);
   return z;
 }
 #undef FUNC_NAME
@@ -542,7 +546,7 @@ PG_DEFINE (pg_connection_p, "pg-connection?", 1, 0, 0,
            "returned by @code{pg-connectdb}.")
 #define FUNC_NAME s_pg_connection_p
 {
-  return sec_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
+  return xc_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 #undef FUNC_NAME
 
@@ -555,7 +559,7 @@ PG_DEFINE (pg_reset, "pg-reset", 1, 0, 0,
            "@code{pg-connectdb}.")
 #define FUNC_NAME s_pg_reset
 {
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_DEFER_INTS;
   PQreset (XCONN (conn));
   SCM_ALLOW_INTS;
@@ -569,8 +573,8 @@ PG_DEFINE (pg_get_client_data, "pg-get-client-data", 1, 0, 0,
            "Return the the client data associated with @var{conn}.")
 #define FUNC_NAME s_pg_get_client_data
 {
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
-  return (sec_unbox (conn)->client);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  return (xc_unbox (conn)->client);
 }
 #undef FUNC_NAME
 
@@ -579,9 +583,9 @@ PG_DEFINE (pg_set_client_data, "pg-set-client-data!", 2, 0, 0,
            "Associate @var{data} with @var{conn}.")
 #define FUNC_NAME s_pg_set_client_data
 {
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_DEFER_INTS;
-  sec_unbox (conn)->client = data;
+  xc_unbox (conn)->client = data;
   SCM_ALLOW_INTS;
   return (data);
 }
@@ -603,7 +607,7 @@ PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
   PGconn *dbconn;
   PGresult *result;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (statement) && SCM_ROSTRINGP (statement),
               statement, SCM_ARG2, FUNC_NAME);
   ROZT_X (statement);
@@ -613,7 +617,7 @@ PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
   result = PQexec (dbconn, ROZT (statement));
 
   z = (result
-       ? make_ser (result, conn)
+       ? make_xr (result, conn)
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
   return z;
@@ -626,7 +630,7 @@ PG_DEFINE (pg_result_p, "pg-result?", 1, 0, 0,
            "returned by @code{pg-exec}.")
 #define FUNC_NAME s_pg_result_p
 {
-  return ser_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
+  return xr_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 #undef FUNC_NAME
 
@@ -641,13 +645,13 @@ PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
   char *pgerrormsg;
 
 #ifdef HAVE_PQRESULTERRORMESSAGE
-  SCM_ASSERT ((sec_p (obj) || ser_p (obj)), obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT ((xc_p (obj) || xr_p (obj)), obj, SCM_ARG1, FUNC_NAME);
 #else
-  SCM_ASSERT ((sec_p (obj)), obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT ((xc_p (obj)), obj, SCM_ARG1, FUNC_NAME);
 #endif
   SCM_DEFER_INTS;
 #ifdef HAVE_PQRESULTERRORMESSAGE
-  if (sec_p (obj))
+  if (xc_p (obj))
 #endif
     pgerrormsg = strdup (PQerrorMessage (XCONN (obj)));
 #ifdef HAVE_PQRESULTERRORMESSAGE
@@ -669,7 +673,7 @@ PG_DEFINE (pg_get_db, "pg-get-db", 1, 0, 0,
 #define FUNC_NAME s_pg_get_db
 {
   const char *rv;
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   rv = PQdb (XCONN (conn));
@@ -686,7 +690,7 @@ PG_DEFINE (pg_get_user, "pg-get-user", 1, 0, 0,
 #define FUNC_NAME s_pg_get_user
 {
   const char *rv;
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   rv = PQuser (XCONN (conn));
@@ -704,7 +708,7 @@ PG_DEFINE (pg_get_pass, "pg-get-pass", 1, 0, 0,
 #define FUNC_NAME s_pg_get_pass
 {
   const char *rv;
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   rv = PQpass (XCONN (conn));
@@ -722,7 +726,7 @@ PG_DEFINE (pg_get_host, "pg-get-host", 1, 0, 0,
 #define FUNC_NAME s_pg_get_host
 {
   const char *rv;
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   rv = PQhost (XCONN (conn));
@@ -739,7 +743,7 @@ PG_DEFINE (pg_get_port,"pg-get-port", 1, 0, 0,
 #define FUNC_NAME s_pg_get_port
 {
   const char *rv;
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   rv = PQport (XCONN (conn));
@@ -756,7 +760,7 @@ PG_DEFINE (pg_get_tty, "pg-get-tty", 1, 0, 0,
 #define FUNC_NAME s_pg_get_tty
 {
   const char *rv;
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   rv = PQtty (XCONN (conn));
@@ -772,7 +776,7 @@ PG_DEFINE (pg_get_options, "pg-get-options", 1, 0, 0,
 #define FUNC_NAME s_pg_get_options
 {
   const char *rv;
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   rv = PQoptions (XCONN (conn));
@@ -788,8 +792,8 @@ PG_DEFINE (pg_get_connection, "pg-get-connection", 1, 0, 0,
            "from which a @var{result} was returned.")
 #define FUNC_NAME s_pg_get_connection
 {
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
-  return (ser_unbox (result)->conn);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
+  return (xr_unbox (result)->conn);
 }
 #undef FUNC_NAME
 
@@ -802,7 +806,7 @@ PG_DEFINE (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
 {
   int pid;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   pid = PQbackendPID (XCONN (conn));
@@ -822,7 +826,7 @@ PG_DEFINE (pg_result_status, "pg-result-status", 1, 0, 0,
   int result_status;
   int pgrs_index;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   result_status = PQresultStatus (RESULT (result));
@@ -845,7 +849,7 @@ PG_DEFINE (pg_ntuples, "pg-ntuples", 1, 0, 0,
 {
   int ntuples;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   ntuples = PQntuples (RESULT (result));
@@ -862,7 +866,7 @@ PG_DEFINE (pg_nfields, "pg-nfields", 1, 0, 0,
 {
   SCM scm_inum;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   scm_inum = SCM_MAKINUM (PQnfields (RESULT (result)));
@@ -882,7 +886,7 @@ PG_DEFINE (pg_cmdtuples, "pg-cmdtuples", 1, 0, 0,
 {
   const char *cmdtuples;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   cmdtuples = PQcmdTuples (RESULT (result));
@@ -901,7 +905,7 @@ PG_DEFINE (pg_oid_status, "pg-oid-status", 1, 0, 0,
 {
   const char *oid_status;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   oid_status = PQoidStatus (RESULT (result));
@@ -921,7 +925,7 @@ PG_DEFINE (pg_oid_value, "pg-oid-value", 1, 0, 0,
 {
   Oid oid_value;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   oid_value = PQoidValue (RESULT (result));
@@ -945,7 +949,7 @@ PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
   int field;
   const char *fname;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
 
   field = SCM_INUM (num);
@@ -975,7 +979,7 @@ PG_DEFINE (pg_fnumber, "pg-fnumber", 2, 0, 0,
 {
   int fnum;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (fname) && SCM_ROSTRINGP (fname), fname,
               SCM_ARG2, FUNC_NAME);
   ROZT_X (fname);
@@ -1002,7 +1006,7 @@ PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
   int ftype;
   SCM scm_inum;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
 
   field = SCM_INUM (num);
@@ -1033,7 +1037,7 @@ PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
   int fsize;
   SCM scm_inum;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
 
   field = SCM_INUM (num);
@@ -1069,7 +1073,7 @@ PG_DEFINE (pg_getvalue, "pg-getvalue", 3, 0, 0,
 #endif
   SCM srv;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (stuple) && SCM_INUMP (stuple), stuple, SCM_ARG2,
               FUNC_NAME);
   SCM_ASSERT (SCM_IMP (sfield) && SCM_INUMP (sfield), sfield, SCM_ARG3,
@@ -1115,7 +1119,7 @@ PG_DEFINE (pg_getlength, "pg-getlength", 3, 0, 0,
   int len;
   SCM ret;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (stuple) && SCM_INUMP (stuple), stuple, SCM_ARG2,
               FUNC_NAME);
   SCM_ASSERT (SCM_IMP (sfield) && SCM_INUMP (sfield), sfield, SCM_ARG3,
@@ -1151,7 +1155,7 @@ PG_DEFINE (pg_getisnull, "pg-getisnull", 3, 0, 0,
   int maxfield, field;
   SCM scm_bool;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (stuple) && SCM_INUMP (stuple), stuple, SCM_ARG2,
               FUNC_NAME);
   SCM_ASSERT (SCM_IMP (sfield) && SCM_INUMP (sfield), sfield, SCM_ARG3,
@@ -1188,7 +1192,7 @@ PG_DEFINE (pg_binary_tuples, "pg-binary-tuples?", 1, 0, 0,
 {
   SCM rv;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   if (PQbinaryTuples (RESULT (result)))
@@ -1213,7 +1217,7 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
   int fmod;
   SCM scm_inum;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
 
   field = SCM_INUM (num);
@@ -1257,7 +1261,7 @@ PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
   int ret = 1;
   SCM str = SCM_UNDEFINED;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   while (ret != 0 && ret != EOF)
     {
       SCM_DEFER_INTS;
@@ -1284,7 +1288,7 @@ PG_DEFINE (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
            "\"consume input\" operation prior to the read.")
 #define FUNC_NAME s_pg_getlineasync
 {
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_STRINGP (buf), buf, SCM_ARG2, FUNC_NAME);
 
   if (tickle != SCM_UNDEFINED && SCM_NFALSEP (tickle))
@@ -1307,7 +1311,7 @@ PG_DEFINE (pg_putline, "pg-putline", 2, 0, 0,
            "The return value is undefined.")
 #define FUNC_NAME s_pg_putline
 {
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (str)&&SCM_ROSTRINGP (str), str, SCM_ARG2, FUNC_NAME);
   SCM_DEFER_INTS;
 #ifdef HAVE_PQPUTNBYTES
@@ -1332,7 +1336,7 @@ PG_DEFINE (pg_endcopy, "pg-endcopy", 1, 0, 0,
   int ret;
   SCM scm_inum;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_DEFER_INTS;
   ret = PQendcopy (XCONN (conn));
   SCM_ALLOW_INTS;
@@ -1355,8 +1359,8 @@ PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
   int fd;
   FILE *fpout;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT (sec_unbox (conn)->fptrace == NULL,
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_unbox (conn)->fptrace == NULL,
               conn, SCM_ARG1, FUNC_NAME);
   port = SCM_COERCE_OUTPORT (port);
   SCM_ASSERT (SCM_NIMP (port) && SCM_OPOUTFPORTP (port),
@@ -1371,7 +1375,7 @@ PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
 
   SCM_DEFER_INTS;
   PQtrace (XCONN (conn), fpout);
-  sec_unbox (conn)->fptrace = fpout;
+  xc_unbox (conn)->fptrace = fpout;
   SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1385,12 +1389,12 @@ PG_DEFINE (pg_untrace, "pg-untrace", 1, 0, 0,
 #define FUNC_NAME s_pg_untrace
 {
   int ret;
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   PQuntrace (XCONN (conn));
-  SCM_SYSCALL (ret = fclose (sec_unbox (conn)->fptrace));
-  sec_unbox (conn)->fptrace = (FILE *) NULL;
+  SCM_SYSCALL (ret = fclose (xc_unbox (conn)->fptrace));
+  xc_unbox (conn)->fptrace = (FILE *) NULL;
   SCM_ALLOW_INTS;
   if (ret)
     scm_syserror (FUNC_NAME);
@@ -1652,7 +1656,7 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
   FILE *fout;
   int redir_p;
 
-  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   options = ((options == SCM_UNDEFINED)
              ? pg_make_print_options (SCM_EOL)
              : options);
@@ -1693,8 +1697,8 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
 
 /* Modify notice processing.
 
-   Note that this is not a simple wrap of `PQsetNoticeProcessor'.  Instead, we
-   simply modify `sec->notice'.  Also, the value can either be a port or
+   Note that this is not a simple wrap of `PQsetNoticeProcessor'.  Instead,
+   we simply modify `xc->notice'.  Also, the value can either be a port or
    procedure that takes a string.  For these reasons, we name the procedure
    `pg-set-notice-out!' to help avoid confusion.  */
 
@@ -1709,13 +1713,13 @@ PG_DEFINE (pg_set_notice_out_x, "pg-set-notice-out!", 2, 0, 0,
            "the connection.")
 #define FUNC_NAME s_pg_set_notice_out_x
 {
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   if (SCM_EQ_P (SCM_BOOL_T, out) ||
       SCM_EQ_P (SCM_BOOL_F, out) ||
       SCM_OUTPORTP (out) ||
       SCM_NFALSEP (scm_procedure_p (out)))
-    sec_unbox (conn)->notice = out;
+    xc_unbox (conn)->notice = out;
   else
     SCM_WTA (SCM_ARG2, out);
 
@@ -1739,7 +1743,7 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
 {
   PGnotify *n;
   SCM rv = SCM_BOOL_F;
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   if (tickle != SCM_UNDEFINED && SCM_NFALSEP (tickle))
     PQconsumeInput (XCONN (conn));
@@ -1768,7 +1772,7 @@ PG_DEFINE (pg_client_encoding, "pg-client-encoding", 1, 0, 0,
 #define FUNC_NAME s_pg_client_encoding
 {
   SCM enc;
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   enc = scm_makfrom0str (pg_encoding_to_char
                          (PQclientEncoding
@@ -1783,7 +1787,7 @@ PG_DEFINE (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
            "Return #t if successful, #f otherwise.")
 #define FUNC_NAME s_pg_set_client_encoding_x
 {
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_STRINGP (encoding), encoding, SCM_ARG2, FUNC_NAME);
   ROZT_X (encoding);
 
@@ -1805,7 +1809,7 @@ PG_DEFINE (pg_send_query, "pg-send-query", 2, 0, 0,
            "message is retrievable with @code{pg-error-message}.")
 #define FUNC_NAME s_pg_send_query
 {
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_STRINGP (query), query, SCM_ARG2, FUNC_NAME);
   ROZT_X (query);
 
@@ -1823,12 +1827,12 @@ PG_DEFINE (pg_get_result, "pg-get-result", 1, 0, 0,
   PGresult *result;
   SCM z;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
   result = PQgetResult (XCONN (conn));
   z = (result
-       ? make_ser (result, conn)
+       ? make_xr (result, conn)
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
   return z;
@@ -1840,7 +1844,7 @@ PG_DEFINE (pg_consume_input, "pg-consume-input", 1, 0, 0,
            "Consume input from @var{conn}.  Return #t iff successful.")
 #define FUNC_NAME s_pg_consume_input
 {
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   return (PQconsumeInput (XCONN (conn))
           ? SCM_BOOL_T
@@ -1854,7 +1858,7 @@ PG_DEFINE (pg_is_busy_p, "pg-is-busy?", 1, 0, 0,
            "@code{pg-consume-input}, otherwise #f.")
 #define FUNC_NAME s_pg_is_busy_p
 {
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   return (PQisBusy (XCONN (conn))
           ? SCM_BOOL_T
@@ -1881,7 +1885,7 @@ PG_DEFINE (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
            "cancellation will abort the whole transaction.")
 #define FUNC_NAME s_pg_is_busy_p
 {
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   return (PQrequestCancel (XCONN (conn))
           ? SCM_BOOL_T
@@ -1908,16 +1912,16 @@ init_module (void)
 #ifdef USE_OLD_SMOB_INTERFACE
 
   /* add new scheme type for connections */
-  type_rec.mark = sec_mark;
-  type_rec.free = sec_free;
-  type_rec.print = sec_display;
+  type_rec.mark = xc_mark;
+  type_rec.free = xc_free;
+  type_rec.print = xc_display;
   type_rec.equalp = 0;
   pg_conn_tag.type_tag = scm_newsmob (&type_rec);
 
   /* add new scheme type for results */
-  type_rec.mark = ser_mark;
-  type_rec.free = ser_free;
-  type_rec.print = ser_display;
+  type_rec.mark = xr_mark;
+  type_rec.free = xr_free;
+  type_rec.print = xr_display;
   type_rec.equalp = 0;
   pg_result_tag.type_tag = scm_newsmob (&type_rec);
 
@@ -1931,14 +1935,14 @@ init_module (void)
 #else /* !USE_OLD_SMOB_INTERFACE */
 
   pg_conn_tag.type_tag = scm_make_smob_type ("PG-CONN", 0);
-  scm_set_smob_mark (pg_conn_tag.type_tag, sec_mark);
-  scm_set_smob_free (pg_conn_tag.type_tag, sec_free);
-  scm_set_smob_print (pg_conn_tag.type_tag, sec_display);
+  scm_set_smob_mark (pg_conn_tag.type_tag, xc_mark);
+  scm_set_smob_free (pg_conn_tag.type_tag, xc_free);
+  scm_set_smob_print (pg_conn_tag.type_tag, xc_display);
 
   pg_result_tag.type_tag = scm_make_smob_type ("PG-RESULT", 0);
-  scm_set_smob_mark (pg_result_tag.type_tag, ser_mark);
-  scm_set_smob_free (pg_result_tag.type_tag, ser_free);
-  scm_set_smob_print (pg_result_tag.type_tag, ser_display);
+  scm_set_smob_mark (pg_result_tag.type_tag, xr_mark);
+  scm_set_smob_free (pg_result_tag.type_tag, xr_free);
+  scm_set_smob_print (pg_result_tag.type_tag, xr_display);
 
   sepo_type_tag = scm_make_smob_type ("PG-PRINT-OPTION", 0);
   scm_set_smob_mark (sepo_type_tag, sepo_mark);
