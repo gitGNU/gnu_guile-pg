@@ -41,6 +41,16 @@ AC_CHECK_FUNCS(tmpfile)
 GUILE_PROGS
 GUILE_FLAGS
 
+AC_CHECK_HEADERS([guile/modsup.h])
+
+AH_BOTTOM([
+#ifdef HAVE_GUILE_MODSUP_H
+#include <guile/modsup.h>
+#else
+#include "modsup.h"
+#endif
+])
+
 saved_CFLAGS="$CFLAGS"                  # restoration below
 saved_LDFLAGS="$LDFLAGS"
 CFLAGS="$GUILE_CFLAGS $CFLAGS"
