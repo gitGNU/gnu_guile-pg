@@ -1,5 +1,5 @@
 /*  Guile-pg - A Guile interface to PostgreSQL
-    Copyright (C) 1999, 2002, 2003 Free Software Foundation, Inc.
+    Copyright (C) 1999, 2002, 2003, 2004 Free Software Foundation, Inc.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -274,7 +274,7 @@ PG_DEFINE (lob_lo_unlink, "pg-lo-unlink", 2, 0, 0,
 PG_DEFINE (lob_lo_get_connection, "pg-lo-get-connection", 1, 0, 0,
            (SCM port),
            "Return the connection associated with a given large object port.\n"
-           "@var{Port} must be a large object port returned from\n"
+           "@var{port} must be a large object port returned from\n"
            "@code{pg-lo-creat} or @code{pg-lo-open}.")
 #define FUNC_NAME s_lob_lo_get_connection
 {
@@ -288,7 +288,7 @@ PG_DEFINE (lob_lo_get_connection, "pg-lo-get-connection", 1, 0, 0,
 PG_DEFINE (lob_lo_get_oid, "pg-lo-get-oid", 1, 0, 0,
            (SCM port),
            "Return the integer identifier of the object to which a given\n"
-           "port applies.  @var{Port} must be a large object port returned\n"
+           "port applies.  @var{port} must be a large object port returned\n"
            "from @code{pg-lo-creat} or @code{pg-lo-open}.")
 #define FUNC_NAME s_lob_lo_get_oid
 {
@@ -301,7 +301,7 @@ PG_DEFINE (lob_lo_get_oid, "pg-lo-get-oid", 1, 0, 0,
 PG_DEFINE (lob_lo_tell, "pg-lo-tell", 1, 0, 0,
            (SCM port),
            "Return the position of the file pointer for the given large\n"
-           "object port.  @var{Port} must be a large object port returned\n"
+           "object port.  @var{port} must be a large object port returned\n"
            "from @code{pg-lo-creat} or @code{pg-lo-open}.  The return\n"
            "value is either an integer greater than or equal to zero or\n"
            "@code{#f} if an error occurred.  In the latter case\n"
@@ -410,9 +410,9 @@ static off_t lob_seek (SCM port, off_t offset, int whence);
 PG_DEFINE (lob_lo_seek, "pg-lo-seek", 3, 0, 0,
            (SCM port, SCM where, SCM whence),
            "Set the position of the next read or write to/from the given\n"
-           "large object port.  @var{Port} must be a large object port\n"
+           "large object port.  @var{port} must be a large object port\n"
            "returned from @code{pg-lo-creat} or @code{pg-lo-open}.\n"
-           "@var{Where} is the position to set the pointer.  @var{Whence}\n"
+           "@var{where} is the position to set the pointer.  @var{whence}\n"
            "must be one of\n\n"
            "@table @code\n\n"
            "@item SEEK_SET\n"
@@ -631,7 +631,7 @@ lob_free (SCM port)
 PG_DEFINE (lob_lo_import, "pg-lo-import", 2, 0, 0,
            (SCM conn, SCM filename),
            "Create a new large object and loads it with the contents of\n"
-           "the specified file.  @var{Filename} must be a string containing\n"
+           "the specified file.  @var{filename} must be a string containing\n"
            "the name of the file to be loaded into the new object.  Return\n"
            "the integer identifier (OID) of the newly created large object,\n"
            "or @code{#f} if an error occurred, in which case\n"
@@ -662,7 +662,7 @@ PG_DEFINE (lob_lo_import, "pg-lo-import", 2, 0, 0,
 PG_DEFINE (lob_lo_export, "pg-lo-export", 3, 0, 0,
            (SCM conn, SCM oid, SCM filename),
            "Write the contents of a given large object to a file.\n"
-           "@var{Oid} is the integer identifying the large object to be\n"
+           "@var{oid} is the integer identifying the large object to be\n"
            "exported and @var{filename} the name of the file to contain the\n"
            "object data.  Return @code{#t} on success, @code{#f} otherwise,\n"
            "in which case @code{pg-error-message} may offer an explanation\n"
