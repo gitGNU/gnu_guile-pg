@@ -125,12 +125,18 @@ extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
       ("not null" . a.attnotnull)
       ("hasdefs"  . a.atthasdef)))
    (make-WHERE-tree
-    `(and (= c.relname ,(sql-quote table-name))
+    `(and (= c.relname ,(sql-quote (symbol->string table-name)))
           (> a.attnum 0)
           (= a.attrelid c.oid)
           (= a.atttypid t.oid)))
    (make-ORDER-BY-tree
     '((< a.attnum)))))
+
+(defcc (gxrepl conn)
+  "Run a recursive repl, talking to database CONN.
+Exiting from the recursive repl returns to this one."
+  (gxrepl (symbol->string conn))
+  (for-display "\nExiting recursive repl."))
 
 ;; Run a read-eval-print loop, talking to database @var{conn}.
 ;; @var{conn} may be a string naming a database, a string with
@@ -148,7 +154,7 @@ extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
 ;; meta-repl or prepackaged operations.
 ;; @end itemize
 ;;
-;; To exit the repl, send an EOF or use the ",q" command.
+;; Sending an EOF exits the repl.
 ;;
 (define (gxrepl conn)
 
@@ -264,8 +270,6 @@ Optional arg SETTING turns on echoing if a positive number."
               (newline))
              (else
               (write res) (newline))))
-
-     (defcc (q . ignored) "Quit the repl." (return #t))
 
      ;; do it!
      (repl -read -eval -print)))
