@@ -303,7 +303,7 @@ strip_newlines (char *str)
   while (str <= --p && *p == '\n')
     *p = '\0';
 
-  return scm_makfrom0str (str);
+  return scm_makfromstr (str, p - str, 0);
 }
 
 
@@ -516,7 +516,7 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
 
   SCM_DEFER_INTS;
   dbconn = PQconnectdb (ROZT (constr));
-  pgerrormsg = strdup (PQerrorMessage (dbconn));
+  pgerrormsg = PQerrorMessage (dbconn);
   if ((connstat = PQstatus (dbconn)) == CONNECTION_BAD)
     PQfinish (dbconn);
   SCM_ALLOW_INTS;
@@ -524,10 +524,8 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
   if (connstat == CONNECTION_BAD)
     {
       SCM msg = strip_newlines (pgerrormsg);
-      free (pgerrormsg);
       scm_misc_error (FUNC_NAME, "~A", SCM_LIST1 (msg));
     }
-  free (pgerrormsg);
 
   z = xc_box ((xc_t*)
                scm_must_malloc (sizeof (xc_t), "PG-CONN"));
@@ -653,13 +651,12 @@ PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
 #ifdef HAVE_PQRESULTERRORMESSAGE
   if (xc_p (obj))
 #endif
-    pgerrormsg = strdup (PQerrorMessage (XCONN (obj)));
+    pgerrormsg = PQerrorMessage (XCONN (obj));
 #ifdef HAVE_PQRESULTERRORMESSAGE
   else
-    pgerrormsg = strdup (PQresultErrorMessage (RESULT (obj)));
+    pgerrormsg = PQresultErrorMessage (RESULT (obj));
 #endif
   rv = strip_newlines (pgerrormsg);
-  free (pgerrormsg);
   SCM_ALLOW_INTS;
 
   return rv;
