@@ -16,7 +16,7 @@
 
   - Review error handling; regularize; document.
 
-  - Implement these calls:
+  + Implement these calls:
 
     + PQsetNoticeProcessor
 
@@ -29,7 +29,7 @@
       Actually, PQsetNoticeProcessor is encapsulated and the programming
       interface is different: `pg-set-notice-out!'.
 
-    - PQnotifies
+    + PQnotifies
 
       PQnotifies returns the next notification from a list of unhandled
       notification messages received from the backend.  Returns NULL if there
