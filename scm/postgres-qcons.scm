@@ -80,7 +80,8 @@
            (cons x (delq! x *binary-infix-operations*))))
     ((#:sql-function)
      (set! *sql-functions*
-           (cons x (delete! (cons x extra) *sql-functions*))))
+           (let ((ent (cons x extra)))
+             (cons ent (delete! ent *sql-functions*)))))
     (else
      (error "bad category:" category))))
 
@@ -212,7 +213,7 @@
 ;;
 (define (make-SELECT/OUT-tree outs)
   (commasep (lambda (x)
-              (cond ((symbol? x) x)
+              (cond ((symbol? x) (fs "~S" (symbol->string x)))
                     ((and (pair? x) (string? (car x)))
                      (list (expr (cdr x)) #:AS (fs "~S" (car x))))
                     ((pair? x) (expr x))
