@@ -1,4 +1,3 @@
-dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl  Copyright (C) 1998, 2002 Free Software Foundation, Inc.
@@ -32,39 +31,76 @@ AC_STDC_HEADERS
 
 AC_HAVE_HEADERS(string.h stdio.h stdlib.h malloc.h unistd.h)
 
+##----------------------------------------------------------------------------
+## Guile
+
 GUILE_PROGS
 GUILE_FLAGS
 
-dnl This little hack allows the tests for libpq etc. to be overridden by
-dnl setting the environment variables PQ_CFLAGS and PQ_LDFLAGS.  This is
-dnl useful e.g. when running 'Make distcheck', which runs ./configure.
+saved_CFLAGS="$CFLAGS"                  # restoration below
+CFLAGS="$CFLAGS $GUILE_CFLAGS"
+
+AC_CACHE_CHECK([for fill_input in struct scm_ptob_descriptor],
+               [ac_cv_struct_fill_input],[
+  AC_TRY_COMPILE([#include <libguile.h>],
+                 [struct scm_ptob_descriptor s; s.fill_input;],
+                 [ac_cv_struct_fill_input=yes],
+                 [ac_cv_struct_fill_input=no])
+])
+if test $ac_cv_struct_fill_input = no; then
+  AC_MSG_ERROR([guile struct scm_ptob_descriptor lacks member fill_input])
+fi
+
+CFLAGS="$saved_CFLAGS"
+
+##----------------------------------------------------------------------------
+## PostgreSQL
+
+## This little hack allows the tests for libpq etc. to be overridden by
+## setting the environment variables PQ_CFLAGS and PQ_LDFLAGS.  This is
+## useful e.g. when running 'Make distcheck', which runs ./configure.
 
 if test "x$PQ_LDFLAGS" = "x" -a "x$PQ_CFLAGS" = "x" ; then
 PQ_FLAGS
 fi
 
-saved_CFLAGS="$CFLAGS"
+saved_CFLAGS="$CFLAGS"                  # restoration below
 saved_LDFLAGS="$LDFLAGS"
-CFLAGS="$CFLAGS $PQ_CFLAGS"
-LDFLAGS="$LDFLAGS $PQ_LDFLAGS"
+CFLAGS="$PQ_CFLAGS $CFLAGS"
+LDFLAGS="$PQ_LDFLAGS $LDFLAGS"
 
-AC_CHECK_LIB(pq, PQconnectdb, , AC_MSG_ERROR(Cannot find libpq (CFLAGS= $CFLAGS
-LDLFAGS= $LDFLAGS) on the system))
-AC_CHECK_FUNCS(PQfmod PQbinaryTuples PQbackendPID PQresultErrorMessage PQpass PQputnbytes PQoidValue)
-CFLAGS="$saved_CFLAGS"
-LDFLAGS="$saved_LDFLAGS"
+AC_CHECK_LIB(pq, PQconnectdb, ,[
+  AC_MSG_NOTICE(CFLAGS: $CFLAGS)
+  AC_MSG_NOTICE(LDFLAGS: $LDFLAGS)
+  AC_MSG_ERROR([cannot find libpq on the system])
+])
+AC_CHECK_FUNCS(PQfmod PQbinaryTuples PQbackendPID               dnl
+               PQresultErrorMessage PQpass PQputnbytes          dnl
+               PQoidValue)
 
-saved_CFLAGS="$CFLAGS"
-CFLAGS="$CFLAGS $GUILE_CFLAGS"
+AC_CHECK_DECL([InvalidOid],,
+              [pg_ac_need_invalidoid=true],
+              [[#include "libpq-fe.h"]])
 
-AC_CACHE_CHECK([for fill_input in struct scm_ptob_descriptor], ac_cv_struct_fill_input,
-[AC_TRY_COMPILE([#include <libguile.h>], [struct scm_ptob_descriptor s; s.fill_input;],
-ac_cv_struct_fill_input=yes, ac_cv_struct_fill_input=no)])
-if test $ac_cv_struct_fill_input = no; then
-  AC_ERROR("Cannot build with guile versions prior to 1.3.4")
+if test x"$pg_ac_need_invalidoid" = xtrue ; then
+  AC_CHECK_DECL([InvalidOid],[
+    pg_ac_need_invalidoid=false
+    AC_DEFINE(INVALIDOID_HEADER, ["postgresql/postgres.h"],
+              [Header that declares InvalidOid if not libpq-fe.h.])
+    ],,[[#include "postgresql/postgres.h"]])
+fi
+
+## Add other locations to check here.
+
+if test "x$pg_ac_need_invalidoid" = xtrue ; then
+  AC_MSG_ERROR([cannot find declaration for InvalidOid])
 fi
 
 CFLAGS="$saved_CFLAGS"
+LDFLAGS="$saved_LDFLAGS"
+
+##----------------------------------------------------------------------------
+## Etc
 
 GUILE_PG_STAMP="`date`"
 AC_SUBST(GUILE_PG_STAMP)
