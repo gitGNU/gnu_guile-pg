@@ -51,6 +51,8 @@
 
 	* test/alive.sh: New file.
 
+	* doc/guile-pg.texi: Update pg-result-status docs and examples.
+
 2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* acinclude.m4 (GUILE_MODULE): Delete.
