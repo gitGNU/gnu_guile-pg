@@ -416,12 +416,12 @@ notice_processor (void *xc, const char *message)
   SCM out = ((xc_t *) xc)->notice;
   SCM msg;
 
-  if (SCM_FALSEP (out))
+  if (EXACTLY_FALSEP (out))
     return;
 
   msg = gh_str02scm (message);
 
-  if (SCM_EQ_P (SCM_BOOL_T, out))
+  if (EXACTLY_TRUEP (out))
     out = scm_current_error_port ();
 
   if (SCM_OUTPORTP (out))
@@ -430,7 +430,7 @@ notice_processor (void *xc, const char *message)
       return;
     }
 
-  if (SCM_NFALSEP (scm_procedure_p (out)))
+  if (NOT_FALSEP (scm_procedure_p (out)))
     scm_apply (out, msg, scm_listofnull);
 }
 
@@ -1299,7 +1299,7 @@ PG_DEFINE (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_STRINGP (buf), buf, SCM_ARG2, FUNC_NAME);
 
-  if (tickle != SCM_UNDEFINED && SCM_NFALSEP (tickle))
+  if (tickle != SCM_UNDEFINED && NOT_FALSEP (tickle))
     /* We don't care if there was an error consuming input; caller can use
        `pg_error_message' to find out afterwards, or simply avoid tickling in
        the first place.  */
@@ -1576,7 +1576,7 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
       SCM head = SCM_CAR (check);
       if (SCM_SYMBOLP (head))
         {
-          SCM_ASSERT (SCM_NFALSEP (scm_memq (head, valid_print_option_flags)),
+          SCM_ASSERT (NOT_FALSEP (scm_memq (head, valid_print_option_flags)),
                       head, SCM_ARG1, FUNC_NAME);
           flags = gh_cons (head, flags);
         }
@@ -1584,7 +1584,7 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
         {
           SCM key = SCM_CAR (head);
           SCM val = SCM_CDR (head);
-          SCM_ASSERT (SCM_NFALSEP (scm_memq (key, valid_print_option_keys)),
+          SCM_ASSERT (NOT_FALSEP (scm_memq (key, valid_print_option_keys)),
                       key, SCM_ARG1, FUNC_NAME);
           if (key == pg_sym_field_names)
             {
@@ -1609,9 +1609,9 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
 
   po = scm_must_malloc (sizeof (PQprintOpt), "PG-PRINT-OPTION");
 
-#define _FLAG_CHECK(m)                                  \
-  (SCM_NFALSEP (scm_memq (pg_sym_no_ ## m, flags))      \
-   ? 0 : (SCM_NFALSEP (scm_memq (pg_sym_ ## m, flags))  \
+#define _FLAG_CHECK(m)                                 \
+  (NOT_FALSEP (scm_memq (pg_sym_no_ ## m, flags))      \
+   ? 0 : (NOT_FALSEP (scm_memq (pg_sym_ ## m, flags))  \
           ? 1 : default_print_options.m))
 
   po->header   = _FLAG_CHECK (header);
@@ -1625,7 +1625,7 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
 #define _STRING_CHECK_SETX(k,m)                         \
   do {                                                  \
     SCM stemp = scm_assq_ref (keys, pg_sym_ ## k);      \
-    po->m = (SCM_NFALSEP (stemp)                        \
+    po->m = (NOT_FALSEP (stemp)                         \
              ? strdup (SCM_ROCHARS (stemp))             \
              : (default_print_options.m                 \
                 ? strdup (default_print_options.m)      \
@@ -1637,7 +1637,7 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
   _STRING_CHECK_SETX (caption, caption);
 #undef _STRING_CHECK_SETX
 
-  if (SCM_FALSEP (substnames))
+  if (EXACTLY_FALSEP (substnames))
     po->fieldName = NULL;
   else
     {
@@ -1726,10 +1726,10 @@ PG_DEFINE (pg_set_notice_out_x, "pg-set-notice-out!", 2, 0, 0,
 #define FUNC_NAME s_pg_set_notice_out_x
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
-  if (SCM_EQ_P (SCM_BOOL_T, out) ||
-      SCM_EQ_P (SCM_BOOL_F, out) ||
+  if (EXACTLY_TRUEP (out) ||
+      EXACTLY_FALSEP (out) ||
       SCM_OUTPORTP (out) ||
-      SCM_NFALSEP (scm_procedure_p (out)))
+      NOT_FALSEP (scm_procedure_p (out)))
     xc_unbox (conn)->notice = out;
   else
     SCM_WTA (SCM_ARG2, out);
@@ -1756,7 +1756,7 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
   SCM rv = SCM_BOOL_F;
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
-  if (tickle != SCM_UNDEFINED && SCM_NFALSEP (tickle))
+  if (tickle != SCM_UNDEFINED && NOT_FALSEP (tickle))
     /* We don't care if there was an error consuming input; caller can use
        `pg_error_message' to find out afterwards, or simply avoid tickling in
        the first place.  */
