@@ -474,29 +474,30 @@
 ;; w/o options: `(NAME . TYPE)' is recognized also, but deprecated; support
 ;; for it will go away in a future release.
 ;;
-;; The closure accepts a single arg CHOICE (a symbol or keyword) and returns
-;; the associated variable or procedure.  Recognized CHOICE:
+;; The closure accepts a single keyword arg CHOICE (symbol ok) and returns
+;; the associated variable or procedure.  The keywords #:table-name, #:defs
+;; and #:pgdb return constant values (the last being a connection object).
+;; Support for these WILL BE REMOVED after 2005-12-31; DO NOT rely on them.
+;; (Use `#:k' instead.)  Other keywords return a procedure:
 ;;
 ;; @example
-;;   table-name
-;;   defs
-;;   pgdb
-;; * (drop)
-;; * (create)
-;; * (insert-values [DATA ...])
-;; * (insert-col-values COLS [DATA ...])
-;; * (insert-alist ALIST)
-;; * (delete-rows WHERE-CONDITION)
-;; * (update-col COLS DATA WHERE-CONDITION)
-;; * (select OUTSPEC [REST-CLAUSES ...])
-;;   (t-obj-walk TABLE PROC-O PROC-NON-O)
-;;   (table->object-alist TABLE)
-;;   (tuples-result->object-alist RES)
-;;   (table->alists TABLE)
-;;   (tuples-result->alists RES)
+;;   #:k VAR
+;; * #:drop
+;; * #:create
+;; * #:insert-values [DATA ...]
+;; * #:insert-col-values COLS [DATA ...]
+;; * #:insert-alist ALIST
+;; * #:delete-rows WHERE-CONDITION
+;; * #:update-col COLS DATA WHERE-CONDITION
+;; * #:select OUTSPEC [REST-CLAUSES ...]
+;;   #:t-obj-walk TABLE PROC-O PROC-NON-O
+;;   #:table->object-alist TABLE
+;;   #:tuples-result->object-alist RES
+;;   #:table->alists TABLE
+;;   #:tuples-result->alists RES
 ;; @end example
 ;;
-;; In this list, procedures are indicated by signature (parens).  DATA is one
+;; VAR is a keyword: #:table-name, #:col-defs, #:connection.  DATA is one
 ;; or more Scheme objects.  COLS is either a list of column names (symbols),
 ;; or a single string of comma-delimited column names.  WHERE-CONDITION is a
 ;; string.  OUTSPEC is either the result of `compile-outspec', or a spec
@@ -518,7 +519,7 @@
 ;; STRING.
 ;;
 ;; The starred (*) procedures return whatever `pg-exec' returns for that type
-;; of procedure.  See guile-pg info page for details.
+;; of procedure.
 ;;
 (define (pgtable-manager db-spec table-name defs)
   (or (and (pair? defs) (not (null? defs)))
@@ -575,25 +576,31 @@
 
     ;; rv
     (lambda (choice)
-      (case (if (keyword? choice)
-                (keyword->symbol choice)
+      (case (if (symbol? choice)
+                (symbol->keyword choice)
                 choice)
-        ((table-name) table-name)
-        ((defs) defs)
-        ((pgdb) conn)
-        ((drop) drop)
-        ((create) create)
-        ((insert-values) insert-values)
-        ((insert-col-values) insert-col-values)
-        ((insert-alist) insert-alist)
-        ((delete-rows) delete-rows)
-        ((update-col) update-col)
-        ((select) select)
-        ((t-obj-walk) t-obj-walk)
-        ((table->object-alist) table->object-alist)
-        ((tuples-result->object-alist) tuples-result->object-alist)
-        ((table->alists) table->alists)
-        ((tuples-result->alists) tuples-result->alists)
+        ((#:k) (lambda (var)
+                 (case var
+                   ((#:connection) conn)
+                   ((#:table-name) table-name)
+                   ((#:col-defs) defs)
+                   (else (error "bad var:" var)))))
+        ((#:table-name) table-name)
+        ((#:defs) defs)
+        ((#:pgdb) conn)
+        ((#:drop) drop)
+        ((#:create) create)
+        ((#:insert-values) insert-values)
+        ((#:insert-col-values) insert-col-values)
+        ((#:insert-alist) insert-alist)
+        ((#:delete-rows) delete-rows)
+        ((#:update-col) update-col)
+        ((#:select) select)
+        ((#:t-obj-walk) t-obj-walk)
+        ((#:table->object-alist) table->object-alist)
+        ((#:tuples-result->object-alist) tuples-result->object-alist)
+        ((#:table->alists) table->alists)
+        ((#:tuples-result->alists) tuples-result->alists)
         (else (error "bad choice:" choice))))))
 
 ;; Take @var{db-spec}, @var{table-name} and @var{defs} (exactly the same as
