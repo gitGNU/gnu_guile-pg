@@ -1,8 +1,11 @@
 
 - 0.17
 
-  - Use tmpfile(3) if available.
-    - pg_print [ttn]
+  - Remove stdout-only restriction on `pg-print'.
+    The current implementation uses tmpfile(3) if available.  That's
+    probably the wrong approach.  Better to dup the current output
+    port's file descriptor and then do a fdopen on it (see `pg_trace'
+    for example of this technique).
 
   - Review error handling; regularize; document.
 
