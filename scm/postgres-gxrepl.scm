@@ -62,8 +62,10 @@
 (define (fs s . args)
   (apply simple-format #f s args))
 
+(define --for-display (make-object-property))
+
 (define (for-display s)
-  (set-object-property! s #:display #t)
+  (set! (--for-display s) #t)
   s)
 
 (defcc (help . command)
@@ -348,7 +350,7 @@ style SQL expression."
      (define (-eval source)
        (cond ((eof-object? source)
               (return #t))
-             ((and (string? source) (not (object-property source #:display)))
+             ((and (string? source) (not (--for-display source)))
               (and (conn-get #:gxrepl-echo)
                    (write-line source))
               (pg-exec conn source))
@@ -364,7 +366,7 @@ style SQL expression."
                 (display status) (newline)
                   (or (string=? "" msg)
                           (begin (display msg) (newline)))))))
-             ((and (string? res) (object-property res #:display))
+             ((and (string? res) (--for-display res))
               (display res)
               (newline))
              (else
