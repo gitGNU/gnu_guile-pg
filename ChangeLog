@@ -23,6 +23,7 @@
 	(BUILT_SOURCES): New directive.
 	(.twerp.texi): New rule.
 	(twerp.mk-am-frag): New "include".
+	(EXTRA_DIST): Add guile-pg.twerp.
 
 	* doc/guile-pg.texi: Now generated.
 
