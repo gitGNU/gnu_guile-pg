@@ -18,7 +18,8 @@
 @ifinfo
 This file is the Reference Guide for the (database postgres*) Modules.
 
-Copyright @copyright{} 1998, 2002, 2003, 2004 Free Software Foundation, Inc.
+Copyright @copyright{} 1998 Ian Grant
+Copyright @copyright{} 2002, 2003, 2004 Thien-Thi Nguyen
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -52,7 +53,8 @@ approved by the Free Software Foundation.
 @c The following two commands start the copyright page.
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1998, 2002, 2003, 2004 Free Software Foundation, Inc.
+Copyright @copyright{} 1998 Ian Grant
+Copyright @copyright{} 2002, 2003, 2004 Thien-Thi Nguyen
 
      Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice are
