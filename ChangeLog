@@ -1,5 +1,10 @@
 2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* scm/postgres-table.scm: New file.
+	* scm/Makefile.am (guile_postgres_sources): Add postgres-table.scm.
+
+2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* scm/postgres-types.scm: New file.
 	* scm/Makefile.am (guile_postgres_sources): Add postgres-types.scm.
 
