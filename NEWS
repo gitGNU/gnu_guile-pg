@@ -1,6 +1,16 @@
 NEWS for Guile-PG
 
 
+- 0.18 | NOT YET RELEASED
+
+  - Limitation lifted: `pg-exec' query string size
+
+	The query string sent to `pg-exec' used to be limited to 7999
+	bytes (plus one for the terminating null).  This is now handled
+	dynamically and in a more efficient manner in the case where
+	the query is not a shared substring.
+
+
 - 0.17 | 2004-02-02
 
   - Installation change: modules installed under site dirs
