@@ -1,24 +1,4 @@
-- 0.20
-
-  + Review for dangerous construct: return scm_cons (scm_cons (...))
-
-    Garbage collection can zonk intermediate values leading to loss of
-    integrity (and thus bugs).  Better to use strictly imperative style
-    and use C auto vars for intermediate values, even if it is ugly.
-
-
-- 1.x
-
-  - Regularize error handling.
-
-  - Use gh_/GH_ abstractions.
-
-    This will make it easier to port Guile-PG to other versions of Guile
-    and even other scheme implementations (long term).
-
-  - Write tests for non-blocking query support.
-
-  - Scan libpq-fe.h for coverage.
+- 0.21
 
   - Remove compiled proc `pg-oid-status'.
 
@@ -33,6 +13,20 @@
     Nowadays we just assume everyone is insane and go w/ that.  Users who want
     to track changes should check features directly instead of version numbers
     and time stamps, anyway.
+
+
+- 1.x
+
+  - Regularize error handling.
+
+  - Use gh_/GH_ abstractions.
+
+    This will make it easier to port Guile-PG to other versions of Guile
+    and even other scheme implementations (long term).
+
+  - Write tests for non-blocking query support.
+
+  - Scan libpq-fe.h for coverage.
 
 
 - Eventually
