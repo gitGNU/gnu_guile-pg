@@ -279,30 +279,50 @@
 
 ;;; select
 
-(define (select-cmd table-name defs selection rest-clauses)
+(define (select-cmd table-name defs selection obh-box rest-clauses)
+
+  (define (bad-selection s)
+    (error "bad selection:" s))
+
+  (define (push! o)
+    (set-car! obh-box (cons o (or (car obh-box) (list)))))
+
+  (define (direct?! sym)
+    (cond ((assq sym defs)
+           => (lambda (def)
+                (push! (dbcoltype:objectifier
+                        (dbcoltype-lookup (def:type-name def))))
+                #t))
+          (else #f)))
+
   (validate-defs defs)
-  (let* ((bad-selection (lambda (s) (error "bad selection:" s)))
-         (sel (cond ((string? selection) selection)
-                    ((list? selection)
-                     (csep (lambda (x)
-                             (or (and (symbol? x)
-                                      (assq x defs)
-                                      (symbol->qstring x))
-                                 (bad-selection x)))
-                           selection))
-                    ((symbol? selection)
-                     (or (and (assq selection defs)
-                              (symbol->qstring selection))
-                         (bad-selection selection)))
-                    (else
-                     (bad-selection selection))))
-         (etc (string* rest-clauses)))
+  (let ((sel (cond ((string? selection) selection)
+                   ((list? selection)
+                    (csep (lambda (x)
+                            (or (and (symbol? x)
+                                     (direct?! x)
+                                     (symbol->qstring x))
+                                (bad-selection x)))
+                          selection))
+                   ((symbol? selection)
+                    (or (and (direct?! selection)
+                             (symbol->qstring selection))
+                        (bad-selection selection)))
+                   (else
+                    (bad-selection selection))))
+        (etc (string* rest-clauses)))
+    (and (car obh-box)
+         (set-car! obh-box (reverse! (car obh-box))))
     (fmt "SELECT ~A FROM ~A ~A;" sel table-name etc)))
 
 (define (select-proc pgdb table-name defs)
   (validate-defs defs)
   (lambda (selection . rest-clauses)
-    (pg-exec pgdb (select-cmd table-name defs selection rest-clauses))))
+    (let* ((obh-box (list #f))          ; objectifier hints
+           (cmd (select-cmd table-name defs selection obh-box rest-clauses))
+           (res (pg-exec pgdb cmd)))
+      (put res 'objectifier-hints (car obh-box))
+      res)))
 
 ;;; results processing
 
@@ -471,15 +491,15 @@
          (t-obj-walk (t-obj-walk-proc defs))
          (table->object-alist (table->object-alist-proc t-obj-walk))
          (objectifiers (def:objectifiers defs))
-         (tuples-result->object-alist (lambda (res)
-                                        (result->object-alist
-                                         res objectifiers)))
+         (res->foo-proc (lambda (proc)
+                          (lambda (res)
+                            (proc res (or (get res 'objectifier-hints)
+                                          objectifiers)))))
+         (tuples-result->object-alist (res->foo-proc result->object-alist))
          (table->alists (lambda (table)
                           (object-alist->alists
                            (table->object-alist table))))
-         (tuples-result->alists (lambda (res)
-                                  (result->object-alists
-                                   res objectifiers))))
+         (tuples-result->alists (res->foo-proc result->object-alists)))
     (lambda (choice)
       (case choice
         ((help menu) '(help menu
