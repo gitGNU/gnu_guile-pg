@@ -1,8 +1,6 @@
 
 - Eventually
 
-  - Make ser_p et al static.
-
   - Review error handling; regularize; document.
 
   - Fix places where SCM_ROSTRINGs are treated as null-terminated strings.
