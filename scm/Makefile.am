@@ -29,17 +29,15 @@ guile_postgres_sources = 			\
   postgres-table.scm				\
   postgres-meta.scm
 
-# These should be installed, but not distributed.
-guile_postgres_generated = postgres.scm
-
 ddir = $(GUILE_SITE)/database
-d_DATA = $(guile_postgres_sources) $(guile_postgres_generated)
+d_DATA = $(guile_postgres_sources)
 
 ETAGS_ARGS = $(subpkgdata_DATA)
 
-EXTRA_DIST = postgres.scm.in $(guile_postgres_sources)
+EXTRA_DIST = $(guile_postgres_sources)
 
 install-data-hook:
+	rm -f $(ddir)/postgres.scm
 	if guile-tools | grep -q make-module-catalog ; then \
 	   guile-tools make-module-catalog $(GUILE_SITE) ; fi
 
