@@ -1,5 +1,9 @@
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm (parse+make-SELECT/tail-tree): Handle #:offset.
+
+2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-gxrepl.scm (dt): Use `sqlsel'.
 
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
