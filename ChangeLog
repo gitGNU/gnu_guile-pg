@@ -1,5 +1,11 @@
 2004-11-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c
+	[not GC_DEBUG] (GC_PRINT): Remove superflous semicolon.
+	[not INIT_DEBUG] (INIT_PRINT): Likewise.
+
+2004-11-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Database Connections):
 	Document connection object print representation.
 	(Processing Results): Likewise for result objects.
