@@ -1,3 +1,5 @@
+;;; postgres.scm --- wrap PostgreSQL libpq
+
 ;;    Guile-pg - A Guile interface to PostgreSQL
 ;;    Copyright (C) 1999,2000,2002 Free Software Foundation, Inc.
 ;;
