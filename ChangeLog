@@ -1,5 +1,12 @@
 2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/guile-pg.twerp:
+	No longer call the document "Command Reference".
+	Instead, use "The (database postgres*) Modules".
+	(Top): Rewrite intro blurb.
+
+2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* Makefile.am (postgres_sup_la_LDFLAGS): Update version info.
 
 2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
