@@ -1,5 +1,14 @@
 2002-12-26  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* scm/postgres-meta.scm: New file.
+	* scm/Makefile.am (guile_postgres_sources): Add postgres-meta.scm.
+
+	* doc/guile-pg.twerp (Introspection): New node/chapter.
+
+	* Makefile.am (DOTDOCFILES): Add scm/postgres-meta.doc.
+
+2002-12-26  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* scm/postgres-types.scm (name, aclitem, aclitem[]):
 	New built-in type converters.
 
