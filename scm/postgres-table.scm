@@ -83,9 +83,6 @@
             (substring-move! s 0 len rv (1+ put))
             (loop (+ put 1 len) (cdr ls) (cdr len-ls)))))))
 
-(define (string* ls)
-  (string-append/separator #\space ls))
-
 (define (char-sep char)
   (lambda (proc ls . more-ls)
     (if (null? ls)
@@ -358,7 +355,7 @@
                             (else
                              (set-hints!+sel
                               (cdr (compile-outspec outspec defs))))))
-                     (string* rest-clauses)))
+                     rest-clauses))
                (res (beex cmd)))
           (and hints (put res #:pgtable-ohints hints))
           res)))))
