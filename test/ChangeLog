@@ -1,3 +1,9 @@
+2004-06-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (main):
+	No longer check `pg-guile-pg-version'.
+	* guile-pg-lo-tests.scm (main): Likewise.
+
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-lo-tests.scm
