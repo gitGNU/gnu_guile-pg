@@ -313,16 +313,21 @@ strip_newlines (char *str)
  * everything (except lo support and some async stuff)
  */
 
+static SCM goodies;
+
 PG_DEFINE (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
            (void),
-           "Return @code{#t} indicating that the binary part of\n"
-           "@code{guile-pg} is loaded.  Thus, to test if @code{guile-pg}\n"
-           "is loaded, use:\n"
+           "Return a list of symbols describing the Guile-PG\n"
+           "installation.  These are basically derived from C preprocessor\n"
+           "macros determined at build time by the configure script.\n"
+           "Presence of this procedure is also a good indicator that\n"
+           "the compiled module @code{(database postgres-sup)} is\n"
+           "available.  You can test this like so:\n\n"
            "@lisp\n"
            "(defined? 'pg-guile-pg-loaded)\n"
            "@end lisp")
 {
-  return SCM_BOOL_T;
+  return goodies;
 }
 
 #define SIMPLE_KEYWORD(name) \
@@ -697,12 +702,14 @@ PG_DEFINE (pg_get_user, "pg-get-user", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-#ifdef HAVE_PQPASS
 PG_DEFINE (pg_get_pass, "pg-get-pass", 1, 0, 0,
            (SCM conn),
            "Return a string containing the password used to\n"
-           "authenticate the connection @var{conn}.")
+           "authenticate the connection @var{conn}.\n"
+           "If the installation does not support @code{PQPASS}, return #f.")
 {
+#ifdef HAVE_PQPASS
+
 #define FUNC_NAME s_pg_get_pass
   const char *rv;
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
@@ -713,8 +720,13 @@ PG_DEFINE (pg_get_pass, "pg-get-pass", 1, 0, 0,
 
   return scm_makfrom0str (rv);
 #undef FUNC_NAME
+
+#else  /* !HAVE_PQPASS */
+
+  return SCM_BOOL_F;
+
+#endif /* !HAVE_PQPASS */
 }
-#endif /* HAVE_PQPASS */
 
 PG_DEFINE (pg_get_host, "pg-get-host", 1, 0, 0,
            (SCM conn),
@@ -794,12 +806,15 @@ PG_DEFINE (pg_get_connection, "pg-get-connection", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-#ifdef HAVE_PQBACKENDPID
 PG_DEFINE (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
            (SCM conn),
            "Return an integer which is the the PID of the backend\n"
-           "process for @var{conn}.")
+           "process for @var{conn}.\n"
+           "If the installation does not support @code{PQBACKENDPID},\n"
+           "return -1.")
 {
+#ifdef HAVE_PQBACKENDPID
+
 #define FUNC_NAME s_pg_backend_pid
   int pid;
 
@@ -811,8 +826,13 @@ PG_DEFINE (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
 
   return SCM_MAKINUM (pid);
 #undef FUNC_NAME
+
+#else /* !HAVE_PQBACKENDPID */
+
+  return SCM_MAKINUM (-1);
+
+#endif /* !HAVE_PQBACKENDPID */
 }
-#endif /* HAVE_PQBACKENDPID */
 
 PG_DEFINE (pg_result_status, "pg-result-status", 1, 0, 0,
            (SCM result),
@@ -912,13 +932,15 @@ PG_DEFINE (pg_oid_status, "pg-oid-status", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-#ifdef HAVE_PQOIDVALUE
 PG_DEFINE (pg_oid_value, "pg-oid-value", 1, 0, 0,
            (SCM result),
            "If the @var{result} is that of an SQL @code{INSERT} command,\n"
            "return the integer OID of the inserted tuple, otherwise return\n"
-           "@code{#f}.")
+           "@code{#f}.\n"
+           "If the installation does not support @code{PQOIDVALUE}, return #f.")
 {
+#ifdef HAVE_PQOIDVALUE
+
 #define FUNC_NAME s_pg_oid_value
   Oid oid_value;
 
@@ -933,8 +955,13 @@ PG_DEFINE (pg_oid_value, "pg-oid-value", 1, 0, 0,
 
   return SCM_MAKINUM (oid_value);
 #undef FUNC_NAME
+
+#else /* !HAVE_PQOIDVALUE */
+
+  return SCM_BOOL_F;
+
+#endif /* !HAVE_PQOIDVALUE */
 }
-#endif /* HAVE_PQOIDVALUE */
 
 PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
            (SCM result, SCM num),
@@ -1180,12 +1207,15 @@ PG_DEFINE (pg_getisnull, "pg-getisnull", 3, 0, 0,
 #undef FUNC_NAME
 }
 
-#ifdef HAVE_PQBINARYTUPLES
 PG_DEFINE (pg_binary_tuples, "pg-binary-tuples?", 1, 0, 0,
            (SCM result),
            "Return @code{#t} if @var{result} contains binary tuple\n"
-           "data, @code{#f} otherwise.")
+           "data, @code{#f} otherwise.\n"
+           "If the installation does not support @code{PQBINARYTUPLES},\n"
+           "return #f.")
 {
+#ifdef HAVE_PQBINARYTUPLES
+
 #define FUNC_NAME s_pg_binary_tuples
   SCM rv;
 
@@ -1200,15 +1230,22 @@ PG_DEFINE (pg_binary_tuples, "pg-binary-tuples?", 1, 0, 0,
 
   return rv;
 #undef FUNC_NAME
-}
-#endif /* HAVE_PQBINARYTUPLES */
 
-#ifdef HAVE_PQFMOD
+#else /* !HAVE_PQBINARYTUPLES */
+
+  return SCM_BOOL_F;
+
+#endif /* !HAVE_PQBINARYTUPLES */
+}
+
 PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
            (SCM result, SCM num),
            "Return the integer type-specific modification data for\n"
-           "the given field (field number @var{num}) of @var{result}.")
+           "the given field (field number @var{num}) of @var{result}.\n"
+           "If the installation does not support @code{PQFMOD}, return -1.")
 {
+#ifdef HAVE_PQFMOD
+
 #define FUNC_NAME s_pg_fmod
   int field;
   int fmod;
@@ -1233,8 +1270,13 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
   scm_inum = SCM_MAKINUM (fmod);
   return scm_inum;
 #undef FUNC_NAME
+
+#else /* !HAVE_PQFMOD */
+
+  return SCM_MAKINUM (-1);
+
+#endif /* !HAVE_PQFMOD */
 }
-#endif /* HAVE_PQFMOD */
 
 PG_DEFINE (pg_guile_pg_version, "pg-guile-pg-version", 0, 0, 0,
            (void),
@@ -1890,6 +1932,32 @@ PG_DEFINE (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
 
 
 /*
+ * installation features
+ */
+
+#define SIMPLE_SYMBOL(s) \
+  SCM_SYMBOL (pg_sym_ ## s, # s)
+
+#define SYM(s)  (pg_sym_ ## s)
+
+#ifdef HAVE_PQPASS
+SIMPLE_SYMBOL (PQPASS);
+#endif
+#ifdef HAVE_PQBACKENDPID
+SIMPLE_SYMBOL (PQBACKENDPID);
+#endif
+#ifdef HAVE_PQOIDVALUE
+SIMPLE_SYMBOL (PQOIDVALUE);
+#endif
+#ifdef HAVE_PQBINARYTUPLES
+SIMPLE_SYMBOL (PQBINARYTUPLES);
+#endif
+#ifdef HAVE_PQFMOD
+SIMPLE_SYMBOL (PQFMOD);
+#endif
+
+
+/*
  * init
  */
 
@@ -1976,7 +2044,27 @@ init_module (void)
 
   init_libpostgres_lo ();
 
-  return;
+  goodies = SCM_EOL;
+
+#define PUSH(x)  goodies = scm_cons (SYM (x), goodies)
+
+#ifdef HAVE_PQPASS
+  PUSH (PQPASS);
+#endif
+#ifdef HAVE_PQBACKENDPID
+  PUSH (PQBACKENDPID);
+#endif
+#ifdef HAVE_PQOIDVALUE
+  PUSH (PQOIDVALUE);
+#endif
+#ifdef HAVE_PQBINARYTUPLES
+  PUSH (PQBINARYTUPLES);
+#endif
+#ifdef HAVE_PQFMOD
+  PUSH (PQFMOD);
+#endif
+
+  goodies = scm_protect_object (goodies);
 }
 
 GH_MODULE_LINK_FUNC ("database postgres-sup"
