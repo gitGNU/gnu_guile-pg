@@ -1,3 +1,8 @@
+2002-12-12  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* doc/guile-pg.texi: Update copyright.
+	Refill; nfc.
+
 2002-12-11  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* configure.in (VERSION): Bump to 0.08 for release.
