@@ -181,6 +181,14 @@
   (command-ok?
    (make-table! conn "test" '(("col1" . "int4") ("col2" . "text")))))
 
+(define (test:pg-error-message)
+  (let ((result (pg-exec conn "invalid--sql--command")))
+    (and result
+         (eq? 'PGRES_FATAL_ERROR (pg-result-status result))
+         (let ((msg (pg-error-message conn)))
+           (and (string? msg)
+                (not (string-null? msg)))))))
+
 ;; Test pg-exec
 ;; expect #t
 (define (test:load-records)
@@ -363,13 +371,14 @@
 (define (main)
   (load-from-path (string-append *srcdir* "/testing.scm"))
   (set! verbose #t)
-  (test-init "basic-tests" 33)
+  (test-init "basic-tests" 34)
   (test *VERSION* pg-guile-pg-version)
   (test #t pg-guile-pg-loaded)
   (test #t test:pg-conndefaults)
   (test #t test:make-connection)
   (test #t test:set-client-data)
   (test #t test:make-table)
+  (test #t test:pg-error-message)
   (test #t test:load-records)
   (test 100 test:count-records)
   (test #t test:reset)
