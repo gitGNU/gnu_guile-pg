@@ -141,7 +141,7 @@
 ;;; multiple tests rolled into each
 
 (define (mtest:select-*)                ; 5
-  (sel/check (select #t)
+  (sel/check (select "*")               ; todo: change to #t after 2005-12-31
              (pass-if "dim" (equal? '(3 9) (array-dimensions table)))
              (pass-if "ugh" (string=? "ugh" (tref 0 1)))
              (pass-if "5" (string=? "5" (tref 0 3)))
