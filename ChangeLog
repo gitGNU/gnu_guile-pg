@@ -2,6 +2,8 @@
 
 	* scm/postgres-meta.scm (check-type/elaborate): Doc fix.
 
+	* scm/postgres-table.scm (pgtable-worker): Doc fix; nfc.
+
 2004-10-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* autogen.sh: Rewrite guile.m4 snapshot handling.
