@@ -1,5 +1,10 @@
 2002-12-26  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* libpostgres.c (sec_box, ser_p, ser_unbox, ser_box): Make static.
+	* libpostgres.h (sec_box, ser_p, ser_unbox, ser_box): Remove decls.
+
+2002-12-26  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* scm/postgres-meta.scm: New file.
 	* scm/Makefile.am (guile_postgres_sources): Add postgres-meta.scm.
 
