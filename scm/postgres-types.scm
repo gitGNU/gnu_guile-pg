@@ -85,22 +85,25 @@
 
 (define *db-col-types* '())     ; (NAME STRINGIFIER DEFAULT OBJECTIFIER)
 
-;; Return all type names.
+;; Return names of all registered type converters.
 ;;
 (define (dbcoltypes)
   (map car *db-col-types*))
 
-;; Return lookup value of TYPE-NAME, a symbol, from `*db-col-types*'.
-;; Use procs `dbcoltype:name', `dbcoltype:default', `dbcoltype:stringifier'
-;; and `dbcoltype:objectifier' on this value to access those components,
-;; respectively.
+;; Return a type-converter object given its @var{type-name}, a symbol.
+;; Return #f if no such t-c object by that name exists.
 ;;
 (define (dbcoltype-lookup type-name)
   (assq type-name *db-col-types*))
-(define dbcoltype:name car)
-(define dbcoltype:stringifier cadr)
-(define dbcoltype:default caddr)
-(define dbcoltype:objectifier cadddr)
+
+;; Extract type name from the type-converter object @var{tc}.
+(define (dbcoltype:name tc) (car tc))
+;; Extract stringifier from the type-converter object @var{tc}.
+(define (dbcoltype:stringifier tc) (cadr tc))
+;; Extract default string from the type-converter object @var{tc}.
+(define (dbcoltype:default tc) (caddr tc))
+;; Extract objectifier from the type-converter object @var{tc}.
+(define (dbcoltype:objectifier tc) (cadddr tc))
 
 (define (read-pgarray-1 objectifier port)
   ;; ugh, i hate parsing...  the right thing to do would be find out if

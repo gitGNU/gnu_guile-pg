@@ -91,9 +91,11 @@
 ;; (The "pre" means "preformatted".)
 ;;
 ;; For example, assume column `count' has type `int4'.  The following
-;; code increments this value for all rows:
-;;   (let ((m (pgtable-manager ...)))
-;;     ((m 'update-col) '(count) `(,(sql-pre "count + 1"))))
+;; fragment increments this value for all rows:
+;; @lisp
+;; (let ((m (pgtable-manager ...)))
+;;   ((m 'update-col) '(count) `(,(sql-pre "count + 1"))))
+;; @end lisp
 ;;
 (define (sql-pre string)
   (set-object-property! string 'ttn-pgtable-sql-pre #t)
@@ -108,15 +110,18 @@
 ;; old / deprecated: (COL-NAME . TYPE-NAME)
 ;; new and improved: (COL-NAME TYPE-NAME [TYPE-OPTIONS ...])
 
+;; Extract column name from @var{def}.
 (define (def:col-name def)
   (car def))
 
+;; Extract type from @var{def}.
 (define (def:type-name def)
   (let ((type-info (cdr def)))
     (if (pair? type-info)
         (car type-info)
         type-info)))
 
+;; Extract type options from @var{def}.
 (define (def:type-options def)
   (let ((type-info (cdr def)))
     (if (pair? type-info)
@@ -413,24 +418,24 @@
 ;; variable or procedure associated with CHOICE.  When CHOICE is `help' or
 ;; `menu', return a list of accepted choices, currently one of:
 ;;
-;; @itemize
-;; @item   table-name
-;; @item   defs
-;; @item   pgdb
-;; @item * (drop)
-;; @item * (create)
-;; @item * (insert-values . DATA)
-;; @item * (insert-col-values COLS . DATA)
-;; @item * (insert-alist ALIST)
-;; @item * (delete-rows WHERE-CONDITION)
-;; @item * (update-col COLS DATA WHERE-CONDITION)
-;; @item * (select SELECTION . REST-CLAUSES)
-;; @item   (t-obj-walk TABLE PROC-O PROC-NON-O)
-;; @item   (table->object-alist TABLE)
-;; @item   (tuples-result->object-alist RES)
-;; @item   (table->alists TABLE)
-;; @item   (tuples-result->alists RES)
-;; @end itemize
+;; @example
+;;   table-name
+;;   defs
+;;   pgdb
+;; * (drop)
+;; * (create)
+;; * (insert-values . DATA)
+;; * (insert-col-values COLS . DATA)
+;; * (insert-alist ALIST)
+;; * (delete-rows WHERE-CONDITION)
+;; * (update-col COLS DATA WHERE-CONDITION)
+;; * (select SELECTION . REST-CLAUSES)
+;;   (t-obj-walk TABLE PROC-O PROC-NON-O)
+;;   (table->object-alist TABLE)
+;;   (tuples-result->object-alist RES)
+;;   (table->alists TABLE)
+;;   (tuples-result->alists RES)
+;; @end example
 ;;
 ;; In this list, procedures are indicated by signature (parens).  DATA is one
 ;; or more Scheme objects.  COLS is either a list of column names (symbols),
