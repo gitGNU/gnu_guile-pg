@@ -1,5 +1,9 @@
 2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* scm/postgres-types.scm (dbcoltypes): New proc, exported.
+
+2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* test/abstraction-scm-tests.sh: New file.
 	* test/guile-pg-abstraction-scm-tests.scm: New file.
 
