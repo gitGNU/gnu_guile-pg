@@ -76,7 +76,9 @@
 (define (symbol->qstring symbol)
   (fmt "~S" (symbol->string symbol)))
 
-;; Return STRING w/ its `ttn-pgtable-sql-pre' property set.
+(define preformatted (make-object-property))
+
+;; Return STRING marked w/ an unspecified property.
 ;; This property disables type conversion and other formatting
 ;; when the string is used for "insert" and "update" operations.
 ;; (The "pre" means "preformatted".)
@@ -89,7 +91,7 @@
 ;; @end lisp
 ;;
 (define (sql-pre string)
-  (put string 'ttn-pgtable-sql-pre #t)
+  (set! (preformatted string) #t)
   string)
 
 (define (serial? def)
@@ -147,7 +149,7 @@
 ;;; inserts
 
 (define (->db-insert-string db-col-type x)
-  (or (and (get x 'ttn-pgtable-sql-pre) x)
+  (or (and (preformatted x) x)
       (let ((def (dbcoltype-lookup db-col-type)))
         (sql-quote (or (false-if-exception ((dbcoltype:stringifier def) x))
                        (dbcoltype:default def))))))
