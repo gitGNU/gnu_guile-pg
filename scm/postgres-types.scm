@@ -40,7 +40,8 @@
 ;; a string from PostgreSQL and returns a Scheme object.
 ;;
 ;; DEFAULT is a string.  TOBJ is a "type object" which should be considered
-;; opaque (use the dbcoltype:foo procs to access the components).
+;; opaque (and thus subject to change w/o warning).  Use the dbcoltype:foo
+;; procs to access the components.
 ;;
 ;; TODO: Look into "user-defined" types from PostgreSQL point of view.
 
@@ -81,7 +82,7 @@
 
 ;; column types / definition
 
-(define *db-col-types* '())     ; (NAME STRINGIFIER DEFAULT OBJECTIFIER)
+(define *db-col-types* '())     ; (NAME . #(STRINGIFIER DEFAULT OBJECTIFIER))
 
 ;; Return names of all registered type converters.
 ;;
@@ -97,11 +98,11 @@
 ;; Extract type name from the type-converter object @var{tc}.
 (define (dbcoltype:name tc) (car tc))
 ;; Extract stringifier from the type-converter object @var{tc}.
-(define (dbcoltype:stringifier tc) (cadr tc))
+(define (dbcoltype:stringifier tc) (vector-ref (cdr tc) 0))
 ;; Extract default string from the type-converter object @var{tc}.
-(define (dbcoltype:default tc) (caddr tc))
+(define (dbcoltype:default tc) (vector-ref (cdr tc) 1))
 ;; Extract objectifier from the type-converter object @var{tc}.
-(define (dbcoltype:objectifier tc) (cadddr tc))
+(define (dbcoltype:objectifier tc) (vector-ref (cdr tc) 2))
 
 (define (read-pgarray-1 objectifier port)
   ;; ugh, i hate parsing...  the right thing to do would be find out if
@@ -157,11 +158,9 @@
 ;; If NAME already exists, it is redefined.  See also `dbcoltype-lookup'.
 ;;
 (define (define-db-col-type name default stringifier objectifier)
-  (let ((lookup (dbcoltype-lookup name))
-        (body (list stringifier default objectifier)))
-    (if lookup
-        (set-cdr! lookup body)
-        (set! *db-col-types* (acons name body *db-col-types*)))))
+  (set! *db-col-types*
+        (assq-set! *db-col-types* name
+                   (vector stringifier default objectifier))))
 
 (define (dimension->string stringifier x)
   (letrec ((dive (lambda (ls)
