@@ -1,5 +1,10 @@
 2004-11-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* Makefile.am (pre-inst.merged-module-catalog): Remove check
+	for and use of "guile-tools make-module-catalog" method.
+
+2004-11-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c
 	[not GC_DEBUG] (GC_PRINT): Remove superflous semicolon.
 	[not INIT_DEBUG] (INIT_PRINT): Likewise.
