@@ -1,4 +1,4 @@
-dnl   -*- autoconf -*- macros for Guile-PG
+dnl   Some -*-autoconf-*- macros for Guile-PG
 dnl
 dnl	Copyright (C) 1998 Ian Grant
 dnl	Copyright (C) 2002, 2003, 2004 Thien-Thi Nguyen
@@ -102,6 +102,18 @@ AC_CHECK_DECL([scm_gc_protect_object],[
  AC_DEFINE([HAVE_SCM_GC_PROTECT_OBJECT], [1],
    [Define if libguile provides the scm_gc_protect_object function.])
 ],,[#include "libguile.h"])
+
+AC_MSG_CHECKING([if libguile.h provides macro SCM_OUTPUT_PORT_P])
+AC_COMPILE_IFELSE([
+#include <libguile.h>
+int main (void) { return SCM_FALSEP (SCM_OUTPUT_PORT_P (SCM_BOOL_F)); }
+],[
+  AC_MSG_RESULT(yes)
+  AC_DEFINE([HAVE_SCM_OUTPUT_PORT_P], [1],
+    [Define if libguile.h provides the SCM_OUTPUT_PORT_P macro.])
+],[
+  AC_MSG_RESULT(no)
+])
 
 ])
 
