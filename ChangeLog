@@ -1,5 +1,11 @@
 2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* doc/Makefile.am (EXTRA_DIST): New var.
+
+	* test/Makefile.am (EXTRA_DIST): Add cov.
+
+2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* doc/Makefile.am (dist-hook): New directive.
 	* test/Makefile.am: Likewise
 
