@@ -1,3 +1,8 @@
+2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* doc/guile-pg.twerp (Writing/Reading Data): In example, use
+	module (ice-9 rdelim), and replace "if + begin" with cond.
+
 2004-05-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres_lo.c (lob_mklobport): Move `pt->read_buf'
