@@ -3,19 +3,23 @@ NEWS for Guile-PG
 
 - 0.17 | NOT YET RELEASED
 
-  - error output bugfix for pg-fname, pg-ftype, pg-fsize, pg-fmod
+  - Error output bugfix for pg-fname, pg-ftype, pg-fsize, pg-fmod
 
 	For an invalid field number argument, these procs used to
 	display "Invalid field number %s".  They now display the
 	field number instead of the literal string "%s".
 
-  - `pg-print' no longer limited to stdout
+  - Proc `pg-print' no longer limited to stdout
 
 	It used to be that `pg-print' output could only be sent to
 	stdout, ignoring the port returned by `current-output-port'.
 	Now, output is now completely controllable from Scheme code
 	using `with-output-to-port' (or `call-with-output-string',
-	`call-with-output-file', etc).
+	`call-with-output-file', `set-current-output-port', etc).
+
+  - New (database postgres) proc: `pg-set-notice-out!'
+
+	This is documented in the manual under "Database Connections".
 
 
 - 0.16 | 2003-08-13
