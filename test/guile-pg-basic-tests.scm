@@ -384,6 +384,22 @@
                            (eq? (pg-endcopy *C*) 0)
                            (string=? line "1\tColumn 1"))))))))))
 
+(define test:getlineasync               ; needs test2
+  (add-test #t
+    (lambda ()
+      (let ((res (cexec "COPY test2 TO STDOUT")))
+        (and ((ok? 'PGRES_COPY_OUT) res)
+             (let ((buf (make-string 8)))
+               (let loop ((count (pg-getlineasync *C* buf)) (acc '()))
+                 (if (< count 0)
+                     (and (string=? "1\tColumn 1\n"
+                                    (apply string-append
+                                           (reverse acc)))
+                          (eq? (pg-endcopy *C*) 0))
+                     (let ((chunk (substring buf 0 count)))
+                       (loop (pg-getlineasync *C* buf)
+                             (cons chunk acc)))))))))))
+
 (define test:putline
   (add-test #t
     (lambda ()
@@ -400,7 +416,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 34)
+  (test-init "basic-tests" 35)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:make-connection
@@ -428,6 +444,7 @@
          test:fsize
          test:getlength
          test:getline
+         test:getlineasync
          test:putline
          test:get-proc:pg-get-db
          test:get-proc:pg-get-user
