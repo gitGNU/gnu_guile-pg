@@ -117,8 +117,6 @@
 (define (serial? def)
   (eq? 'serial (def:type-name def)))
 
-;;; connection
-
 (define (col-defs defs cols)
   (map (lambda (col)
          (or (find-if (lambda (def)
