@@ -27,6 +27,10 @@
   (pg-print ((manager #:select) #t))
   (flush-all-ports))
 
+(define (alref-proc alist)
+  (lambda (sym)
+    (assq-ref alist sym)))
+
 ;; markup table interface: extend pgtable-manager
 
 (define (markup-table-manager db name key-types)
@@ -75,14 +79,14 @@
                   #:where (key-match-pexp keys)
                   #:order-by '((< seq)))))
         (and (not (= 0 (pg-ntuples res)))
-             (let ((alist ((m #:tuples-result->object-alist) res)))
+             (let* ((:: (alref-proc ((m #:tuples-result->object-alist) res))))
                (map (lambda (raw mtype mdata)
                       (if (string=? "" mtype)
                           raw
                           (render raw (string->symbol mtype) mdata)))
-                    (assq-ref alist 'raw)
-                    (assq-ref alist 'mtype)
-                    (assq-ref alist 'mdata))))))
+                    (:: 'raw)
+                    (:: 'mtype)
+                    (:: 'mdata))))))
 
     (lambda (choice)                    ; retval
       (case choice
@@ -137,13 +141,14 @@
              form))))
 
   (define (add-project ext)             ; external representation
-    (let ((name (car (assq-ref ext 'name)))
-          (license (cond ((assq-ref ext 'license) => car) (else #f))))
+    (let* ((:: (alref-proc ext))
+           (name (car (:: 'name)))
+           (license (cond ((:: 'license) => car) (else #f))))
       (apply (c #:insert-col-values)
              `(name license ,@*markup-fields*)
              name license
              (map (lambda (field)
-                    (cond ((assq-ref ext field)
+                    (cond ((:: field)
                            => (lambda (data)
                                 ((m #:add) data
                                  (list (symbol->string field) name)
@@ -152,9 +157,8 @@
                   *markup-fields*))))
 
   (define (find-proj name)
-    (let ((alist (car ((c #:tuples-result->alists)
-                       ((c #:select) #t #:where `(= name ,name))))))
-      (lambda (key) (assq-ref alist key))))
+    (alref-proc (car ((c #:tuples-result->alists)
+                      ((c #:select) #t #:where `(= name ,name))))))
 
   (define (htmlize-markup raw mtype mdata)
     (case mtype
@@ -231,7 +235,7 @@
         "The hobbit author is "
         (email "Tanel Tammet" "tammet@cs.chalmers.se") "."))))
 
-  (define (*names* ls) (map (lambda (x) (car (assq-ref x 'name))) ls))
+  (define (*names* ls) (map (lambda (x) (car ((alref-proc x) 'name))) ls))
 
   ((m #:drop)) ((c #:drop))
 
