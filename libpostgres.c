@@ -48,7 +48,6 @@
 #include "libpostgres.h"
 
 #define BUF_LEN 256
-#define QUERY_BUF_LEN 8000
 
 #ifdef GC_DEBUG
 #define GC_PRINT(x) x
@@ -67,7 +66,7 @@
  * support
  */
 
-static char *strncpy0 (char *dest, const char *source, int maxlen);
+static char *maybe_strcpy (SCM source, int *freshp);
 static char *strip_newlines (char *str);
 void scm_init_database_postgres_sup_module (void);
 
@@ -268,17 +267,32 @@ ser_free (SCM obj)
   return size;
 }
 
-static char *strncpy0 (char *dest, const char *source, int maxlen)
+
+/*
+ * string munging
+ */
+
+static char *
+maybe_strcpy (SCM source, int *freshp)
 {
-  int len;
+  int len = SCM_ROLENGTH (source);
+  char *src = SCM_ROCHARS (source);
+  char *rv;
 
-  (void) strncpy (dest, source, maxlen);
-  if ((len = strlen (source)) < maxlen)
-    *(dest + len) = '\0';
+  if (src[len] != '\0')
+    {
+      rv = (char *) malloc (1 + len);
+      memcpy (rv, src, len);
+      rv[len] = '\0';
+      *freshp = 1;
+    }
   else
-    *(dest + maxlen - 1) = '\0';
+    {
+      rv = src;
+      *freshp = 0;
+    }
 
-  return dest;
+  return rv;
 }
 
 static char *
@@ -486,22 +500,29 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
   SCM z;
   PGconn *dbconn;
   ConnStatusType connstat;
-  char pgconstr[BUF_LEN];
-  char pgerrormsg[BUF_LEN];
+  char *pgconstr; int pgconstr_freshp;
+  char *pgerrormsg;
 
   SCM_ASSERT (SCM_NIMP (constr) && SCM_ROSTRINGP (constr), constr,
               SCM_ARG1, FUNC_NAME);
-  strncpy0 (pgconstr, SCM_CHARS (constr), BUF_LEN);
+  pgconstr = maybe_strcpy (constr, &pgconstr_freshp);
 
-  SCM_DEFER_INTS;;
+  SCM_DEFER_INTS;
   dbconn = PQconnectdb (pgconstr);
-  strncpy0 (pgerrormsg, PQerrorMessage (dbconn), BUF_LEN);
+  if (pgconstr_freshp)
+    free (pgconstr);
+  pgerrormsg = strdup (PQerrorMessage (dbconn));
   if ((connstat = PQstatus (dbconn)) == CONNECTION_BAD)
     PQfinish (dbconn);
   SCM_ALLOW_INTS;
 
   if (connstat == CONNECTION_BAD)
-    scm_misc_error (FUNC_NAME, strip_newlines (pgerrormsg), SCM_EOL);
+    {
+      SCM msg = scm_makfrom0str (strip_newlines (pgerrormsg));
+      free (pgerrormsg);
+      scm_misc_error (FUNC_NAME, "~A", SCM_LIST1 (msg));
+    }
+  free (pgerrormsg);
 
   z = sec_box ((scm_extended_dbconn*)
                scm_must_malloc (sizeof (scm_extended_dbconn), "PG-CONN"));
@@ -585,19 +606,21 @@ PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
   SCM z;
   PGconn *dbconn;
   PGresult *result;
-  char pgquery[QUERY_BUF_LEN];
+  char *pgquery; int pgquery_freshp;
 
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (statement) && SCM_ROSTRINGP (statement),
               statement, SCM_ARG2, FUNC_NAME);
 
-  SCM_DEFER_INTS;;
+  SCM_DEFER_INTS;
 
-  strncpy0 (pgquery, SCM_CHARS (statement), QUERY_BUF_LEN);
-
+  pgquery = maybe_strcpy (statement, &pgquery_freshp);
   dbconn = sec_unbox (conn)->dbconn;
+  result = PQexec (dbconn, pgquery);
+  if (pgquery_freshp)
+    free (pgquery);
 
-  if ((result= PQexec (dbconn, pgquery)) != NULL)
+  if (result != NULL)
     {
       /* successfully exec'ed command; create data structure */
       SCM_ALLOW_INTS; /* Looks weird, but they're SCM_DEFERred in ser_box. */
@@ -635,7 +658,8 @@ PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
            "succeeded.")
 #define FUNC_NAME s_pg_error_message
 {
-  char pgerrormsg[BUF_LEN];
+  SCM rv = SCM_BOOL_F;
+  char *pgerrormsg;
 
 #ifdef HAVE_PQRESULTERRORMESSAGE
   SCM_ASSERT ((sec_p (obj) || ser_p (obj)), obj, SCM_ARG1, FUNC_NAME);
@@ -646,16 +670,16 @@ PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
 #ifdef HAVE_PQRESULTERRORMESSAGE
   if (sec_p (obj))
 #endif
-    strncpy0 (pgerrormsg, PQerrorMessage (sec_unbox (obj)->dbconn), BUF_LEN);
+    pgerrormsg = strdup (PQerrorMessage (sec_unbox (obj)->dbconn));
 #ifdef HAVE_PQRESULTERRORMESSAGE
   else
-    strncpy0 (pgerrormsg,
-              (const char *) PQresultErrorMessage (ser_unbox (obj)->result),
-              BUF_LEN);
+    pgerrormsg = strdup (PQresultErrorMessage (ser_unbox (obj)->result));
 #endif
+  rv = scm_makfrom0str (strip_newlines (pgerrormsg));
+  free (pgerrormsg);
   SCM_ALLOW_INTS;
 
-  return scm_makfrom0str (strip_newlines (pgerrormsg));
+  return rv;
 }
 #undef FUNC_NAME
 
@@ -971,17 +995,19 @@ PG_DEFINE (pg_fnumber, "pg-fnumber", 2, 0, 0,
 #define FUNC_NAME s_pg_fnumber
 {
   int fnum;
-  char name[BUF_LEN];
+  char *name; int name_freshp;
 
   SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (fname) && SCM_ROSTRINGP (fname), fname,
               SCM_ARG2, FUNC_NAME);
 
-  strncpy0 (name, SCM_CHARS (fname), BUF_LEN);
+  name = maybe_strcpy (fname, &name_freshp);
 
   SCM_DEFER_INTS;
   fnum = PQfnumber (ser_unbox (result)->result, name);
   SCM_ALLOW_INTS;
+  if (name_freshp)
+    free (name);
 
   return SCM_MAKINUM (fnum);
 }
