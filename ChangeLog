@@ -1,5 +1,17 @@
 2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.h (NOT_FALSEP): New macro.
+	(EXACTLY_FALSEP): Likewise.
+	(EXACTLY_TRUEP): Likewise.
+
+	* libpostgres.c (notice_processor): Use `NOT_FALSEP',
+	`EXACTLY_FALSEP' and `EXACTLY_TRUEP'.
+	(pg_make_print_options): Likewise.
+	(pg_set_notice_out_x): Likewise.
+	(pg_notifies): Likewise.
+
+2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c (pg_conndefaults): Use `gh_char2scm'.
 
 2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
