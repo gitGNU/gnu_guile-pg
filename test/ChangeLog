@@ -1,5 +1,16 @@
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* alive.sh: Add env check.
+	* coverage.sh: Likewise.
+
+	* abstraction-scm-tests.sh: Add env check.
+	Use drop.sh and create.sh.
+	(PGDATABASE): Delete var.
+	* basic-tests.sh: Likewise.
+	* lo-tests.sh: Likewise.
+
+2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* Makefile.am (TESTS_ENVIRONMENT): Add PGDATABASE var. Append $(SHELL).
 
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
