@@ -135,14 +135,14 @@ extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
                                  ("s" "special")
                                  (else "huh?")))
                    ("owner"  . u.usename)))
-       ;; todo: arrive at this via tree build call, not manually
-       '(#:FROM               pg_catalog.pg_class c
-                #:LEFT #:JOIN pg_catalog.pg_user u
-                #:ON                             u.usesysid = c.relowner
-                #:LEFT #:JOIN pg_catalog.pg_namespace n
-                #:ON                                  n.oid = c.relnamespace)
        (parse+make-SELECT/tail-tree
-        '(#:where
+        '(#:from
+          ((#:left-join (#:on (= n.oid c.relnamespace))
+                        (#:left-join (#:on (= u.usesysid c.relowner))
+                                     (c . pg_catalog.pg_class)
+                                     (u . pg_catalog.pg_user))
+                        (n . pg_catalog.pg_namespace)))
+          #:where
           (and (not (= n.nspname "pg_catalog"))
                (not (= n.nspname "pg_toast")))
           #:order-by
