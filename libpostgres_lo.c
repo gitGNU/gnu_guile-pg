@@ -71,10 +71,20 @@ long lob_ptype;
 
 static SCM lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller);
 
-SCM_PROC (s_lob_lo_creat, "pg-lo-creat", 2, 0, 0, lob_lo_creat);
-
-static SCM
-lob_lo_creat (SCM conn, SCM modes)
+PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
+           (SCM conn, SCM modes),
+           "Create a new large object and open a port over it for reading\n"
+           "and/or writing.  @var{modes} is a string describing the mode in\n"
+           "which the port is to be opened.  The mode string must include\n"
+           "one of @code{r} for reading, @code{w} for writing or @code{a}\n"
+           "for append (but since the object is empty to start with this is\n"
+           "the same as @code{w}.)  The return value is a large object port\n"
+           "which can be used to read or write data to/from the object, or\n"
+           "@code{#f} on failure in which case @code{pg-error-message} from\n"
+           "the connection should give some idea of what happened.\n\n"
+           "In addition to returning @code{#f} on failure this procedure\n"
+           "throws a @code{misc-error} if the @code{modes} string is invalid.")
+#define FUNC_NAME s_lob_lo_creat
 {
   long mode_bits;
   PGconn *dbconn;
@@ -82,9 +92,9 @@ lob_lo_creat (SCM conn, SCM modes)
   Oid oid;
   int pg_modes = 0;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, s_lob_lo_creat);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (modes) && SCM_ROSTRINGP (modes),
-              modes, SCM_ARG2, s_lob_lo_creat);
+              modes, SCM_ARG2, FUNC_NAME);
 
   if (SCM_SUBSTRP (modes)) /* Why do we do this? I don't know. */
     modes = scm_makfromstr (SCM_ROCHARS (modes), SCM_ROLENGTH (modes), 0);
@@ -98,7 +108,7 @@ lob_lo_creat (SCM conn, SCM modes)
     pg_modes |= INV_WRITE;
 
   if (pg_modes == 0)
-    scm_misc_error (s_lob_lo_creat, "Invalid mode specification %s",
+    scm_misc_error (FUNC_NAME, "Invalid mode specification %s",
                     scm_listify (modes, SCM_UNDEFINED));
   SCM_DEFER_INTS;
   if ((oid = lo_creat (dbconn, INV_READ | INV_WRITE)) != 0)
@@ -114,13 +124,27 @@ lob_lo_creat (SCM conn, SCM modes)
     SCM_ALLOW_INTS;
     return SCM_BOOL_F;
   }
-  return lob_mklobport (conn, oid, fd, mode_bits, s_lob_lo_creat);
+  return lob_mklobport (conn, oid, fd, mode_bits, FUNC_NAME);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_lob_lo_open, "pg-lo-open", 3, 0, 0, lob_lo_open);
-
-static SCM
-lob_lo_open (SCM conn, SCM oid, SCM modes)
+PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
+           (SCM conn, SCM oid, SCM modes),
+           "Open a port over an existing large object.  The port can be\n"
+           "used to read or write data from/to the object.  @var{oid}\n"
+           "should be an integer identifier representing the large object.\n"
+           "@var{modes} must be a string describing the mode in which the\n"
+           "port is to be opened.  The mode string must include one of\n"
+           "@code{r} for reading, @code{w} for writing, @code{a} for\n"
+           "append or @code{+} with any of the above indicating both\n"
+           "reading and writing/appending.  @code{A} is equivalent to\n"
+           "opening the port for writing and immediately doing a\n"
+           "@code{(pg-lo-seek)} to the end.  The return value is either\n"
+           "an open large object port or @code{#f} on failure in which\n"
+           "case @code{pg-error-message} from the connection should give\n"
+           "some idea of what happened.\n\n"
+           "Throw @code{misc-error} if the @code{modes} is invalid.")
+#define FUNC_NAME s_lob_lo_open
 {
   long mode_bits;
   PGconn *dbconn;
@@ -128,10 +152,10 @@ lob_lo_open (SCM conn, SCM oid, SCM modes)
   Oid pg_oid;
   int pg_modes = 0;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, s_lob_lo_open);
-  SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, s_lob_lo_open);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (modes) && SCM_ROSTRINGP (modes),
-              modes, SCM_ARG3, s_lob_lo_open);
+              modes, SCM_ARG3, FUNC_NAME);
 
   if (SCM_SUBSTRP (modes))
     modes = scm_makfromstr (SCM_ROCHARS (modes), SCM_ROLENGTH (modes), 0);
@@ -145,7 +169,7 @@ lob_lo_open (SCM conn, SCM oid, SCM modes)
     pg_modes |= INV_WRITE;
 
   if (pg_modes == 0)
-    scm_misc_error (s_lob_lo_open, "Invalid mode specification %s",
+    scm_misc_error (FUNC_NAME, "Invalid mode specification %s",
                     scm_listify (modes, SCM_UNDEFINED));
   pg_oid = SCM_INUM (oid);
   SCM_DEFER_INTS;
@@ -164,8 +188,9 @@ lob_lo_open (SCM conn, SCM oid, SCM modes)
     }
     SCM_ALLOW_INTS;
   }
-  return lob_mklobport (conn, pg_oid, fd, mode_bits, s_lob_lo_open);
+  return lob_mklobport (conn, pg_oid, fd, mode_bits, FUNC_NAME);
 }
+#undef FUNC_NAME
 
 static SCM
 lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller)
@@ -218,16 +243,19 @@ lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller)
   return port;
 }
 
-SCM_PROC (s_lob_lo_unlink, "pg-lo-unlink", 2, 0, 0, lob_lo_unlink);
-
-static SCM
-lob_lo_unlink (SCM conn, SCM oid)
+PG_DEFINE (lob_lo_unlink, "pg-lo-unlink", 2, 0, 0,
+           (SCM conn, SCM oid),
+           "Delete the large object identified by @var{oid}.\n"
+           "Return @code{#t} if the object was successfully deleted,\n"
+           "@code{#f} otherwise, in which case @code{pg-error-message}\n"
+           "applied to @code{conn} should give an idea of what went wrong.")
+#define FUNC_NAME s_lob_lo_unlink
 {
   int ret;
   PGconn *dbconn;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, s_lob_lo_unlink);
-  SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, s_lob_lo_unlink);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
 
   dbconn = sec_unbox (conn)->dbconn;
 
@@ -239,37 +267,51 @@ lob_lo_unlink (SCM conn, SCM oid)
 
   return SCM_BOOL_T;
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_lob_lo_get_connection, "pg-lo-get-connection", 1, 0, 0, lob_lo_get_connection);
-
-static SCM
-lob_lo_get_connection (SCM port)
+PG_DEFINE (lob_lo_get_connection, "pg-lo-get-connection", 1, 0, 0,
+           (SCM port),
+           "Return the connection associated with a given large object port.\n"
+           "@var{Port} must be a large object port returned from\n"
+           "@code{pg-lo-creat} or @code{pg-lo-open}.")
+#define FUNC_NAME s_lob_lo_get_connection
 {
   SCM_ASSERT (SCM_NIMP (port) && SCM_OPLOBPORTP (port),
-              port, SCM_ARG1, s_lob_lo_get_connection);
+              port, SCM_ARG1, FUNC_NAME);
 
   return ((lob_stream *)SCM_STREAM (port))->conn;
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_lob_lo_get_oid, "pg-lo-get-oid", 1, 0, 0, lob_lo_get_oid);
-
-static SCM
-lob_lo_get_oid (SCM port)
+PG_DEFINE (lob_lo_get_oid, "pg-lo-get-oid", 1, 0, 0,
+           (SCM port),
+           "Return the integer identifier of the object to which a given\n"
+           "port applies.  @var{Port} must be a large object port returned\n"
+           "from @code{pg-lo-creat} or @code{pg-lo-open}.")
+#define FUNC_NAME s_lob_lo_get_oid
 {
   SCM_ASSERT (SCM_NIMP (port) && SCM_LOBPORTP (port),
-              port, SCM_ARG1, s_lob_lo_get_oid);
+              port, SCM_ARG1, FUNC_NAME);
   return SCM_MAKINUM (((lob_stream *)SCM_STREAM (port))->oid);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_lob_lo_tell, "pg-lo-tell", 1, 0, 0, lob_lo_tell);
-
-static SCM
-lob_lo_tell (SCM port)
+PG_DEFINE (lob_lo_tell, "pg-lo-tell", 1, 0, 0,
+           (SCM port),
+           "Return the position of the file pointer for the given large\n"
+           "object port.  @var{Port} must be a large object port returned\n"
+           "from @code{pg-lo-creat} or @code{pg-lo-open}.  The return\n"
+           "value is either an integer greater than or equal to zero or\n"
+           "@code{#f} if an error occurred.  In the latter case\n"
+           "@code{pg-error-message} applied to @code{conn} should\n"
+           "explain what went wrong.")
+#define FUNC_NAME s_lob_lo_tell
 {
-  SCM_ASSERT (SCM_NIMP (port)&&SCM_OPLOBPORTP (port),port,SCM_ARG1,s_lob_lo_tell);
+  SCM_ASSERT (SCM_NIMP (port)&&SCM_OPLOBPORTP (port),port,SCM_ARG1,FUNC_NAME);
 
   return scm_seek (port, SCM_INUM0, SCM_MAKINUM (SEEK_CUR));
 }
+#undef FUNC_NAME
 
 /* During lob_flush error, we decide whether to use scm_syserror ("normal"
    error mechanism) or to write directly to stderr, depending on libguile's
@@ -361,22 +403,38 @@ lob_end_input (SCM port, int offset)
   pt->rw_active = SCM_PORT_NEITHER;
 }
 
-SCM_PROC (s_lob_lo_seek, "pg-lo-seek", 3, 0, 0, lob_lo_seek);
-
 static off_t lob_seek (SCM port, off_t offset, int whence);
 
-static SCM
-lob_lo_seek (SCM port, SCM where, SCM whence)
+PG_DEFINE (lob_lo_seek, "pg-lo-seek", 3, 0, 0,
+           (SCM port, SCM where, SCM whence),
+           "Set the position of the next read or write to/from the given\n"
+           "large object port.  @var{Port} must be a large object port\n"
+           "returned from @code{pg-lo-creat} or @code{pg-lo-open}.\n"
+           "@var{Where} is the position to set the pointer.  @var{Whence}\n"
+           "must be one of\n\n"
+           "@table @code\n\n"
+           "@item SEEK_SET\n"
+           "Relative to the beginning of the file.\n\n"
+           "@item SEEK_CUR\n"
+           "Relative to the current position.\n\n"
+           "@item SEEK_END\n"
+           "Relative to the end of the file.\n\n"
+           "@end table\n"
+           "The return value is an integer which is the new position\n"
+           "relative to the beginning of the object, or a number less than\n"
+           "zero if an error occurred.")
+#define FUNC_NAME s_lob_lo_seek
 {
   SCM_ASSERT (SCM_NIMP (port) && SCM_OPLOBPORTP (port),
-              port, SCM_ARG1, s_lob_lo_seek);
-  SCM_ASSERT (SCM_INUMP (where), where, SCM_ARG2, s_lob_lo_seek);
-  SCM_ASSERT (SCM_INUMP (whence), whence, SCM_ARG3, s_lob_lo_seek);
+              port, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_INUMP (where), where, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (SCM_INUMP (whence), whence, SCM_ARG3, FUNC_NAME);
 
   lob_flush (port);
 
   return SCM_MAKINUM (lob_seek (port, SCM_INUM (where), SCM_INUM (whence)));
 }
+#undef FUNC_NAME
 
 /* fill a port's read-buffer with a single read.
    returns the first char and moves the read_pos pointer past it.
@@ -477,20 +535,22 @@ lob_input_waiting_p (SCM port)
   return 1;
 }
 
-SCM_PROC (s_lob_lo_read, "pg-lo-read", 3, 0, 0, lob_lo_read);
-
-static SCM
-lob_lo_read (SCM siz, SCM num, SCM port)
+PG_DEFINE (lob_lo_read, "pg-lo-read", 3, 0, 0,
+           (SCM siz, SCM num, SCM port),
+           "Read @var{num} objects each of length @var{siz} from @var{port}.\n"
+           "Return a string containing the data read from the port or\n"
+           "@code{#f} if an error occurred.")
+#define FUNC_NAME s_lob_lo_read
 {
   scm_sizet n;
   SCM str;
   int len;
   int done = 0;
 
-  SCM_ASSERT (SCM_INUMP (siz), siz, SCM_ARG1, s_lob_lo_read);
-  SCM_ASSERT (SCM_INUMP (num), num, SCM_ARG2, s_lob_lo_read);
+  SCM_ASSERT (SCM_INUMP (siz), siz, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (port) && SCM_OPINLOBPORTP (port),
-              port, SCM_ARG3, s_lob_lo_read);
+              port, SCM_ARG3, FUNC_NAME);
 
   len = SCM_INUM (siz) * SCM_INUM (num);
   str = scm_make_string (SCM_MAKINUM (len), SCM_UNDEFINED);
@@ -515,6 +575,7 @@ lob_lo_read (SCM siz, SCM num, SCM port)
   }
   return str;
 }
+#undef FUNC_NAME
 
 static int
 lob_close (SCM port)
@@ -565,17 +626,23 @@ lob_free (SCM port)
   return 0;
 }
 
-SCM_PROC (s_lob_lo_import, "pg-lo-import", 2, 0, 0, lob_lo_import);
-
-static SCM
-lob_lo_import (SCM conn, SCM filename)
+PG_DEFINE (lob_lo_import, "pg-lo-import", 2, 0, 0,
+           (SCM conn, SCM filename),
+           "Create a new large object and loads it with the contents of\n"
+           "the specified file.  @var{Filename} must be a string containing\n"
+           "the name of the file to be loaded into the new object.  Return\n"
+           "the integer identifier (OID) of the newly created large object,\n"
+           "or @code{#f} if an error occurred, in which case\n"
+           "@code{pg-error-message} should be consulted to determine\n"
+           "the failure.")
+#define FUNC_NAME s_lob_lo_import
 {
   PGconn *dbconn;
   int ret;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, s_lob_lo_import);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename),
-              filename, SCM_ARG2, s_lob_lo_import);
+              filename, SCM_ARG2, FUNC_NAME);
 
   dbconn = sec_unbox (conn)->dbconn;
 
@@ -588,20 +655,26 @@ lob_lo_import (SCM conn, SCM filename)
 
   return SCM_MAKINUM (ret);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_lob_lo_export, "pg-lo-export", 3, 0, 0, lob_lo_export);
-
-static SCM
-lob_lo_export (SCM conn, SCM oid, SCM filename)
+PG_DEFINE (lob_lo_export, "pg-lo-export", 3, 0, 0,
+           (SCM conn, SCM oid, SCM filename),
+           "Write the contents of a given large object to a file.\n"
+           "@var{Oid} is the integer identifying the large object to be\n"
+           "exported and @var{filename} the name of the file to contain the\n"
+           "object data.  Return @code{#t} on success, @code{#f} otherwise,\n"
+           "in which case @code{pg-error-message} may offer an explanation\n"
+           "of the failure.")
+#define FUNC_NAME s_lob_lo_export
 {
   PGconn *dbconn;
   Oid pg_oid;
   int ret;
 
-  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, s_lob_lo_export);
-  SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, s_lob_lo_export);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename), filename,
-              SCM_ARG3, s_lob_lo_export);
+              SCM_ARG3, FUNC_NAME);
   dbconn = sec_unbox (conn)->dbconn;
   pg_oid = SCM_INUM (oid);
 
@@ -614,6 +687,7 @@ lob_lo_export (SCM conn, SCM oid, SCM filename)
 
   return SCM_BOOL_T;
 }
+#undef FUNC_NAME
 
 static int lob_printpt (SCM exp, SCM port, scm_print_state *pstate);
 

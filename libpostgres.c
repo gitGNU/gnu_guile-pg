@@ -275,18 +275,74 @@ strip_newlines (char *str)
   return str;
 }
 
-SCM_PROC (s_pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0, pg_guile_pg_loaded);
+
 
-static SCM
-pg_guile_pg_loaded (void)
+PG_DEFINE (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
+           (void),
+           "Return @code{#t} indicating that the binary part of\n"
+           "@code{guile-pg} is loaded.  Thus, to test if @code{guile-pg}\n"
+           "is loaded, use:\n"
+           "@lisp\n"
+           "(defined? 'pg-guile-pg-loaded)\n"
+           "@end lisp")
+#define FUNC_NAME s_pg_guile_pg_loaded
 {
-  return SCM_BOOL_T;
+  return SCM_BOOL_T;                    /* todo: other checks */
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_connectdb, "pg-connectdb", 1, 0, 0, pg_connectdb);
-
-static SCM
-pg_connectdb (SCM constr)
+PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
+            (SCM constr),
+            "Open a connection to a database.  @var{connect-string} should be\n"
+            "a string consisting of zero or more space-separated @code{name=value} pairs.\n"
+            "If the value contains spaces it must be enclosed in single quotes and any\n"
+            "single quotes appearing in the value must be escaped using backslashes.\n"
+            "Backslashes appearing in the value must similarly be escaped.  Note that\n"
+            "if the @code{connect-string} is a Guile string literal then all the backslashes\n"
+            "will themselves require to be escaped a second time.\n"
+            "The @code{name} strings can be any of:\n\n"
+            "@table @code\n\n"
+            "@item host\n"
+            "The host-name or dotted-decimal IP address of the host on which the postmaster\n"
+            "is running.  If no @code{host=} sub-string is given then the host is assumed\n"
+            "to be the value of the environment variable @code{PGHOST} or the local\n"
+            "host if @code{PGHOST} is not defined.\n\n"
+            "@item port\n"
+            "The TCP or Unix socket on which the backend is listening.  If this is not\n"
+            "specified then the value of the @code{PGHOST} environment variable is used.\n"
+            "If that too is not defined then the default port 5432 is assumed.\n\n"
+            "@item options\n"
+            "A string containing the options to the backend server.  The options given\n"
+            "here are in addition to the options given by the environment variable\n"
+            "@code{PGOPTIONS}.  The options string should be a set of command line\n"
+            "switches as would be passed to the backend.  See the @code{postgres(1)}\n"
+            "man page for more details.\n\n"
+            "@item tty\n"
+            "A string defining the file or device on which error messages from the backend\n"
+            "are to be displayed.  If this is empty (@code{""}) then the environment variable\n"
+            "@code{PGTTY} is checked.  If the specified @code{tty} is a file then the file\n"
+            "will be readable only by the user the postmaster runs as (usually\n"
+            "@code{postgres}).  Similarly, if the specified @code{tty} is a device then it\n"
+            "must have permissions allowing the postmaster user to write to it.\n\n"
+            "@item dbname\n"
+            "The name of the database.  If no @code{dbname=} sub-string is given then the\n"
+            "database name is assumed to be that given by the value of the @code{PGDATABASE}\n"
+            "environment variable, or the @code{USER} environment variable if the\n"
+            "@code{PGDATABASE} environment variable is not defined.  If the @code{USER}\n"
+            "environment variable is not specified either then the value of the\n"
+            "@code{user} option is taken as the database name.\n\n"
+            "@item user\n"
+            "The login name of the user to authenticate.  If none is given then the\n"
+            "@code{PGUSER} environment variable is checked.  If that is not given then the\n"
+            "login of the user owning the process is used.\n\n"
+            "@item password\n"
+            "The password.  Whether or not this is used depends upon the contents of the\n"
+            "@code{pg_hba.conf} file.  See the @code{pg_hba.conf(5)} man page for details.\n\n"
+            "@item authtype\n"
+            "This must be set to @code{password} if password authentication is in use,\n"
+            "otherwise it must not be specified.\n\n"
+            "@end table")
+#define FUNC_NAME s_pg_connectdb
 {
   scm_extended_dbconn *sec;
   SCM z;
@@ -296,7 +352,7 @@ pg_connectdb (SCM constr)
   char pgerrormsg[BUF_LEN];
 
   SCM_ASSERT (SCM_NIMP (constr) && SCM_ROSTRINGP (constr), constr,
-              SCM_ARG1, s_pg_connectdb);
+              SCM_ARG1, FUNC_NAME);
   strncpy0 (pgconstr, SCM_CHARS (constr), BUF_LEN);
 
   SCM_DEFER_INTS;;
@@ -307,7 +363,7 @@ pg_connectdb (SCM constr)
   SCM_ALLOW_INTS;
 
   if (connstat == CONNECTION_BAD)
-    scm_misc_error (s_pg_connectdb, strip_newlines (pgerrormsg), SCM_EOL);
+    scm_misc_error (FUNC_NAME, strip_newlines (pgerrormsg), SCM_EOL);
 
   z = sec_box ((scm_extended_dbconn*)
                scm_must_malloc (sizeof (scm_extended_dbconn), "PG-CONN"));
@@ -319,45 +375,60 @@ pg_connectdb (SCM constr)
   sec->fptrace = (FILE *) NULL;
   return z;
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_reset, "pg-reset", 1, 0, 0, pg_reset);
-
-static SCM
-pg_reset (SCM obj)
+PG_DEFINE (pg_reset, "pg-reset", 1, 0, 0,
+           (SCM conn),
+           "Reset the connection @var{conn} with the backend.\n"
+           "Equivalent to closing the connection and re-opening it again\n"
+           "with the same connect options as given to @code{pg-connectdb}.\n"
+           "@var{conn} must be a valid @code{PG_CONN} object returned by\n"
+           "@code{pg-connectdb}.")
+#define FUNC_NAME s_pg_reset
 {
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_reset);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_DEFER_INTS;
-  PQreset (sec_unbox (obj)->dbconn);
+  PQreset (sec_unbox (conn)->dbconn);
   SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_get_client_data,"pg-get-client-data",1,0, 0, pg_get_client_data);
-
-static SCM
-pg_get_client_data (SCM obj)
+PG_DEFINE (pg_get_client_data, "pg-get-client-data", 1, 0, 0,
+           (SCM conn),
+           "Return the the client data associated with @var{conn}.")
+#define FUNC_NAME s_pg_get_client_data
 {
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_get_client_data);
-  return (sec_unbox (obj)->client);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  return (sec_unbox (conn)->client);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_set_client_data,"pg-set-client-data!",2,0,0, pg_set_client_data);
-
-static SCM
-pg_set_client_data (SCM obj, SCM client)
+PG_DEFINE (pg_set_client_data, "pg-set-client-data!", 2, 0, 0,
+           (SCM conn, SCM data),
+           "Associate @var{data} with @var{conn}.")
+#define FUNC_NAME s_pg_set_client_data
 {
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_set_client_data);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_DEFER_INTS;
-  sec_unbox (obj)->client = client;
+  sec_unbox (conn)->client = data;
   SCM_ALLOW_INTS;
-  return (client);
+  return (data);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_exec,"pg-exec",2,0,0, pg_exec);
-
-static SCM
-pg_exec (SCM obj, SCM cmd)
+PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
+           (SCM conn, SCM statement),
+           "Execute the SQL string @var{statement} on a given connection\n"
+           "@var{conn} returning either a @code{PG_RESULT} object containing\n"
+           "a @code{pg-result-status} or @code{#f} if an error occurred,\n"
+           "in which case the error message can be obtained using\n"
+           "@code{pg-error-message}, passing it the @code{PG_CONN} object\n"
+           "on which the statement was attempted.  Note that the error\n"
+           "message is available only until the next call to @code{pg-exec}\n"
+           "on this connection.")
+#define FUNC_NAME s_pg_exec
 {
   scm_extended_result *ser;
   SCM z;
@@ -365,14 +436,15 @@ pg_exec (SCM obj, SCM cmd)
   PGresult *result;
   char pgquery[QUERY_BUF_LEN];
 
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_exec);
-  SCM_ASSERT (SCM_NIMP (cmd) && SCM_ROSTRINGP (cmd), cmd, SCM_ARG2, s_pg_exec);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_NIMP (statement) && SCM_ROSTRINGP (statement),
+              statement, SCM_ARG2, FUNC_NAME);
 
   SCM_DEFER_INTS;;
 
-  strncpy0 (pgquery, SCM_CHARS (cmd), QUERY_BUF_LEN);
+  strncpy0 (pgquery, SCM_CHARS (statement), QUERY_BUF_LEN);
 
-  dbconn = sec_unbox (obj)->dbconn;
+  dbconn = sec_unbox (conn)->dbconn;
 
   if ((result= PQexec (dbconn, pgquery)) != NULL) {
     /* successfully exec'ed command; create data structure */
@@ -385,25 +457,28 @@ pg_exec (SCM obj, SCM cmd)
     /* initialize the dbconn */
     ser->result = result;
     ser->count = ++pg_result_tag.count;
-    ser->conn = obj;
+    ser->conn = conn;
   } else {
     z = SCM_BOOL_F;
   }
   SCM_ALLOW_INTS;
   return z;
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_error_message,"pg-error-message",1,0,0, pg_error_message);
-
-static SCM
-pg_error_message (SCM obj)
+PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
+           (SCM obj),
+           "Return the most-recent error message that occurred on this\n"
+           "connection, or an empty string if the previous @code{pg-exec}\n"
+           "succeeded.")
+#define FUNC_NAME s_pg_error_message
 {
   char pgerrormsg[BUF_LEN];
 
 #ifdef HAVE_PQRESULTERRORMESSAGE
-  SCM_ASSERT ((sec_p (obj) || ser_p (obj)), obj, SCM_ARG1, s_pg_error_message);
+  SCM_ASSERT ((sec_p (obj) || ser_p (obj)), obj, SCM_ARG1, FUNC_NAME);
 #else
-  SCM_ASSERT ((sec_p (obj)), obj, SCM_ARG1, s_pg_error_message);
+  SCM_ASSERT ((sec_p (obj)), obj, SCM_ARG1, FUNC_NAME);
 #endif
   SCM_DEFER_INTS;
 #ifdef HAVE_PQRESULTERRORMESSAGE
@@ -419,153 +494,172 @@ pg_error_message (SCM obj)
 
   return scm_makfrom0str (strip_newlines (pgerrormsg));
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_get_db,"pg-get-db",1,0,0, pg_get_db);
-
-static SCM
-pg_get_db (SCM obj)
+PG_DEFINE (pg_get_db, "pg-get-db", 1, 0, 0,
+           (SCM conn),
+           "Return a string containing the name of the database\n"
+           "to which @var{conn} represents a connection.")
+#define FUNC_NAME s_pg_get_db
 {
   const char *rv;
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_get_db);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  rv = PQdb (sec_unbox (obj)->dbconn);
+  rv = PQdb (sec_unbox (conn)->dbconn);
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_get_user,"pg-get-user",1,0,0, pg_get_user);
-
-static SCM
-pg_get_user (SCM obj)
+PG_DEFINE (pg_get_user, "pg-get-user", 1, 0, 0,
+           (SCM conn),
+           "Return a string containing the user name used to\n"
+           "authenticate the connection @var{conn}.")
+#define FUNC_NAME s_pg_get_user
 {
   const char *rv;
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_get_user);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  rv = PQuser (sec_unbox (obj)->dbconn);
+  rv = PQuser (sec_unbox (conn)->dbconn);
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
 }
+#undef FUNC_NAME
 
 #ifdef HAVE_PQPASS
-SCM_PROC (s_pg_get_pass,"pg-get-pass",1,0,0, pg_get_pass);
-
-static SCM
-pg_get_pass (SCM obj)
+PG_DEFINE (pg_get_pass, "pg-get-pass", 1, 0, 0,
+           (SCM conn),
+           "Return a string containing the password used to\n"
+           "authenticate the connection @var{conn}.")
+#define FUNC_NAME s_pg_get_pass
 {
   const char *rv;
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_get_pass);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  rv = PQpass (sec_unbox (obj)->dbconn);
+  rv = PQpass (sec_unbox (conn)->dbconn);
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
 }
-#endif
+#undef FUNC_NAME
+#endif /* HAVE_PQPASS */
 
-SCM_PROC (s_pg_get_host,"pg-get-host",1,0,0, pg_get_host);
-
-static SCM
-pg_get_host (SCM obj)
+PG_DEFINE (pg_get_host, "pg-get-host", 1, 0, 0,
+           (SCM conn),
+           "Return a string containing the name of the host to which\n"
+           "@var{conn} represents a connection.")
+#define FUNC_NAME s_pg_get_host
 {
   const char *rv;
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_get_host);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  rv = PQhost (sec_unbox (obj)->dbconn);
+  rv = PQhost (sec_unbox (conn)->dbconn);
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_get_port,"pg-get-port",1,0,0, pg_get_port);
-
-static SCM
-pg_get_port (SCM obj)
+PG_DEFINE (pg_get_port,"pg-get-port", 1, 0, 0,
+           (SCM conn),
+           "Return a string containing the port number to which\n"
+           "@var{conn} represents a connection.")
+#define FUNC_NAME s_pg_get_port
 {
   const char *rv;
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_get_port);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  rv = PQport (sec_unbox (obj)->dbconn);
+  rv = PQport (sec_unbox (conn)->dbconn);
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_get_tty,"pg-get-tty",1,0,0, pg_get_tty);
-
-static SCM
-pg_get_tty (SCM obj)
+PG_DEFINE (pg_get_tty, "pg-get-tty", 1, 0, 0,
+           (SCM conn),
+           "Return a string containing the the name of the\n"
+           "diagnostic tty for @var{conn}.")
+#define FUNC_NAME s_pg_get_tty
 {
   const char *rv;
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_get_tty);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  rv = PQtty (sec_unbox (obj)->dbconn);
+  rv = PQtty (sec_unbox (conn)->dbconn);
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_get_options,"pg-get-options",1,0,0, pg_get_options);
-
-static SCM
-pg_get_options (SCM obj)
+PG_DEFINE (pg_get_options, "pg-get-options", 1, 0, 0,
+           (SCM conn),
+           "Return a string containing the the options string for @var{conn}.")
+#define FUNC_NAME s_pg_get_options
 {
   const char *rv;
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_get_options);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  rv = PQoptions (sec_unbox (obj)->dbconn);
+  rv = PQoptions (sec_unbox (conn)->dbconn);
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_get_connection, "pg-get-connection",1,0,0, pg_get_connection);
-
-static SCM
-pg_get_connection (SCM obj)
+PG_DEFINE (pg_get_connection, "pg-get-connection", 1, 0, 0,
+           (SCM result),
+           "Return the @code{PG_CONN} object representing the connection\n"
+           "from which a @var{result} was returned.")
+#define FUNC_NAME s_pg_get_connection
 {
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_get_connection);
-  return (ser_unbox (obj)->conn);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  return (ser_unbox (result)->conn);
 }
+#undef FUNC_NAME
 
 #ifdef HAVE_PQBACKENDPID
-SCM_PROC (s_pg_backend_pid, "pg-backend-pid",1,0,0, pg_backend_pid);
-
-static SCM
-pg_backend_pid (SCM obj)
+PG_DEFINE (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
+           (SCM conn),
+           "Return an integer which is the the PID of the backend\n"
+           "process for @var{conn}.")
+#define FUNC_NAME s_pg_backend_pid
 {
   int pid;
 
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_backend_pid);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  pid = PQbackendPID (sec_unbox (obj)->dbconn);
+  pid = PQbackendPID (sec_unbox (conn)->dbconn);
   SCM_ALLOW_INTS;
 
   return SCM_MAKINUM (pid);
 }
-#endif
+#undef FUNC_NAME
+#endif /* HAVE_PQBACKENDPID */
 
-SCM_PROC (s_pg_result_status, "pg-result-status",1,0,0, pg_result_status);
-
-static SCM
-pg_result_status (SCM obj)
+PG_DEFINE (pg_result_status, "pg-result-status", 1, 0, 0,
+           (SCM result),
+           "Return the symbolic status of a @code{PG_RESULT} object\n"
+           "returned by @code{pg-exec}.")
+#define FUNC_NAME s_pg_result_status
 {
   int result_status;
   int pgrs_index;
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_result_status);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  result_status = PQresultStatus (ser_unbox (obj)->result);
+  result_status = PQresultStatus (ser_unbox (result)->result);
   SCM_ALLOW_INTS;
 
   for (pgrs_index = 0; pgrs_index < pgrs_count; pgrs_index++)
@@ -576,83 +670,95 @@ pg_result_status (SCM obj)
   /* abort(); */
   return SCM_MAKINUM (result_status);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_ntuples, "pg-ntuples",1,0,0, pg_ntuples);
-
-static SCM
-pg_ntuples (SCM obj)
+PG_DEFINE (pg_ntuples, "pg-ntuples", 1, 0, 0,
+           (SCM result),
+           "Return the number of tuples in @var{result}.")
+#define FUNC_NAME s_pg_ntuples
 {
   int ntuples;
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_ntuples);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  ntuples = PQntuples (ser_unbox (obj)->result);
+  ntuples = PQntuples (ser_unbox (result)->result);
   SCM_ALLOW_INTS;
 
   return SCM_MAKINUM (ntuples);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_nfields, "pg-nfields",1,0,0, pg_nfields);
-
-static SCM
-pg_nfields (SCM obj)
+PG_DEFINE (pg_nfields, "pg-nfields", 1, 0, 0,
+           (SCM result),
+           "Return the number of fields in @var{result}.")
+#define FUNC_NAME s_pg_nfields
 {
   SCM scm_inum;
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_nfields);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  scm_inum = SCM_MAKINUM (PQnfields (ser_unbox (obj)->result));
+  scm_inum = SCM_MAKINUM (PQnfields (ser_unbox (result)->result));
   SCM_ALLOW_INTS;
 
   return scm_inum;
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_cmdtuples, "pg-cmdtuples",1,0,0, pg_cmdtuples);
-
-static SCM
-pg_cmdtuples (SCM obj)
+PG_DEFINE (pg_cmdtuples, "pg-cmdtuples", 1, 0, 0,
+           (SCM result),
+           "Return the number of tuples in @var{result} affected by a command.\n"
+           "This is a string which is empty in the case of commands\n"
+           "like @code{CREATE TABLE}, @code{GRANT}, @code{REVOKE} etc.\n"
+           "which don't affect tuples.")
+#define FUNC_NAME s_pg_cmdtuples
 {
   const char *cmdtuples;
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_cmdtuples);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  cmdtuples = PQcmdTuples (ser_unbox (obj)->result);
+  cmdtuples = PQcmdTuples (ser_unbox (result)->result);
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (cmdtuples);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_oid_status, "pg-oid-status",1,0,0, pg_oid_status);
-
-static SCM
-pg_oid_status (SCM obj)
+PG_DEFINE (pg_oid_status, "pg-oid-status", 1, 0, 0,
+           (SCM result),
+           "Return a string which contains the integer OID (greater than\n"
+           "or equal to 0) of the tuple inserted, or is empty if the\n"
+           "command to which @var{result} pertains was not @code{INSERT}.")
+#define FUNC_NAME s_pg_oid_status
 {
   const char *oid_status;
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_oid_status);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  oid_status = PQoidStatus (ser_unbox (obj)->result);
+  oid_status = PQoidStatus (ser_unbox (result)->result);
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (oid_status);
 }
+#undef FUNC_NAME
 
 #ifdef HAVE_PQOIDVALUE
-SCM_PROC (s_pg_oid_value, "pg-oid-value",1,0,0, pg_oid_value);
-
-static SCM
-pg_oid_value (SCM obj)
+PG_DEFINE (pg_oid_value, "pg-oid-value", 1, 0, 0,
+           (SCM result),
+           "If the @var{result} is that of an SQL @code{INSERT} command,\n"
+           "return the integer OID of the inserted tuple, otherwise return\n"
+           "@code{#f}.")
+#define FUNC_NAME s_pg_oid_value
 {
   Oid oid_value;
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_oid_value);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  oid_value = PQoidValue (ser_unbox (obj)->result);
+  oid_value = PQoidValue (ser_unbox (result)->result);
   SCM_ALLOW_INTS;
 
   if (oid_value == InvalidOid)
@@ -660,73 +766,86 @@ pg_oid_value (SCM obj)
 
   return SCM_MAKINUM (oid_value);
 }
-#endif
+#undef FUNC_NAME
+#endif /* HAVE_PQOIDVALUE */
 
-SCM_PROC (s_pg_fname, "pg-fname",2,0,0, pg_fname);
-
-static SCM
-pg_fname (SCM obj, SCM num)
+PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
+           (SCM result, SCM num),
+           "Return a string containing the canonical lower-case name\n"
+           "of the field number @var{num} in @var{result}.  SQL variables\n"
+           "and field names are not case-sensitive.")
+#define FUNC_NAME s_pg_fname
 {
   int field;
   const char *fname;
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_fname);
-  SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, s_pg_fname);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
 
   field = SCM_INUM (num);
 
   SCM_DEFER_INTS;
-  if (field < PQnfields (ser_unbox (obj)->result) && field >= 0) {
-    fname = PQfname (ser_unbox (obj)->result, field);
+  if (field < PQnfields (ser_unbox (result)->result) && field >= 0) {
+    fname = PQfname (ser_unbox (result)->result, field);
     SCM_ALLOW_INTS;
   } else {
     SCM_ALLOW_INTS;
-    scm_misc_error (s_pg_fname, "Invalid field number %s",
+    scm_misc_error (FUNC_NAME, "Invalid field number %s",
                     scm_listify (num, SCM_UNDEFINED));
   }
   return scm_makfrom0str (fname);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_fnumber, "pg-fnumber",2,0,0, pg_fnumber);
-
-static SCM
-pg_fnumber (SCM obj, SCM str)
+PG_DEFINE (pg_fnumber, "pg-fnumber", 2, 0, 0,
+           (SCM result, SCM fname),
+           "Return the integer field-number corresponding to field\n"
+           "@var{fname} if this exists in @var{result}, or @code{-1}\n"
+           "otherwise.")
+#define FUNC_NAME s_pg_fnumber
 {
   int fnum;
   char name[BUF_LEN];
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_fnumber);
-  SCM_ASSERT (SCM_NIMP (str)&&SCM_ROSTRINGP (str), str, SCM_ARG2, s_pg_fnumber);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_NIMP (fname) && SCM_ROSTRINGP (fname), fname,
+              SCM_ARG2, FUNC_NAME);
 
-  strncpy0 (name, SCM_CHARS (str), BUF_LEN);
+  strncpy0 (name, SCM_CHARS (fname), BUF_LEN);
 
   SCM_DEFER_INTS;
-  fnum = PQfnumber (ser_unbox (obj)->result, name);
+  fnum = PQfnumber (ser_unbox (result)->result, name);
   SCM_ALLOW_INTS;
 
   return SCM_MAKINUM (fnum);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_ftype, "pg-ftype",2,0,0, pg_ftype);
-
-static SCM
-pg_ftype (SCM obj, SCM num)
+PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
+           (SCM result, SCM num),
+           "Return the PostgreSQL internal integer representation of\n"
+           "the type of the given attribute.  The integer is actually an\n"
+           "OID (object ID) which can be used as the primary key to\n"
+           "reference a tuple from the system table @code{pg_type}.  A\n"
+           "@code{misc-error} is thrown if the @code{field-number} is\n"
+           "not valid for the given @code{result}.")
+#define FUNC_NAME s_pg_ftype
 {
   int field;
   int ftype;
   SCM scm_inum;
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_ftype);
-  SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, s_pg_ftype);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
 
   field = SCM_INUM (num);
 
   SCM_DEFER_INTS;
-  if (field < PQnfields (ser_unbox (obj)->result) && field >= 0) {
-    ftype = PQftype (ser_unbox (obj)->result, field);
+  if (field < PQnfields (ser_unbox (result)->result) && field >= 0) {
+    ftype = PQftype (ser_unbox (result)->result, field);
   } else {
     SCM_ALLOW_INTS;
-    scm_misc_error (s_pg_ftype, "Invalid field number %s",
+    scm_misc_error (FUNC_NAME, "Invalid field number %s",
                     scm_listify (num, SCM_UNDEFINED));
   }
   SCM_ALLOW_INTS;
@@ -734,27 +853,29 @@ pg_ftype (SCM obj, SCM num)
   scm_inum = SCM_MAKINUM (ftype);
   return scm_inum;
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_fsize, "pg-fsize",2,0,0, pg_fsize);
-
-static SCM
-pg_fsize (SCM obj, SCM num)
+PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
+           (SCM result, SCM num),
+           "Return the size of a @var{result} field @var{num} in bytes,\n"
+           "or -1 if the field is variable-length.")
+#define FUNC_NAME s_pg_fsize
 {
   int field;
   int fsize;
   SCM scm_inum;
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_fsize);
-  SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, s_pg_fsize);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
 
   field = SCM_INUM (num);
 
   SCM_DEFER_INTS;
-  if (field < PQnfields (ser_unbox (obj)->result) && field >= 0) {
-    fsize = PQfsize (ser_unbox (obj)->result, field);
+  if (field < PQnfields (ser_unbox (result)->result) && field >= 0) {
+    fsize = PQfsize (ser_unbox (result)->result, field);
   } else {
     SCM_ALLOW_INTS;
-    scm_misc_error (s_pg_fsize, "Invalid field number %s",
+    scm_misc_error (FUNC_NAME, "Invalid field number %s",
                     scm_listify (num, SCM_UNDEFINED));
   }
   SCM_ALLOW_INTS;
@@ -762,11 +883,14 @@ pg_fsize (SCM obj, SCM num)
   scm_inum = SCM_MAKINUM (fsize);
   return scm_inum;
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_getvalue, "pg-getvalue",3,0,0, pg_getvalue);
-
-static SCM
-pg_getvalue (SCM obj, SCM stuple, SCM sfield)
+PG_DEFINE (pg_getvalue, "pg-getvalue", 3, 0, 0,
+           (SCM result, SCM stuple, SCM sfield),
+           "Return a string containing the value of the attribute\n"
+           "@var{sfield}, tuple @var{stuple} of @var{result}.  It is\n"
+           "up to the caller to convert this to the required type.")
+#define FUNC_NAME s_pg_getvalue
 {
   int maxtuple, tuple;
   int maxfield, field;
@@ -776,28 +900,28 @@ pg_getvalue (SCM obj, SCM stuple, SCM sfield)
 #endif
   SCM srv;
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_getvalue);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (stuple) && SCM_INUMP (stuple), stuple, SCM_ARG2,
-              s_pg_getvalue);
+              FUNC_NAME);
   SCM_ASSERT (SCM_IMP (sfield) && SCM_INUMP (sfield), sfield, SCM_ARG3,
-              s_pg_getvalue);
+              FUNC_NAME);
   tuple = SCM_INUM (stuple);
   field = SCM_INUM (sfield);
 
   SCM_DEFER_INTS;
-  maxtuple = PQntuples (ser_unbox (obj)->result);
-  maxfield = PQnfields (ser_unbox (obj)->result);
+  maxtuple = PQntuples (ser_unbox (result)->result);
+  maxfield = PQnfields (ser_unbox (result)->result);
   SCM_ALLOW_INTS;
 
   SCM_ASSERT (tuple < maxtuple && tuple >= 0, stuple, SCM_OUTOFRANGE,
-              s_pg_getvalue);
+              FUNC_NAME);
   SCM_ASSERT (field < maxfield && field >= 0, sfield, SCM_OUTOFRANGE,
-              s_pg_getvalue);
+              FUNC_NAME);
   SCM_DEFER_INTS;
-  val = PQgetvalue (ser_unbox (obj)->result, tuple, field);
+  val = PQgetvalue (ser_unbox (result)->result, tuple, field);
 #ifdef HAVE_PQBINARYTUPLES
-  if ((isbinary = PQbinaryTuples (ser_unbox (obj)->result)) != 0)
-    veclen = PQgetlength (ser_unbox (obj)->result, tuple, field);
+  if ((isbinary = PQbinaryTuples (ser_unbox (result)->result)) != 0)
+    veclen = PQgetlength (ser_unbox (result)->result, tuple, field);
 #endif
   SCM_ALLOW_INTS;
 
@@ -810,70 +934,73 @@ pg_getvalue (SCM obj, SCM stuple, SCM sfield)
 
   return srv;
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_getlength, "pg-getlength",3,0,0, pg_getlength);
-
-static SCM
-pg_getlength (SCM obj, SCM stuple, SCM sfield)
+PG_DEFINE (pg_getlength, "pg-getlength", 3, 0, 0,
+           (SCM result, SCM stuple, SCM sfield),
+           "The size of the datum in bytes.")
+#define FUNC_NAME s_pg_getlength
 {
   int maxtuple, tuple;
   int maxfield, field;
   int len;
   SCM ret;
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_getlength);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (stuple) && SCM_INUMP (stuple), stuple, SCM_ARG2,
-              s_pg_getlength);
+              FUNC_NAME);
   SCM_ASSERT (SCM_IMP (sfield) && SCM_INUMP (sfield), sfield, SCM_ARG3,
-              s_pg_getlength);
+              FUNC_NAME);
   tuple = SCM_INUM (stuple);
   field = SCM_INUM (sfield);
 
   SCM_DEFER_INTS;
-  maxtuple = PQntuples (ser_unbox (obj)->result);
-  maxfield = PQnfields (ser_unbox (obj)->result);
+  maxtuple = PQntuples (ser_unbox (result)->result);
+  maxfield = PQnfields (ser_unbox (result)->result);
   SCM_ALLOW_INTS;
 
   SCM_ASSERT (tuple < maxtuple && tuple >= 0, stuple, SCM_OUTOFRANGE,
-              s_pg_getlength);
+              FUNC_NAME);
   SCM_ASSERT (field < maxfield && field >= 0, sfield, SCM_OUTOFRANGE,
-              s_pg_getlength);
+              FUNC_NAME);
   SCM_DEFER_INTS;
-  len = PQgetlength (ser_unbox (obj)->result, tuple, field);
+  len = PQgetlength (ser_unbox (result)->result, tuple, field);
   SCM_ALLOW_INTS;
 
   ret = SCM_MAKINUM (len);
   return ret;
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_getisnull, "pg-getisnull",3,0,0, pg_getisnull);
-
-static SCM
-pg_getisnull (SCM obj, SCM stuple, SCM sfield)
+PG_DEFINE (pg_getisnull, "pg-getisnull", 3, 0, 0,
+           (SCM result, SCM stuple, SCM sfield),
+           "Return @code{#t} if the attribute is @code{NULL},\n"
+           "@code{#f} otherwise.")
+#define FUNC_NAME s_pg_getisnull
 {
   int maxtuple, tuple;
   int maxfield, field;
   SCM scm_bool;
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_getisnull);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (stuple) && SCM_INUMP (stuple), stuple, SCM_ARG2,
-              s_pg_getisnull);
+              FUNC_NAME);
   SCM_ASSERT (SCM_IMP (sfield) && SCM_INUMP (sfield), sfield, SCM_ARG3,
-              s_pg_getisnull);
+              FUNC_NAME);
   tuple = SCM_INUM (stuple);
   field = SCM_INUM (sfield);
 
   SCM_DEFER_INTS;
-  maxtuple = PQntuples (ser_unbox (obj)->result);
-  maxfield = PQnfields (ser_unbox (obj)->result);
+  maxtuple = PQntuples (ser_unbox (result)->result);
+  maxfield = PQnfields (ser_unbox (result)->result);
   SCM_ALLOW_INTS;
 
   SCM_ASSERT (tuple < maxtuple && tuple >= 0, stuple, SCM_OUTOFRANGE,
-              s_pg_getisnull);
+              FUNC_NAME);
   SCM_ASSERT (field < maxfield && field >= 0, sfield, SCM_OUTOFRANGE,
-              s_pg_getisnull);
+              FUNC_NAME);
   SCM_DEFER_INTS;
-  if (PQgetisnull (ser_unbox (obj)->result, tuple, field))
+  if (PQgetisnull (ser_unbox (result)->result, tuple, field))
     scm_bool = SCM_BOOL_T;
   else
     scm_bool = SCM_BOOL_F;
@@ -881,19 +1008,21 @@ pg_getisnull (SCM obj, SCM stuple, SCM sfield)
 
   return scm_bool;
 }
+#undef FUNC_NAME
 
 #ifdef HAVE_PQBINARYTUPLES
-SCM_PROC (s_pg_binary_tuples,"pg-binary-tuples?",1,0,0,pg_binary_tuples);
-
-static SCM
-pg_binary_tuples (SCM obj)
+PG_DEFINE (pg_binary_tuples, "pg-binary-tuples?", 1, 0, 0,
+           (SCM result),
+           "Return @code{#t} if @var{result} contains binary tuple\n"
+           "data, @code{#f} otherwise.")
+#define FUNC_NAME s_pg_binary_tuples
 {
   SCM rv;
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_binary_tuples);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  if (PQbinaryTuples (ser_unbox (obj)->result))
+  if (PQbinaryTuples (ser_unbox (result)->result))
     rv = SCM_BOOL_T;
   else
     rv = SCM_BOOL_F;
@@ -901,29 +1030,31 @@ pg_binary_tuples (SCM obj)
 
   return rv;
 }
-#endif
+#undef FUNC_NAME
+#endif /* HAVE_PQBINARYTUPLES */
 
 #ifdef HAVE_PQFMOD
-SCM_PROC (s_pg_fmod, "pg-fmod",2,0,0, pg_fmod);
-
-static SCM
-pg_fmod (SCM obj, SCM num)
+PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
+           (SCM result, SCM num),
+           "Return the integer type-specific modification data for\n"
+           "the given field (field number @var{num}) of @var{result}.")
+#define FUNC_NAME s_pg_fmod
 {
   int field;
   int fmod;
   SCM scm_inum;
 
-  SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_fsize);
-  SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, s_pg_fsize);
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
 
   field = SCM_INUM (num);
 
   SCM_DEFER_INTS;
-  if (field < PQnfields (ser_unbox (obj)->result) && field >= 0) {
-    fmod = PQfmod (ser_unbox (obj)->result, field);
+  if (field < PQnfields (ser_unbox (result)->result) && field >= 0) {
+    fmod = PQfmod (ser_unbox (result)->result, field);
   } else {
     SCM_ALLOW_INTS;
-    scm_misc_error (s_pg_fmod, "Invalid field number %s",
+    scm_misc_error (FUNC_NAME, "Invalid field number %s",
                     scm_listify (num, SCM_UNDEFINED));
   }
   SCM_ALLOW_INTS;
@@ -931,29 +1062,38 @@ pg_fmod (SCM obj, SCM num)
   scm_inum = SCM_MAKINUM (fmod);
   return scm_inum;
 }
-#endif
+#undef FUNC_NAME
+#endif /* HAVE_PQFMOD */
 
-SCM_PROC (s_pg_guile_pg_version,"pg-guile-pg-version",0,0,0,pg_guile_pg_version);
-
-static SCM
-pg_guile_pg_version (void)
+PG_DEFINE (pg_guile_pg_version, "pg-guile-pg-version", 0, 0, 0,
+           (void),
+           "Return a string giving the version of @code{guile-pg}.\n"
+           "The form is \"M.m\" giving major and minor versions.")
+#define FUNC_NAME s_pg_guile_pg_version
 {
   return scm_makfrom0str (VERSION);
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_getline, "pg-getline", 1, 0, 0, pg_getline);
-
-static SCM
-pg_getline (SCM obj)
+PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
+           (SCM conn),
+           "Read a line from a connection on which a @code{COPY <table> TO\n"
+           "STDOUT} has been issued.  Return a string from the connection.\n"
+           "If the returned string consists of only a backslash followed by\n"
+           "a full stop, then the results from the @code{COPY} command have\n"
+           "all been read and @code{pg-endcopy} should be called to\n"
+           "resynchronise the connection before any further calls to\n"
+           "@code{pg-exec} on this connection.")
+#define FUNC_NAME s_pg_getline
 {
   char buf[BUF_LEN];
   int ret = 1;
   SCM str = SCM_UNDEFINED;
 
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_getline);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   while (ret != 0 && ret != EOF) {
     SCM_DEFER_INTS;
-    ret = PQgetline (sec_unbox (obj)->dbconn, buf, BUF_LEN);
+    ret = PQgetline (sec_unbox (conn)->dbconn, buf, BUF_LEN);
     SCM_ALLOW_INTS;
     if (str == SCM_UNDEFINED)
       str = scm_makfrom0str (buf);
@@ -962,88 +1102,107 @@ pg_getline (SCM obj)
   }
   return str;
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_putline, "pg-putline", 2, 0, 0, pg_putline);
-
-static SCM
-pg_putline (SCM obj, SCM str)
+PG_DEFINE (pg_putline, "pg-putline", 2, 0, 0,
+           (SCM conn, SCM str),
+           "Write a line to the connection on which a @code{COPY <table>\n"
+           "FROM STDIN} has been issued.  The lines written should include\n"
+           "the final newline characters.  The last line should be a\n"
+           "backslash, followed by a full-stop.  After this, the\n"
+           "@code{pg-endcopy} procedure should be called for this\n"
+           "connection before any further @code{pg-exec} call is made.\n"
+           "The return value is undefined.")
+#define FUNC_NAME s_pg_putline
 {
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_putline);
-  SCM_ASSERT (SCM_NIMP (str)&&SCM_ROSTRINGP (str), str, SCM_ARG2, s_pg_putline);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_NIMP (str)&&SCM_ROSTRINGP (str), str, SCM_ARG2, FUNC_NAME);
   SCM_DEFER_INTS;
 #ifdef HAVE_PQPUTNBYTES
-  PQputnbytes (sec_unbox (obj)->dbconn, SCM_CHARS (str), SCM_ROLENGTH (str));
+  PQputnbytes (sec_unbox (conn)->dbconn, SCM_CHARS (str), SCM_ROLENGTH (str));
 #else
-  PQputline (sec_unbox (obj)->dbconn, SCM_CHARS (str));
+  PQputline (sec_unbox (conn)->dbconn, SCM_CHARS (str));
 #endif
   SCM_ALLOW_INTS;
   return SCM_UNSPECIFIED;
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_endcopy, "pg-endcopy", 1, 0, 0, pg_endcopy);
-
-static SCM
-pg_endcopy (SCM obj)
+PG_DEFINE (pg_endcopy, "pg-endcopy", 1, 0, 0,
+           (SCM conn),
+           "Resynchronize with the backend process.  This procedure\n"
+           "must be called after the last line of a table has been\n"
+           "transferred using @code{pg-getline} or ???.\n\n"
+           "Return an integer: zero if successful, non-zero otherwise.")
+#define FUNC_NAME s_pg_endcopy
 {
   int ret;
   SCM scm_inum;
 
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_endcopy);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_DEFER_INTS;
-  ret = PQendcopy (sec_unbox (obj)->dbconn);
+  ret = PQendcopy (sec_unbox (conn)->dbconn);
   SCM_ALLOW_INTS;
 
   scm_inum = SCM_MAKINUM (ret);
   return scm_inum;
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_trace, "pg-trace", 2, 0, 0, pg_trace);
-
-static SCM
-pg_trace (SCM obj, SCM port)
+PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
+           (SCM conn, SCM port),
+           "Start outputting low-level trace information on the\n"
+           "connection @var{conn} to @var{port}, which must have been\n"
+           "opened for writing.  This trace is more useful for debugging\n"
+           "Postgres than it is for debugging applications.\n"
+           "The return value is unspecified.")
+#define FUNC_NAME s_pg_trace
 {
   struct scm_fport *fp = SCM_FSTREAM (port);
   int fd;
   FILE *fpout;
 
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_trace);
-  SCM_ASSERT (sec_unbox (obj)->fptrace == NULL, obj, SCM_ARG1, s_pg_trace);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (sec_unbox (conn)->fptrace == NULL, conn, SCM_ARG1, FUNC_NAME);
   port = SCM_COERCE_OUTPORT (port);
-  SCM_ASSERT (SCM_NIMP (port) && SCM_OPOUTFPORTP (port),port,SCM_ARG2,s_pg_trace);
+  SCM_ASSERT (SCM_NIMP (port) && SCM_OPOUTFPORTP (port),port,SCM_ARG2,FUNC_NAME);
 
   SCM_SYSCALL (fd = dup (fp->fdes));
   if (fd == -1)
-    scm_syserror (s_pg_trace);
+    scm_syserror (FUNC_NAME);
   SCM_SYSCALL (fpout = fdopen (fd, "w"));
   if (fpout == NULL)
-    scm_syserror (s_pg_trace);
+    scm_syserror (FUNC_NAME);
 
   SCM_DEFER_INTS;
-  PQtrace (sec_unbox (obj)->dbconn, fpout);
-  sec_unbox (obj)->fptrace = fpout;
+  PQtrace (sec_unbox (conn)->dbconn, fpout);
+  sec_unbox (conn)->fptrace = fpout;
   SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
 }
+#undef FUNC_NAME
 
-SCM_PROC (s_pg_untrace, "pg-untrace", 1, 0, 0, pg_untrace);
-
-static SCM
-pg_untrace (SCM obj)
+PG_DEFINE (pg_untrace, "pg-untrace", 1, 0, 0,
+           (SCM conn),
+           "Stop tracing on connection @var{conn}.\n"
+           "The return value is unspecified.")
+#define FUNC_NAME s_pg_untrace
 {
   int ret;
-  SCM_ASSERT (sec_p (obj), obj, SCM_ARG1, s_pg_untrace);
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   SCM_DEFER_INTS;
-  PQuntrace (sec_unbox (obj)->dbconn);
-  SCM_SYSCALL (ret = fclose (sec_unbox (obj)->fptrace));
-  sec_unbox (obj)->fptrace = (FILE *) NULL;
+  PQuntrace (sec_unbox (conn)->dbconn);
+  SCM_SYSCALL (ret = fclose (sec_unbox (conn)->fptrace));
+  sec_unbox (conn)->fptrace = (FILE *) NULL;
   SCM_ALLOW_INTS;
   if (ret)
-    scm_syserror (s_pg_untrace);
+    scm_syserror (FUNC_NAME);
 
   return SCM_UNSPECIFIED;
 }
+#undef FUNC_NAME
 
 void
 init_postgres (void)
