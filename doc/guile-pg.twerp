@@ -1371,7 +1371,13 @@ The rest of this chapter is an extended example showing some of the uses of
 (add '(date amount) (current-time) 2.98)
 @result{} #<PG-RESULT:3:COMMAND_OK:0:0>
 
-(define result (sel "count(*)" (where-clausifier "amount < 2.00")))
+;; opaque strings -- currently supported but not as good as...
+(define result (sel "count(*)"
+                     (where-clausifier "amount < 2.00")))
+
+;; ...using a proper outspec and prefix-style expressions
+(define result (sel '((integer #f (count *)))
+                    #:where '(< amount 2.00)))
 
 result
 @result{} #<PG-RESULT:4:TUPLES_OK:1:1>
@@ -1389,8 +1395,8 @@ invocations evaluate the operating thunk directly (double parentheses); and
 (shown here) of a @code{serial} column type, which requires an additional drop
 of the associated PostgreSQL @dfn{sequence} used to implement the expected
 serial behavior.  (As of PostgreSQL 7.x, the sequence name is constructed like
-so: TABLENAME_COLNAME_seq.  For more info, see the PostgreSQL User Guide,
-Chapter 3: Data Types.
+so: @code{TABLENAME_COLNAME_seq}.  For more info, see the PostgreSQL User Guide,
+Chapter 3: Data Types.)
 
 @c ---------------------------------------------------------------------------
 @node    Introspection
