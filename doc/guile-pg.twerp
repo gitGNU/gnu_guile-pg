@@ -587,7 +587,7 @@ to retrieve the results of a @code{COPY <table> TO STDOUT} command.
   (let loop ((line (pg-getline conn)))
     (if (string=? line "\\.")
         (pg-endcopy conn)
-        (begin (write-line line port)
+        (begin (format port "~A\n" line)
                (loop (pg-getline conn))))))
 @end lisp
 @heading Notes
@@ -782,8 +782,7 @@ into a nested list:
 @lisp
 (let ((raw (pg-getvalue result 0 0))
       (conv (dbcoltype:objectifier (dbcoltype-lookup 'text[][]))))
-  (write-line raw)
-  (write-line (conv raw)))
+  (format #t "~A\n~A\n" raw (conv raw)))
 
 @print{} @{@{a,b@},@{c,d@}@}
 @print{} (("a" "b") ("c" "d"))
