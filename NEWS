@@ -1,6 +1,25 @@
 NEWS for Guile-PG
 
 
+- version 0.09 released 2002-12-12
+
+	Docs spiffing: Info page organization now flattened.
+
+	As a convenience for existing code, the vars:
+		PGRES_EMPTY_QUERY
+		PGRES_COMMAND_OK
+		PGRES_TUPLES_OK
+		PGRES_COPY_OUT
+		PGRES_COPY_IN
+		PGRES_BAD_RESPONSE
+		PGRES_NONFATAL_ERROR
+		PGRES_FATAL_ERROR
+	are now added back, but w/ symbolic values rather than
+	numerical.  However, this is temporary; these vars will go away
+	(and stay gone) as 1.0 release nears.  New code should use
+	symbols directly (see manual for examples).
+
+
 - version 0.08 released 2002-12-11
 
 	Maintenance for guile-pg has passed from Ian Grant (original
