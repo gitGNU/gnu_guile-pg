@@ -7,7 +7,7 @@ recip='good-news-guile-pg@glug.org'
 go ()
 {
     echo guile-pg: `sed '/^ *VERSION=/!d;s/.*=//' ../configure`
-    for opt in m s r p v ; do echo uname-${opt}: `uname -$opt` ; done
+    for opt in m s r ; do echo uname-${opt}: `uname -$opt` ; done
     echo autoconf: `autoconf --version | head -1 | sed -e 's/[^0-9.]*//g'`
     echo automake: `automake --version | head -1 | sed -e 's/[^0-9.]*//g'`
     echo libtool: `libtool --version | sed 's/([^)]*)//g;s/^[^0-9]*//;1!d'`
@@ -18,9 +18,16 @@ go ()
     echo libguile: `guile-config info libguileinterface`
 }
 
+gosexp ()
+{
+    echo '('
+    go | sed 's/^\([-a-z]*\): *\(.*\)/(\1 . "\2")/g'
+    echo ')'
+}
+
 if [ x"$1" = x-m ] ; then
     tmp="show-platform.$$"
-    go > $tmp
+    gosexp > $tmp
     mail -s "show-platform output" $recip < $tmp
     rv=$?
     cat $tmp
