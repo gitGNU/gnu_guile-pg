@@ -96,10 +96,10 @@ abstractions and convenience procedures.
 * Large Objects::               Large-Object support.
 * Miscellaneous::               Everything else starting with "pg-".
 
+* Query Construction::          Module: (database postgres-qcons).
 * Displaying Results::          Module: (database postgres-resdisp).
 * Types Conversion::            Module: (database postgres-types).
 * Column Definitions::          Module: (database postgres-col-defs).
-* Query Construction::          Module: (database postgres-qcons).
 * Result Transforms::           Module: (database postgres-resx).
 * Single-Table Abstraction::    Module: (database postgres-table).
 * Introspection::               Module: (database postgres-meta).
@@ -794,6 +794,101 @@ opens the required file and starts/stops the trace.
 @end lisp
 
 @c ---------------------------------------------------------------------------
+@node    Query Construction
+@chapter Query Construction
+
+Constucting a typical SQL @code{SELECT} query (to be passed to @code{pg-exec})
+can be tedious and error prone due to the many string-munging operations
+involved.  Guile-PG provides some procedures to make things a little easier.
+
+To get started, load the @code{postgres-qcons} module:
+
+@lisp
+(use-modules (database postgres-qcons))
+@end lisp
+
+This provides procedures to @dfn{render} sexps to SQL syntax, essentially by
+constructing stylized trees (nested lists) and then flattening them to a
+string on output.
+
+@section Prefix-Style Expressions
+
+To be brutally honest, both SQL and Scheme revolve around structured
+expressions (also known as @dfn{sexps}), so ascribing some elevated status to
+the representation that ``supports sexps'' is really not saying much.  In the
+Guile-PG maintainer's humble opinion, the advantage in expressivity of Scheme
+over SQL is not in the presence or lack of structure, but rather in the
+regularity of the structure.
+
+Scheme syntax is (as you probably already know) exceedingly easy to describe:
+first there is the opening parenthesis, then the operator or function, then
+the argument(s), and finally the matching closing parenthesis.  The
+argument(s) can in turn be sub-expressions of their own.  This simplicity
+stands in stark contrast to the myriad rules (and worse: exceptions to the
+rules) that comprise the SQL language specification.
+
+Thus, we call the mini-language described in this chapter
+@dfn{prefix-style expressions} because it borrows from Scheme's regularity
+even though it is not Scheme, per se.  Its components are symbols, keywords,
+numbers, strings and the dot (aka period aka full-stop), arranged in nested
+lists delimited by matching pairs of parentheses.  Unlike Scheme, it does not
+have quote, quasiquote, unquote or unquote-splicing, although those facilities
+can (and should) be used in a Scheme program to construct a prefix-style
+expression.
+
+@section Lookup Tables Extension
+
+During tree construction, internal lookup tables control the rendering
+transformations.  You can add to them using proc @code{qcons-declare!}.
+
+@twerpdoc (qcons-declare!)
+
+The rest of this section presents various lists of built-in declarations.
+Using @code{qcons-declare!} on a built-in symbol overwrites the associated
+value (if any).  There is no @dfn{undeclare} support.
+
+@include qcons-tables.texi
+
+@section Quoting
+
+Ideally, the tree construction procedures in the following section would
+be powerful enough to do the right thing given a well-formed prefix-style
+expression.  However, sometimes reality intrudes and you need to craft SQL
+directly.  In these cases, it still may be a good idea to use the tree
+construction procs for most of the work and tweak only the small parts that
+need it.  This selective use of varying expression construction approaches is
+known prosaically as @dfn{quoting}.
+
+@twerpdoc (sql-pre)
+@twerpdoc (sql-pre?)
+@twerpdoc (sql-unpre)
+@twerpdoc (sql-quote)
+
+@section Tree Construction
+
+This section describes the tree construction procedures, most of which are
+still (at this time, 2005-02-24) considered @emph{experimental}.  You should
+take this as an invitation to @emph{experiment} and share your observations w/
+the Guile-PG maintainer so that we can refine them nicely for the 1.0 release.
+
+@twerpdoc (make-comma-separated-tree)
+@twerpdoc (make-WHERE-tree)
+@twerpdoc (make-GROUP-BY-tree)
+@twerpdoc (make-HAVING-tree)
+@twerpdoc (make-ORDER-BY-tree)
+@twerpdoc (make-SELECT/COLS-tree)
+@twerpdoc (make-FROM-tree)
+@twerpdoc (make-SELECT/FROM/COLS-tree)
+@twerpdoc (parse+make-SELECT/tail-tree)
+
+@section Output
+
+To get SQL once the tree is constructed, you have to flatten it.
+
+@twerpdoc (sql<-trees)
+@twerpdoc (sql-command<-trees)
+
+@c ---------------------------------------------------------------------------
 @node    Displaying Results
 @chapter Displaying Results
 
@@ -1127,82 +1222,6 @@ Transforms}):
 
 @twerpdoc (objectifiers)
 @twerpdoc (stringifiers)
-
-@c ---------------------------------------------------------------------------
-@node    Query Construction
-@chapter Query Construction
-
-Constucting a typical SQL @code{SELECT} query (to be passed to @code{pg-exec})
-can be tedious and error prone due to the many string-munging operations
-involved.  Guile-PG provides some procedures to make things a little easier.
-
-To get started, load the @code{postgres-qcons} module:
-
-@lisp
-(use-modules (database postgres-qcons))
-@end lisp
-
-This provides procedures to @dfn{render} sexps to SQL syntax, essentially by
-constructing stylized trees (nested lists) and then flattening them to a
-string on output.
-
-@section Prefix-Style Expressions
-
-To be brutally honest, both SQL and Scheme revolve around structured
-expressions (also known as @dfn{sexps}), so ascribing some elevated status to
-the representation that ``supports sexps'' is really not saying much.  In the
-Guile-PG maintainer's humble opinion, the advantage in expressivity of Scheme
-over SQL is not in the presence or lack of structure, but rather in the
-regularity of the structure.  Scheme syntax is (as you probably already know)
-exceedingly easy to describe: first there is the opening parenthesis, then the
-operator or function, then the argument(s), and finally the matching closing
-parenthesis.  The argument(s) can in turn be sub-expressions of their own.
-
-In any case, we call the mini-language described in this chapter
-@dfn{prefix-style expressions} because it borrows from Scheme's regularity
-even though it is not Scheme, per se.  Its components are symbols, keywords,
-numbers, strings and the dot (aka period aka full-stop), arranged in nested
-lists delimited by matching pairs of parentheses.  Unlike Scheme, it does not
-have quote, quasiquote, unquote or unquote-splicing, although those facilities
-can (and should) be used in a Scheme program to construct a prefix-style
-expression.
-
-@section Lookup Tables Extension
-
-During tree construction, internal lookup tables control the rendering
-transformations.  You can add to them using proc @code{qcons-declare!}.
-
-@twerpdoc (qcons-declare!)
-
-The rest of this section presents various lists of built-in declarations.
-Using @code{qcons-declare!} on a built-in symbol overwrites the associated
-value (if any).  There is no @dfn{undeclare} support.
-
-@include qcons-tables.texi
-
-@section Quoting
-
-@twerpdoc (sql-pre)
-@twerpdoc (sql-pre?)
-@twerpdoc (sql-unpre)
-@twerpdoc (sql-quote)
-
-@section Tree Construction
-
-@twerpdoc (make-comma-separated-tree)
-@twerpdoc (make-WHERE-tree)
-@twerpdoc (make-GROUP-BY-tree)
-@twerpdoc (make-HAVING-tree)
-@twerpdoc (make-ORDER-BY-tree)
-@twerpdoc (make-SELECT/COLS-tree)
-@twerpdoc (make-FROM-tree)
-@twerpdoc (make-SELECT/FROM/COLS-tree)
-@twerpdoc (parse+make-SELECT/tail-tree)
-
-@section Output
-
-@twerpdoc (sql<-trees)
-@twerpdoc (sql-command<-trees)
 
 @c ---------------------------------------------------------------------------
 @node    Result Transforms
