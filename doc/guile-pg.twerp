@@ -1013,12 +1013,41 @@ To get started, load the @code{postgres-meta} module:
 (use-modules (database postgres-meta))
 @end lisp
 
-The column definitions of an existing table can be discovered to some extent by
-the @code{infer-defs} and @code{describe-table!} procedures, the latter also
-displaying details on field/column innards.
+The column definitions of an existing table can be discovered to some extent
+by the @code{defs-from-psql}, @code{infer-defs} and @code{describe-table!}
+procedures, the last one also displaying details on field/column innards.
 
+@twerpdoc (defs-from-psql)
 @twerpdoc (infer-defs)
 @twerpdoc (describe-table!)
+
+Once you have a set of defs, you can verify that their types are supported by
+Guile-PG with the following procedures.
+
+@twerpdoc (check-type/elaborate)
+@twerpdoc (strictly-check-types/elaborate!)
+
+@heading Example
+@lisp
+(define DEFS (defs-from-psql #t "glug" "updok"))
+
+(car DEFS)
+@result{} (time timestamp "without time zone not null")
+
+(map type-name DEFS)
+@result{} (timestamp integer integer real integer real)
+
+(strictly-check-types/elaborate! "updok" (map type-name DEFS))
+@print{}
+ERROR: bad "updok" types: (real real)
+ABORT: (misc-error)
+@end lisp
+
+In this example, we use the external program @file{psql} to find out the defs
+for the table @code{updok} in database @code{glug}; use @code{type-name} to
+get the types (@pxref{Column Definitions}); and finally check to see which
+ones, if any, are unknown to Guile-PG.  The error output lists @code{real}
+twice because two of the @code{DEFS} have that type.
 
 @c ---------------------------------------------------------------------------
 @c ---------------------------------------------------------------------------
