@@ -832,7 +832,6 @@ using the @code{dbcoltype:FOO} procedures.
 
 @twerpdoc (dbcoltypes)
 @twerpdoc (dbcoltype-lookup)
-@twerpdoc (dbcoltype:name)
 @twerpdoc (dbcoltype:stringifier)
 @twerpdoc (dbcoltype:objectifier)
 @twerpdoc (dbcoltype:default)
