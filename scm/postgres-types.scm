@@ -365,6 +365,25 @@
   host-stringifier
   host-objectifier)
 
+(define-db-col-type 'macaddr "00:00:00:00:00:00"
+  (lambda (n)
+    (let loop ((bpos 0) (acc '()) (n n))
+      (if (= bpos 48)
+          (apply simple-format #f "~A:~A:~A:~A:~A:~A"
+                 (map (lambda (x) (number->string x 16)) acc))
+          (loop (+ bpos 8)
+                (cons (logand #xff n) acc)
+                (ash n -8)))))
+  (lambda (s)
+    (let loop ((cut 2) (acc '()) (shift 40))
+      (if (> 0 shift)
+          (apply + acc)
+          (loop (+ 3 cut)
+                (cons (ash (string->number (substring s (- cut 2) cut) 16)
+                           shift)
+                      acc)
+                (- shift 8))))))
+
 ;; 5.8.3        -- inet vs cidr
 ;; 5.8.4        -- macaddr
 ;; 5.9          -- bit string types
