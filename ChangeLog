@@ -1,5 +1,10 @@
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-resdisp.scm (display-result):
+	Handle flags to inhibit L/R decorations.
+
+2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-resdisp.scm (decor): Rename from `intersection-style'.
 	Also, handle keyword arg.
 	(display-result): Use `decor'. Recognize/pass keywords.
