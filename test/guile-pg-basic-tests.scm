@@ -210,8 +210,8 @@
          (res (cexec "SELECT COUNT(*) FROM test WHERE col1 <= 100")))
     (and (tuples-ok? res)
          (let ((backend-sez (string->number (pg-getvalue res 0 0))))
-           (and (= line-count backend-sez))
-           backend-sez))))
+           (and (= line-count backend-sez)
+                backend-sez)))))
 
 (define test:count-records-expect-100
   (add-test 100 (lambda () (count-records))))
@@ -256,11 +256,13 @@
         (and (tuples-ok? res)
              (field-names res))))))
 
-(define test:ftypes
+(define test:fmod+ftypes
   (add-test '("int4" "text")
     (lambda ()
       (let ((res (cexec "SELECT * FROM test WHERE col1 = 1")))
         (and (tuples-ok? res)
+             (= -1 (pg-fmod res 0))     ; -1 means "no modification";
+             (= -1 (pg-fmod res 1))     ;    these are simple types
              (ftype-names res))))))
 
 (define test:get-connection
@@ -410,7 +412,7 @@
          test:delete-some-records
          test:count-records-expect-50
          test:fname
-         test:ftypes
+         test:fmod+ftypes
          test:get-client-data
          test:get-connection
          test:ntuples
