@@ -22,22 +22,17 @@
 
 #define IFNULL(x,y) ((x) == NULL ? (y) : (x))
 
-typedef struct _scm_extended_dbconn {
+typedef struct
+{
   SCM          notice;        /* port to send notices to */
   SCM          client;
   int          count;         /* which dbconn is this? */
   PGconn      *dbconn;        /* Postgres data structure */
   FILE        *fptrace;       /* The current trace stream */
-} scm_extended_dbconn;
+} xc_t;
 
-typedef struct _scm_extended_result {
-    SCM          conn;          /* Connection */
-    int          count;         /* which result is this? */
-    PGresult    *result;        /* Postgres result structure */
-} scm_extended_result;
-
-extern int                  guile_pg_sec_p (SCM obj);
-extern scm_extended_dbconn *guile_pg_sec_unbox (SCM obj);
+extern int   xc_p (SCM obj);
+extern xc_t *xc_unbox (SCM obj);
 
 extern void init_libpostgres_lo (void);
 
@@ -48,7 +43,7 @@ extern void init_libpostgres_lo (void);
 
 /* string munging */
 
-/* Return a string that is to be used in contexts where the extracted C
+/* Coerce a string that is to be used in contexts where the extracted C
    string is expected to be zero-terminated and is read-only.  We check
    this condition precisely instead of simply coercing all substrings,
    to avoid waste for those substrings that may in fact already satisfy
