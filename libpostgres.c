@@ -99,13 +99,13 @@ static int pgrs_count = sizeof (pgrs) / sizeof (pgrs_t);
 int
 xc_p (SCM obj)
 {
-  return (SCM_NIMP (obj) && SCM_CAR (obj) == pg_conn_tag.type_tag);
+  return (SCM_NIMP (obj) && gh_car (obj) == pg_conn_tag.type_tag);
 }
 
 xc_t *
 xc_unbox (SCM obj)
 {
-  return ((xc_t *) SCM_CDR (obj));
+  return ((xc_t *) gh_cdr (obj));
 }
 
 #define XCONN(x)  (xc_unbox (x)->dbconn)
@@ -185,13 +185,13 @@ typedef struct  /* extended result */
 static int
 xr_p (SCM obj)
 {
-  return (SCM_NIMP (obj) && SCM_CAR (obj) == pg_result_tag.type_tag);
+  return (SCM_NIMP (obj) && gh_car (obj) == pg_result_tag.type_tag);
 }
 
 static xr_t *
 xr_unbox (SCM obj)
 {
-  return ((xr_t*)SCM_CDR (obj));
+  return ((xr_t*) gh_cdr (obj));
 }
 
 #define RESULT(x)  (xr_unbox (x)->result)
@@ -1424,7 +1424,7 @@ static long sepo_type_tag;
 static int
 sepo_p (SCM obj)
 {
-  return (SCM_NIMP (obj) && SCM_CAR (obj) == sepo_type_tag);
+  return (SCM_NIMP (obj) && gh_car (obj) == sepo_type_tag);
 }
 
 static SCM
@@ -1444,7 +1444,7 @@ sepo_box (PQprintOpt *sepo)
 static PQprintOpt *
 sepo_unbox (SCM obj)
 {
-  return ((PQprintOpt *) SCM_CDR (obj));
+  return ((PQprintOpt *) gh_cdr (obj));
 }
 
 static SCM
@@ -1573,7 +1573,7 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
   check = spec;
   while (SCM_NNULLP (check))
     {
-      SCM head = SCM_CAR (check);
+      SCM head = gh_car (check);
       if (SCM_SYMBOLP (head))
         {
           SCM_ASSERT (NOT_FALSEP (scm_memq (head, valid_print_option_flags)),
@@ -1582,8 +1582,8 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
         }
       else if (SCM_CONSP (head))
         {
-          SCM key = SCM_CAR (head);
-          SCM val = SCM_CDR (head);
+          SCM key = gh_car (head);
+          SCM val = gh_cdr (head);
           SCM_ASSERT (NOT_FALSEP (scm_memq (key, valid_print_option_keys)),
                       key, SCM_ARG1, FUNC_NAME);
           if (key == pg_sym_field_names)
@@ -1591,12 +1591,12 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
               SCM_ASSERT (SCM_NNULLP (val), head, SCM_ARG1, FUNC_NAME);
               while (SCM_NNULLP (val))
                 {
-                  SCM_ASSERT (SCM_STRINGP (SCM_CAR (val)),
+                  SCM_ASSERT (SCM_STRINGP (gh_car (val)),
                               head, SCM_ARG1, FUNC_NAME);
                   count++;
-                  val = SCM_CDR (val);
+                  val = gh_cdr (val);
                 }
-              substnames = SCM_CDR (head);    /* i.e., `val' */
+              substnames = gh_cdr (head);    /* i.e., `val' */
             }
           else
             {
@@ -1604,7 +1604,7 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
               keys = gh_cons (head, keys);
             }
         }
-      check = SCM_CDR (check);
+      check = gh_cdr (check);
     }
 
   po = scm_must_malloc (sizeof (PQprintOpt), "PG-PRINT-OPTION");
@@ -1647,8 +1647,8 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
       po->fieldName[count] = NULL;
       for (i = 0; i < count; i++)
         {
-          po->fieldName[i] = strdup (SCM_ROCHARS (SCM_CAR (substnames)));
-          substnames = SCM_CDR (substnames);
+          po->fieldName[i] = strdup (SCM_ROCHARS (gh_car (substnames)));
+          substnames = gh_cdr (substnames);
         }
     }
 
@@ -2016,7 +2016,7 @@ init_module (void)
   {
     int i;
     for (i = 0; i < pgrs_count; i++)
-      pgrs[i].sym = scm_protect_object (SCM_CAR (scm_sysintern0 (pgrs[i].s)));
+      pgrs[i].sym = scm_protect_object (gh_car (scm_sysintern0 (pgrs[i].s)));
   }
 
   init_libpostgres_lo ();
