@@ -1,0 +1,15 @@
+#!/bin/sh
+
+drop="@DROPDB@"
+
+if [ -z "$drop" -o x"$drop" = xno ] ; then
+    echo $0: error: no idea how to drop a database
+    exit 1
+fi
+
+$drop $1 >/dev/null 2>&1
+rv=$?
+
+exit $rv
+
+# drop.sh ends here
