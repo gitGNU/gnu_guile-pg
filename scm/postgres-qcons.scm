@@ -342,16 +342,19 @@
 
 ;; Return a @dfn{from clause} tree for @var{froms} (a list).
 ;; Each element of @var{froms} is either TABLE-NAME, or a pair
-;; @code{(ALIAS . TABLE-NAME)} (both symbols).
+;; @code{(ALIAS . TABLE-NAME)} (both symbols).  IF @var{froms}
+;; is #f, return a null tree (the empty list).
 ;;
 (define (make-FROM-tree froms)
-  (list #:FROM
-        (commasep (lambda (x)
-                    (cond ((symbol? x) x)
-                          ((and (pair? x) (not (pair? (cdr x))))
-                           (list (cdr x) (car x)))
-                          (else (error "bad from spec:" x))))
-                  froms)))
+  (if froms
+      (list #:FROM
+            (commasep (lambda (x)
+                        (cond ((symbol? x) (maybe-dq x))
+                              ((and (pair? x) (not (pair? (cdr x))))
+                               (list (maybe-dq (cdr x)) (maybe-dq (car x))))
+                              (else (error "bad from spec:" x))))
+                      froms))
+      '()))
 
 ;; Return a @dfn{select/from/out combination clause} tree for
 ;; @var{froms} and @var{outs} (both lists).  In addition to the
