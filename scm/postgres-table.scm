@@ -26,6 +26,7 @@
 ;;   (tuples-result->table res)
 ;;   (where-clausifier string)
 ;;   (pgtable-manager db-spec table-name defs)
+;;   (compile-outspec spec defs)
 ;;
 ;; TODO: Move some of this into a query-construction module.
 
@@ -279,50 +280,97 @@
 
 ;;; select
 
-(define (select-cmd table-name defs selection obh-box rest-clauses)
+;; Return a @dfn{compiled outspec object} from @var{spec} and @var{defs},
+;; suitable for passing to the @code{select} choice of @code{pgtable-manager}.
+;; @var{defs} is the same as that for @code{pgtable-manager}.  @var{spec} is
+;; either a column name (a symbol); #t, which means all columns (notionally
+;; equivalent to "*"); or a list of column specifications each of which is
+;; either a column name, or has the form @code{(TYPE TITLE EXP)}, where
+;; @var{exp} is the SQL expression (string) to compute for the column;
+;; @var{title} is the title (string) of the column, or #f; and @var{type} is a
+;; column type (symbol) such as @code{int4}, or #f to mean @code{text}, or #t
+;; to mean use the type associated with the column named in @var{exp}, or the
+;; pair @code{(#t . name)} to mean use the type associated with column
+;; @var{name}.
+;;
+;; A "bad select part" error results if specified columns or types do not
+;; exist, or if other syntax errors are found in @var{spec}.
+;;
+(define (compile-outspec spec defs)
 
-  (define (bad-selection s)
-    (error "bad selection:" s))
+  (define (bad-select-part s)
+    (error "bad select part:" s))
 
-  (define (push! o)
-    (set-car! obh-box (cons o (or (car obh-box) (list)))))
+  (let ((objectifiers '()))
 
-  (define (direct?! sym)
-    (cond ((assq sym defs)
-           => (lambda (def)
-                (push! (dbcoltype:objectifier
-                        (dbcoltype-lookup (def:type-name def))))
-                #t))
-          (else #f)))
+    (define (push! type)
+      (set! objectifiers
+            (cons (dbcoltype:objectifier (or (dbcoltype-lookup type)
+                                             (bad-select-part type)))
+                  objectifiers)))
 
-  (validate-defs defs)
-  (let ((sel (cond ((string? selection) selection)
-                   ((list? selection)
-                    (csep (lambda (x)
-                            (or (and (symbol? x)
-                                     (direct?! x)
-                                     (symbol->qstring x))
-                                (bad-selection x)))
-                          selection))
-                   ((symbol? selection)
-                    (or (and (direct?! selection)
-                             (symbol->qstring selection))
-                        (bad-selection selection)))
-                   (else
-                    (bad-selection selection))))
-        (etc (string* rest-clauses)))
-    (and (car obh-box)
-         (set-car! obh-box (reverse! (car obh-box))))
-    (fmt "SELECT ~A FROM ~A ~A;" sel table-name etc)))
+    (define (munge x)
+      (cond ((symbol? x)
+             (or (and=> (assq x defs)
+                        (lambda (def)
+                          (push! (def:type-name def))))
+                 (bad-select-part x))
+             (symbol->qstring x))
+            ((and (list? x) (= 3 (length x)))
+             (apply-to-args
+              x (lambda (type title exp)
+                  (push! (cond ((symbol? type)
+                                type)
+                               ((eq? #f type)
+                                'text)
+                               ((and (eq? #t type)
+                                     (or (assq exp defs)
+                                         (bad-select-part exp)))
+                                => def:type-name)
+                               ((and (pair? type)
+                                     (eq? #t (car type))
+                                     (symbol? (cdr type))
+                                     (or (assq (cdr type) defs)
+                                         (bad-select-part (cdr type))))
+                                => def:type-name)
+                               (else
+                                (bad-select-part type))))
+                  (if title (fmt "~A AS ~S" exp title) exp))))
+            (else
+             (bad-select-part x))))
+
+    (let ((s (csep munge (cond ((eq? #t spec) (map def:column-name defs))
+                               ((pair? spec) spec)
+                               (else (list spec))))))
+      ;; rv, a "compiled outspec"
+      (cons compile-outspec
+            (cons (reverse! objectifiers) s)))))
+
+(define (compiled-outspec?-extract obj)
+  (and (pair? obj)
+       (eq? compile-outspec (car obj))
+       (cdr obj)))
 
 (define (select-proc pgdb table-name defs)
   (validate-defs defs)
-  (lambda (selection . rest-clauses)
-    (let* ((obh-box (list #f))          ; objectifier hints
-           (cmd (select-cmd table-name defs selection obh-box rest-clauses))
-           (res (pg-exec pgdb cmd)))
-      (put res 'objectifier-hints (car obh-box))
-      res)))
+  (lambda (outspec . rest-clauses)
+    (let* ((hints #f)
+           (set-hints!+sel (lambda (pair)
+                             (set! hints (car pair))
+                             (cdr pair))))
+      (let* ((cmd (fmt "SELECT ~A FROM ~A ~A;"
+                       (cond ((compiled-outspec?-extract outspec)
+                              => set-hints!+sel)
+                             ((string? outspec) ; this will go away
+                              outspec)
+                             (else
+                              (set-hints!+sel
+                               (cdr (compile-outspec outspec defs)))))
+                       table-name
+                       (string* rest-clauses)))
+             (res (pg-exec pgdb cmd)))
+        (and hints (put res 'objectifier-hints hints))
+        res))))
 
 ;;; results processing
 
@@ -442,12 +490,12 @@
 ;;   pgdb
 ;; * (drop)
 ;; * (create)
-;; * (insert-values . DATA)
-;; * (insert-col-values COLS . DATA)
+;; * (insert-values [DATA ...])
+;; * (insert-col-values COLS [DATA ...])
 ;; * (insert-alist ALIST)
 ;; * (delete-rows WHERE-CONDITION)
 ;; * (update-col COLS DATA WHERE-CONDITION)
-;; * (select SELECTION . REST-CLAUSES)
+;; * (select OUTSPEC [REST-CLAUSES ...])
 ;;   (t-obj-walk TABLE PROC-O PROC-NON-O)
 ;;   (table->object-alist TABLE)
 ;;   (tuples-result->object-alist RES)
@@ -458,8 +506,10 @@
 ;; In this list, procedures are indicated by signature (parens).  DATA is one
 ;; or more Scheme objects.  COLS is either a list of column names (symbols),
 ;; or a single string of comma-delimited column names.  WHERE-CONDITION is a
-;; string.  SELECTION is either a list of column names, or a string that is
-;; passed directly to the backend in an SQL "select" clause.  REST-CLAUSES are
+;; string.  OUTSPEC is either the result of `compile-outspec', or a spec
+;; that `compile-outspec' can process to produce such a result.  NOTE: Some
+;; older versions of `pgtable-manager' also accept a string for OUTSPEC.
+;; Do not rely on that behavior; it will go away.  REST-CLAUSES are
 ;; zero or more strings.  TABLE and RES are the same types as for proc
 ;; `tuples-result->table', q.v.
 ;;
