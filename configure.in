@@ -152,7 +152,7 @@ AC_CONFIG_FILES([
 AC_CONFIG_COMMANDS([twerp-prep],[
   if echo "$ac_cs_version" | grep -q options.*--enable-maintainer-mode ; then
     if guile-tools list | grep -q twerp2texi ; then
-      guile-tools twerp2texi --prep doc/Makefile guile-pg
+      guile-tools prep-Ptexi doc/Makefile guile-pg
     else
       AC_MSG_WARN([[automatic doc rebuild not supported; you need to]])
       AC_MSG_WARN([[edit doc/guile-pg.texi manually if source changes]])
