@@ -30,4 +30,22 @@ dist-hook:
 	if [ -x $(srcdir)/cov ] ; then \
 	  ( cd $(srcdir) && ./cov ) > $(distdir)/doc.coverage ; fi
 
+if MAINTAINER_MODE
+
+BUILT_SOURCES = doc-index-prep
+
+doc-index-prep:
+	( cd .. ; $(MAKE) .doc-index )
+
+.twerp.texi:
+	$(GUILE_TOOLS) twerp2texi	\
+	  -I $(top_builddir)/.doc-index	\
+	  -d .deps/$*.Ptexi		\
+	  -o $(srcdir)/$*.texi		\
+	  $<
+
+include twerp.mk-am-frag
+
+endif # MAINTAINER_MODE
+
 ## Makefile.am ends here
