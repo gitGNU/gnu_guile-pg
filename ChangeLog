@@ -1,5 +1,10 @@
 2003-09-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/guile-pg.twerp: Add "@paragraphindent 0"
+	directive in header block.
+
+2003-09-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* tmpfile.h, tmpfile.c: New files.
 
 	* AUTHORS: Mention tmpfile.h and tmpfile.c.
