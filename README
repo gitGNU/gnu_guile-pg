@@ -97,8 +97,10 @@ Testing
 
 	The tests will destroy any existing database named
 	"guile_pg_test", create it anew, and upon completion of the
-	tests, destroy it again.  If you should find the database
-	hanging around afterwards for some, reason you can use the
+	tests, destroy it again.  This means that the uid running
+	the tests has to be a PostgreSQL user that additionally must
+	be able to create databases.  If you should find the database
+	hanging around afterwards for some reason, you can use the
 	command:
 
 	    dropdb guile_pg_test   # or "destroydb" for old PostgreSQL
