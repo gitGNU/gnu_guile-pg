@@ -51,13 +51,13 @@
 #ifdef GC_DEBUG
 #define GC_PRINT(x) x
 #else
-#define GC_PRINT(x) (void)0;
+#define GC_PRINT(x) (void)0
 #endif
 
 #ifdef INIT_DEBUG
 #define INIT_PRINT(x) x
 #else
-#define INIT_PRINT(x) (void)0;
+#define INIT_PRINT(x) (void)0
 #endif
 
 
