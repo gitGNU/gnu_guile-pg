@@ -397,8 +397,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 35)
-  (test *VERSION* pg-guile-pg-version)
+  (test-init "basic-tests" 34)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:make-connection

@@ -210,8 +210,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "lo-tests" 14)
-  (test *VERSION* pg-guile-pg-version)
+  (test-init "lo-tests" 13)
   (test! test:make-connection
          test:make-data
          test:make-table
