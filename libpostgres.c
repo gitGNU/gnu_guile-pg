@@ -1471,25 +1471,10 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
 
 PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
            (SCM result, SCM options),
-           "Display @var{result} to the process' concept of \"stdout\".\n"
+           "Display @var{result} on the current output port.\n"
            "Optional second arg @var{options} is an\n"
-           "object returned by @code{pg-make-print-options}, q.v.\n\n"
-           "@emph{NOTE:} Due to a fundamental incompatibility between\n"
-           "the underlying @code{PQprint} libpq function interface and\n"
-           "the Guile port implementation, the \"stdout\" is hard-coded\n"
-           "and may indeed be different from the current output port as\n"
-           "otherwise seen by Guile.  This means @code{pg-print}:\n\n"
-           "@itemize\n\n"
-           "@item may not mix well with code using\n"
-           "@code{with-output-to-string} or other constructs\n"
-           "that modify the current output port\n\n"
-           "@item may require a port flush between its use and the\n"
-           "use of normal scheme output operations\n\n"
-           "@end itemize\n\n"
-           "For these reasons, @code{pg-print} is only recommended if\n"
-           "you can guarantee that the current output port does not\n"
-           "change and that normal output and @code{pg-print} output\n"
-           "are not mixed without an intervening port flush.")
+           "object returned by @code{pg-make-print-options} that\n"
+           "specifies various parameters of the output format.")
 #define FUNC_NAME s_pg_print
 {
   FILE *fout;
