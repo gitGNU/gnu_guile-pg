@@ -45,6 +45,15 @@ GUILE_FLAGS
 GUILE_SITE_DIR
 GUILE_LIBSITE_DIR
 
+AC_MSG_CHECKING([c2x method])
+if guile-tools | grep -q c2x ; then
+  c2x="guile-tools c2x"
+else
+  c2x="guile-snarf"
+fi
+AC_SUBST(c2x)
+AC_MSG_RESULT([$c2x])
+
 AC_CHECK_HEADERS([guile/modsup.h])
 
 AC_GUILE_PG_FCOMPAT
