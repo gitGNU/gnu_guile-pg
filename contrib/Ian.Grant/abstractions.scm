@@ -2,7 +2,7 @@
 ;; databases easier and prevent everyone from having to reimplement the
 ;; same set of prinitives again and again.  These are just some rough ideas
 ;; of functions that could be implemented.  They are not very efficient or
-;; safe though so they're not being distributed.
+;; safe though so they're not being installed.
 
 (define (list->sqlcmd lst)
   (define (cmd->string cmd)
@@ -39,7 +39,7 @@
         ((symbol? obj) (symbol->string obj))
         ((number? obj) (number->string obj))
         ((procedure? obj) (as-string (obj)))
-        ((pair? obj) (interpolate-list "(" " " ")" 
+        ((pair? obj) (interpolate-list "(" " " ")"
                        (lambda (x) (as-string x)) obj))
         (else "?as-string")))
 
@@ -57,9 +57,9 @@
 (define-public (pg-make-table! conn tablename fields)
   (let ((sql-string (string-append
                       "CREATE TABLE " tablename " "
-                      (interpolate-list "(" ", " ")" 
+                      (interpolate-list "(" ", " ")"
                         (lambda (p)
-                          (string-append 
+                          (string-append
                             (as-string (car p)) " " (as-string (cdr p))))
                         fields))))
        (pg:exec conn sql-string)))
@@ -67,12 +67,12 @@
 (define-public (pg-insert-record! conn tablename record)
   (let ((sql-string (string-append
                       "INSERT INTO " tablename " "
-                      (interpolate-list "(" ", " ")" 
+                      (interpolate-list "(" ", " ")"
                         (lambda (p)
                           (string-append (as-string (car p)) " "))
                         record)
                       " VALUES "
-                      (interpolate-list "(" ", " ")" 
+                      (interpolate-list "(" ", " ")"
                         (lambda (p)
                           (string-append (as-string (cdr p)) " "))
                         record))))
