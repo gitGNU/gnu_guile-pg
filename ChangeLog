@@ -1,5 +1,12 @@
 2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-types.scm (bigint): New built-in type converter.
+	(int2, int8, double, float8, bigserial, serial4, serial8): Likewise.
+	(serial, inet): Remove `lambda' wrapping.
+	(name): Bump truncation to 63. Make it conditional.
+
+2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-types.scm (dbcoltype-lookup): Return vector.
 	(dbcoltype:stringifier): Extract from vector directly.
 	(dbcoltype:default): Likewise.
