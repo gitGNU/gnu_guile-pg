@@ -76,7 +76,7 @@ install-data-hook:
 
 DISTCLEANFILES = *.x *.doc
 
-CLEANFILES = *.x
+CLEANFILES = *.x $(noinst_DATA)
 
 dist-hook:
 	rm -rf `find $(distdir)/contrib -name CVS`
