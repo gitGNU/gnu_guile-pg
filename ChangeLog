@@ -1,5 +1,15 @@
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm (commasep): Use keyword instead of ",".
+	(paren): Likewise.
+	(sql<-trees): Handle keywords for L/R paren, comma and semicolon.
+	Also, avoid output of superfluous space after first element of
+	a list, before last element of a list, or before one of the
+	delimiter keywords.
+	(sql-command<-trees): Use keyword instead of ";".
+
+2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-gxrepl.scm (dt): For this comma-command, convert
 	manually-constructed from tree into a `parse+make-SELECT/tail-tree'
 	argument.
