@@ -36,7 +36,10 @@
   #:use-module (database postgres-types)
   #:use-module ((database postgres-col-defs)
                 #:renamer (symbol-prefix-proc 'def:))
-  #:use-module ((database postgres-qcons) #:select (sql-quote))
+  #:use-module ((database postgres-qcons)
+                #:select (sql-quote
+                          make-SELECT/FROM/OUT-tree
+                          sql-command<-trees))
   #:use-module (database postgres-resx)
   #:export (sql-pre
             tuples-result->table
@@ -119,7 +122,7 @@
                                (char=? c #\_)))
                          (string->list (symbol->string col-name)))))
            (dbcoltype-lookup (def:type-name def))
-           (put def 'validated #t)) ; cache
+           (put def 'validated #t))     ; cache
       (error "malformed def:" def)))
 
 (define (validate-defs defs)
@@ -127,7 +130,7 @@
       (and (list? defs)
            (not (null? defs))
            (for-each validate-def defs)
-           (put defs 'validated #t)) ; cache
+           (put defs 'validated #t))    ; cache
       (error "malformed defs:" defs)))
 
 (define (col-defs defs cols)
@@ -283,8 +286,9 @@
 ;; name, or has the form @code{(TYPE TITLE EXPR)}, where:
 ;;
 ;; @itemize
-;; @item @var{expr} is the SQL expression (string)
-;; to compute for the column
+;; @item @var{expr} is a prefix-style expression to compute for the column
+;; (@pxref{Query Construction}); or a string (note, however, that support
+;; for string @var{expr} WILL BE REMOVED after 2005-12-31; DO NOT rely on it)
 ;;
 ;; @item @var{title} is the title (string) of the column, or #f
 ;;
@@ -317,10 +321,12 @@
                         (lambda (def)
                           (push! (def:type-name def))))
                  (bad-select-part x))
-             (symbol->qstring x))
+             x)
             ((and (list? x) (= 3 (length x)))
              (apply-to-args
               x (lambda (type title expr)
+                  ;; todo: enable after 2005-12-31
+                  ;;+ (and (string? expr) (bad-select-part expr))
                   (push! (cond ((symbol? type)
                                 type)
                                ((eq? #f type)
@@ -337,13 +343,13 @@
                                 => def:type-name)
                                (else
                                 (bad-select-part type))))
-                  (if title (fmt "~A AS ~S" expr title) expr))))
+                  (if title (cons title expr) expr))))
             (else
              (bad-select-part x))))
 
-    (let ((s (csep munge (cond ((eq? #t spec) (map def:column-name defs))
-                               ((pair? spec) spec)
-                               (else (list spec))))))
+    (let ((s (map munge (cond ((eq? #t spec) (map def:column-name defs))
+                              ((pair? spec) spec)
+                              (else (list spec))))))
       ;; rv, a "compiled outspec"
       (cons compile-outspec
             (cons (reverse! objectifiers) s)))))
@@ -355,24 +361,27 @@
 
 (define (select-proc pgdb table-name defs)
   (validate-defs defs)
-  (lambda (outspec . rest-clauses)
-    (let* ((hints #f)
-           (set-hints!+sel (lambda (pair)
-                             (set! hints (car pair))
-                             (cdr pair))))
-      (let* ((cmd (fmt "SELECT ~A FROM ~A ~A;"
-                       (cond ((compiled-outspec?-extract outspec)
-                              => set-hints!+sel)
-                             ((string? outspec) ; this will go away
-                              outspec)
-                             (else
-                              (set-hints!+sel
-                               (cdr (compile-outspec outspec defs)))))
-                       table-name
-                       (string* rest-clauses)))
-             (res (pg-exec pgdb cmd)))
-        (and hints (put res 'objectifier-hints hints))
-        res))))
+  (let ((froms (list (string->symbol table-name))))
+    (lambda (outspec . rest-clauses)
+      (let ((hints #f))
+        (define (set-hints!+sel pair)
+          (set! hints (car pair))
+          (cdr pair))
+        (let* ((cmd (sql-command<-trees
+                     (make-SELECT/FROM/OUT-tree
+                      froms
+                      (cond ((compiled-outspec?-extract outspec)
+                             => set-hints!+sel)
+                            ;; todo: zonk after 2005-12-31
+                            ((string? outspec)
+                             (list outspec))
+                            (else
+                             (set-hints!+sel
+                              (cdr (compile-outspec outspec defs))))))
+                     (string* rest-clauses)))
+               (res (pg-exec pgdb cmd)))
+          (and hints (put res 'objectifier-hints hints))
+          res)))))
 
 ;;; results processing
 
@@ -514,9 +523,9 @@
 ;; string.  OUTSPEC is either the result of `compile-outspec', or a spec
 ;; that `compile-outspec' can process to produce such a result.  NOTE: Some
 ;; older versions of `pgtable-manager' also accept a string for OUTSPEC.
-;; Do not rely on that behavior; it will go away.  REST-CLAUSES are
-;; zero or more strings.  TABLE and RES are the same types as for proc
-;; `tuples-result->table', q.v.
+;; DO NOT rely on this; string support WILL BE REMOVED after 2005-12-31.
+;; REST-CLAUSES are zero or more strings.  TABLE and RES are the same
+;; types as for proc `tuples-result->table', q.v.
 ;;
 ;; PROC-O is #f, or a procedure that is called by the table walker like so:
 ;;  (PROC-O TABLE TN FN STRING OBJ)
