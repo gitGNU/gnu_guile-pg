@@ -35,11 +35,10 @@ dnl
 #                  flag to tell the compiler where to find the libraries
 #
 AC_DEFUN([PQ_FLAGS],[
-  AC_ARG_WITH(libpq,
-[  --with-libpq=DIR        look for libpq includes in DIR/include and
-                          libpq.a in DIR/lib (default=/usr/local)
-                             See also --with-libpq-includes and
-                          --with-libpq-lib below],
+  AC_ARG_WITH([libpq], AC_HELP_STRING([--with-libpq=DIR],
+   [look for libpq headers in DIR/include and libpq.a in DIR/lib
+    @<:@default=/usr/local@:>@; see also --with-libpq-includes and
+    --with-libpq-lib below]),
    [AC_MSG_CHECKING([$withval/include/libpq-fe.h exists])
     if test ! -f "$withval/include/libpq-fe.h" ; then
       AC_MSG_RESULT(no)
@@ -57,10 +56,10 @@ AC_DEFUN([PQ_FLAGS],[
     PQ_CPPFLAGS="-I$withval/include"
     PQ_LDFLAGS="-L$withval/lib -lpq"
    ],[
-    AC_ARG_WITH(libpq-includes,
-[  --with-libpq-includes=DIR    look for libpq includes in DIR ],[
+    AC_ARG_WITH([libpq-includes], AC_HELP_STRING([--with-libpq-includes=DIR],
+                                    [look for libpq includes in DIR]),[
        if test ! -f "$withval/libpq-fe.h" ; then
-        AC_ERROR([$withval/libpq-fe.h does not exist.])
+         AC_ERROR([$withval/libpq-fe.h does not exist.])
        fi
        PQ_CPPFLAGS="-I$withval"],[
        AC_CHECK_HEADERS(libpq-fe.h)
@@ -68,14 +67,14 @@ AC_DEFUN([PQ_FLAGS],[
          AC_ERROR([Cannot find libpq-fe.h; try "--with-libpq-includes=DIR"])
        fi
     ])
-    AC_ARG_WITH(libpq-lib,
-[  --with-libpq-lib=DIR    look for libpq libraries in DIR ],[
+    AC_ARG_WITH([libpq-lib], AC_HELP_STRING([--with-libpq-lib=DIR],
+                               [look for libpq libraries in DIR]),[
        AC_MSG_CHECKING([$withval/libpq.a exists])
        if test ! -f "$withval/libpq.a" ; then
-        AC_MSG_RESULT(no)
-        AC_ERROR([$withval/libpq.a does not exist.])
+         AC_MSG_RESULT(no)
+         AC_ERROR([$withval/libpq.a does not exist.])
        else
-        AC_MSG_RESULT(yes)
+         AC_MSG_RESULT(yes)
        fi
        PQ_LDFLAGS="-L$withval -lpq"],[
        AC_CHECK_LIB(pq,PQsetdbLogin)
@@ -87,7 +86,7 @@ AC_DEFUN([PQ_FLAGS],[
   ])
   AC_CHECK_LIB(crypt, crypt)
   if test "$ac_cv_lib_crypt" = yes ; then
-     PQ_LDFLAGS="$PQ_LDFLAGS -lcrypt"
+    PQ_LDFLAGS="$PQ_LDFLAGS -lcrypt"
   fi
   AC_SUBST(PQ_CPPFLAGS)
   AC_SUBST(PQ_LDFLAGS)
