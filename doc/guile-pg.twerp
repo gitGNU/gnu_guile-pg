@@ -476,10 +476,6 @@ and @code{pg-fsize} can all throw an @dfn{Invalid field number} error.
 
 @twerpdoc (pg-cmdtuples)
 
-@twerpdoc (pg-oid-status)
-
-@b{NOTE}: @code{pg-oid-status} is deprecated.  Use @code{pg-oid-value} instead.
-
 @twerpdoc (pg-oid-value)
 
 @twerpdoc (pg-fname)
