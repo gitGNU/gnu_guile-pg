@@ -1,5 +1,16 @@
 2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-meta.scm (check-def/elaborate): Delete.
+	(strictly-check-defs/elaborate!): Likewise.
+	(check-type/elaborate): New proc, exported.
+	(strictly-check-types/elaborate!): Likewise.
+
+	* doc/guile-pg.twerp (Introspection): Add @twerpdoc entries and
+	related blurbs for `defs-from-psql', `check-type/elaborate' and
+	`strictly-check-types/elaborate!'.  Also, add example.
+
+2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-meta.scm (defs-from-psql): Take additional arg `psql'.
 
 2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
