@@ -1,7 +1,7 @@
 NEWS for Guile-PG
 
 
-- 0.25 | NOT YET RELEASED
+- 0.25 | 2005-01-02
 
   - New (database postgres) proc: pg-result-error-message
 
