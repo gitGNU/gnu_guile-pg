@@ -1,4 +1,4 @@
-dnl   Automake macros for working with PostgreSQL libPQ.
+dnl   -*- autoconf -*- macros for Guile-PG
 dnl
 dnl	Copyright (C) 1998 Ian Grant
 dnl	Copyright (C) 2002, 2003, 2004 Thien-Thi Nguyen
