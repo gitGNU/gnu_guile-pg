@@ -1,3 +1,9 @@
+2004-11-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.h (xc_display): New func decl.
+	* libpostgres.c (xc_display): Func no longer static.
+	* libpostgres_lo.c (lob_printp): Use `xc_display'.
+
 2004-11-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.c (xc_display): If there is no host, disregard port.
