@@ -23,7 +23,7 @@
 ##
 AUTOMAKE_OPTIONS = foreign
 
-# These should be installed and distributed.
+# These files should be installed and distributed.
 guile_postgres_sources = 			\
   postgres-types.scm 				\
   postgres-table.scm				\
