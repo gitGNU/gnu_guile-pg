@@ -449,13 +449,18 @@ lob_seek (SCM port, off_t offset, int whence)
   lob_stream *lobp = (lob_stream *) SCM_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
   off_t ret;
+  scm_port *pt = SCM_PTAB_ENTRY (port);
+
   SCM_DEFER_INTS;
   ret = lo_lseek (conn, lobp->fd, offset, whence);
   SCM_ALLOW_INTS;
   if (ret == -1)
     scm_misc_error ("lob_seek", "Error (%s) seeking on lo port %s",
                     scm_listify (SCM_MAKINUM (ret), port, SCM_UNDEFINED));
-  return ret;
+
+  /* Although this offset expression is the same used by `lob_end_input', we
+     don't presently take into account guile's putback buffer.  */
+  return ret - (pt->read_end - pt->read_pos);
 }
 
 /* Check whether a port can supply input.  */
