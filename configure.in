@@ -144,8 +144,7 @@ AC_CONFIG_FILES([
   doc/Makefile
   scm/postgres.scm
   test/Makefile
-  test/guile-pg-basic-tests.scm
-  test/guile-pg-lo-tests.scm
+  test/config.scm
 ])
 
 AC_CONFIG_COMMANDS([twerp-prep],[
