@@ -22,6 +22,7 @@
 ;;; Commentary:
 
 ;; This module provides the procs:
+;;  (oid-type-name-cache CONN . FRESH?) => ((OID . TYPE-NAME) ...)
 ;;  (dbcoltypes) => list of names
 ;;  (dbcoltype-lookup NAME) => tobj
 ;;  (dbcoltype:name TOBJ) => symbol
@@ -49,7 +50,9 @@
 ;;; Code:
 
 (define-module (database postgres-types)
-  :export (dbcoltypes
+  :autoload (database postgres) (pg-exec)
+  :export (oid-type-name-cache
+           dbcoltypes
            dbcoltype-lookup
            dbcoltype:name
            dbcoltype:stringifier
@@ -57,6 +60,26 @@
            dbcoltype:objectifier
            define-db-col-type
            define-db-col-type-array-variant))
+
+;; Query connection @var{conn} for oid/type-name info, caching results.
+;; Optional arg @var{fresh?} forces a (re-)query, bypassing the cache.
+;; Return a list of oid/type-name (number/string) pairs.
+;;
+(define (oid-type-name-cache conn . fresh?)
+  (let ((get object-property)
+        (put set-object-property!))
+    (or (and (null? fresh?)
+             (get conn oid-type-name-cache))
+        (put conn oid-type-name-cache
+             (let ((res (pg-exec conn "SELECT oid,typname FROM pg_type;")))
+               (and (eq? 'PGRES_TUPLES_OK (pg-result-status res))
+                    (let loop ((n (1- (pg-ntuples res))) (acc '()))
+                      (if (> 0 n)
+                          acc
+                          (loop (1- n)
+                                (acons (string->number (pg-getvalue res n 0))
+                                       (pg-getvalue res n 1)
+                                       acc))))))))))
 
 ;; column types / definition
 
