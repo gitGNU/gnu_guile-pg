@@ -2,14 +2,13 @@
 
 drop="@DROPDB@"
 
-if [ -z "$drop" -o x"$drop" = xno ] ; then
-    echo $0: error: no idea how to drop a database
+if [ -z "$drop" -o "$drop" = no ] ; then
+    echo ERROR: no idea how to drop a database
     exit 1
 fi
+if [ -z "$PGDATABASE" ] ; then echo PGDATABASE not set. ; exit 1 ; fi
 
-$drop $1 >/dev/null 2>&1
-rv=$?
-
-exit $rv
+$drop $PGDATABASE >/dev/null 2>&1
+exit $?
 
 # drop.sh ends here
