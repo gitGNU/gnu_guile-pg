@@ -1,3 +1,9 @@
+2004-06-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* doc/guile-pg.twerp (Miscellaneous): Remove @twerpdoc for
+	`pg-guile-pg-version', `pg-guile-pg-module-version' and
+	`pg-guile-pg-module-config-stamp', as well as intro blurb.
+
 2004-06-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* HACKING: Mention .last-release file.
