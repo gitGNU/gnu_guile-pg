@@ -1,5 +1,18 @@
 2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-meta.scm
+	(table-info): Use keyword for pgtable-manager message.
+	(describe-table!): Likewise.
+	Also, use #:k and #:connection instead of `pgdb'.
+
+2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-meta.scm: Use module (database postgres-qcons).
+	(table-info): Rewrite to compose SQL w/ trees.
+	(table-fields-info): Likewise.
+
+2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm (expr): Handle `::' as SQL `CAST'.
 
 2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
