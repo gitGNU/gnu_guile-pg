@@ -1,6 +1,16 @@
 NEWS for Guile-PG
 
 
+- 0.17 | NOT YET RELEASED
+
+  - `pg-print' no longer limited to stdout
+
+	It used to be that `pg-print' output could only be sent to
+	stdout, ignoring the port returned by `current-output-port'.
+	Now, output is now completely controllable from Scheme code
+	using `with-output-to-port' or `call-with-output-port'.
+
+
 - 0.16 | 2003-08-13
 
   - New (database postgres) proc: `pg-print'
