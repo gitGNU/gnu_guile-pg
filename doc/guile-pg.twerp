@@ -808,9 +808,9 @@ To get started, load the @code{postgres-qcons} module:
 (use-modules (database postgres-qcons))
 @end lisp
 
-This provides procedures to @dfn{render} sexps to SQL syntax, essentially by
-constructing stylized trees (nested lists) and then flattening them to a
-string on output.
+This provides procedures to render @dfn{prefix-style expressions} to SQL
+syntax, essentially by constructing stylized trees (nested lists) and then
+flattening them to a string on output.
 
 @section Prefix-Style Expressions
 
@@ -828,14 +828,103 @@ argument(s) can in turn be sub-expressions of their own.  This simplicity
 stands in stark contrast to the myriad rules (and worse: exceptions to the
 rules) that comprise the SQL language specification.
 
-Thus, we call the mini-language described in this chapter
-@dfn{prefix-style expressions} because it borrows from Scheme's regularity
-even though it is not Scheme, per se.  Its components are symbols, keywords,
-numbers, strings and the dot (aka period aka full-stop), arranged in nested
-lists delimited by matching pairs of parentheses.  Unlike Scheme, it does not
-have quote, quasiquote, unquote or unquote-splicing, although those facilities
-can (and should) be used in a Scheme program to construct a prefix-style
-expression.
+Thus, we call the mini-language described in this chapter @dfn{prefix-style
+expressions} because it borrows from Scheme's regularity even though it is not
+Scheme, per se.  This is the general form of a prefix-style expression:
+
+@example
+(operator [operand ...])
+@end example
+
+In words: An open paren followed by a symbol @var{operator} followed by zero
+or more @var{operand} arguments, each in turn a prefix-style sub-expression,
+followed by the close paren.  Components of these expressions may be symbols,
+keywords, numbers, strings and matching parens.  Unlike Scheme, there is no
+quote, quasiquote, unquote or unquote-splicing, although those facilities can
+(and should) be used in a Scheme program to construct a prefix-style
+expression.  Also unlike Scheme is the requirement that @var{operator} be a
+symbol; it is not processed in the same way as each @var{operand}.
+
+Usually, @var{operator} names an SQL function or operator.  For example,
+the symbol @code{date_trunc} refers to the SQL function by the same name.
+Guile-PG uses lookup tables to determine how to transform the prefix style
+into either infix, postfix, functional or other layouts.  Some operators are
+handled specially:
+
+@table @code
+@item and
+@itemx or
+These infix operators are very common and are only mentioned because they do
+not show up in the lookup tables.  (Do not be alarmed!)
+
+@item (case PEXP (MAYBE1 VAL1) ... [(else DEFAULT-VAL)])
+This maps to the SQL @code{CASE} statement:
+
+@example
+CASE exp
+ WHEN maybe1 THEN val1 ...
+ ELSE default
+END
+@end example
+
+where the changes from @code{PEXP}, @code{MAYBE1}, @code{VAL1} and
+@code{DEFAULT-VAL} to @code{exp}, @code{maybe1}, @code{val1} and
+@code{default}, respectively, involve recursive layout transforms.
+
+@item (cond (MAYBE1 VAL1) ... [(else DEFAULT-VAL)])
+This maps to the SQL @code{CASE} statement without the initial pexp:
+
+@example
+CASE
+ WHEN maybe1 THEN val1 ...
+ ELSE default
+END
+@end example
+
+where the changes from @code{MAYBE1}, @code{VAL1} and
+@code{DEFAULT-VAL} to @code{maybe1}, @code{val1} and
+@code{default}, respectively, involve recursive layout transforms.
+
+@item (if PEXP YES-VAL NO-VAL)
+This maps to the SQL @code{CASE} statement:
+
+@example
+CASE exp
+ WHEN 't' THEN yes
+ WHEN 'f' THEN no
+END
+@end example
+
+where the changes from @code{PEXP}, @code{YES-VAL} and
+@code{NO-VAL} to @code{exp}, @code{yes} and
+@code{no}, respectively, involve recursive layout transforms.
+Note that @dfn{one-armed if} is not permitted.
+
+@item (:: TYPE PEXP)
+This maps to the SQL @code{CAST} statement:
+
+@example
+CAST exp AS type
+@end example
+
+where the change from @code{PEXP} to @code{exp} involves a recursive layout
+transform.  Note that the result is identical to using (SQL) suffix
+@code{::TYPE}; the operator @code{::} was actually chosen with this
+mnemonic in mind.
+@end table
+
+A symbol appearing in the operands, or alone without parentheses (i.e., in a
+non-operator position), it is taken to be a column name or reference.
+
+Strings are always passed through @code{sql-quote} unless they have been
+previously been passed through @code{sql-pre}.
+
+Numbers are passed through w/o change.
+
+The documentation for the procedures described in this chapter often uses
+@dfn{pexp} to stand for prefix-style expression.  Some procedures take a pexp
+(or list of them), while others take a more complex structure usually
+involving some extra specification composed with a single pexp.
 
 @section Lookup Tables Extension
 
