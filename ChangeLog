@@ -1,5 +1,11 @@
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-gxrepl.scm: Autoload (ice-9 pretty-print).
+	From (database postgres-qcons), select also `make-SELECT/OUT-tree'.
+	(obvious): New comma-command.
+
+2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm (make-SELECT/OUT-tree): Handle plain string.
 
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
