@@ -118,6 +118,7 @@
 ;; Test pg-lo-creat
 ;; expect #t
 
+(define nchars 100)
 (define new-oid #f)
 
 (define (write-chars n c lop)
@@ -133,7 +134,7 @@
     (lambda (conn)
       (let ((lo-port (pg-lo-creat conn "w")))
            (and lo-port
-                (write-chars 1000 #\a lo-port)
+                (write-chars nchars #\a lo-port)
                 (set! new-oid (pg-lo-get-oid lo-port))
                 (close-port lo-port))))))
 
@@ -146,9 +147,22 @@
        (let ((lo-port (pg-lo-open conn new-oid "r"))
              (data #f))
             (and lo-port
-                 (set! data (pg-lo-read 1 100 lo-port))
+                 (set! data (pg-lo-read 1 nchars lo-port))
                  (close-port lo-port)
-                 (equal? data (make-string 100 #\a)))))))
+                 (equal? data (make-string nchars #\a)))))))
+
+;; Test read-line
+;; expect #t
+
+(define (test:read-line)
+  (pg-transaction conn
+     (lambda (conn)
+       (let ((lo-port (pg-lo-open conn new-oid "r"))
+             (data #f))
+            (and lo-port
+                 (set! data (read-line lo-port))
+                 (close-port lo-port)
+                 (equal? data (make-string nchars #\a)))))))
 
 ;; Test pg-lo-seek
 ;; expect #t
@@ -186,7 +200,7 @@
 
 (load-from-path "testing.scm")
 (set! verbose #t)
-(test-init "lo-tests" 11)
+(test-init "lo-tests" 12)
 (test "@VERSION@" pg-guile-pg-version)
 (test #t test:make-connection)
 (test #t test:make-data)
@@ -196,6 +210,7 @@
 (test #t test:lo-open-read)
 (test #t test:lo-creat)
 (test #t test:lo-read)
+(test #t test:read-line)
 (test #t test:lo-seek)
 (test "ababaa" test:lo-seek2)
 (set! conn #f)
