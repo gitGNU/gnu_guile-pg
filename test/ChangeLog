@@ -1,5 +1,10 @@
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* guile-pg-basic-tests.scm (test:various-connection-info): New proc.
+	(main): Test using new proc. Increment test count.
+
+2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* testing.scm (test): Use procedure name in report, if available.
 
 2004-03-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
