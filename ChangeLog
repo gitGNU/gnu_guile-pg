@@ -1,5 +1,10 @@
 2004-06-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* HACKING: Mention .last-release file.
+	Use "1.4.1.x series" instead of "1.4.1.93".
+
+2004-06-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* guile.m4.snap: New file.
 
 	* autogen.sh: Consider guile.m4.snap as guile.m4.
