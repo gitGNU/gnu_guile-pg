@@ -1174,6 +1174,12 @@ transformations.  You can add to them using proc @code{qcons-declare!}.
 
 @twerpdoc (qcons-declare!)
 
+The rest of this section presents various lists of built-in declarations.
+Using @code{qcons-declare!} on a built-in symbol overwrites the associated
+value (if any).  There is no @dfn{undeclare} support.
+
+@include qcons-tables.texi
+
 @section Quoting
 
 @twerpdoc (sql-pre)
