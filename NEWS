@@ -10,6 +10,11 @@ NEWS for Guile-PG
 
   - Error output bugfix: Use ~S instead of %s
 
+  - Build bugfix: pre-inst.merged-module-catalog conditionally built
+
+	The build process now checks if prerequisite tools are available
+	before attempting to make this file.
+
   - Limitation lifted: `pg-exec' query string size
 
 	The query string sent to `pg-exec' used to be limited to 7999
@@ -78,6 +83,16 @@ NEWS for Guile-PG
 	This means you can invoke the unpacked distribution's configure
 	script from another directory, and the "make", "make check" and
 	"make install" steps know how to cope.
+
+  - Untested procs shown by "make check"
+
+	There is a new test "coverage.sh" that displays the names of
+	pg-* procs that are defined but not tested by the "make check"
+	step.  This list must be empty for a 1.0 release.  To see full
+	status (both tested/untested), change directory to test/ and
+	invoke the script "cov".
+
+	Note that coverage does not imply good coverage!
 
 
 - 0.17 | 2004-02-02
