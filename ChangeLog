@@ -1,6 +1,31 @@
 2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* (VERSION): Bump to "0.16.31415.1" for hacking.
+	* configure.in (AC_DISABLE_STATIC): New macro call.
+	(GUILE_SITE_DIR): Likewise.
+	(GUILE_LIBSITE_DIR): Likewise.
+
+	* Makefile.am (pkglibversdir): Delete var.
+	(pkglibvers_LTLIBRARIES): Delete automake directive.
+	(libpostgres_la_SOURCES): Likewise.
+	(libpostgres_la_LDFLAGS): Likewise.
+	(ddir): New var.
+	(d_LTLIBRARIES): New automake directive.
+	(postgres_sup_la_SOURCES): Likewise.
+	(postgres_sup_la_LDFLAGS): Likewise.
+	(install-data-hook): New target.
+
+	* scm/Makefile.am: Update copyright.
+	(subpkgdatadir): Delete var.
+	(subpkgdata_DATA): Delete automake directive.
+	(ddir): New var.
+	(d_DATA): New automake directive.
+	(install-data-hook): Rewrite action:
+	No longer textually modify/re-install postgres.scm.  Instead,
+	do "guile-tools make-module-catalog" if that tool is available.
+
+2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (VERSION): Bump to "0.16.31415.1" for hacking.
 
 2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
