@@ -1,5 +1,11 @@
 2005-02-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm (make-ORDER-BY-tree): Signal
+	error if ordering item is neither an integer nor a symbol.
+	Also, fix bug: Call `maybe-dq' only if ordering item is a symbol.
+
+2005-02-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm (maybe-dq): New proc.
 	(make-ORDER-BY-tree, make-SELECT/OUT-tree): Use `maybe-dq'.
 
