@@ -8,11 +8,6 @@
   :use-module (database postgres-table)
   :use-module (ttn display-table))
 
-;; type extension
-
-(or (dbcoltype-lookup 'oid[])
-    (define-db-col-type-array-variant 'oid[] 'oid))
-
 ;; database
 
 (define *db* (getenv "USER"))
@@ -22,11 +17,13 @@
 (define *markup-defs*
   '((raw   text)
     (mtype text)
-    (mdata text)))
+    (mdata text)
+    (back  text)                        ; client info (back pointer)
+    (seq   int4)))                      ; client sequence number
 
 (define *client-defs*
-  '((i           serial)
-    (description oid[])))
+  '((project     text)
+    (description int4)))                ; item count
 
 ;; display-tree
 
@@ -40,7 +37,7 @@
 (let ((m (pgtable-manager *db* "markup_play" *markup-defs*))
       (c (pgtable-manager *db* "client_play" *client-defs*)))
 
-  ;; Add POSSIBLY-MARKED-TEXT to markup table, and return its OID.
+  ;; Add POSSIBLY-MARKED-TEXT for BACK/SEQ to markup table.
   ;; POSSIBLY-MARKED-TEXT can either be a simple string, in which
   ;; case no markup is implied, or a list taking one of the forms:
   ;;
@@ -52,100 +49,121 @@
   ;; ADDR), respectively, and the TEXT is passed through directly.  In the
   ;; url case, if TEXT is missing, use URL instead.
   ;;
-  (define (add-possibly-marked-text possibly-marked-text)
-    (pg-oid-value
-     (let ((insert (m 'insert-values)))
-       (if (string? possibly-marked-text)
-           (insert possibly-marked-text #f #f)
-           (let* ((form possibly-marked-text)
-                  (type (car form)))
-             (insert (case type
-                       ((url) ((if (= 3 (length form)) caddr cadr) form))
-                       ((email) (cadr form))
-                       (else (error (format #f "bad form: ~A" form))))
-                     (symbol->string (car form))
-                     ((case type
-                        ((url) cadr)
-                        ((email) caddr))
-                      form)))))))
+  ;; BACK is string indicating the client using this row.  SEQ is the sequence
+  ;; number (integer) of this row in the client.
+  ;;
+  (define (add-possibly-marked-text possibly-marked-text back seq)
+    (let ((insert (lambda (raw mtype mdata)
+                    ((m 'insert-values) raw mtype mdata back seq))))
+      (if (string? possibly-marked-text)
+          (insert possibly-marked-text #f #f)
+          (let* ((form possibly-marked-text)
+                 (type (car form)))
+            (insert (case type
+                      ((url) ((if (= 3 (length form)) caddr cadr) form))
+                      ((email) (cadr form))
+                      (else (error (format #f "bad form: ~A" form))))
+                    (symbol->string (car form))
+                    ((case type
+                       ((url) cadr)
+                       ((email) caddr))
+                     form))))))
 
-  (define (add-description ls)
-    (pg-oid-value
-     ((c 'insert-col-values) '(description)
-      (map add-possibly-marked-text ls))))
+  (define (add-project pair)
+    ((c 'insert-values) (car pair)
+     (let loop ((count 0) (ls (cdr pair)))
+       (if (null? ls)
+           count
+           (begin
+             (add-possibly-marked-text
+              (car ls)
+              (format #f "description:~A" (car pair))
+              count)
+             (loop (1+ count) (cdr ls)))))))
 
   (define (>>table heading manager)
     (write-line heading)
     (display-table (tuples-result->table ((manager 'select) "*"))))
 
-  (define (get-one-row manager oid)
-    (car ((manager 'tuples-result->alists)
-          ((manager 'select) "*" (where-clausifier
-                                  (format #f "oid = ~A" oid))))))
+  (define (get-rows manager order as . args)
+    ((manager 'tuples-result->object-alist)
+     ((manager 'select) "*"
+      (where-clausifier (apply format #f as args))
+      (if order (format #f "ORDER BY ~A" order) ""))))
 
-  (define (tree<-possibly-marked-text oid)
-    (let* ((alist (get-one-row m oid))
-           (raw (assq-ref alist 'raw))
-           (mtype (assq-ref alist 'mtype))
-           (mdata (assq-ref alist 'mdata)))
-      (if (string=? "" mtype)
-          raw
-          (case (string->symbol mtype)
-            ((url) (list "<A HREF=\"" mdata "\">" raw "</A>"))
-            ((email) (list "<A HREF=\"mailto:" mdata "\">" raw "</A>"))
-            (else (error (format #f "bad markup type: ~A" mtype)))))))
+  (define (get-one-row manager as . args)
+    (map (lambda (col)
+           (cons (car col) (cadr col)))
+         (apply get-rows manager #f as args)))
 
-  (define (>>description oid)
-    (let* ((alist (get-one-row c oid))
-           (i (assq-ref alist 'i))
+  (define (tree<-possibly-marked-text back max-seq)
+    (let ((alist (get-rows m "seq" "back = '~A' AND seq < ~A"
+                           back max-seq)))
+      (map (lambda (raw mtype mdata)
+             (if (string=? "" mtype)
+                 raw
+                 (case (string->symbol mtype)
+                   ((url) (list "<A HREF=\"" mdata "\">" raw "</A>"))
+                   ((email) (list "<A HREF=\"mailto:" mdata "\">" raw "</A>"))
+                   (else (error (format #f "bad markup type: ~A" mtype))))))
+           (assq-ref alist 'raw)
+           (assq-ref alist 'mtype)
+           (assq-ref alist 'mdata))))
+
+  (define (>>project project)
+    (let* ((alist (get-one-row c "project = '~A'" project))
            (description (assq-ref alist 'description)))
-      (format #t "description for: ~A\n" i)
-      (for-each (lambda (oid)
-                  (display-tree (tree<-possibly-marked-text oid)))
-                description))
+      (format #t "project: ~A\ndescription: ~A\n" project description)
+      (display-tree (tree<-possibly-marked-text
+                     (format #f "description:~A" project)
+                     description)))
     (newline))
 
-  (define (delete-description oid)
-    (let* ((alist (get-one-row c oid))
+  (define (delete-project project)
+    (let* ((alist (get-one-row c "project = '~A'" project))
            (description (assq-ref alist 'description)))
-      (for-each (lambda (oid)
-                  ((m 'delete-rows) (format #f "oid = ~A" oid)))
-                description)
-      ((c 'delete-rows) (format #f "oid = ~A" oid))))
+      ((m 'delete-rows)
+       (format #f "back = '~A' AND seq < ~A"
+               (format #f "description:~A" project) description))
+      ((c 'delete-rows) (format #f "project = '~A'" project))))
 
   (define *samples*
     (list
-     '("This is the guile scheme code that maintains the "
-       (url "http://www.glug.org/projects/list.html"
-            "guile projects list")
-       ".  There are configurations for glug.org as well for "
-       (url "http://www.gnu.org/software/guile/gnu-guile-projects.html"
-            "the gnu.org subset of the list") ".")
-     '("An interface to PostgreSQL from guile.")
-     '((url "http://www-ccrma.stanford.edu/software/snd/")
-       " is where you can find Snd.")
-     '("The hobbit author is "
-       (email "Tanel Tammet" "tammet@cs.chalmers.se") ".")))
+     (cons "guile projects list maintenance"
+           '("This is the guile scheme code that maintains the "
+             (url "http://www.glug.org/projects/list.html"
+                  "guile projects list")
+             ".  There are configurations for glug.org as well for "
+             (url "http://www.gnu.org/software/guile/gnu-guile-projects.html"
+                  "the gnu.org subset of the list") "."))
+     (cons "guile-pg"
+           '("An interface to PostgreSQL from guile."))
+     (cons "snd"
+           '((url "http://www-ccrma.stanford.edu/software/snd/")
+             " is where you can find Snd."))
+     (cons "hobbit"
+           '("The hobbit author is "
+             (email "Tanel Tammet" "tammet@cs.chalmers.se") "."))))
+
+  ;;((m 'drop)) ((c 'drop))
 
   (write-line ((m 'create)))
   (write-line ((c 'create)))
 
-  (let ((desc-oids (map add-description *samples*)))
-    (format #t "desc-oids: ~A\n" desc-oids)
+  (for-each write-line (map add-project *samples*))
 
-    (>>table "markup" m)
-    (>>table "client" c)
+  (>>table "markup" m)
+  (>>table "client" c)
 
-    (for-each >>description desc-oids)
+  (for-each >>project (map car *samples*))
 
-    (write-line (delete-description (list-ref desc-oids 0)))
-    (write-line (delete-description (list-ref desc-oids 1)))
-    (set! desc-oids (cddr desc-oids))
+  (write-line (delete-project (list-ref (map car *samples*) 0)))
+  (write-line (delete-project (list-ref (map car *samples*) 1)))
 
-    (for-each >>description desc-oids)
+  ;;(for-each >>project (map car (cddr *samples*)))
 
-    (>>table "markup" m)
-    (>>table "client" c))
+  (>>table "markup" m)
+  (>>table "client" c)
 
   (write-line ((c 'drop)))
   (write-line ((m 'drop))))
