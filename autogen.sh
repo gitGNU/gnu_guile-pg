@@ -15,6 +15,11 @@ test -f ltmain.sh || libtoolize --force
 aclocal
 autoheader
 autoconf
+# prep automake
+if [ ! -f doc/guile-pg.texi ] ; then
+    echo '@setfilename guile-pg.info' > doc/guile-pg.texi
+    touch -m -t 01010000 doc/guile-pg.texi
+fi
 automake --add-missing --force
 
 #############################################################################
