@@ -1,3 +1,8 @@
+2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-abstraction-scm-tests.scm (test:m-help): Delete test proc.
+	(main): No longer use `test:m-help'. Update expected-passes number.
+
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-abstraction-scm-tests.scm
