@@ -4,6 +4,11 @@
 	(test-report): Return #f on count mismatch,
 	non-zero `xpass-count', or non-zero `fail-count'.
 
+	* test/guile-pg-lo-tests.scm: Update copyright.
+	Use `test-report' return value as exit value.
+	* test/guile-pg-basic-tests.scm: Likewise.
+	* test/guile-pg-abstraction-scm-tests.scm: Likewise.
+
 2004-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-meta.scm (put, get): New aliases.
