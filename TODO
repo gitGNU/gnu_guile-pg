@@ -20,19 +20,19 @@
 
     + Asynchronous version of PQgetline
 
-          int PQgetlineAsync(PGconn *conn, char *buffer, int bufsize)
+	int PQgetlineAsync(PGconn *conn, char *buffer, int bufsize)
 
     + Non-blocking query support
 
-          int PQsendQuery (PGconn *conn, const char *query)
-          PGresult *PQgetResult (PGconn *conn)
-          int PQconsumeInput (PGconn *conn)
-          int PQisBusy(PGconn *conn)
-          int PQrequestCancel(PGconn *conn)
+	int PQsendQuery (PGconn *conn, const char *query)
+	PGresult *PQgetResult (PGconn *conn)
+	int PQconsumeInput (PGconn *conn)
+	int PQisBusy(PGconn *conn)
+	int PQrequestCancel(PGconn *conn)
 
     + PQconndefaults
 
-        PQconninfoOption *PQconndefaults(void)
+	PQconninfoOption *PQconndefaults(void)
         struct PQconninfoOption { ... }
 
   + Use GNU style curly-brace placement in C code
@@ -40,18 +40,20 @@
 
 - Eventually
 
-  - Review for dangerous construct: return scm_cons (scm_cons (...))
+  - Use gh_/GH_ abstractions.
+
+    This will make it easier to port Guile-PG to other versions of Guile
+    and even other scheme implementations (long term).
+
+  - Review for dangerous construct: return scm_cons (scm_cons (...)).
 
     Garbage collection can zonk intermediate values leading to loss of
     integrity (and thus bugs).  Better to use strictly imperative style
     and use C auto vars for intermediate values, even if it is ugly.
 
-  - Write tests for non-blocking query support
+  - Write tests for non-blocking query support.
 
-  - Implement these calls:
-
-          int PQsocket(PGconn *conn)
-                 Returns a socket fd for the connection to the backend.
+  - Scan libpq-fe.h for coverage.
 
   - Regularize error handling.
 
@@ -69,8 +71,9 @@
 	pg-guile-pg-module-version
 	pg-guile-pg-module-config-stamp
 
-    Users who want to track changes should check features directly instead
-    of version numbers and time stamps.
+    Nowadays we just assume everyone is insane and go w/ that.  Users who want
+    to track changes should check features directly instead of version numbers
+    and time stamps, anyway.
 
   - Add to the manual a section giving an overview of using large-objects.
 
