@@ -1,5 +1,12 @@
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* guile-pg-lo-tests.scm
+	(some-test-data): Make var into a single string.
+	(test:make-data): Rewrite.
+	(test:lo-export): Update `some-test-data' use site.
+
+2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* guile-pg-lo-tests.scm: Use module (ice-9 rdelim).
 	(eval-port): Delete proc.
 	(some-test-data): No longer quote sexp.
