@@ -29,6 +29,8 @@
 
   - Regularize error handling.
 
+  - Remove compiled proc `pg-oid-status'.
+
   - Remove compiled/uncompiled synchronization procs.
 
     These are non-critical cruft from when sanity checking was necessary:
