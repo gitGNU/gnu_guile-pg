@@ -7,6 +7,20 @@
 	(EXTRA_DIST): Delete postgres.scm.in.
 	(install-data-hook): In any postgres.scm from $(ddir).
 
+	* configure.in (AC_CONFIG_FILES): Remove scm/postgres.scm.
+
+	* libpostgres.c (scm_init_database_postgres_module):
+	Rename from `scm_init_database_postgres_sup_module'.
+
+	* Makefile.am
+	(d_LTLIBRARIES): Add postgres.la. Remove postgres-sup.la.
+	(postgres_sup_la_SOURCES): Delete.
+	(postgres_sup_la_LDFLAGS): Delete.
+	(postgres_la_SOURCES): New var/directive.
+	(postgres_la_LDFLAGS): New var/directive.
+	(install-data-hook): Delete any postgres-sup.* files in $(ddir).
+	(DOTDOCFILES): Remove scm/postgres.doc.
+
 2004-06-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.c (pg_oid_status): Delete PG_DEFINE func.

@@ -1,5 +1,14 @@
 2004-06-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* alive.sh: No longer load $top_builddir/scm/postgres.scm.
+	Instead, evaluate `use-modules' form.
+
+	* basic-tests.sh: No longer load $top_builddir/scm/postgres.scm.
+	* lo-tests.sh: Likewise.
+	* abstraction-scm-tests.sh: Likewise.
+
+2004-06-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* guile-pg-basic-tests.scm
 	(test:oid-value-was-oid-status): Rename from
 	`test:oid-status'.  Convert to check using `pg-oid-value'.
