@@ -443,9 +443,55 @@
                            (string=? (pg-getvalue res 0 0) "2")
                            (string=? (pg-getvalue res 0 1) "Column 2"))))))))))
 
+(define test:set-nonblocking!
+  (add-test #t
+    (lambda ()
+      (or (not (memq 'PQSETNONBLOCKING (pg-guile-pg-loaded)))
+          (pg-set-nonblocking! *C* #t)))))
+
+(define test:is-nonblocking?
+  (add-test #t
+    (lambda ()
+      (or (not (memq 'PQISNONBLOCKING (pg-guile-pg-loaded)))
+          (pg-is-nonblocking? *C*)))))
+
+(define test:asynchronous-retrieval
+  (add-test #t
+    (lambda ()
+      (and
+       ;; Create a table.
+       (command-ok? (cexec "CREATE TABLE async (a numeric (20, 10))"))
+       ((ok? 'PGRES_COPY_IN) (cexec "COPY async FROM STDIN"))
+       (begin (do ((i 4224 (1- i)))
+                  ((= i 0))
+                (pg-putline *C* (format #f "~A.~A\n" i i)))
+              (pg-putline *C* "\\.\n")
+              (pg-endcopy *C*))
+       ;; Perhaps usage protocol does not absolutely require this check, but
+       ;; removing it causes the subsequent `pg-send-query' to return #f, with
+       ;; error message "another command is already in progress".
+       (not (pg-is-busy? *C*))
+       ;; Register a query.
+       (pg-send-query *C* "SELECT * FROM async WHERE sqrt(a) * sqrt(a) = a;")
+       (begin
+         (display "INFO: (async checks) ")
+         (flush-all-ports)
+         (let loop ((checks 0))
+           (cond ((pg-is-busy? *C*)
+                  (pg-consume-input *C*)
+                  (sleep 1)
+                  (display ".")
+                  (flush-all-ports)
+                  (loop (1+ checks)))
+                 (else
+                  (display checks)
+                  (newline)
+                  (flush-all-ports)))))
+       (tuples-ok? (pg-get-result *C*))))))
+
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 37)
+  (test-init "basic-tests" 40)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:make-connection
@@ -482,7 +528,10 @@
          test:get-proc:pg-get-pass
          test:get-proc:pg-get-tty
          test:get-proc:pg-get-port
-         test:get-proc:pg-get-options)
+         test:get-proc:pg-get-options
+         test:set-nonblocking!
+         test:is-nonblocking?           ; must be after test:set-nonblocking!
+         test:asynchronous-retrieval)
   (set! *C* #f)
   (test-report))
 
