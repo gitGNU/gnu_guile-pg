@@ -45,14 +45,6 @@
 
   - Implement these calls:
 
-    - PQclear
-
-      void PQclear (PGresult *res);
-
-    - PQfinish
-
-      void PQfinish (PGconn *conn);
-
     - PQconndefaults
 
         PQconninfoOption *PQconndefaults(void)
