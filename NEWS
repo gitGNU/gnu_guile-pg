@@ -1,6 +1,14 @@
 NEWS for Guile-PG
 
 
+- 0.19 | 2004-05-10
+
+  - configure script checks c2x method
+
+	If "guile-tools c2x" is available, use it.
+	Otherwise, use "guile-snarf".
+
+
 - 0.18 | 2004-03-22
 
   - Variables removed from module (database postgres)

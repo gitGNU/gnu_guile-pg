@@ -20,3 +20,6 @@ Thanks go to these people for their help in improving Guile-PG.
 - Greg Troxel
   - portability bug reports
   - abstraction (interface) design hints
+
+- Shan Shan Huang
+  - c2x portability bug report
