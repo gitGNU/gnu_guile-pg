@@ -29,4 +29,8 @@ CLEANFILES = basic-tests.log lo-tests.log lo-tests-data-1 lo-tests-data-2 \
              test-lo-seek.log
 DISTCLEANFILES = guile-pg-basic-tests.scm guile-pg-lo-tests.scm
 
+dist-hook:
+	if [ -x $(srcdir)/cov ] ; then \
+	  ( cd $(srcdir) && ./cov ) > $(distdir)/test.coverage ; fi
+
 ## Makefile.am ends here
