@@ -3,6 +3,8 @@
 	* configure.in: Add multiple checks for `InvalidOid' decl.
 	Signal error if not found.
 
+	* libpostgres.c (INVALIDOID_HEADER): #include this if defined.
+
 2002-12-16  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* acinclude.m4: Use m4 quoting (square braces)
