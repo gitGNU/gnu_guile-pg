@@ -332,12 +332,20 @@ The client's character encoding, represented by a string such as
 @chapter Procedures for Retrieving Data
 
 To get an answer you have to ask a question, i.e., send either a command or a
-query to the connection using @code{pg-exec}.  The return value's type can be
-tested with @code{pg-result?}.
+query to the connection using either @code{pg-exec} or some combination of the
+lower-level non-blocking operations that comprise @code{pg-exec}.
+
+@menu
+* Synchronous Retrieval::       Using @code{pg-exec}.
+* Asynchronous Retrieval::      Using pieces of @code{pg-exec}.
+* Processing Results::          What to do with data and/or errors.
+@end menu
+
+@c ---------------------------------------------------------------------------
+@node    Synchronous Retrieval
+@section Synchronous Retrieval
 
 @twerpdoc (pg-exec)
-
-@twerpdoc (pg-result?)
 
 @heading Example
 This example defines a procedure @code{pg-exec/no-false} which wraps
@@ -359,6 +367,26 @@ better to @code{DECLARE} a cursor over the @code{SELECT} and retrive small
 numbers of rows at a time using @code{FETCH}.  These commands can only be
 issued between @code{BEGIN TRANSACTION/END TRANSACTION} pairs.  See the
 PostgreSQL @code{declare(l)} and @code{fetch(l)} man pages for more details.
+
+@c ---------------------------------------------------------------------------
+@node    Asynchronous Retrieval
+@section Asynchronous Retrieval
+
+@twerpdoc (pg-send-query)
+@twerpdoc (pg-get-result)
+@twerpdoc (pg-consume-input)
+@twerpdoc (pg-is-busy?)
+@twerpdoc (pg-request-cancel)
+
+@c ---------------------------------------------------------------------------
+@node    Processing Results
+@section Processing Results
+
+The @dfn{result} of a command or query placed by @code{pg-exec} satisfies
+predicate @code{pg-result?}.  It may encapsulate an error, row data, or other
+status.  @xref{Retrieving Data}.
+
+@twerpdoc (pg-result?)
 
 @twerpdoc (pg-error-message)
 
