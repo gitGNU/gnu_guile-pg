@@ -94,8 +94,8 @@
         ""
         (string-append/separator char (apply map proc ls more-ls)))))
 
-(define ssep (char-sep " "))
-(define csep (char-sep ","))
+(define ssep (char-sep #\space))
+(define csep (char-sep #\,))
 
 (define (symbol->qstring symbol)
   (format #f "~S" (symbol->string symbol)))
