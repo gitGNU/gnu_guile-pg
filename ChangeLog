@@ -1,5 +1,9 @@
 2005-02-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm (pgdb-connection): Do not `fmt' error message.
+
+2005-02-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-resdisp.scm: Explicitly #:select in #:use-module clause.
 	* scm/postgres-resx.scm: Likewise.
 	* scm/postgres-table.scm: Likewise.
