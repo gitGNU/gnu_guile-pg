@@ -1,3 +1,8 @@
+2004-05-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-meta.scm (defs-from-psql): When
+	reading type options, consider all #\, as #\space.
+
 2004-05-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in (VERSION): Bump to "0.19" for release.
