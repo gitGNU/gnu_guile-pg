@@ -1,5 +1,33 @@
 2002-12-22  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* doc/.twerp-list: New file.
+	* doc/.make-automake-frags: New script.
+	* doc/guile-pg.twerp: New file.
+
+	* libpostgres.h (PG_DEFINE): New macro.
+	* libpostgres.c: Replace SCM_PROC with PG_DEFINE.
+	Use FUNC_NAME in function bodies.
+	Add docstrings from defunct doc/guile-pg.texi.
+	* libpostgres_lo.c: Likewise.
+
+	* configure.in (AM_MAINTAINER_MODE, AC_CONFIG_COMMANDS): New.
+	* Makefile.am (SUBDIRS): Put doc/ last.
+	(SUFFIXES): Add ".doc".
+	(snarfcppopts): New refactor var.
+	(.c.doc, .scm.doc): New rules.
+	(DISTCLEANFILES): Add "*.doc".
+	(DOTDOCFILES): New var, when MAINTAINER_MODE.
+	(.doc-index): New target, when MAINTAINER_MODE.
+
+	* doc/Makefile.am: All these in "if MAINTAINER_MODE" block:
+	(BUILT_SOURCES): New directive.
+	(.twerp.texi): New rule.
+	(twerp.mk-am-frag): New "include".
+
+	* doc/guile-pg.texi: Now generated.
+
+2002-12-22  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* autogen.sh: Add recursive invocation of ".make-automake-frags".
 	Before running automake, check if doc/guile-pg.texi exists.
 	If not, fake one suitable for automake, w/ timestamp January 1.
