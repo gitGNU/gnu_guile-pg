@@ -118,6 +118,9 @@
   (put string 'ttn-pgtable-sql-pre #t)
   string)
 
+(define (serial? def)
+  (eq? 'serial (def:type-name def)))
+
 ;;; connection
 
 (define (pgdb-connection db)
@@ -161,49 +164,45 @@
 
 ;;; drops
 
-(define (drop-table-cmd table-name)
-  (fmt "DROP TABLE ~A;" table-name))
-
-(define (drop-sequence-cmd sequence-name)
-  (fmt "DROP SEQUENCE ~A;" sequence-name))
-
-(define (drop-proc pgdb table-name defs)
+(define (drop-proc beex table-name defs)
+  (define cmds
+    (delay (let loop ((ls defs)
+                      (acc (list (fmt "DROP TABLE ~A;" table-name))))
+             (if (null? ls)
+                 (reverse! acc)
+                 ;; Also drop associated sequences created by magic
+                 ;; `serial' type.  Apparently, this was not handled
+                 ;; automatically in old PostgreSQL versions.  See
+                 ;; PostgreSQL User Guide, Chapter 3: Data Types.
+                 (loop (cdr ls)
+                       (if (serial? (car ls))
+                           (cons (fmt "DROP SEQUENCE ~A_~A_seq;"
+                                      table-name
+                                      (def:column-name (car ls)))
+                                 acc)
+                           acc))))))
+  ;; rv
   (lambda ()
-    (cons (pg-exec pgdb (drop-table-cmd table-name))
-          ;; Also drop associated sequences created by magic `serial' type.
-          ;; The naming algorithm is detailed in the PostgreSQL User Guide,
-          ;; Chapter 3: Data Types.
-          (map (lambda (col)
-                 (pg-exec pgdb (drop-sequence-cmd
-                                (string-append table-name "_"
-                                               (symbol->string col)
-                                               "_seq"))))
-               (pick-mappings (lambda (def)
-                                (and (eq? 'serial (def:type-name def))
-                                     (def:column-name def)))
-                              defs)))))
+    (map beex (force cmds))))
 
 ;;; create table
 
-(define (create-cmd table-name defs)
-  (validate-defs defs)
-  (let ((dspec (csep (lambda (def)
-                       (let ((name (symbol->qstring (def:column-name def)))
-                             (type (string-upcase
-                                    (symbol->string
-                                     (def:type-name def))))
-                             (opts (let ((opts (def:type-options def)))
-                                     (if (null? opts)
-                                         ""
-                                         (ssep identity (cons "" opts))))))
-                         (fmt "~A ~A~A" name type opts)))
-                     defs)))
-    (fmt "CREATE TABLE ~A (~A);" table-name dspec)))
-
-(define (create-proc pgdb table-name defs)
-  (validate-defs defs)
+(define (create-proc beex table-name defs)
+  (define (fmt-col def)
+    (let ((name (symbol->qstring (def:column-name def)))
+          (type (string-upcase
+                 (symbol->string
+                  (def:type-name def))))
+          (opts (let ((opts (def:type-options def)))
+                  (if (null? opts)
+                      ""
+                      (ssep identity (cons "" opts))))))
+      (fmt "~A ~A~A" name type opts)))
+  (define cmd
+    (delay (fmt "CREATE TABLE ~A (~A);" table-name (csep fmt-col defs))))
+  ;; rv
   (lambda ()
-    (pg-exec pgdb (create-cmd table-name defs))))
+    (beex (force cmd))))
 
 ;;; inserts
 
@@ -213,80 +212,76 @@
         (sql-quote (or (false-if-exception ((dbcoltype:stringifier def) x))
                        (dbcoltype:default def))))))
 
-(define (serial? def)
-  (eq? 'serial (def:type-name def)))
-
 (define (clean-defs defs)
-  (validate-defs defs)
   (remove-if serial? defs))
 
-(define (cdefs->cols cdefs)
-  (csep (lambda (def)
-          (symbol->qstring (def:column-name def)))
-        cdefs))
+(define (pre-insert-into table-name)
+  (fmt "INSERT INTO ~A" table-name))
 
-(define (insert-values-cmd table-name defs data)
-  (let ((cdefs (clean-defs defs)))
-    (fmt "INSERT INTO ~A (~A) VALUES (~A);" table-name
-         (cdefs->cols cdefs)            ;;; cols
-         (csep ->db-insert-string       ;;; values
-               (map def:type-name cdefs)
-               data))))
-
-(define (insert-values-proc pgdb table-name defs)
-  (validate-defs defs)
+(define (insert-values-proc beex table-name defs)
+  (define cdefs (delay (clean-defs defs)))
+  (define pre (delay (fmt "~A (~A) VALUES"
+                          (pre-insert-into table-name)
+                          (csep (lambda (def)
+                                  (symbol->qstring (def:column-name def)))
+                                (force cdefs)))))
+  (define types (delay (map def:type-name (force cdefs))))
+  (define (make-cmd data)
+    (fmt "~A (~A);" (force pre)
+         (csep ->db-insert-string (force types) data)))
+  ;; rv
   (lambda data
-    (pg-exec pgdb (insert-values-cmd table-name defs data))))
+    (beex (make-cmd data))))
 
-(define (insert-col-values-cmd table-name defs cols data)
+(define (insert-col-values-cmd pre defs cols data)
   (let ((cdefs (clean-defs (col-defs defs cols))))
-    (fmt "INSERT INTO ~A (~A) VALUES (~A);" table-name
+    (fmt "~A (~A) VALUES (~A);" pre
          (csep symbol->qstring cols)    ;;; cols
          (csep ->db-insert-string       ;;; values
                (map def:type-name cdefs)
                data))))
 
-(define (insert-col-values-proc pgdb table-name defs)
-  (validate-defs defs)
+(define (insert-col-values-proc beex table-name defs)
+  (define pre (delay (pre-insert-into table-name)))
+  (define (make-cmd cols data)
+    (insert-col-values-cmd (force pre) defs cols data))
   (lambda (cols . data)
-    (pg-exec pgdb (insert-col-values-cmd table-name defs cols data))))
+    (beex (make-cmd cols data))))
 
-(define (insert-alist-cmd table-name defs alist)
-  (insert-col-values-cmd table-name defs
-                         (map car alist)        ;;; cols
-                         (map cdr alist)))      ;;; values
-
-(define (insert-alist-proc pgdb table-name defs)
-  (validate-defs defs)
+(define (insert-alist-proc beex table-name defs)
+  (define pre (delay (pre-insert-into table-name)))
+  (define (make-cmd alist)
+    (insert-col-values-cmd (force pre) defs
+                           (map car alist)        ;;; cols
+                           (map cdr alist)))      ;;; values
   (lambda (alist)
-    (pg-exec pgdb (insert-alist-cmd table-name defs alist))))
+    (beex (make-cmd alist))))
 
 ;;; delete
 
-(define (delete-rows-cmd table-name where-condition)
-  (fmt "DELETE FROM ~A WHERE ~A;" table-name where-condition))
-
-(define (delete-rows-proc pgdb table-name)
+(define (delete-rows-proc beex table-name ignored-defs)
+  (define pre (delay (fmt "DELETE FROM ~A WHERE" table-name)))
+  (define (make-cmd where-condition)
+    (fmt "~A ~A;" (force pre) where-condition))
   (lambda (where-condition)
-    (pg-exec pgdb (delete-rows-cmd table-name where-condition))))
+    (beex (make-cmd where-condition))))
 
 ;;; update
 
-(define (update-col-cmd table-name defs cols data where-condition)
-  (let* ((cdefs (col-defs defs cols))
-         (stuff (csep (lambda (def val)
-                        (let* ((col (symbol->qstring (def:column-name def)))
-                               (type (def:type-name def))
-                               (instr (->db-insert-string type val)))
-                          (fmt "~A=~A" col instr)))
-                      cdefs
-                      data)))
-    (fmt "UPDATE ~A SET ~A WHERE ~A;" table-name stuff where-condition)))
-
-(define (update-col-proc pgdb table-name defs)
+(define (update-col-proc beex table-name defs)
+  (define pre (delay (fmt "UPDATE ~A SET" table-name)))
+  (define (make-cmd cols data where-condition)
+    (let* ((cdefs (col-defs defs cols))
+           (stuff (csep (lambda (def val)
+                          (let* ((col (symbol->qstring (def:column-name def)))
+                                 (type (def:type-name def))
+                                 (instr (->db-insert-string type val)))
+                            (fmt "~A=~A" col instr)))
+                        cdefs
+                        data)))
+      (fmt "~A ~A WHERE ~A;" (force pre) stuff where-condition)))
   (lambda (cols data where-condition)
-    (pg-exec pgdb (update-col-cmd
-                   table-name defs cols data where-condition))))
+    (beex (make-cmd cols data where-condition))))
 
 ;;; select
 
@@ -377,8 +372,7 @@
        (eq? compile-outspec (car obj))
        (cdr obj)))
 
-(define (select-proc pgdb table-name defs)
-  (validate-defs defs)
+(define (select-proc beex table-name defs)
   (let ((froms (list (string->symbol table-name))))
     (lambda (outspec . rest-clauses)
       (let ((hints #f))
@@ -397,8 +391,8 @@
                              (set-hints!+sel
                               (cdr (compile-outspec outspec defs))))))
                      (string* rest-clauses)))
-               (res (pg-exec pgdb cmd)))
-          (and hints (put res 'objectifier-hints hints))
+               (res (beex cmd)))
+          (and hints (put res #:pgtable-ohints hints))
           res)))))
 
 ;;; results processing
@@ -561,27 +555,45 @@
 ;;
 (define (pgtable-manager db-spec table-name defs)
   (validate-defs defs)
-  (let* ((pgdb (pgdb-connection db-spec))
-         (drop (drop-proc pgdb table-name defs))
-         (create (create-proc pgdb table-name defs))
-         (insert-values (insert-values-proc pgdb table-name defs))
-         (insert-col-values (insert-col-values-proc pgdb table-name defs))
-         (insert-alist (insert-alist-proc pgdb table-name defs))
-         (delete-rows (delete-rows-proc pgdb table-name))
-         (update-col (update-col-proc pgdb table-name defs))
-         (select (select-proc pgdb table-name defs))
-         (t-obj-walk (t-obj-walk-proc defs))
-         (table->object-alist (table->object-alist-proc t-obj-walk))
+  (let* ((conn (pgdb-connection db-spec))
          (objectifiers (def:objectifiers defs))
+         (pp (lambda (proc-proc)
+               (proc-proc (lambda (s)   ; beex (back-end exec)
+                            (pg-exec conn s))
+                          table-name
+                          defs)))
          (res->foo-proc (lambda (proc)
                           (lambda (res)
-                            (proc res (or (get res 'objectifier-hints)
+                            (proc res (or (get res #:pgtable-ohints)
                                           objectifiers)))))
-         (tuples-result->object-alist (res->foo-proc result->object-alist))
-         (table->alists (lambda (table)
-                          (object-alist->alists
-                           (table->object-alist table))))
-         (tuples-result->alists (res->foo-proc result->object-alists)))
+         (t-obj-walk (t-obj-walk-proc defs)))
+
+    (define drop (pp drop-proc))
+
+    (define create (pp create-proc))
+
+    (define insert-values (pp insert-values-proc))
+
+    (define insert-col-values (pp insert-col-values-proc))
+
+    (define insert-alist (pp insert-alist-proc))
+
+    (define delete-rows (pp delete-rows-proc))
+
+    (define update-col (pp update-col-proc))
+
+    (define select (pp select-proc))
+
+    (define table->object-alist (table->object-alist-proc t-obj-walk))
+
+    (define tuples-result->object-alist (res->foo-proc result->object-alist))
+
+    (define (table->alists table)
+      (object-alist->alists (table->object-alist table)))
+
+    (define tuples-result->alists (res->foo-proc result->object-alists))
+
+    ;; rv
     (lambda (choice)
       (case (if (keyword? choice)
                 (keyword->symbol choice)
@@ -598,7 +610,7 @@
                             tuples-result->alists))
         ((table-name) table-name)
         ((defs) defs)
-        ((pgdb) pgdb)
+        ((pgdb) conn)
         ((drop) drop)
         ((create) create)
         ((insert-values) insert-values)
