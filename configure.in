@@ -58,9 +58,7 @@ AH_BOTTOM([
 #else
 #include "modsup.h"
 #endif
-#ifdef HAVE_SCM_GC_PROTECT_OBJECT
-#define scm_protect_object(x)  (scm_gc_protect_object (x))
-#endif
+#include "fcruft.h"
 ])
 
 saved_CFLAGS="$CFLAGS"                  # restoration below
