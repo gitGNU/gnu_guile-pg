@@ -1,3 +1,8 @@
+2004-01-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* test/guile-pg-lo-tests.scm: Update copyright.
+	(eval-port): Use `eval-in-module' instead of naked `eval'.
+
 2004-01-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-meta.scm (describe-table!):
