@@ -24,7 +24,7 @@
 (define (>>table heading manager)
   (format #t "TABLE: ~A\n" heading)
   (flush-all-ports)
-  (pg-print ((manager 'select) "*"))
+  (pg-print ((manager #:select) "*"))
   (flush-all-ports))
 
 ;; markup table interface: extend pgtable-manager
@@ -54,7 +54,7 @@
       (let loop ((ls ls) (count 0))
         (or (null? ls)
             (let ((item (car ls)))
-              (apply (m 'insert-col-values)
+              (apply (m #:insert-col-values)
                      `(seq ,@key-names raw mtype mdata)
                      count
                      (append keys
@@ -64,18 +64,18 @@
               (loop (cdr ls) (1+ count))))))
 
     (define (del keys)
-      ((m 'delete-rows) (apply format #f key-match keys)))
+      ((m #:delete-rows) (apply format #f key-match keys)))
 
     (define (upd ls keys . canonicalize)
       (del keys)                        ; ugh
       (add ls keys canonicalize))
 
     (define (->tree keys render)
-      (let ((res ((m 'select) "*"
+      (let ((res ((m #:select) "*"
                   (where-clausifier (apply format #f key-match keys))
                   "ORDER BY seq")))
         (and (not (= 0 (pg-ntuples res)))
-             (let ((alist ((m 'tuples-result->object-alist) res)))
+             (let ((alist ((m #:tuples-result->object-alist) res)))
                (map (lambda (raw mtype mdata)
                       (if (string=? "" mtype)
                           raw
@@ -86,10 +86,10 @@
 
     (lambda (choice)                    ; retval
       (case choice
-        ((add) add)
-        ((del) del)
-        ((upd) upd)
-        ((->tree) ->tree)
+        ((#:add) add)
+        ((#:del) del)
+        ((#:upd) upd)
+        ((#:->tree) ->tree)
         (else (m choice))))))
 
 ;; play!
@@ -139,22 +139,22 @@
   (define (add-project ext)             ; external representation
     (let ((name (car (assq-ref ext 'name)))
           (license (cond ((assq-ref ext 'license) => car) (else #f))))
-      (apply (c 'insert-col-values)
+      (apply (c #:insert-col-values)
              `(name license ,@*markup-fields*)
              name license
              (map (lambda (field)
                     (cond ((assq-ref ext field)
                            => (lambda (data)
-                                ((m 'add) data
+                                ((m #:add) data
                                  (list (symbol->string field) name)
                                  canonicalize-markup)))
                           (else #f)))
                   *markup-fields*))))
 
   (define (find-proj name)
-    (let ((alist (car ((c 'tuples-result->alists)
-                       ((c 'select) "*" (where-clausifier
-                                         (format #f "name = '~A'" name)))))))
+    (let ((alist (car ((c #:tuples-result->alists)
+                       ((c #:select) "*" (where-clausifier
+                                          (format #f "name = '~A'" name)))))))
       (lambda (key) (assq-ref alist key))))
 
   (define (htmlize-markup raw mtype mdata)
@@ -174,16 +174,16 @@
                (pick-mappings (lambda (field)
                                 (and (get field)
                                      (let ((sf (symbol->string field)))
-                                       (-pair sf ((m '->tree) (list sf name)
+                                       (-pair sf ((m #:->tree) (list sf name)
                                                   htmlize-markup)))))
                               *markup-fields*)))))
     (newline))
 
   (define (delete-project name)
     (for-each (lambda (field)
-                ((m 'del) (list (symbol->string field) name)))
+                ((m #:del) (list (symbol->string field) name)))
               *markup-fields*)
-    ((c 'delete-rows) (format #f "name = '~A'" name)))
+    ((c #:delete-rows) (format #f "name = '~A'" name)))
 
   (define (externalize-markup raw mtype mdata)
     (case mtype
@@ -201,7 +201,7 @@
          ,@(pick-mappings (lambda (field)
                             (and (get field)
                                  (cons field
-                                       ((m '->tree)
+                                       ((m #:->tree)
                                         (list (symbol->string field) name)
                                         externalize-markup))))
                           *markup-fields*)))))
@@ -231,10 +231,10 @@
 
   (define (*names* ls) (map (lambda (x) (car (assq-ref x 'name))) ls))
 
-  ((m 'drop)) ((c 'drop))
+  ((m #:drop)) ((c #:drop))
 
-  (write-line ((m 'create)))
-  (write-line ((c 'create)))
+  (write-line ((m #:create)))
+  (write-line ((c #:create)))
 
   (for-each write-line (map add-project *samples*))
 
@@ -251,7 +251,7 @@
 
   (for-each dump-project (*names* (cddr *samples*)))
 
-  (write-line ((c 'drop)))
-  (write-line ((m 'drop))))
+  (write-line ((c #:drop)))
+  (write-line ((m #:drop))))
 
 ;;; markup.scm ends here
