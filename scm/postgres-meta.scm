@@ -192,8 +192,8 @@
     (relhassubclass boolean "not null")
     (relacl         aclitem[])))
 
-(define (make-M:pg-class)
-  (pgtable-manager "template1" "pg_class" *class-defs*))
+(define (make-M:pg-class db-name)
+  (pgtable-manager db-name "pg_class" *class-defs*))
 
 (define *table-info-selection*
   (delay (compile-outspec
@@ -247,7 +247,7 @@
 ;; attnotnull, atthasdef, attnum).
 ;;
 (define (describe-table! db-name table-name)
-  (let* ((M:pg-class (make-M:pg-class))
+  (let* ((M:pg-class (make-M:pg-class db-name))
          (conn ((M:pg-class #:k) #:connection)))
     (for-each (lambda (x) (display x) (newline))
               (infer-defs conn table-name))
