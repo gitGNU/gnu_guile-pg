@@ -1,7 +1,7 @@
 dnl $Id$
 dnl   Automake macros for working with PostgreSQL libPQ.
 dnl
-dnl   	Copyright (C) 1998 Free Software Foundation, Inc.
+dnl   	Copyright (C) 1998, 2002, 2003 Free Software Foundation, Inc.
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License as published by

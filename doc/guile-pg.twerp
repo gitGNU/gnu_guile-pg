@@ -14,7 +14,7 @@
 @ifinfo
 This file is the Guile-pg Command Reference
 
-Copyright @copyright{} 1998, 2002 Free Software Foundation, Inc.
+Copyright @copyright{} 1998, 2002, 2003 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -48,7 +48,7 @@ approved by the Free Software Foundation.
 @c The following two commands start the copyright page.
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1998, 2002 Free Software Foundation, Inc.
+Copyright @copyright{} 1998, 2002, 2003 Free Software Foundation, Inc.
 
      Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice are
