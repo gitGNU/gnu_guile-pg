@@ -1,5 +1,9 @@
 2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-meta.scm (*class-defs*): Update, from PostgreSQL 7.3.5.
+
+2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-meta.scm (check-def/elaborate): Delete.
 	(strictly-check-defs/elaborate!): Likewise.
 	(check-type/elaborate): New proc, exported.
