@@ -1,5 +1,11 @@
 2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* test/coverage.sh: New file.
+	* test/Makefile.am: Update copyright.
+	(TESTS): Add coverage.sh.
+
+2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c (pg_sym_envvar): Delete symbol.
 	(pg_sym_compiled, pg_sym_val, pg_sym_label,
 	pg_sym_dispchar, pg_sym_dispsize): Likewise.
