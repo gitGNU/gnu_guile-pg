@@ -1,5 +1,10 @@
 2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* test/show-platform (go): Omit `uname -p' and `uname -v' output.
+	(gosexp): New func. Use it for mailing intead of `go'.
+
+2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* test/show-platform (go): Invoke uname separately w/
 	opts -m, -s, -r, -p, -v; one per line.
 	Also, for libtool version, keep only the first line.
