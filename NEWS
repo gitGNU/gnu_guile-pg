@@ -1,6 +1,30 @@
 NEWS for Guile-PG
 
 
+- 0.21 | NOT YET RELEASED
+
+  - Proc removed: pg-oid-status
+
+	The first mention of imminent removal for `pg-oid-status' was in
+	its docstring, available since Guile-PG 0.13, 2002-12-24.  The
+	following two constructs are equivalent and thus demonstrate how
+	to migrate code using `pg-oid-status' to use `pg-oid-value':
+
+	(let ((s (pg-oid-status RESULT)))
+	  (and (not (string-null? s)) (string->number s)))
+	===
+	(pg-oid-value RESULT)
+
+  - Proc removed: pg-guile-pg-version
+  - Proc removed: pg-guile-pg-module-version
+  - Proc removed: pg-guile-pg-module-config-stamp
+
+	First mention for imminent removal for these procs occurred in
+	the info node "Miscellaneous", available since Guile-PG 0.17,
+	2004-02-02.  See `pg-guile-pg-loaded' for a more direct way to
+	discern Guile-PG features than mapping time/version info.
+
+
 - 0.20 | 2004-06-15
 
   - Bugfix: proc `defs-from-psql' now parses comma as space
