@@ -34,7 +34,11 @@ dnl
 #                  the pq library itself. It may also include a -L
 #                  flag to tell the compiler where to find the libraries
 #
+# This whole approach is rather ungainly and needs to be rethought. --ttn
+#
 AC_DEFUN([PQ_FLAGS],[
+  AC_ARG_ENABLE([pq-rpath], AC_HELP_STRING([--enable-pq-rpath],
+                              [arrange to use "-R" when linking libpq]))
   AC_ARG_WITH([libpq], AC_HELP_STRING([--with-libpq=DIR],
    [look for libpq headers in DIR/include and libpq.a in DIR/lib
     @<:@default=/usr/local@:>@; see also --with-libpq-includes and
@@ -88,6 +92,12 @@ AC_DEFUN([PQ_FLAGS],[
   if test "$ac_cv_lib_crypt" = yes ; then
     PQ_LDFLAGS="$PQ_LDFLAGS -lcrypt"
   fi
+  # add rpath to link flags if requested by --enable-pq-rpath;
+  # note: the regexp passed to sed relies on a trailing space,
+  # which means that removing "-lpq" from PQ_LDFLAGS will break it
+  if test $enable_pq_rpath = yes ; then
+    PQ_LDFLAGS="`echo $PQ_LDFLAGS | sed 's/-L\(@<:@^ @:>@* \)/-R\1-L\1/'`"
+  fi
   AC_SUBST(PQ_CPPFLAGS)
   AC_SUBST(PQ_LDFLAGS)
 ])
@@ -132,7 +142,7 @@ GUILE_C2X_METHOD([c2x])
 
 GUILE_MODSUP_H
 
-])
+])dnl AC_GUILE_PG_BCOMPAT
 
 
 # AC_GUILE_PG_FCOMPAT --- figure out some "forward compatability" cruft
@@ -151,11 +161,11 @@ int main (void) { return SCM_FALSEP (SCM_OUTPORTP (SCM_BOOL_F)); }
 ],[
   AC_MSG_RESULT(yes)
   AC_DEFINE([HAVE_SCM_OUTPORTP], [1],
-    [Define if libguile.h provides the SCM_OUTPORTP macro.])
+    [Define if programs using SCM_OUTPORTP can link against libguile.])
 ],[
   AC_MSG_RESULT(no)
 ])
 
-])
+])dnl AC_GUILE_PG_FCOMPAT
 
 dnl acinclude.m4 ends here
