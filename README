@@ -9,8 +9,10 @@ change from version to version.
 
 To build guile-pg you need to have installed both Guile >= 1.3.4 and the
 PostgreSQL frontend library libpq.  This version of guile-pg has been tested
-with PostgreSQL version 7.2.1, but you may find it works with other versions.
-If so, please let us know the good news.
+with PostgreSQL version 7.3.3, but you may find it works with other versions.
+If so, please let us know the good news.  (You can do this by changing to
+the test/ subdirectory and typing "./show-platform && ./show-platform -m".
+The "-m" means "mail results to good-news-guile-pg at glug dot org".)
 
 
 Building and Installing Guile-pg
@@ -95,7 +97,7 @@ To run the tests type
 
 The basic tests should all pass. The large-object tests might fail because of
 bugs in PostgreSQL.  If the basic tests passed then you may want to install
-guile-pg. To do this type make install
+guile-pg. To do this type "make install".
 
 If you didn't use the --prefix options to configure then the shared library
 code will have been installed wherever Guile's shared libraries are installed,
@@ -133,5 +135,6 @@ Please report bugs to bug-guile-pg@glug.org
 
 
 Thanks,
-Ian Grant <Ian.Grant@cl.cam.ac.uk> (author)
-Thien-Thi Nguyen <ttn@glug.org> (current maintainer)
+ Thien-Thi Nguyen <ttn@glug.org> (co-author and maintainer)
+ Ian Grant <Ian.Grant@cl.cam.ac.uk> (original author)
+
