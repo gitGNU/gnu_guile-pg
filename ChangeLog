@@ -1,3 +1,8 @@
+2002-12-18  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* test/guile-pg-lo-tests.scm.in: Look for testing.scm in @srcdir@.
+	* test/guile-pg-basic-tests.scm.in: Likewise.
+
 2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* doc/Makefile.am (EXTRA_DIST): New var.
