@@ -1,3 +1,12 @@
+2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* configure.in (HAVE_SCM_TERMINATING): Arrange to define this
+	config.h macro if libguile.h declares `scm_terminating'.
+
+	* libpostgres_lo.c (scm_terminating): Rename from `terminating',
+	but only declare if HAVE_SCM_TERMINATING is not defined.  Use
+	"extern int" in that case.
+
 2002-12-16  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* THANKS: New file.
