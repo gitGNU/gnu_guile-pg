@@ -1,3 +1,8 @@
+2003-10-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (pg_fname, pg_ftype, pg_fsize, pg_fmod):
+	Use ~S instead of %s in format string.  Thanks to Joost Helberg.
+
 2003-09-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* doc/guile-pg.twerp: Add "@paragraphindent 0"
