@@ -1,5 +1,10 @@
 2004-11-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres_lo.c (lob_mklobport, lob_write):
+	Use `SCM_CELL_WORD_0'.  Patch by Greg Troxel.
+
+2004-11-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c (xc_p, xr_p, sepo_p): Use `SCM_SMOB_PREDICATE'.
 
 2004-11-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
