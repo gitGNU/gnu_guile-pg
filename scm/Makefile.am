@@ -26,6 +26,7 @@ guile_postgres_sources = 			\
   postgres-types.scm 				\
   postgres-col-defs.scm				\
   postgres-resx.scm				\
+  postgres-qcons.scm				\
   postgres-table.scm				\
   postgres-meta.scm
 
