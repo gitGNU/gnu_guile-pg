@@ -20,6 +20,10 @@ else
 fi
 rv=$?
 
+# Sometimes PostgreSQL doesn't finish the drop.
+# We give it a chance to do so w/ this kludge.
+sleep 1
+
 exit $rv
 
 # drop.sh ends here
