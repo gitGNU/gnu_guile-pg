@@ -2,7 +2,7 @@
  (location (url "http://www.glug.org/alt/"))
  (category "Libraries/Database")
  (description "An interface to PostgreSQL from guile.")
- (status "version 0.11 released 2002-12-17")
+ (status "version 0.12 released 2002-12-21")
  (authors (email "Ian Grant" "iang@pobox.com"))
  (maintainer (email "ttn" "ttn@glug.org"))
  (help-wanted "See TODO file in the distribution.")
