@@ -147,7 +147,6 @@ AC_SUBST(GUILE_PG_STAMP)
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PATH_PROG(DIFF_PATH, diff)
-AC_PATH_PROG(MD5SUM_PATH, md5sum)
 
 ## If we're using GCC, ask for aggressive warnings.
 case "$GCC" in
