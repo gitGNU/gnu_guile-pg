@@ -21,7 +21,7 @@ dnl  Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 dnl  Boston, MA 02111-1307, USA.
 
 AC_INIT(libpostgres.c)
-AM_INIT_AUTOMAKE(guile-pg, 0.21)
+AM_INIT_AUTOMAKE(guile-pg, 0.22)
 AM_CONFIG_HEADER(config.h)
 
 AM_MAINTAINER_MODE
