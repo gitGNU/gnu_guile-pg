@@ -15,7 +15,8 @@
     along with this program; if not, write to the Free Software Foundation,
     Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA  */
 
-/* Author: Ian Grant <Ian.Grant@cl.cam.ac.uk> */
+/* Author: Ian Grant <Ian.Grant@cl.cam.ac.uk>
+           Thien-Thi Nguyen <ttn@gnu.org>  */
 
 #include <config.h>
 
@@ -291,7 +292,7 @@ strip_newlines (char *str)
 
 
 /*
- * everything (except printing and lo support)
+ * everything (except lo support and some async stuff)
  */
 
 PG_DEFINE (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
@@ -305,6 +306,84 @@ PG_DEFINE (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
 #define FUNC_NAME s_pg_guile_pg_loaded
 {
   return SCM_BOOL_T;                    /* todo: other checks */
+}
+#undef FUNC_NAME
+
+SCM_SYMBOL (pg_sym_envvar, "envvar");
+SCM_SYMBOL (pg_sym_compiled, "compiled");
+SCM_SYMBOL (pg_sym_val, "val");
+SCM_SYMBOL (pg_sym_label, "label");
+SCM_SYMBOL (pg_sym_dispchar, "dispchar");
+SCM_SYMBOL (pg_sym_dispsize, "dispsize");
+
+PG_DEFINE (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
+           (void),
+           "Return an alist associating options with their connection\n"
+           "defaults.  The option name is a string.\n"
+           "Each associated value is in turn a sub-alist, with\n"
+           "the following symbolic keys:\n\n"
+           "@itemize\n"
+           "@item envvar\n\n"
+           "@item compiled\n"
+           "@item val\n"
+           "@item label\n"
+           "@item dispchar (character: @code{#\\*} or @code{#\\D}; or #f)\n"
+           "@item dispsize (integer)\n"
+           "@end itemize\n\n"
+           "Values are strings or #f, unless noted otherwise.\n"
+           "A @code{dispchar} of @code{#\\*} means the option should\n"
+           "be treated like a password: connection dialogs should hide\n"
+           "the value; while @code{#\\D} means the option is for\n"
+           "debugging purposes: probably a good idea to entirely avoid\n"
+           "presenting it in the first place.")
+#define FUNC_NAME s_pg_conndefaults
+{
+  PQconninfoOption *opt, *head;
+  SCM tem, pdl, rv = SCM_EOL;
+
+#define MAYBEFALSE(field,exp) \
+  ((!opt->field || '\0' == opt->field[0]) ? SCM_BOOL_F : (exp))
+#define PUSH() pdl = scm_cons (tem, pdl)
+  for (head = opt = PQconndefaults (); opt && opt->keyword; opt++)
+    {
+      pdl = SCM_EOL;
+
+      tem = SCM_MAKINUM (opt->dispsize);
+      tem = scm_cons (pg_sym_dispsize, tem);
+      PUSH ();
+
+      tem = MAYBEFALSE (dispchar, SCM_MAKE_CHAR (opt->dispchar[0]));
+      tem = scm_cons (pg_sym_dispchar, tem);
+      PUSH ();
+
+      tem = MAYBEFALSE (label, scm_makfrom0str (opt->label));
+      tem = scm_cons (pg_sym_label, tem);
+      PUSH ();
+
+      tem = MAYBEFALSE (val, scm_makfrom0str (opt->val));
+      tem = scm_cons (pg_sym_val, tem);
+      PUSH ();
+
+      tem = MAYBEFALSE (compiled, scm_makfrom0str (opt->compiled));
+      tem = scm_cons (pg_sym_compiled, tem);
+      PUSH ();
+
+      tem = MAYBEFALSE (envvar, scm_makfrom0str (opt->envvar));
+      tem = scm_cons (pg_sym_envvar, tem);
+      PUSH ();
+
+      tem = scm_makfrom0str (opt->keyword);
+      PUSH ();
+
+      rv = scm_cons (pdl, rv);
+    }
+#undef PUSH
+#undef MAYBEFALSE
+
+  if (head)
+    PQconninfoFree (head);
+
+  return rv;
 }
 #undef FUNC_NAME
 
