@@ -1,11 +1,12 @@
-;; Copyright 1996, 1997, 1998 Per Bothner.
+;; Copyright (C) 2004 Thien-Thi Nguyen
+;; Copyright (C) 1996, 1997, 1998 Per Bothner.
 ;;
 ;; Usage:
 ;; (load "testing.scm")
 ;; (test-init "Miscellaneous" 2)
 ;; (test '(3 4 5 6) (lambda x x) 3 4 5 6)
 ;; (test '(a b c . d) 'dot '(a . (b . (c . d))))
-;; (test-report)
+;; (exit (test-report))
 ;;
 ;; test-init:  The first argument is the name of the test.
 ;; A log is written to (string-append NAME ".log").
@@ -22,7 +23,9 @@
 ;; procedure.  The arguments of the previous section are displayed if any
 ;; errors are reported.
 ;;
-;; test-report:  Called at end to print a summary.
+;; test-report:  Called at end to print a summary.  Return value #f
+;; means either total-expected-count was not the same as actual, or
+;; there was at least one unexpected success or unexpected failure.
 ;;
 ;; fail-unexpected:  If non-null, if means the following test is
 ;; expected to fail.  The actual value should be string explaining
@@ -143,21 +146,26 @@
 	 (report-newline))))
 
 (define (test-report)
-  (report1 pass-count  "# of expected passes      ")
-  (report1 xfail-count "# of expected failures    ")
-  (report1 xpass-count  "# of unexpected successes ")
-  (report1 fail-count  "# of unexpected failures  ")
-  (if (and total-expected-count
-	   (not (= total-expected-count
-		   (+ pass-count xfail-count xpass-count fail-count))))
-      (begin
-	(report-display "*** Total number of tests should be: ")
-	(report-display total-expected-count)
-	(report-display ". ***")
-	(report-newline)
-	(report-display 
-              "*** Discrepancy indicates testsuite error or exceptions. ***")
-	(report-newline)))
-  (cond (*log-file*
-	 (close-output-port *log-file*)
-	 (set! *log-file* #f))))
+  (let ((rv #t))                        ; feeling optimistic
+    (report1 pass-count  "# of expected passes      ")
+    (report1 xfail-count "# of expected failures    ")
+    (report1 xpass-count "# of unexpected successes ")
+    (report1 fail-count  "# of unexpected failures  ")
+    (if (and total-expected-count
+             (not (= total-expected-count
+                     (+ pass-count xfail-count xpass-count fail-count))))
+        (begin
+          (report-display "*** Total number of tests should be: ")
+          (report-display total-expected-count)
+          (report-display ". ***")
+          (report-newline)
+          (report-display
+           "*** Discrepancy indicates testsuite error or exceptions. ***")
+          (report-newline)
+          (set! rv #f)))
+    (cond (*log-file*
+           (close-output-port *log-file*)
+           (set! *log-file* #f)))
+    (and rv (= 0 xpass-count fail-count))))
+
+;;; testing.scm ends here
