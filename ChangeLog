@@ -1,5 +1,9 @@
 2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* autogen.sh: Update autoconf version; nfc.
+
+2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres.scm.in (PGRES_EMPTY_QUERY): Delete var.
 	(PGRES_COMMAND_OK, PGRES_TUPLES_OK, PGRES_COPY_OUT,
 	PGRES_COPY_IN, PGRES_BAD_RESPONSE, PGRES_NONFATAL_ERROR,
