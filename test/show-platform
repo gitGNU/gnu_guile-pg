@@ -7,10 +7,10 @@ recip='good-news-guile-pg@glug.org'
 go ()
 {
     echo guile-pg: `sed '/^ *VERSION=/!d;s/.*=//' ../configure`
-    echo uname: `uname -a`
+    for opt in m s r p v ; do echo uname-${opt}: `uname -$opt` ; done
     echo autoconf: `autoconf --version | head -1 | sed -e 's/[^0-9.]*//g'`
     echo automake: `automake --version | head -1 | sed -e 's/[^0-9.]*//g'`
-    echo libtool: `libtool --version | sed 's/([^)]*)//g;s/^[^0-9]*//'`
+    echo libtool: `libtool --version | sed 's/([^)]*)//g;s/^[^0-9]*//;1!d'`
     echo gcc: `gcc --version`
     echo cc: `cc --version`
     echo psql: `psql --version | head -1 | sed -e 's/[^0-9.]*//g'`
