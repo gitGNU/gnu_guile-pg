@@ -35,6 +35,7 @@ CLEANFILES = basic-tests.log                    \
 
 EXTRA_DIST = $(TESTS)                           \
              testing.scm                        \
+	     guile-pg-abstraction-scm-tests.scm \
              cov
 
 dist-hook:
