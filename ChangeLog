@@ -1,3 +1,7 @@
+2004-08-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* doc/guile-pg.twerp (Writing/Reading Data): Fix typo.
+
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* acinclude.m4 (PQ_FLAGS): Fix shell-quoting omission bug.
