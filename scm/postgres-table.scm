@@ -26,6 +26,7 @@
 ;;   (tuples-result->table res)
 ;;   (where-clausifier string)
 ;;   (pgtable-manager db-spec table-name defs)
+;;   (pgtable-worker db-spec table-name defs)
 ;;   (compile-outspec spec defs)
 ;;
 ;; TODO: Move some of this into a query-construction module.
@@ -42,6 +43,7 @@
   #:export (sql-pre
             tuples-result->table
             pgtable-manager
+            pgtable-worker
             compile-outspec
             where-clausifier))
 
@@ -475,9 +477,9 @@
 ;; w/o options: `(NAME . TYPE)' is recognized also, but deprecated; support
 ;; for it will go away in a future release.
 ;;
-;; The closure accepts a single arg CHOICE (a symbol) and returns either the
-;; variable or procedure associated with CHOICE.  When CHOICE is `help' or
-;; `menu', return a list of accepted choices, currently one of:
+;; The closure accepts a single arg CHOICE (a symbol or keyword) and returns
+;; either the variable or procedure associated with CHOICE.  When CHOICE is
+;; `help' or `menu', return a list of accepted choices, currently one of:
 ;;
 ;; @example
 ;;   table-name
@@ -546,7 +548,9 @@
                            (table->object-alist table))))
          (tuples-result->alists (res->foo-proc result->object-alists)))
     (lambda (choice)
-      (case choice
+      (case (if (keyword? choice)
+                (keyword->symbol choice)
+                choice)
         ((help menu) '(help menu
                             table-name defs
                             pgdb
@@ -573,7 +577,35 @@
         ((tuples-result->object-alist) tuples-result->object-alist)
         ((table->alists) table->alists)
         ((tuples-result->alists) tuples-result->alists)
-        (else (error "bad choice"))))))
+        (else (error "bad choice:" choice))))))
+
+;; Take @var{db-spec}, @var{table-name} and @var{defs} (exactly the same as
+;; for @code{pgtable-manager}) and return a procedure @var{worker} similar to
+;; that returned by @code{pgtable-manager} except that the @dfn{data} choices
+;; @code{table-name}, @code{defs} and @code{pgdb} result in error (only
+;; actions remain), and more importantly, @var{worker} actually @emph{does}
+;; the actions (applying its chosen procedure to its args).  For example:
+;;
+;; @example
+;; (define M (pgtable-manager spec name defs))
+;; (define W (pgtable-worker  spec name defs))
+;;
+;; (equal? ((M #:tuples-result->alists) ((M #:select) #t))
+;;         (W #:tuples-result->alists (W #:select #t)))
+;; @result{} #t
+;; @end example
+;;
+;; This example is not intended to be wry commentary on the behavioral
+;; patterns of human managers and workers, btw.
+;;
+(define (pgtable-worker db-spec table-name defs)
+  (let ((M (pgtable-manager db-spec table-name defs)))
+    ;; rv
+    (lambda (command . args)
+      (let ((proc (M command)))
+        (if (procedure? proc)
+            (apply proc args)
+            (error "command does not yield a procedure:" command))))))
 
 ;;; "where" clausifier
 
