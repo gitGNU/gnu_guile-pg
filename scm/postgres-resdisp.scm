@@ -19,7 +19,7 @@
 ;;; Commentary:
 
 ;; This module exports the proc:
-;;   (display-result result [intersection-style [flags...]])
+;;   (display-result result [decor [flags...]])
 
 ;;; Code:
 
@@ -34,8 +34,10 @@
                           pg-getvalue))
   #:export (display-result))
 
-(define (intersection-style name)
-  (case name
+(define (decor name)
+  (case (if (keyword? name)
+            (keyword->symbol name)
+            name)
     ((space)      (lambda (x) (case x ((h) #\space) (else " "))))
     ((h-only)     (lambda (x) (case x ((h) #\-) ((v) " ") ((+) "-"))))
     ((v-only)     (lambda (x) (case x ((h) #\space) ((v) "|") ((+) "|"))))
@@ -46,7 +48,7 @@
     ((fat-space)  (lambda (x) (case x ((h) #\space) (else "  "))))
     ((fat-no-v)   (lambda (x) (case x ((h) #\-) ((v) "   ") ((+) "-+-"))))
     ((fat-h-only) (lambda (x) (case x ((h) #\-) ((v) "  ") ((+) "--"))))
-    (else         (error "bad style:" style))))
+    (else         (error "bad decor:" name))))
 
 (define vr vector-ref)
 (define v! vector-set!)
@@ -59,7 +61,7 @@
 
 ;; Display @var{result}, including header and ASCII decoration.
 ;; @var{result} is an object that satisfies @code{pg-result?}.
-;; Optional second arg @var{intersection-style} is a symbol, one of:
+;; Optional second arg @var{decor} is a symbol, one of:
 ;;
 ;; @example
 ;; space
@@ -81,26 +83,27 @@
 ;; between the header and the table body, and at the bottom of the
 ;; output, respectively.
 ;;
-;;-sig: (result [intersection-style [flags...]])
+;;-sig: (result [decor [flags...]])
 ;;
 (define (display-result result . opts)
   (or (and (pg-result? result)
            (eq? 'PGRES_TUPLES_OK (pg-result-status result)))
       (error "bad result:" result))
-  (let* ((ttot   (pg-ntuples result))
-         (ftot   (pg-nfields result))
-         (style  (if (or (null? opts) (not (car opts)))
-                     (lambda (x) (case x ((h) #\-) ((v) "|") ((+) "+")))
-                     (let ((s (car opts)))
-                       (cond ((procedure? s) s)
-                             ((symbol? s) (intersection-style s))
-                             (else (error "bad style:" s))))))
-         (flags  (if (null? opts)
-                     opts
-                     (let ((rest (cdr opts)))
-                       (if (and (pair? rest) (pair? (car rest)))
-                           (car rest)
-                           rest))))
+  (let* ((ttot (pg-ntuples result))
+         (ftot (pg-nfields result))
+         (deco (if (or (null? opts) (not (car opts)))
+                   (lambda (x) (case x ((h) #\-) ((v) "|") ((+) "+")))
+                   (let ((d (car opts)))
+                     (cond ((procedure? d) d)
+                           ((keyword? d) (decor d))
+                           ((symbol? d) (decor d))
+                           (else (error "bad decor:" d))))))
+         (flags (if (null? opts)
+                    opts
+                    (let ((rest (cdr opts)))
+                      (if (and (pair? rest) (pair? (car rest)))
+                          (car rest)
+                          rest))))
          (v-init (v-init-proc ftot))
          (names  (v-init (lambda (fn) (pg-fname result fn))))
          (widths (v-init (lambda (fn)
@@ -121,12 +124,12 @@
 
     (define (hr inhibit)
       (or (memq inhibit flags)
-          (display-row (style '+)
+          (display-row (deco '+)
                        (lambda (fn) "")
-                       (style 'h))))
+                       (deco 'h))))
 
     (define (row content)
-      (display-row (style 'v) content #\space))
+      (display-row (deco 'v) content #\space))
 
     ;; do it!
     (hr 'no-top-hr)
