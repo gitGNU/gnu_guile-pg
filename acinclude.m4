@@ -97,8 +97,35 @@ AC_DEFUN([PQ_FLAGS],[
 # AC_GUILE_PG_BCOMPAT --- figure out some "backward compatability" cruft
 #
 AC_DEFUN([AC_GUILE_PG_BCOMPAT],[
+
+AC_CACHE_CHECK([for fill_input in struct scm_ptob_descriptor],
+               [ac_cv_struct_fill_input],[
+  AC_TRY_COMPILE([#include <libguile.h>],
+                 [struct scm_ptob_descriptor s; s.fill_input;],
+                 [ac_cv_struct_fill_input=yes],
+                 [ac_cv_struct_fill_input=no])
+])
+if test $ac_cv_struct_fill_input = no; then
+  AC_MSG_ERROR([guile struct scm_ptob_descriptor lacks member fill_input])
+fi
+
+## Older guiles know "scm_terminating" as simply "terminating" and don't
+## declare it.  So, we check for both.  See libpostgres_lo.c comments.
+
+AC_CHECK_DECL([scm_terminating],[
+                AC_DEFINE(HAVE_SCM_TERMINATING, 1,
+                          [Define if libguile.h declares scm_terminating.])
+              ],,[[#include "libguile.h"]])
+
+AC_CHECK_LIB(guile, terminating, [
+  AC_DEFINE(HAVE_LIBGUILE_TERMINATING, 1,
+            [Define if libguile defines terminating.])
+])
+
 GUILE_C2X_METHOD([c2x])
+
 GUILE_MODSUP_H
+
 ])
 
 
