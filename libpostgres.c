@@ -1817,6 +1817,51 @@ PG_DEFINE (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
 
 
 /*
+ * non-blocking connection mode
+ */
+
+PG_DEFINE (pg_set_nonblocking_x, "pg-set-nonblocking!", 2, 0, 0,
+           (SCM conn, SCM mode),
+           "Set the nonblocking status of @var{conn} to @var{mode}.\n"
+           "If @var{mode} is non-#f, set it to nonblocking, otherwise\n"
+           "set it to blocking.  Return #t if successful.\n"
+           "If @code{pg-guile-pg-loaded} does not include\n"
+           "@code{PQSETNONBLOCKING}, do nothing and return #f.")
+{
+#define FUNC_NAME s_pg_set_nonblocking_x
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
+
+#ifdef HAVE_PQSETNONBLOCKING
+  return (0 == PQsetnonblocking (XCONN (conn), ! EXACTLY_FALSEP (mode))
+          ? SCM_BOOL_T
+          : SCM_BOOL_F);
+#else
+  return SCM_BOOL_F;
+#endif
+#undef FUNC_NAME
+}
+
+PG_DEFINE (pg_is_nonblocking_p, "pg-is-nonblocking?", 1, 0, 0,
+           (SCM conn),
+           "Return #t if @var{conn} is in nonblocking mode.\n"
+           "If @code{pg-guile-pg-loaded} does not include\n"
+           "@code{PQISNONBLOCKING}, do nothing and return #f.")
+{
+#define FUNC_NAME s_pg_is_nonblocking_p
+  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
+
+#ifdef HAVE_PQISNONBLOCKING
+  return (PQisnonblocking (XCONN (conn))
+          ? SCM_BOOL_T
+          : SCM_BOOL_F);
+#else
+  return SCM_BOOL_F;
+#endif
+#undef FUNC_NAME
+}
+
+
+/*
  * non-blocking query operations
  */
 
