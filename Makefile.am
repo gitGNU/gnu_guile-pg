@@ -61,7 +61,8 @@ if MAINTAINER_MODE
 DOTDOCFILES = libpostgres.doc                   \
               libpostgres_lo.doc                \
               scm/postgres-types.doc            \
-              scm/postgres-table.doc
+              scm/postgres-table.doc            \
+              scm/postgres-meta.doc
 
 .doc-index: $(DOTDOCFILES)
 	guile-tools twerp2texi --make-index -o $@ $(DOTDOCFILES)
