@@ -1,3 +1,14 @@
+2004-03-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (QUERY_BUF_LEN): Delete macro.
+	(strncpy0): Delete decl and func.
+	(maybe_strcpy): New static decl and func.
+	(pg_connectdb): Use `maybe_strcpy' and dynamic memory
+	allocation instead of `strncpy0' and function-static buffers.
+	(pg_exec): Likewise.
+	(pg_error_message): Likewise.
+	(pg_fnumber): Likewise.
+
 2004-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm (pgtable-manager): Make
