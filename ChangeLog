@@ -1,5 +1,9 @@
 2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* configure.in (MD5SUM_PATH): Delete unused AC_PATH_PROG.
+
+2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* Makefile.am (cvs-state-summary): New target, when MAINTAINER_MODE.
 
 2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
