@@ -1,5 +1,11 @@
 2005-02-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm (make-v): New proc.
+	(tuples-result->table): Rewrite to avoid `iota'.
+	(t-obj-walk-proc): Likewise.
+
+2005-02-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-resdisp.scm: New file.
 	* scm/Makefile.am (guile_postgres_sources): Add postgres-resdisp.scm.
 	* Makefile.am (DOTDOCFILES): Add scm/postgres-resdisp.doc.
