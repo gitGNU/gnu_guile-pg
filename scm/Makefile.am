@@ -26,6 +26,8 @@ AUTOMAKE_OPTIONS = foreign
 # These files should be installed and distributed.
 guile_postgres_sources = 			\
   postgres-types.scm 				\
+  postgres-col-defs.scm				\
+  postgres-resx.scm				\
   postgres-table.scm				\
   postgres-meta.scm
 
