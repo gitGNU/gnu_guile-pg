@@ -154,6 +154,7 @@ sec_mark (SCM obj)
   scm_extended_dbconn *sec = sec_unbox (obj);
 
   GC_PRINT (fprintf (stderr, "marking PG-CONN %d\n", sec->count));
+  scm_gc_mark (sec->notice);
   return sec->client;
 }
 
@@ -307,6 +308,30 @@ PG_DEFINE (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
 }
 #undef FUNC_NAME
 
+static void
+notice_processor (void *sec, const char *message)
+{
+  SCM out = ((scm_extended_dbconn *) sec)->notice;
+  SCM msg;
+
+  if (SCM_FALSEP (out))
+    return;
+
+  msg = scm_makfrom0str (message);
+
+  if (SCM_EQ_P (SCM_BOOL_T, out))
+    out = scm_current_error_port ();
+
+  if (SCM_OUTPORTP (out))
+    {
+      scm_display (msg, out);
+      return;
+    }
+
+  if (SCM_NFALSEP (scm_procedure_p (out)))
+    scm_apply (out, msg, scm_listofnull);
+}
+
 PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
             (SCM constr),
             "Open a connection to a database.  @var{connect-string} should be\n"
@@ -388,7 +413,10 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
   sec->dbconn = dbconn;
   sec->count = ++pg_conn_tag.count;
   sec->client = SCM_BOOL_F;
+  sec->notice = SCM_BOOL_T;
   sec->fptrace = (FILE *) NULL;
+
+  PQsetNoticeProcessor (dbconn, &notice_processor, sec);
   return z;
 }
 #undef FUNC_NAME
@@ -1512,6 +1540,39 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
         }
       fclose (fout);
     }
+
+  return SCM_UNSPECIFIED;
+}
+#undef FUNC_NAME
+
+
+/* Modify notice processing.
+
+   Note that this is not a simple wrap of `PQsetNoticeProcessor'.  Instead, we
+   simply modify `sec->notice'.  Also, the value can either be a port or
+   procedure that takes a string.  For these reasons, we name the procedure
+   `pg-set-notice-out' to help avoid confusion.  */
+
+PG_DEFINE (pg_set_notice_out_x, "pg-set-notice-out!", 2, 0, 0,
+           (SCM conn, SCM out),
+           "Set notice output handler of @var{conn} to @var{out}.\n"
+           "@var{out} can be #f, which means discard notices;\n"
+           "#t, which means send them to the current error port;\n"
+           "an output port to send the notice to; or a procedure that\n"
+           "takes one argument, the notice string.  It's usually a good\n"
+           "idea to call @code{pg-set-notice-out!} soon after establishing\n"
+           "the connection.")
+#define FUNC_NAME s_pg_set_notice_out_x
+{
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+
+  if (SCM_EQ_P (SCM_BOOL_T, out) ||
+      SCM_EQ_P (SCM_BOOL_F, out) ||
+      SCM_OUTPORTP (out) ||
+      SCM_NFALSEP (scm_procedure_p (out)))
+    sec_unbox (conn)->notice = out;
+  else
+    SCM_WTA (SCM_ARG2, out);
 
   return SCM_UNSPECIFIED;
 }
