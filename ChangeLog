@@ -1,3 +1,8 @@
+2002-12-26  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* scm/postgres-types.scm (name, aclitem, aclitem[]):
+	New built-in type converters.
+
 2002-12-25  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* libpostgres.c (pg_result_p): New PG_DEFINE func.
