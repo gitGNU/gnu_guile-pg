@@ -23,14 +23,14 @@
 
 ;; This module exports the procs:
 ;;   (defs-from-psql PSQL DB-NAME TABLE-NAME) => defs
-;;   (check-def/elaborate DEF) => #f, or OLD-TOBJ, or NEW-TYPE
-;;   (strictly-check-defs/elaborate! TABLE-NAME DEFS) => #t, or ERROR
+;;   (check-type/elaborate TYPE) => #f, or KNOWN-TOBJ, or NEW-TYPE
+;;   (strictly-check-types/elaborate! TABLE-NAME TYPES) => #t, or ERROR
 ;;   (infer-defs CONN TABLE-NAME) => defs
 ;;   (describe-table! DB-NAME TABLE-NAME)
 ;;
-;; DB-NAME and TABLE-NAME are strings.  DEF is a single column def.  DEFS
-;; is a list of column defs.  NEW-TYPE is a symbol.  OLD-TOBJ is the type
-;; object already registered.  CONN is a the result of `pg-connectdb'.
+;; DB-NAME and TABLE-NAME are strings.  DEF is a single column def.  DEFS is a
+;; list of column defs.  TYPE and NEW-TYPE are symbols.  KNOWN-TOBJ is the
+;; type object already registered.  CONN is a the result of `pg-connectdb'.
 ;; ERROR means an error is thrown.  PSQL is either a string, a thunk, or #t.
 
 ;;; Code:
@@ -44,8 +44,8 @@
   #:autoload (srfi srfi-13) (string-trim-both)
   #:autoload (ice-9 popen) (open-input-pipe)
   #:export (defs-from-psql
-            check-def/elaborate
-            strictly-check-defs/elaborate!
+            check-type/elaborate
+            strictly-check-types/elaborate!
             infer-defs
             describe-table!))
 
@@ -116,41 +116,37 @@
             (reverse acc))              ; rv
           (loop (next) (cons def acc))))))
 
-;; Check type of column definition @var{def}.  If it not an array variant,
-;; return non-#f only if type converters are already registered with Guile-PG.
-;; If it is an array variant, check the base (non-array) type first, and use
-;; @code{define-db-col-type-array-variant} if possible (and necessary) to
-;; ensure the array variant type is registered.  Return non-#f if successful.
+;; Check @var{type}, a symbol.  If it not an array variant, return non-#f only
+;; if its type converters are already registered with Guile-PG.  If @var{type}
+;; is an array variant, check the base (non-array) type first, and if needed,
+;; is it to ensure the array variant type is registered.  Return non-#f if
+;; successful.
 ;;
-(define (check-def/elaborate def)
-  (let* ((s (symbol->string (type-name def)))
+(define (check-type/elaborate type)
+  (let* ((s (symbol->string type))
          (n (string-index s #\[))
          (base (string->symbol (if n (substring s 0 n) s))))
     (and (dbcoltype-lookup base)
          (or (not n)
-             (let ((array-variant (type-name def)))
+             (let ((array-variant type))
                (or (dbcoltype-lookup array-variant)
                    (begin
                      (define-db-col-type-array-variant array-variant base)
                      array-variant)))))))
 
-;; For table @var{table-name}, check the @var{defs} with
-;; @code{check-def/elaborate} and signal error for those defs that do not
+;; For table @var{table-name}, check @var{types} (list of symbols) with
+;; @code{check-type/elaborate} and signal error for those types that do not
 ;; validate, or return non-#f otherwise.  The @var{table-name} is used only to
 ;; form the error message.
 ;;
-(define (strictly-check-defs/elaborate! table-name defs)
+(define (strictly-check-types/elaborate! table-name types)
   (let ((bad '()))
-    (for-each (lambda (def)
-                (or (check-def/elaborate def)
-                    (set! bad (cons def bad))))
-              defs)
+    (for-each (lambda (type)
+                (or (check-type/elaborate type)
+                    (set! bad (cons type bad))))
+              types)
     (or (null? bad)
-        (error (apply string-append
-                      "bad \"" table-name "\" defs:"
-                      (map (lambda (def)
-                             (format #f "\n ~S" def))
-                           bad))))))
+        (error (format #f "bad ~S types: ~S" table-name bad)))))
 
 (define *class-defs*
   ;; todo: Either mine from "psql \d pg_class", or verify at "make install"
