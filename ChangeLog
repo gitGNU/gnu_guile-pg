@@ -1,172 +1,160 @@
-$Id$
+2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
-Thu Mar  8 13:53:15 GMT 2001 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+	* acconfig.h, aclocal.m4, configure: Delete.
 
-        * Added explicit exports to scm/postgres.scm.in so that the
-          module works properly when used by another module.  Thanks
-          to David Pirotte for finding this bug.
+2000-06-20  Ian Grant  <Ian.Grant@cl.cam.ac.uk>
 
-        * Bumped VERSION to 0.08
+	* libpostgres.c: Fixed use of soon-to-be-deprecated
+	  scm_make_smob_type_mfpe.
 
-Sat Jul  8 09:54:01 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+2000-06-15  Ian Grant  <Ian.Grant@cl.cam.ac.uk>
 
-        * Bumped VERSION prior to releasing 0.07
+	* libpostgres.c: Fixed use of deprecated scm_smobfuns struct.
 
-        * Updated README and NEWS
+	* libpostgres.c configure.in doc/guile-pg.texi
+	  test/guile-pg-basic-tests.scm.in: Added pg-oid-value function.
 
-Tue Jun 20 12:38:07 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+2000-06-02  Ian Grant  <Ian.Grant@cl.cam.ac.uk>
 
-        * libpostgres.c: Fixed use of soon-to-be-deprecated
-          scm_make_smob_type_mfpe.
+	* ANNOUNCE: New file.
 
-Thu Jun 15 11:09:34 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+	* Bumped libtool interface number to 2 prior to release.
 
-        * libpostgres.c: Fixed use of deprecated scm_smobfuns struct.
+	* Printing a large object port now gives information about the
+	  libpq file descriptor, the OID and the database connection to
+	  which the port applies.
 
-        * libpostgres.c configure.in doc/guile-pg.texi
-          test/guile-pg-basic-tests.scm.in: Added pg-oid-value function.
-          
-Fri Jun  2 10:30:43 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+	* Fixed buffer overflow in print methods for connection and
+	  results smobs.
 
-        * NEW FILE: ANNOUNCE
+	* Fixed fill_input bug and lob_printp of closed port.
 
-        * Bumped libtool interface number to 2 prior to release.
+	* Added test case for read-line (would've caught fill_input bug)
 
-        * Printing a large object port now gives information about the
-          libpq file descriptor, the OID and the database connection to
-          which the port applies.
+	* Changed libtool to new version 1.3.5
 
-        * Fixed buffer overflow in print methods for connection and
-          results smobs.
+	* Updated autogen.sh
 
-        * Fixed fill_input bug and lob_printp of closed port.
+2000-05-30  Ian Grant  <Ian.Grant@cl.cam.ac.uk>
 
-        * Added test case for read-line (would've caught fill_input bug)
+	* Fixed large object ports so that they work with the further
+	  changes to the ports interface.
 
-        * Changed libtool to new version 1.3.5
+	  Note: because of this, guile-pg no-longer builds with guile
+	  versions prior to 1.3.4
 
-        * Updated autogen.sh
+	* Changed all function names from pg:name to pg-name.  This
+	  removes the need for a hacked texi2html so that is now gone.
 
-Tue May 30 08:20:09 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+	* Removed pq-setdb  entirely.  It has been replaced by
+	  pq-connectdb which is much more flexible.
 
-        * Fixed large object ports so that they work with the further
-          changes to the ports interface.
+	* Changed the installation directory of libpostgres.so.  This
+	  used to be in an architecture dependent subdirectory, with a
+	  symbolic link from an architecture-independent directory, but
+	  this was still not compatible with multiple architectures.
+	  Instead we install the .so in the $(library) directory and
+	  load it explicitly using the scheme interface to dlopen etc.
 
-          Note: because of this, guile-pg no-longer builds with guile
-          versions prior to 1.3.4
+	* As part of the above, the module is now loaded using
 
-        * Changed all function names from pg:name to pg-name.  This
-          removes the need for a hacked texi2html so that is now gone.
+	         (use-modules (database postgres))
 
-        * Removed pq-setdb  entirely.  It has been replaced by
-          pq-connectdb which is much more flexible.
+	* Addded procedure pg-guile-pg-loaded.  This is a marker, the
+	  presence of which guarantees that guile-pg is present.  This
+	  is tested in postgres.scm to see whether the guile is plain
+	  guile or the statically-linked guile-pg.
 
-        * Changed the installation directory of libpostgres.so.  This
-          used to be in an architecture dependent subdirectory, with a
-          symbolic link from an architecture-independent directory, but
-          this was still not compatible with multiple architectures.
-          Instead we install the .so in the $(library) directory and
-          load it explicitly using the scheme interface to dlopen etc.
+	* Updated README
 
-        * As part of the above, the module is now loaded using
+	* Added <Dollar>Id<Dollar> all over the place in preparation
+	  for CVS use.  Also added PG-MODULE-RCSID procedure to get
+	  the RCS Id of the scheme module (postgres.scm).
 
-                 (use-modules (database postgres))
+1999-06-27  Ian Grant  <Ian.Grant@cl.cam.ac.uk>
+	* Changes to configure.in to check for Postgres 6.4 features.
 
-        * Addded procedure pg-guile-pg-loaded.  This is a marker, the
-          presence of which guarantees that guile-pg is present.  This
-          is tested in postgres.scm to see whether the guile is plain
-          guile or the statically-linked guile-pg.
+	* Changes to libpostgres.c to conditionally compile procedures
+	  depending on post 6.4 functionality in libpq.
 
-        * Updated README
+	* Split libpostgres.c into two files. Added libpostgres_lo.c
+	  containing the large object code.
 
-        * Added <Dollar>Id<Dollar> all over the place in preparation
-          for CVS use.  Also added PG-MODULE-RCSID procedure to get
-          the RCS Id of the scheme module (postgres.scm).
+	* Changes to libpostgres_lo.c to deal with Guile's new ptobfuns
+	  interface. Changes to configure.in to detect the new ptobfuns
+	  interface.
 
-Sun Jun 27 14:50:09 BST 1999 Ian Grant <Ian.Grant@cl.cam.ac.uk>
-        * Changes to configure.in to check for Postgres 6.4 features.
+1999-01-31  Ian Grant  <Ian.Grant@cl.cam.ac.uk>
+	* Changes to work with libpq from PostgreSQL 6.4.2 these were:
 
-        * Changes to libpostgres.c to conditionally compile procedures
-          depending on post 6.4 functionality in libpq.
+	* libpostgres.c: Added new primitives pg:binary-tuples? and pg:fmod.
+	  Changed pg:error-message to work with either a PG-CONN or a
+	  PG-RESULT object, calling PQresultErrorMessage in the latter case
 
-        * Split libpostgres.c into two files. Added libpostgres_lo.c 
-          containing the large object code.
+	  Changed pg:getvalue to work with binary data. Now PQbinaryTuples
+	  is called to check whether the returned value is binary and
+	  if it is a string of the appropriate length is returned.
 
-        * Changes to libpostgres_lo.c to deal with Guile's new ptobfuns
-          interface. Changes to configure.in to detect the new ptobfuns
-          interface.
+	  Changed pg:putline so that it actually calls PQputnbytes with
+	  the correct length. This works with null-terminated strings
+	  as it did before, but now works with strings containing embedded
+	  nulls as well.
 
-Sun Jan 31 19:05:32 GMT 1999 Ian Grant <Ian.Grant@cl.cam.ac.uk>
-        * Changes to work with libpq from PostgreSQL 6.4.2 these were:
+	* Makefile.am: Added -lcrypt to the dependency list for libpostgres.so
+	  This is actually wrong though: -lcrypt should only be linked if
+	  necessary, since it doesn't exist on some systems. We need to
+	  check whether or not it exists in configure.in and only if does
+	  should we include it. I don't have enough brains to do this
+	  right now though.
 
-        * libpostgres.c: Added new primitives pg:binary-tuples? and pg:fmod.
-          Changed pg:error-message to work with either a PG-CONN or a
-          PG-RESULT object, calling PQresultErrorMessage in the latter case
+1999-01-24  Ian Grant  <Ian.Grant@cl.cam.ac.uk>
+	* HACKING: New File.
 
-          Changed pg:getvalue to work with binary data. Now PQbinaryTuples
-          is called to check whether the returned value is binary and
-          if it is a string of the appropriate length is returned.
+	* README: Added info on building guile-pg and intalling
+	  PostgreSQL from the Red Hat RPMS.
 
-          Changed pg:putline so that it actually calls PQputnbytes with
-          the correct length. This works with null-terminated strings
-          as it did before, but now works with strings containing embedded
-          nulls as well.
+	* test/guile-pg-basic-tests.scm: New file. Uses testing.scm in the
+	  same directory.
 
-        * Makefile.am: Added -lcrypt to the dependency list for libpostgres.so
-          This is actually wrong though: -lcrypt should only be linked if
-          necessary, since it doesn't exist on some systems. We need to
-          check whether or not it exists in configure.in and only if does
-          should we include it. I don't have enough brains to do this
-          right now though.
+	* test/guile-pg-lo-tests.scm: New file. Uses testing.scm in the
+	  same directory.
 
-Sun Jan 24 11:05:19 GMT 1999 Ian Grant <Ian.Grant@cl.cam.ac.uk>
-        * HACKING: New File.
+	* Makefile.am, configure.in: Added test subdirectory.
 
-        * README: Added info on building guile-pg and intalling
-          PostgreSQL from the Red Hat RPMS.
+1999-01-17  Ian Grant  <I.A.N.Grant@damtp.cam.ac.uk>
+	* acinclude.m4: Added new macro definition GUILE_MODULE
+	  which sets up the necessary install targets for a guile
+	  module. It gets these from guile-config.
 
-        * test/guile-pg-basic-tests.scm: New file. Uses testing.scm in the
-          same directory.
+	* configure.in: Changed to use GUILE_MODULE.
 
-        * test/guile-pg-lo-tests.scm: New file. Uses testing.scm in the
-          same directory.
+	* libpostgres.c: Changed all scheme i/f functions to use
+	  guile-snarf to make libpostgres.x
 
-        * Makefile.am, configure.in: Added test subdirectory.
+	* Makefile.am: Added lines to allow .x in .deps and to run
+	  guile-snarf to create the .x files when necessary.
 
-Sun Jan 17 17:02:42 1999  Ian Grant <I.A.N.Grant@damtp.cam.ac.uk>
-        * acinclude.m4: Added new macro definition GUILE_MODULE
-          which sets up the necessary install targets for a guile
-          module. It gets these from guile-config.
+	* libpostgres.c: Added pg:reset and pg:trace and pg:untrace
 
-        * configure.in: Changed to use GUILE_MODULE.
+1999-01-12  Ian Grant  <I.A.N.Grant@damtp.cam.ac.uk>
+	* libpostgres.c: Completed large obect support
 
-        * libpostgres.c: Changed all scheme i/f functions to use
-          guile-snarf to make libpostgres.x
+	* libpostgres.c: Added support for PQputline/PQgetline/PQendcopy
 
-        * Makefile.am: Added lines to allow .x in .deps and to run
-          guile-snarf to create the .x files when necessary.
+	* doc/guile-pg.texi: Function descriptions
 
-        * libpostgres.c: Added pg:reset and pg:trace and pg:untrace
+1998-12-05  Ian Grant  <I.A.N.Grant@damtp.cam.ac.uk>
+	* libtoolized
 
-Tue Jan 12 20:14:06 1999  Ian Grant <I.A.N.Grant@damtp.cam.ac.uk>
-        * libpostgres.c: Completed large obect support
+	* acinclude.m4: new file defining PQ library autoconf macro
 
-        * libpostgres.c: Added support for PQputline/PQgetline/PQendcopy
+1998-12-03  Ian Grant  <I.A.N.Grant@damtp.cam.ac.uk>
+	* AUTHORS: New file, in accordance with the GNU maintainers'
+	standards.
 
-        * doc/guile-pg.texi: Function descriptions
+	* README: New file, in accordance with the GNU maintainers'
+	standards.
 
-Sat Dec  5 14:29:54 1998  Ian Grant <I.A.N.Grant@damtp.cam.ac.uk>
-        * libtoolized
+	* Makefile.am: New file for automake.
 
-        * acinclude.m4: new file defining PQ library autoconf macro
-
-Thu Dec  3 23:14:38 1998  Ian Grant <I.A.N.Grant@damtp.cam.ac.uk>
-        * AUTHORS: New file, in accordance with the GNU maintainers'
-        standards.
-
-        * README: New file, in accordance with the GNU maintainers'
-        standards.
-
-        * Makefile.am: New file for automake.
-
-        * configure.in and friends: new files for autoconf.
+	* configure.in and friends: new files for autoconf.
