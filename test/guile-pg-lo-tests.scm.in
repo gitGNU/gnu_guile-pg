@@ -208,6 +208,7 @@
                     (= 1 (string-length data))
                     (string=? "a" data)))
              (let ((location-after-read (pg-lo-tell lo-port)))
+               (eq? 1 (pg-lo-seek lo-port 0 SEEK_CUR))
                (close-port lo-port)
                (eq? 1 location-after-read)))))))
 
