@@ -1,3 +1,8 @@
+2004-03-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* basic-tests.sh: Use $srcdir.
+	* lo-tests.sh: Likewise.
+
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-lo-tests.scm (test:lo-unlink): New test proc.
