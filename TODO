@@ -224,5 +224,4 @@
 	mode: outline
 	outline-regexp: "\\([ ][ ]\\)*- "
 	fill-column: 78
-	fill-prefix: "\t"
 	End:
