@@ -33,6 +33,8 @@ AC_STDC_HEADERS
 
 AC_HAVE_HEADERS(string.h stdio.h stdlib.h malloc.h unistd.h)
 
+AC_CHECK_FUNCS(tmpfile)
+
 ##----------------------------------------------------------------------------
 ## Guile
 
