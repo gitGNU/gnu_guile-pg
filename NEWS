@@ -11,7 +11,8 @@ NEWS for Guile-PG
 	to migrate code using `pg-oid-status' to use `pg-oid-value':
 
 	(let ((s (pg-oid-status RESULT)))
-	  (and (not (string-null? s)) (string->number s)))
+	  (and (not (string-null? s))
+	       (string->number s)))
 	===
 	(pg-oid-value RESULT)
 
