@@ -1,3 +1,26 @@
+2002-12-29  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* test/config.scm.in: New file.
+
+	* test/basic-tests.sh: Also load config.scm.
+	* test/lo-tests.sh: Likewise.
+	* test/abstraction-scm-tests: Likewise.
+
+	* test/guile-pg-abstraction-scm-tests.scm:
+	Look for testing.scm in `*srcdir*'.
+
+	* test/guile-pg-basic-tests.scm: New file converted from .in file.
+	* test/guile-pg-lo-tests.scm: Likewise.
+
+	* test/guile-pg-basic-tests.scm.in: Delete.
+	* test/guile-pg-lo-tests.scm.in: Likewise.
+
+	* test/Makefile.am (EXTRA_DIST): Add guile-pg-basic-tests.scm
+	and guile-pg-lo-tests.scm.
+
+	* configure.in (AC_CONFIG_FILES): Delete test/guile-pg-basic-tests.scm
+	and test/guile-pg-lo-tests.scm.  Add test/config.scm.
+
 2002-12-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* configure.in (VERSION): Bump to 0.14 for release.
