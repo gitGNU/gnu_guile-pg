@@ -125,13 +125,13 @@ extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
        #:SELECT (make-SELECT/OUT-tree
                  '(("schema" . n.nspname)
                    ("name"   . c.relname)
-                   ("type"   . (#:q* (case c.relkind
-                                       ("r" "table")
-                                       ("v" "view")
-                                       ("i" "index")
-                                       ("S" "sequence")
-                                       ("s" "special")
-                                       (else "huh?"))))
+                   ("type"   . (case c.relkind
+                                 ("r" "table")
+                                 ("v" "view")
+                                 ("i" "index")
+                                 ("S" "sequence")
+                                 ("s" "special")
+                                 (else "huh?")))
                    ("owner"  . u.usename)))
        ;; todo: arrive at this via tree build call, not manually
        '(#:FROM               pg_catalog.pg_class c
@@ -140,8 +140,8 @@ extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
                 #:LEFT #:JOIN pg_catalog.pg_namespace n
                 #:ON                                  n.oid = c.relnamespace)
        (make-WHERE-tree
-        '(#:q* (and (not (= n.nspname "pg_catalog"))
-                    (not (= n.nspname "pg_toast")))))
+        '(and (not (= n.nspname "pg_catalog"))
+              (not (= n.nspname "pg_toast"))))
        (make-ORDER-BY-tree
         '((< 1) (< 2))))
       (let ((table-name (symbol->string (car which))))
@@ -150,22 +150,22 @@ extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
     '((c . pg_class) (a . pg_attribute) (t . pg_type))
     '(("name"   . a.attname)
       ("type"   . t.typname)
-      (" bytes" . (#:q* (if (< 0 a.attlen)
-                            (to_char a.attlen "99999")
-                            "varies")))
+      (" bytes" . (if (< 0 a.attlen)
+                      (to_char a.attlen "99999")
+                      "varies"))
       ("mod"    . (to_char a.atttypmod "999"))
-      ("etc"    . (#:q* (|| (if a.attnotnull
-                                "NOT NULL"
-                                "NULL ok")
-                            ", "
-                            (if a.atthasdef
-                                "has defs"
-                                "no defs"))))))
+      ("etc"    . (|| (if a.attnotnull
+                          "NOT NULL"
+                          "NULL ok")
+                      ", "
+                      (if a.atthasdef
+                          "has defs"
+                          "no defs")))))
    (make-WHERE-tree
-          `(#:q* (and (= c.relname ,table-name)
+          `(and (= c.relname ,table-name)
                 (> a.attnum 0)
                 (= a.attrelid c.oid)
-                (= a.atttypid t.oid))))
+                (= a.atttypid t.oid)))
    (make-ORDER-BY-tree
           '((< a.attnum)))))))
 
@@ -274,13 +274,12 @@ style SQL expression."
                       (where (and=> (conn-get #:gxrepl-wheres)
                                     (lambda (ls)
                                       (make-WHERE-tree
-                                       `(#:q* (and ,@ls)))))))
+                                       `(and ,@ls))))))
                   (let loop ((ls etc))
                     (cond ((null? ls))
                           ((keyword? (car ls))
                            (if (eq? #:where (car ls))
-                               (set! where (make-WHERE-tree
-                                            (list #:q* (cadr ls))))))
+                               (set! where (make-WHERE-tree (cadr ls)))))
                           (else
                            (set! outs (append! outs (list (car ls))))
                            (loop (cdr ls)))))
