@@ -1,5 +1,11 @@
 2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/guile-pg.twerp (Types Conversion): Add @pxref.
+	Add section "Selected Notes About Some Types".
+	Push sections down one level of hierarchy; add menu.
+
+2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-types.scm (macaddr): New built-in type converter.
 
 2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
