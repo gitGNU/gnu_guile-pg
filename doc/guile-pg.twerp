@@ -316,8 +316,8 @@ connection object that logs all the SQL statements it executes.
   (pg-get-client-data conn))
 @end lisp
 
-Here are implementations using object properties, using the symbol @code{log}
-as the key.
+Here is an implementation using object properties,
+using the keyword @code{#:log} as the key.
 
 @lisp
 (define put set-object-property!)
@@ -325,16 +325,16 @@ as the key.
 
 (define (pg-connectdb/logged options)
   (let ((conn (pg-connectdb options)))
-    (put conn 'log '())
+    (put conn #:log '())
     conn))
 
 (define (pg-exec/logged conn sql)
-  (put conn 'log (append (get conn 'log)
-                         (list sql)))
+  (put conn #:log (append! (get conn #:log)
+                           (list sql)))
   (pg-exec conn sql))
 
 (define (conn-log conn)
-  (get conn 'log))
+  (get conn #:log))
 @end lisp
 
 @section Asynchronous Notifications
@@ -1240,11 +1240,11 @@ The rest of this chapter is an extended example showing some of the uses of
                              (catcode    text)
                              (details    text[]))))
 
-((m 'create))
+((m #:create))
 @result{} #<PG-RESULT:1:PGRES_COMMAND_OK:0:0>
 
-(define add (m 'insert-col-values))
-(define sel (m 'select))
+(define add (m #:insert-col-values))
+(define sel (m #:select))
 
 (add '(date amount) (current-time) 1.98)
 @result{} #<PG-RESULT:2:PGRES_COMMAND_OK:0:0>
@@ -1260,11 +1260,11 @@ result
 (tuples-result->table result)
 @result{} #2(("1"))
 
-((m 'drop))
+((m #:drop))
 @result{} (#<PG-RESULT:5:PGRES_COMMAND_OK:0:0> #<PG-RESULT:6:PGRES_COMMAND_OK:0:0>)
 @end lisp
 
-Two things to note in this example: (1) Both @code{create} and @code{drop}
+Two things to note in this example: (1) Both @code{#:create} and @code{#:drop}
 invocations evaluate the operating thunk directly (double parentheses); and
 (2) The drop returns a list of result values to accomodate the possibility
 (shown here) of a @code{serial} column type, which requires an additional drop
