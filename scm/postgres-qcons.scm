@@ -63,13 +63,22 @@
 
 (define *conditional-operations*        ; entry: NAME
   '(= < <= > >= <> !=
-      all any in like))
+      all any in
+      like not-like ilike not-ilike
+      ~~ !~~ ~~* !~~*
+      similar not-similar
+      ~ ~* !~ !~*))
 
 (define *infix-operations*              ; entry: NAME
-  (append! '(|| / * ~ - +)
+  (append! '(|| ||/ |/ / !! % ^ * - +
+                     @ & | #{#}# << >>
+                       #{##}# && &< &>
+                       <-> <^ >^ #{?#}#
+                       ?- ?-| @-@ ?| ?||
+                       @@ ~= <<= >>=)
            *conditional-operations*))
 
-(define *display-aliases*               ; entry: (NAME . ALIAS)
+(define *postfix-display-aliases*
   '((null?        . "IS NULL")
     (not-null?    . "IS NOT NULL")
     (true?        . "IS TRUE")
@@ -79,8 +88,16 @@
     (unknown?     . "IS UNKNOWN")
     (not-unknown? . "IS NOT UNKNOWN")))
 
+(define *display-aliases*               ; entry: (NAME . ALIAS)
+  (append *postfix-display-aliases*
+          '((not-like     . "NOT LIKE")
+            (not-ilike    . "NOT ILIKE")
+            (similar      . "SIMILAR TO")
+            (not-similar  . "NOT SIMILAR TO"))))
+
 (define *postfix-operations*            ; entry: NAME
-  (map car *display-aliases*))
+  (append '(!)
+          (map car *postfix-display-aliases*)))
 
 ;; Declare as part of @var{category} (a keyword) the symbol @var{x}.
 ;; @var{extra} information may be required for the particular category.
