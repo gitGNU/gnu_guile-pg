@@ -1,5 +1,10 @@
 2004-11-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c (xc_display): If there is no host, disregard port.
+	Also, use "?" for default db, and "" for all other default values.
+
+2004-11-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres_lo.c (TTN_COERCE_INT): Delete macro.
 	(lob_mklobport): No longer use `TTN_COERCE_INT'.
 	(lob_write): Likewise.
