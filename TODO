@@ -85,6 +85,11 @@
 
   - Implement these calls:
 
+    - client encoding
+
+      int PQclientEncoding (const PGconn *conn);
+      int PQsetClientEncoding (PGconn *conn, const char *encoding);
+
     - PQclear
 
       void PQclear (PGresult *res);
