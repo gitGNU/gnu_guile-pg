@@ -1,7 +1,7 @@
 ;;; postgres-meta.scm --- Methods for understanding PostgreSQL data structures
 
 ;;    Guile-pg - A Guile interface to PostgreSQL
-;;    Copyright (C) 2002, 2003 Free Software Foundation, Inc.
+;;    Copyright (C) 2002, 2003, 2004 Free Software Foundation, Inc.
 ;;
 ;;    This program is free software; you can redistribute it and/or modify
 ;;    it under the terms of the GNU General Public License as published by
@@ -28,13 +28,13 @@
 ;;; Code:
 
 (define-module (database postgres-meta)
-  :use-module (database postgres)
-  :use-module (database postgres-types)
-  :use-module (database postgres-resx)
-  :use-module (database postgres-table)
-  :use-module (srfi srfi-13)
-  :export (infer-defs
-           describe-table!))
+  #:use-module (database postgres)
+  #:use-module (database postgres-types)
+  #:use-module (database postgres-resx)
+  #:use-module (database postgres-table)
+  #:use-module (srfi srfi-13)
+  #:export (infer-defs
+            describe-table!))
 
 (define (make-M:pg-class db-name)
   (pgtable-manager db-name "pg_class"

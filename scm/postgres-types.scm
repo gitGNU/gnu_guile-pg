@@ -1,7 +1,7 @@
 ;;; postgres-types.scm --- convert PostgreSQL <-> Scheme objects
 
 ;;    Guile-pg - A Guile interface to PostgreSQL
-;;    Copyright (C) 2002, 2003 Free Software Foundation, Inc.
+;;    Copyright (C) 2002, 2003, 2004 Free Software Foundation, Inc.
 ;;
 ;;    This program is free software; you can redistribute it and/or modify
 ;;    it under the terms of the GNU General Public License as published by
@@ -50,16 +50,16 @@
 ;;; Code:
 
 (define-module (database postgres-types)
-  :autoload (database postgres) (pg-exec)
-  :export (oid-type-name-cache
-           dbcoltypes
-           dbcoltype-lookup
-           dbcoltype:name
-           dbcoltype:stringifier
-           dbcoltype:default
-           dbcoltype:objectifier
-           define-db-col-type
-           define-db-col-type-array-variant))
+  #:autoload (database postgres) (pg-exec)
+  #:export (oid-type-name-cache
+            dbcoltypes
+            dbcoltype-lookup
+            dbcoltype:name
+            dbcoltype:stringifier
+            dbcoltype:default
+            dbcoltype:objectifier
+            define-db-col-type
+            define-db-col-type-array-variant))
 
 ;; Query connection @var{conn} for oid/type-name info, caching results.
 ;; Optional arg @var{fresh?} forces a (re-)query, bypassing the cache.

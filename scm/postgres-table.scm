@@ -1,7 +1,7 @@
 ;;; postgres-table.scm --- abstract manipulation of a single PostgreSQL table
 
 ;;    Guile-pg - A Guile interface to PostgreSQL
-;;    Copyright (C) 2002, 2003 Free Software Foundation, Inc.
+;;    Copyright (C) 2002, 2003, 2004 Free Software Foundation, Inc.
 ;;
 ;;    This program is free software; you can redistribute it and/or modify
 ;;    it under the terms of the GNU General Public License as published by
@@ -32,20 +32,20 @@
 ;;; Code:
 
 (define-module (database postgres-table)
-  :use-module (ice-9 common-list)
-  :use-module (database postgres)
-  :use-module (database postgres-types)
-  :use-module ((database postgres-col-defs)
-               :renamer (symbol-prefix-proc 'def:))
-  :use-module (database postgres-resx)
-  :export (sql-pre
-           tuples-result->table
-           pgtable-manager
-           where-clausifier
-           ;; these will go away
-           def:col-name
-           def:type-name
-           def:type-options))
+  #:use-module (ice-9 common-list)
+  #:use-module (database postgres)
+  #:use-module (database postgres-types)
+  #:use-module ((database postgres-col-defs)
+                #:renamer (symbol-prefix-proc 'def:))
+  #:use-module (database postgres-resx)
+  #:export (sql-pre
+            tuples-result->table
+            pgtable-manager
+            where-clausifier
+            ;; these will go away
+            def:col-name
+            def:type-name
+            def:type-options))
 
 (define def:col-name def:column-name)
 

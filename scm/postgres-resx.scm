@@ -1,7 +1,7 @@
 ;;; postgres-resx.scm --- query-result transforms
 
 ;;    Guile-pg - A Guile interface to PostgreSQL
-;;    Copyright (C) 2002, 2003 Free Software Foundation, Inc.
+;;    Copyright (C) 2002, 2003, 2004 Free Software Foundation, Inc.
 ;;
 ;;    This program is free software; you can redistribute it and/or modify
 ;;    it under the terms of the GNU General Public License as published by
@@ -32,14 +32,14 @@
 ;;; Code:
 
 (define-module (database postgres-resx)
-  :use-module (database postgres)
-  :use-module (database postgres-types)
-  :use-module ((database postgres-col-defs)
-               :renamer (symbol-prefix-proc 'def:))
-  :export (for-each-tuple
-           result-field->object-list
-           result->object-alist
-           result->object-alists))
+  #:use-module (database postgres)
+  #:use-module (database postgres-types)
+  #:use-module ((database postgres-col-defs)
+                #:renamer (symbol-prefix-proc 'def:))
+  #:export (for-each-tuple
+            result-field->object-list
+            result->object-alist
+            result->object-alists))
 
 ;; Apply @var{proc} to each tuple in @var{result}.  Return #t to indicate
 ;; success, or #f if either the tuple count or the field count is zero.

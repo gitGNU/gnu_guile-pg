@@ -1,7 +1,7 @@
 ;;; postgres-col-defs.scm --- column definitions
 
 ;;    Guile-pg - A Guile interface to PostgreSQL
-;;    Copyright (C) 2002, 2003 Free Software Foundation, Inc.
+;;    Copyright (C) 2002, 2003, 2004 Free Software Foundation, Inc.
 ;;
 ;;    This program is free software; you can redistribute it and/or modify
 ;;    it under the terms of the GNU General Public License as published by
@@ -33,15 +33,15 @@
 ;;; Code:
 
 (define-module (database postgres-col-defs)
-  :use-module ((database postgres-types)
-               :select (dbcoltype-lookup
-                        dbcoltype:objectifier
-                        dbcoltype:stringifier))
-  :export (column-name
-           type-name
-           type-options
-           objectifiers
-           stringifiers))
+  #:use-module ((database postgres-types)
+                #:select (dbcoltype-lookup
+                          dbcoltype:objectifier
+                          dbcoltype:stringifier))
+  #:export (column-name
+            type-name
+            type-options
+            objectifiers
+            stringifiers))
 
 ;; Extract column name from @var{def}.
 (define (column-name def)
