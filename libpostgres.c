@@ -250,7 +250,7 @@ xr_display (SCM exp, SCM port, scm_print_state *pstate)
 
   scm_puts ("#<PG-RESULT:", port);
   scm_intprint (xr->count, 10, port); scm_putc (':', port);
-  scm_puts (pgrs[pgrs_index].s, port); scm_putc (':', port);
+  scm_puts (pgrs[pgrs_index].s + 6, port); scm_putc (':', port);
   scm_intprint (ntuples, 10, port); scm_putc (':', port);
   scm_intprint (nfields, 10, port);
   scm_putc ('>', port);
