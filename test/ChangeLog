@@ -1,3 +1,9 @@
+2005-01-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm
+	(test:untracing-untraced-connection): New test proc.
+	(main): Use new test proc; update expected-pass number.
+
 2005-01-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (ok?):
