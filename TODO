@@ -1,10 +1,7 @@
 
-- Eventually
+- 0.17
 
   - Review error handling; regularize; document.
-
-  - Fix places where SCM_ROSTRINGs are treated as null-terminated strings.
-    We need to make sure they aren't substrings.
 
   - Implement these calls:
 
@@ -66,6 +63,14 @@
       PQsendQuery/PQgetResult or plain old PQexec for queries.  You should,
       however, remember to check PQnotifies() after each PQgetResult or PQexec
       to see if any notifications came in during the processing of the query.
+
+
+- Eventually
+
+  - Fix places where SCM_ROSTRINGs are treated as null-terminated strings.
+    We need to make sure they aren't substrings.
+
+  - Implement these calls:
 
     - PQclear
 
