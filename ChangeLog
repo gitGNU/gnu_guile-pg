@@ -1,3 +1,9 @@
+2005-02-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-resx.scm: No longer use
+	modules (database postgres-types)
+	and (database postgres-col-defs).
+
 2005-02-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm (dt): For this comma-command, allow arg
