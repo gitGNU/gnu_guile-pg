@@ -71,7 +71,7 @@
     (let ((res (pg-exec conn (sql-proc n))))
       (if (eq? n 1)
           #t
-          (if (and res (not (command-ok? res)))
+          (if (and res (pg-result? res) (not (command-ok? res)))
               #f
               (iter (- n 1))))))
   (iter n))
