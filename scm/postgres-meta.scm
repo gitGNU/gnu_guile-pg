@@ -22,7 +22,7 @@
 ;;; Commentary:
 
 ;; This module exports the procs:
-;;   (defs-from-psql DB-NAME TABLE-NAME) => defs
+;;   (defs-from-psql PSQL DB-NAME TABLE-NAME) => defs
 ;;   (check-def/elaborate DEF) => #f, or OLD-TOBJ, or NEW-TYPE
 ;;   (strictly-check-defs/elaborate! TABLE-NAME DEFS) => #t, or ERROR
 ;;   (infer-defs CONN TABLE-NAME) => defs
@@ -31,7 +31,7 @@
 ;; DB-NAME and TABLE-NAME are strings.  DEF is a single column def.  DEFS
 ;; is a list of column defs.  NEW-TYPE is a symbol.  OLD-TOBJ is the type
 ;; object already registered.  CONN is a the result of `pg-connectdb'.
-;; ERROR means an error is thrown.
+;; ERROR means an error is thrown.  PSQL is either a string, a thunk, or #t.
 
 ;;; Code:
 
@@ -49,42 +49,65 @@
             infer-defs
             describe-table!))
 
-;; Return a @dfn{defs} form for db @var{db-name} table @var{table-name}, as
-;; determined by the external program @file{psql}, which must be findable
-;; using the @var{PATH} environment variable.  The column names are exact.
-;; The column types and options are only as exact as @file{psql} can produce.
+;; Run @var{psql} and return a @dfn{defs} form for db @var{db-name}, table
+;; @var{table-name}.  @var{psql} can be a string specifying the filename of
+;; the psql (or psql-workalike) program, a thunk that produces such a string,
+;; or #t, which means use the first "psql" found in the directories named by
+;; the @code{PATH} env var.  @code{defs-from-psql} signals "bad psql" error
+;; otherwise.
 ;;
-(define (defs-from-psql db-name table-name)
+;; In the returned defs, the column names are exact.  The column types and
+;; options are only as exact as @var{psql} can produce.
+;;
+(define (defs-from-psql psql db-name table-name)
+
+  (define (psql-command)
+    (format #f "~A -d ~A -F ' ' -P t -A -c '\\d ~A'"
+            (cond ((string? psql) psql)
+                  ((procedure? psql) (psql))
+                  ((eq? #t psql) "psql")
+                  (else (error "bad psql:" psql)))
+            db-name table-name))
+
   (define (read-def p)                  ; NAME TYPE [OPTIONS...]
+                                        ; => eof object, or def
+    (define (read-type)
+      (let ((type (read p)))
+        (if (string? type)              ; handle "TYPE" as well as TYPE
+            (string->symbol type)
+            type)))
+
+    (define (read-options)              ; => eof object, or list
+
+      (define (stb s)
+        (string-trim-both s))
+
+      (define (line-remainder)
+        (let drain ((c (read-char p)) (acc '()))
+          (if (char=? #\newline c)
+              (stb (list->string (reverse acc)))
+              (drain (read-char p) (cons c acc)))))
+
+      (define (eol-if-null-string s)
+        (and (string-null? s) '()))
+
+      (let ((opts (line-remainder)))
+        (cond ((eol-if-null-string opts))
+              ((and (char=? #\( (string-ref opts 0))
+                    (string-index opts #\)))
+               => (lambda (cut)
+                    (let ((rest (stb (substring opts (1+ cut)))))
+                      (cons (with-input-from-string opts read)
+                            (or (eol-if-null-string rest)
+                                (list rest))))))
+              (else
+               (list opts)))))
+
     (let ((name (read p)))
-      (if (eof-object? name)
-          name
-          (cons*
-           name
-           (let ((type (read p)))
-             (if (string? type)         ; handle "TYPE" as well as TYPE
-                 (string->symbol type)
-                 type))
-           (let ((opts (let drain ((c (read-char p)) (acc '()))
-                         (if (char=? #\newline c)
-                             (string-trim-both (list->string (reverse acc)))
-                             (drain (read-char p) (cons c acc)))))
-                 (eol-if-null-string (lambda (s)
-                                       (and (string-null? s) '()))))
-             (cond ((eol-if-null-string opts))
-                   ((and (char=? #\( (string-ref opts 0))
-                         (string-index opts #\)))
-                    => (lambda (cut)
-                         (let ((rest (string-trim-both
-                                      (substring opts (1+ cut)))))
-                           (cons (with-input-from-string opts read)
-                                 (or (eol-if-null-string rest)
-                                     (list rest))))))
-                   (else
-                    (list opts))))))))
-  (let* ((psql-spew (open-input-pipe
-                     (format #f "psql -d ~A -F ' ' -P t -A -c '\\d ~A'"
-                             db-name table-name)))
+      (or (and (eof-object? name) name)
+          (cons* name (read-type) (read-options)))))
+
+  (let* ((psql-spew (open-input-pipe (psql-command)))
          (next (lambda () (read-def psql-spew))))
     (let loop ((def (next)) (acc '()))
       (if (eof-object? def)
