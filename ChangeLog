@@ -1,5 +1,11 @@
 2003-01-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* scm/postgres-table.scm (pgtable-manager): First arg can now
+	be an empty string, a space-separated "var=val" string, or a pg
+	connection.
+
+2003-01-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* libpostgres.c (pg_connection_p): New PG_DEFINE function.
 	* Makefile.am (libpostgres_la_LDFLAGS): Update vers to "4:0:2".
 	* scm/postgres.scm.in (pg-connection?): Export.
