@@ -12,7 +12,7 @@
       PGRES_FATAL_ERROR
     Code should be using the symbols (by the same name) instead by now.
 
-  - Removal of "def:" procs from (database postgres-table)
+  + Removal of "def:" procs from (database postgres-table)
       def:col-name
       def:type-name
       def:type-options
