@@ -19,9 +19,8 @@ test -f ltmain.sh || libtoolize --force
 # in similar style to the modsup.h wrangling below.
 fresh_guile_m4="guile.m4.snap"
 ln -sf $fresh_guile_m4 guile.m4
-aclocal -I .
-# voodoo to avoid ridiculous C++ and FORTRAN probing
-( echo ; echo 'AC_DEFUN([_LT_AC_TAGCONFIG],[])' ) >> aclocal.m4
+
+aclocal -I . --output=- | sed '$raclocal-suffix' > aclocal.m4
 
 autoheader
 autoconf
