@@ -1,6 +1,6 @@
 - 0.21
 
-  - Remove compiled proc `pg-oid-status'.
+  + Remove compiled proc `pg-oid-status'.
 
   + Remove compiled/uncompiled synchronization procs.
 
