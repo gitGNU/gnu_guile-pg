@@ -77,6 +77,7 @@ if MAINTAINER_MODE
 
 DOTDOCFILES = libpostgres.doc                   \
               libpostgres_lo.doc                \
+              scm/postgres.doc                  \
               scm/postgres-types.doc            \
               scm/postgres-col-defs.doc         \
               scm/postgres-resx.doc             \
