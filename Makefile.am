@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 ##
-##      Copyright (C) 1998-2000, 2002, 2003 Free Software Foundation, Inc.
+##      Copyright (C) 1998-2000,02,03,2004 Free Software Foundation, Inc.
 ##
 ##   This file is part of GUILE-PG.
 ##
@@ -21,7 +21,7 @@
 
 SUBDIRS = scm test doc
 
-EXTRA_DIST = THANKS contrib acinclude.m4 TODO HACKING autogen.sh
+EXTRA_DIST = THANKS contrib acinclude.m4 TODO HACKING autogen.sh ANONCVS
 
 BUILT_SOURCES = libpostgres.x libpostgres_lo.x
 
