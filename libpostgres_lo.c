@@ -37,8 +37,6 @@
 
 #include "libpostgres.h"
 
-#define XCONN(x)      (xc_unbox (x)->dbconn)
-
 #define LOB_READING 1
 #define LOB_WRITING 2
 
@@ -52,13 +50,7 @@ typedef struct lob_stream_tag {
    int alod; /* A Large-Object Descriptor */
 } lob_stream;
 
-
-/* LOB_CONN takes a lob_stream pointer and returns the PGconn pointer for
-   that stream. Because SCM_DEFER/ALLOW_INTS are used in xc_unbox, this
-   macro cannot be used inside SCM_DEFER/ALLOW_INTS. FIXME: Is this still true?
-*/
-
-#define LOB_CONN(x) (XCONN ((x)->conn))
+#define LOB_CONN(x) (xc_unbox ((x)->conn)->dbconn)
 
 #define LOBPORTP(x) (SCM_TYP16 (x)==lob_ptype)
 
@@ -95,13 +87,12 @@ PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
   Oid oid;
   int pg_modes = 0;
 
-  ASSERT_CONNECTION (1, conn);
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_ASSERT (SCM_NIMP (modes) && SCM_ROSTRINGP (modes),
               modes, SCM_ARG2, FUNC_NAME);
   ROZT_X (modes);
 
   mode_bits = scm_mode_bits (ROZT (modes));
-  dbconn = XCONN (conn);
 
   if (mode_bits & SCM_RDNG)
     pg_modes |= INV_READ;
@@ -154,14 +145,13 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
   Oid pg_oid;
   int pg_modes = 0;
 
-  ASSERT_CONNECTION (1, conn);
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_ULONG_COPY (2, oid, pg_oid);
   SCM_ASSERT (SCM_NIMP (modes) && SCM_ROSTRINGP (modes),
               modes, SCM_ARG3, FUNC_NAME);
   ROZT_X (modes);
 
   mode_bits = scm_mode_bits (ROZT (modes));
-  dbconn = XCONN (conn);
 
   if (mode_bits & SCM_RDNG)
     pg_modes |= INV_READ;
@@ -264,10 +254,8 @@ PG_DEFINE (lob_lo_unlink, "pg-lo-unlink", 2, 0, 0,
   int ret, pg_oid;
   PGconn *dbconn;
 
-  ASSERT_CONNECTION (1, conn);
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_ULONG_COPY (2, oid, pg_oid);
-
-  dbconn = XCONN (conn);
 
   SCM_DEFER_INTS;
   ret = lo_unlink (dbconn, pg_oid);
@@ -668,12 +656,10 @@ PG_DEFINE (lob_lo_import, "pg-lo-import", 2, 0, 0,
   PGconn *dbconn;
   int ret;
 
-  ASSERT_CONNECTION (1, conn);
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename),
               filename, SCM_ARG2, FUNC_NAME);
   ROZT_X (filename);
-
-  dbconn = XCONN (conn);
 
   SCM_DEFER_INTS;
   ret = lo_import (dbconn, ROZT (filename));
@@ -700,12 +686,11 @@ PG_DEFINE (lob_lo_export, "pg-lo-export", 3, 0, 0,
   Oid pg_oid;
   int ret;
 
-  ASSERT_CONNECTION (1, conn);
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_ULONG_COPY (2, oid, pg_oid);
   SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename), filename,
               SCM_ARG3, FUNC_NAME);
   ROZT_X (filename);
-  dbconn = XCONN (conn);
 
   SCM_DEFER_INTS;
   ret = lo_export (dbconn, pg_oid, ROZT (filename));
