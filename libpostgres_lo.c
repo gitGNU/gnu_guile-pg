@@ -350,28 +350,19 @@ lob_end_input (SCM port, int offset)
 
 SCM_PROC (s_lob_lo_seek, "pg-lo-seek", 3, 0, 0, lob_lo_seek);
 
+static off_t lob_seek (SCM port, off_t offset, int whence);
+
 static SCM
 lob_lo_seek (SCM port, SCM where, SCM whence)
 {
-  int ret;
-  lob_stream *lobp;
-  PGconn *conn;
-
   SCM_ASSERT (SCM_NIMP (port) && SCM_OPLOBPORTP (port),
               port, SCM_ARG1, s_lob_lo_seek);
   SCM_ASSERT (SCM_INUMP (where), where, SCM_ARG2, s_lob_lo_seek);
   SCM_ASSERT (SCM_INUMP (whence), whence, SCM_ARG3, s_lob_lo_seek);
 
-  lobp = (lob_stream *) SCM_STREAM (port);
-  conn = LOB_CONN (lobp);
-
   lob_flush (port);
 
-  SCM_DEFER_INTS;
-  ret = lo_lseek (conn, lobp->fd, SCM_INUM (where), SCM_INUM (whence));
-  SCM_ALLOW_INTS;
-
-  return SCM_MAKINUM (ret);
+  return SCM_MAKINUM (lob_seek (port, SCM_INUM (where), SCM_INUM (whence)));
 }
 
 /* fill a port's read-buffer with a single read.
@@ -460,7 +451,7 @@ lob_seek (SCM port, off_t offset, int whence)
   /* Adjust return value to account for guile port buffering.  */
   if (SEEK_CUR == whence) {
     scm_port *pt = SCM_PTAB_ENTRY (port);
-    ret -= (pt->read_end - pt->read_ret);
+    ret -= (pt->read_end - pt->read_pos);
   }
 
   return ret;
