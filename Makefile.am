@@ -21,7 +21,7 @@
 
 SUBDIRS = scm doc test
 
-EXTRA_DIST = acinclude.m4 TODO HACKING autogen.sh
+EXTRA_DIST = contrib acinclude.m4 TODO HACKING autogen.sh
 
 BUILT_SOURCES = libpostgres.x libpostgres_lo.x
 
@@ -45,5 +45,8 @@ MKDEP = gcc -M -MG $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 DISTCLEANFILES = *.x
 
 CLEANFILES = *.x
+
+dist-hook:
+	rm -rf `find $(distdir)/contrib -name CVS`
 
 ## Makefile.am ends here
