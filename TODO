@@ -1,30 +1,11 @@
 
-- 0.18
++ 0.18
 
   + Add proc `pgtable-worker' to (database postgres-table)
 
-  + Remove variables
-      PGRES_EMPTY_QUERY
-      PGRES_COMMAND_OK
-      PGRES_TUPLES_OK
-      PGRES_COPY_OUT
-      PGRES_COPY_IN
-      PGRES_BAD_RESPONSE
-      PGRES_NONFATAL_ERROR
-      PGRES_FATAL_ERROR
-    Code should be using the symbols (by the same name) instead by now.
+  + Remove PGRES_* variables from (database postgres)
 
   + Remove "def:" procs from (database postgres-table)
-      def:col-name
-      def:type-name
-      def:type-options
-    Still available from (database postgres-col-defs) w/o "def:" prefix.
-
-  - Review for dangerous construct: return scm_cons (scm_cons (...))
-
-    Garbage collection can zonk intermediate values leading to loss of
-    integrity (and thus bugs).  Better to use strictly imperative style
-    and use C auto vars for intermediate values, even if it is ugly.
 
   + Review SCM_ROSTRINGs used as null-terminated strings
 
@@ -34,8 +15,6 @@
     + Add procs to validate types and extend Guile-PG array variants
     + Document new procs
     + Add necessary types to handle PostgreSQL 7.3.5 pg_class
-
-  - Write tests for non-blocking query support
 
   + Implement these calls:
 
@@ -60,6 +39,14 @@
 
 
 - Eventually
+
+  - Review for dangerous construct: return scm_cons (scm_cons (...))
+
+    Garbage collection can zonk intermediate values leading to loss of
+    integrity (and thus bugs).  Better to use strictly imperative style
+    and use C auto vars for intermediate values, even if it is ugly.
+
+  - Write tests for non-blocking query support
 
   - Implement these calls:
 
