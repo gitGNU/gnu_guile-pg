@@ -1,7 +1,17 @@
 2003-09-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* tmpfile.h, tmpfile.c: New files.
+
 	* AUTHORS: Mention tmpfile.h and tmpfile.c.
+
+	* Makefile.am (libpostgres_la_SOURCES): Add tmpfile.c.
+
+	* libpostgres.c: If HAVE_TMPFILE not defined,
+	also #include "tmpfile.h" and define `tmpfile'
+	to expand to `guile_pg_tmpfile'.
+	(pg_print): Remove "undefined" branch of HAVE_TMPFILE,
+	since we will always have `tmpfile' available.
+	Add check for NULL `fout'; call `scm_syserror' in that case.
 
 2003-09-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
