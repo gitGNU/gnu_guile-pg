@@ -14,3 +14,4 @@ config.h
 *.la
 libtool
 stamp-h1
+config.cache
