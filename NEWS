@@ -5,6 +5,13 @@ NEWS for Guile-PG
 
   - New (database postgres) proc: `pg-connection?'
 
+  - Extension to (database postgres-table) proc: `pgtable-manager'
+
+	The first arg of this proc used to be a string naming the
+	database to use.  Now it can additionally be an empty string,
+	a string of space-separated "var=val" pairs, or an already
+	existing connection object (satisfying `pg-connection?').
+
 
 - 0.14 | 2002-12-27
 
