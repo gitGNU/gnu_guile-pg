@@ -1,3 +1,29 @@
+2005-01-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (ASSERT_CONNECTION_OR_RESULT): Delete macro.
+	(pg_result_error_message): New PG_DEFINE func.
+	(pg_error_message): Rewrite.
+	(PQRESULTERRORMESSAGE): New SIMPLE_SYMBOL.
+	(init_module): Add `PQRESULTERRORMESSAGE' handling.
+
+	* doc/guile-pg.twerp (Processing Results):
+	Add @twerpdoc for `pg-result-error-message'.
+
+2005-01-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.h (ASSERT_CONNECTION): Delete macro.
+	(VALIDATE_CONNECTION_UNBOX_DBCONN): New macro.
+
+	* libpostgres.c: Use `VALIDATE_CONNECTION_UNBOX_DBCONN'.
+	(XCONN): Delete macro.
+	(ASSERT_CONNECTION): New macro.
+	(CONN_NOTICE, CONN_CLIENT, CONN_FPTRACE): New macros. Use throughout.
+	(pg_error_message): Use `xc_unbox'.
+
+	* libpostgres_lo.c: Use `VALIDATE_CONNECTION_UNBOX_DBCONN'.
+	(XCONN): Delete macro.
+	(LOB_CONN): Use `xc_unbox'.
+
 2004-12-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.c (ASSERT_RESULT): Delete macro.
