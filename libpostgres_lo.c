@@ -33,6 +33,11 @@
 #include <libguile.h>
 #include <guile/gh.h>
 
+#ifndef HAVE_SCM_TERMINATING
+extern int terminating;
+#define scm_terminating terminating
+#endif
+
 #include <libpq-fe.h>
 #include <libpq/libpq-fs.h>
 
@@ -271,8 +276,6 @@ lob_lo_tell (SCM port)
   return scm_seek (port, SCM_INUM0, SCM_MAKINUM (SEEK_CUR));
 }
 
-static int terminating = 0;             /* wtf? -ttn */
-
 static void
 lob_flush (SCM port)
 {
@@ -307,7 +310,7 @@ lob_flush (SCM port)
         }
         pt->write_pos = pt->write_buf + remaining;
       }
-      if (!terminating)
+      if (! scm_terminating)
         scm_syserror ("lob_flush");
       else {
         const char *msg = "Error: could not flush large object file descriptor ";
