@@ -1,5 +1,11 @@
 2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* test/guile-pg-basic-tests.scm:
+	(test:pg-conndefaults): New proc.
+	(main): New proc. Call it from top-level.
+
+2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* test/coverage.sh: New file.
 	* test/Makefile.am: Update copyright.
 	(TESTS): Add coverage.sh.
