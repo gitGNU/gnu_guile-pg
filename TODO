@@ -14,9 +14,9 @@
 
   - Review error handling; regularize; document.
 
-  - Implement these calls:
+  + Implement these calls:
 
-    - client encoding
+    + client encoding
 
       int PQclientEncoding (const PGconn *conn);
       int PQsetClientEncoding (PGconn *conn, const char *encoding);
