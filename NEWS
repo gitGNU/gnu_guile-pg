@@ -1,6 +1,11 @@
 NEWS for Guile-PG
 
 
+- 0.15 | NOT YET RELEASED
+
+  - New (database postgres) proc: `pg-connection?'
+
+
 - 0.14 | 2002-12-27
 
   - Configuration bugfix: twerp2texi invocation conditionalized
