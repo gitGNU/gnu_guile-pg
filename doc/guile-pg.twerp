@@ -604,16 +604,19 @@ This example defines a procedure @code{copy-from-port} which can be used
 to supply data to a @code{COPY <table> TO STDIN} command.
 
 @lisp
+(use-modules (ice-9 rdelim))
+
 (define (copy-from-port conn port)
   (let loop ((line (read-line port)))
-    (if (eof-object? line)
-        (begin (pg-putline conn "\\.\n")
-               (pg-endcopy conn))
-        (begin (pg-putline conn line)
-               (pg-putline conn "\n")
-               (if (string=? line "\\.")
-                   (pg-endcopy conn)
-                   (loop (read-line port)))))))
+    (cond ((eof-object? line)
+           (pg-putline conn "\\.\n")
+           (pg-endcopy conn))
+          (else
+           (pg-putline conn line)
+           (pg-putline conn "\n")
+           (if (string=? line "\\.")
+               (pg-endcopy conn)
+               (loop (read-line port)))))))
 @end lisp
 
 @twerpdoc (pg-endcopy)
