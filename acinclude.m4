@@ -95,7 +95,7 @@ AC_DEFUN([PQ_FLAGS],[
   # add rpath to link flags if requested by --enable-pq-rpath;
   # note: the regexp passed to sed relies on a trailing space,
   # which means that removing "-lpq" from PQ_LDFLAGS will break it
-  if test $enable_pq_rpath = yes ; then
+  if test "$enable_pq_rpath" = yes ; then
     PQ_LDFLAGS="`echo $PQ_LDFLAGS | sed 's/-L\(@<:@^ @:>@* \)/-R\1-L\1/'`"
   fi
   AC_SUBST(PQ_CPPFLAGS)
