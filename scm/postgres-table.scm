@@ -413,22 +413,24 @@
 ;; variable or procedure associated with CHOICE.  When CHOICE is `help' or
 ;; `menu', return a list of accepted choices, currently one of:
 ;;
-;;   table-name
-;;   defs
-;;   pgdb
-;; * (drop)
-;; * (create)
-;; * (insert-values . DATA)
-;; * (insert-col-values COLS . DATA)
-;; * (insert-alist ALIST)
-;; * (delete-rows WHERE-CONDITION)
-;; * (update-col COLS DATA WHERE-CONDITION)
-;; * (select SELECTION . REST-CLAUSES)
-;;   (t-obj-walk TABLE PROC-O PROC-NON-O)
-;;   (table->object-alist TABLE)
-;;   (tuples-result->object-alist RES)
-;;   (table->alists TABLE)
-;;   (tuples-result->alists RES)
+;; @itemize
+;; @item   table-name
+;; @item   defs
+;; @item   pgdb
+;; @item * (drop)
+;; @item * (create)
+;; @item * (insert-values . DATA)
+;; @item * (insert-col-values COLS . DATA)
+;; @item * (insert-alist ALIST)
+;; @item * (delete-rows WHERE-CONDITION)
+;; @item * (update-col COLS DATA WHERE-CONDITION)
+;; @item * (select SELECTION . REST-CLAUSES)
+;; @item   (t-obj-walk TABLE PROC-O PROC-NON-O)
+;; @item   (table->object-alist TABLE)
+;; @item   (tuples-result->object-alist RES)
+;; @item   (table->alists TABLE)
+;; @item   (tuples-result->alists RES)
+;; @end itemize
 ;;
 ;; In this list, procedures are indicated by signature (parens).  DATA is one
 ;; or more Scheme objects.  COLS is either a list of column names (symbols),
@@ -440,8 +442,10 @@
 ;;
 ;; PROC-O is #f, or a procedure that is called by the table walker like so:
 ;;  (PROC-O TABLE TN FN STRING OBJ)
+;;
 ;; Similarly, PROC-NON-O is #f, or a procedure with signature:
 ;;  (PROC-NON-O TABLE TN FN STRING)
+;;
 ;; For both these procedures, TABLE is as described above, TN and FN are the
 ;; tuple and field numbers (zero-origin), respectively, STRING is the string
 ;; representation of the data and OBJ is the Scheme object converted from
