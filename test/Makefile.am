@@ -20,10 +20,12 @@
 ##   330, Boston, MA 02111-1307 USA
 
 TESTS_ENVIRONMENT =				\
+  PGDATABASE=guile_pg_test			\
   GUILE=$(top_builddir_absolute)/wily-guile	\
   top_builddir=$(top_builddir_absolute)		\
   top_srcdir=$(top_srcdir)			\
-  srcdir=$(srcdir)
+  srcdir=$(srcdir)				\
+  $(SHELL)
 
 TESTS = alive.sh                                \
 	coverage.sh				\
