@@ -15,6 +15,7 @@
 
 	* libpostgres.c (xc_display): If there is no host, disregard port.
 	Also, use "?" for default db, and "" for all other default values.
+	Reported by Greg Troxel.
 
 2004-11-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
