@@ -271,16 +271,29 @@
 
 ;; Return a @dfn{compiled outspec object} from @var{spec} and @var{defs},
 ;; suitable for passing to the @code{select} choice of @code{pgtable-manager}.
-;; @var{defs} is the same as that for @code{pgtable-manager}.  @var{spec} is
-;; either a column name (a symbol); #t, which means all columns (notionally
-;; equivalent to "*"); or a list of column specifications each of which is
-;; either a column name, or has the form @code{(TYPE TITLE EXP)}, where
-;; @var{exp} is the SQL expression (string) to compute for the column;
-;; @var{title} is the title (string) of the column, or #f; and @var{type} is a
-;; column type (symbol) such as @code{int4}, or #f to mean @code{text}, or #t
-;; to mean use the type associated with the column named in @var{exp}, or the
-;; pair @code{(#t . name)} to mean use the type associated with column
-;; @var{name}.
+;; @var{defs} is the same as that for @code{pgtable-manager}.  @var{spec} can
+;; be one of the following:
+;;
+;; @itemize
+;; @item a column name (a symbol)
+;;
+;; @item #t, which means all columns (notionally equivalent to "*")
+;;
+;; @item a list of column specifications each of which is either a column
+;; name, or has the form @code{(TYPE TITLE EXPR)}, where:
+;;
+;; @itemize
+;; @item @var{expr} is the SQL expression (string)
+;; to compute for the column
+;;
+;; @item @var{title} is the title (string) of the column, or #f
+;;
+;; @item @var{type} is a column type (symbol) such as @code{int4},
+;; or #f to mean @code{text}, or #t to mean use the type associated
+;; with the column named in @var{expr}, or the pair @code{(#t . name)}
+;; to mean use the type associated with column @var{name}
+;; @end itemize
+;; @end itemize
 ;;
 ;; A "bad select part" error results if specified columns or types do not
 ;; exist, or if other syntax errors are found in @var{spec}.
@@ -307,14 +320,14 @@
              (symbol->qstring x))
             ((and (list? x) (= 3 (length x)))
              (apply-to-args
-              x (lambda (type title exp)
+              x (lambda (type title expr)
                   (push! (cond ((symbol? type)
                                 type)
                                ((eq? #f type)
                                 'text)
                                ((and (eq? #t type)
-                                     (or (assq exp defs)
-                                         (bad-select-part exp)))
+                                     (or (assq expr defs)
+                                         (bad-select-part expr)))
                                 => def:type-name)
                                ((and (pair? type)
                                      (eq? #t (car type))
@@ -324,7 +337,7 @@
                                 => def:type-name)
                                (else
                                 (bad-select-part type))))
-                  (if title (fmt "~A AS ~S" exp title) exp))))
+                  (if title (fmt "~A AS ~S" expr title) expr))))
             (else
              (bad-select-part x))))
 
