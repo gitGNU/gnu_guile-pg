@@ -9,7 +9,7 @@
 # - guile 1.4.1.98
 
 #############################################################################
-# Autotools
+# Autotools (except automake)
 
 test x"$1" = x--libtoolize && libtoolize --force
 test -f ltmain.sh || libtoolize --force
@@ -24,19 +24,17 @@ aclocal -I . --output=- | sed '$raclocal-suffix' > aclocal.m4
 
 autoheader
 autoconf
-# prep automake
-if [ ! -f doc/guile-pg.texi ] ; then
-    echo '@setfilename guile-pg.info' > doc/guile-pg.texi
-    touch -m -t 01010000 doc/guile-pg.texi
-fi
-automake --add-missing --force
 
 #############################################################################
-# Make local automake frags.
+# Automake
 
+# Make local automake frags and do other automake prep.
 for script in `find . -name .make-automake-frags` ; do
     ( cd `dirname $script` ; ./.make-automake-frags )
 done
+
+# Do it.
+automake --add-missing --force
 
 ######################################################################
 # Header: <guile/modsup.h>
