@@ -1,6 +1,16 @@
 NEWS for Guile-PG
 
 
+- 0.24 | NOT YET RELEASED
+
+  - New (database postgres) proc: pg-set-nonblocking!
+  - New (database postgres) proc: pg-is-nonblocking?
+
+	These track recent(ish) appearance of similarly-named libpq
+	functions.  Both do nothing and return #f if the underlying
+	libpq function is not available.
+
+
 - 0.23 | 2004-11-21
 
   - Print representations of smobs now documented
