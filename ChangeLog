@@ -4,6 +4,10 @@
 
 2003-08-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* autogen.sh: Also pass "-I $HOME/local/share/aclocal" to aclocal.
+
+2003-08-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* guile-pg.project (authors): Expand ttn email addr.
 
 2003-08-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
