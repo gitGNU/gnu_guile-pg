@@ -1,4 +1,10 @@
 $Id$
+Sat Jul  8 09:54:01 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+
+        * Bumped VERSION prior to releasing 0.07
+
+        * Updated README and NEWS
+
 Tue Jun 20 12:38:07 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
 
         * libpostgres.c: Fixed use of soon-to-be-deprecated

@@ -129,12 +129,23 @@ variable.)
 guile> (use-modules (database postgres)) 
 guile> (define test (pg-connectdb "dbname=test"))
 guile> test
-#<PG_CONN:1:test:(null):5432:>
+#<PG-CONN:1:test::5432:>
 guile> (define result (pg-exec test "SELECT * FROM PEOPLE"))
 guile> result
-#<PG_RESULT:1:PGRES_TUPLES_OK:3>
+#<PG-RESULT:1:PGRES_TUPLES_OK:3:5>
 @end example
 @end cartouche
+
+The @code{test} object is a @code{PG-CONN} type representing the database
+connection.  Displaying the @code{PG-CONN} object shows that the serial number
+of the connection is 1, that the database name is @code{test} on the default
+host (the hostname field is empty) on port number 5432 and that the default
+options were passed to the backend. This object is passed to @code{pg-exec}
+which returns a @code{PG-RESULT} object representing the result of the SQL
+statement executed on the server. In this case, displaying the @code{PG-RESULT}
+object shows us that the serial number of the result is 2, that the return code
+from the database was @code{PGRES_TUPLES_OK} and that we have received 3 tuples
+with 5 fields.
 
 Having obtained a result object from the database we can find out how
 many rows and how many columns are in the result. We can also find out the
@@ -142,7 +153,7 @@ names of the columns:
 
 @cartouche
 @example
-guile> (pg-ntuples result) 
+guile> (pg-ntuples result)
 3
 guile> (pg-nfields result)
 5
@@ -858,7 +869,7 @@ consulted to determine the failure.
 Write the contents of a given large object to a file.
 @var{Oid} is the integer identifying the large object to be exported and
 @var{filename} the name of the file to contain the object data.
-The function returns @code{#t} on succeess, @code{#f} otherwise, in which case
+The function returns @code{#t} on success, @code{#f} otherwise, in which case
 @code{pg-error-message} may offer an explanation of the failure. 
 @end defun
 
