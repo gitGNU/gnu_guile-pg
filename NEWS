@@ -1,6 +1,23 @@
 NEWS for Guile-PG
 
 
+- version 0.14 NOT YET RELEASED
+
+  - New (database postgres) proc: `pg-result?'
+
+  - New (database postgres-types) built-in type converters
+
+	name
+	aclitem
+	aclitem[]
+
+  - New experimental module: (database postgres-meta)
+
+	This module provides some table introspection capabilities,
+	currently exported as procedure `describe-table!', q.v.
+	Interface design ideas welcome (post to mailing lists).
+
+
 - version 0.13 released 2002-12-24
 
   - `terminating' slack
