@@ -25,8 +25,6 @@
 ;;   (pgtable-manager db-spec table-name defs)
 ;;   (pgtable-worker db-spec table-name defs)
 ;;   (compile-outspec spec defs)
-;;
-;; TODO: Move some of this into a query-construction module.
 
 ;;; Code:
 
