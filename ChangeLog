@@ -1,3 +1,8 @@
+2004-02-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c: Curly-brace placement munging; nfc.
+	* libpostgres_lo.c: Likewise.
+
 2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* test/show-platform (go): Omit `uname -p' and `uname -v' output.
