@@ -1366,7 +1366,7 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
            "@item standard: Old brain-dead format.\n"
            "@item html3: Output HTML tables.\n"
            "@item expand: Expand tables.\n"
-           "@end itemize\n"
+           "@end itemize\n\n"
            "To specify a disabled flag, use @dfn{no-FLAG}, e.g.,"
            "@code{no-header}.  Recognized keys:\n\n"
            "@itemize\n"
