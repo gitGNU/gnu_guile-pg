@@ -54,7 +54,7 @@
       all any in like
       ALL ANY IN LIKE))
 
-(define *binary-infix-operations*       ; entry: NAME
+(define *infix-operations*              ; entry: NAME
   (map identity *conditional-operations*))
 
 (define *sql-functions* '())            ; entry: (NAME ARGCOUNT)
@@ -64,7 +64,7 @@
 ;; Currently, these categories are recognized:
 ;;
 ;; @table @code
-;; @item #:binary-infix-op
+;; @item #:infix-op
 ;; Render @code{(x A B)} as @code{( A x B )}.
 ;;
 ;; @item #:sql-function
@@ -75,9 +75,9 @@
 (define (qcons-declare! category x . extra)
   (or (symbol? x) (error "not a symbol:" x))
   (case category
-    ((#:binary-infix-op)
-     (set! *binary-infix-operations*
-           (cons x (delq! x *binary-infix-operations*))))
+    ((#:infix-op)
+     (set! *infix-operations*
+           (cons x (delq! x *infix-operations*))))
     ((#:sql-function)
      (set! *sql-functions*
            (let ((ent (cons x extra)))
@@ -151,8 +151,8 @@
                (list "(" (andsep expr rest) ")"))
               ((memq op '(#:OR #:or or))
                (list "(" (orsep expr rest) ")"))
-              ((memq op *binary-infix-operations*)
-               (list "(" (expr (car rest)) op (expr (cadr rest)) ")"))
+              ((memq op *infix-operations*)
+               (list "(" ((list-sep-proc op) expr rest) ")"))
               ((assq-ref *sql-functions* op)
                => (lambda (argcount)
                     ;; argcount unused, maybe better to ignore completely
@@ -282,8 +282,8 @@
 ;;; load-time actions
 
 (for-each (lambda (x)
-            (qcons-declare! #:binary-infix-op x))
-          '(~ * ||
+            (qcons-declare! #:infix-op x))
+          '(+ - ~ * ||
               ;; todo: add here.
               ))
 
