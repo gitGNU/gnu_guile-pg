@@ -1,5 +1,8 @@
 2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* Makefile.am (EXTRA_DIST): Add contrib.
+	(dist-hook): New directive.
+
 	* configure.in (VERSION): Bump to 0.10 for release.
 
 2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
