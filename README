@@ -1,18 +1,17 @@
-$Id$
 guile-pg 0.08
 =============
 
 This is a set of bindings providing a Guile interface to the
 PostgreSQL front-end library libpq.
 
-This is alpha code. It has bugs, and the interfaces may change from
+This is alpha code.  It has bugs, and the interfaces may change from
 version to version.
 
-To build guile-pg you need to have installed both Guile >= 1.3.4 and
-the PostgreSQL frontend library libpq. This version of guile-pg has been
-tested with PostgreSQL version 7.0.2, but you may find it works with
-versions prior to this.  Please report your experiences in this
-respect to me.
+To build guile-pg you need to have installed both Guile >= 1.3.4 and the
+PostgreSQL frontend library libpq.  This version of guile-pg has been tested
+with PostgreSQL version 7.2.1, but you may find it works with other versions.
+If so, please let us know the good news.
+
 
 Building and Installing Guile-pg
 --------------------------------
