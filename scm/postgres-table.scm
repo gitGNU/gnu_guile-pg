@@ -52,7 +52,9 @@
   #:use-module ((database postgres-qcons)
                 #:select (sql-quote
                           (make-comma-separated-tree . cseptree)
+                          make-WHERE-tree
                           make-SELECT/FROM/OUT-tree
+                          parse+make-SELECT/tail-tree
                           sql<-trees
                           sql-command<-trees))
   #:use-module ((database postgres-resx)
@@ -206,10 +208,14 @@
 ;;; delete
 
 (define (delete-rows-proc beex table-name ignored-defs)
-  (define pre (delay (sql<-trees #:DELETE #:FROM table-name #:WHERE)))
+  (define pre (delay (sql<-trees #:DELETE #:FROM table-name)))
   (define (make-cmd where-condition)
     (sql-command<-trees
-     (force pre) where-condition))
+     (force pre)
+     (if (string? where-condition)      ; todo: zonk after 2005-12-31
+         (list #:WHERE where-condition)
+         (make-WHERE-tree (list #:q* where-condition)))))
+  ;; rv
   (lambda (where-condition)
     (beex (make-cmd where-condition))))
 
@@ -226,7 +232,10 @@
                        (->db-insert-string (def:type-name def) val)))
                (col-defs defs cols)
                #f data)
-     #:WHERE where-condition))
+     (if (string? where-condition)      ; todo: zonk after 2005-12-31
+         (list #:WHERE where-condition)
+         (make-WHERE-tree (list #:q* where-condition)))))
+  ;; rv
   (lambda (cols data where-condition)
     (beex (make-cmd cols data where-condition))))
 
@@ -337,7 +346,11 @@
                             (else
                              (set-hints!+sel
                               (cdr (compile-outspec outspec defs))))))
-                     rest-clauses))
+                     (cond ((null? rest-clauses) '())
+                           ;; todo: zonk after 2005-12-31
+                           ((string? (car rest-clauses)) rest-clauses)
+                           (else (parse+make-SELECT/tail-tree
+                                  rest-clauses #t)))))
                (res (beex cmd)))
           (and hints (put res #:pgtable-ohints hints))
           res)))))
