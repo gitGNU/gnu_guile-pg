@@ -1,5 +1,10 @@
 2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c (pg_client_encoding): New PG_DEFINE func.
+	(pg_set_client_encoding_x): Likewise.
+
+2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-table.scm (select-cmd): Delete proc.
 	(compile-outspec): New proc, exported.
 	(select-proc): Rewrite to use `compile-outspec'.
