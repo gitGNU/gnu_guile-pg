@@ -1,5 +1,5 @@
 ;;    Guile-pg - A Guile interface to PostgreSQL
-;;    Copyright (C) 1999-2000, 2002, 2003 Free Software Foundation, Inc.
+;;    Copyright (C) 1999-2000,02,03,2004 Free Software Foundation, Inc.
 ;;
 ;;    This program is free software; you can redistribute it and/or modify
 ;;    it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@
     (let ((form (read port)))
       (if (eof-object? form)
           result
-          (iter (eval form)))))
+          (iter (eval-in-module form (current-module))))))
   (iter #f))
 
 ;; We want to keep one connection hanging around for the duration of all the
