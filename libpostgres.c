@@ -301,7 +301,7 @@ strip_newlines (char *str)
   char *p = str + strlen (str);
 
   while (str <= --p && *p == '\n')
-    *p = '\0';
+    ;
 
   return scm_makfromstr (str, p - str, 0);
 }
