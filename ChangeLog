@@ -1,3 +1,12 @@
+2005-03-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* doc/Makefile.am (html) [MAINTAINER_MODE]: New target.
+
+2005-03-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* doc/Makefile.am (CLEANFILES):
+	Remove guile-pg.dvi and guile-pg_toc.html.
+
 2005-03-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in (AC_INIT): Use "modern" two-arg form.
