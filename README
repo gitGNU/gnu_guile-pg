@@ -68,6 +68,10 @@ Configuration
 	value: '-Wl,-rpath -Wl/opt/guile/lib' (quotes to protect spaces
 	from the shell).
 
+	If your platform needs "-R DIR" for the libpq link command, you
+	can try the experimental configure option --enable-pq-rpath, or
+	alternatively set the LDFLAGS env var as described above.
+
 	After configuration, type:
 
 	    make
