@@ -89,6 +89,9 @@
 (export pg-trace)
 (export pg-untrace)
 
+(export pg-make-print-options)
+(export pg-print)
+
 (export pg-lo-creat)
 (export pg-lo-open)
 (export pg-lo-unlink)
