@@ -1,3 +1,36 @@
+2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* doc/guile-pg.twerp (Query Construction):
+	Add section "Prefix-Style Expressions".
+
+2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (--preformatted): New object property.
+	(sql-pre, sql-pre?, sql-unpre): New procs, exported.
+	(sql-quote): Mark return value as preformatted.
+	(maybe-dq): Likewise.
+	(expr): Remove #:q* handling. Arrange to do `sql-quote'
+	non-recursively, and only if the tree is not marked as preformatted.
+	(make-SELECT/OUT-tree): Mark naked strings as preformatted.
+	Likewise for strings used in title position.
+	(parse+make-SELECT/tail-tree): Rewrite.
+
+	* scm/postgres-table.scm: From module (database postgres-qcons),
+	select also `sql-pre' and `sql-pre?'. Re-export `sql-pre'.
+	(preformatted): Delete object property.
+	(sql-pre): Delete proc.
+	(->db-insert-string): Use `sql-pre?'.
+	(delete-rows-proc): Mark string where condition as preformatted.
+	(update-col-proc): Likewise.
+	(select-proc): Likewise for string outspec and string rest clauses.
+
+	* scm/postgres-gxrepl.scm: Throughout,
+	excise #:q* from make-*-tree args.
+
+	* doc/guile-pg.twerp (Query Construction): Add section "Quoting".
+	Add @twerpdoc for `sql-pre', `sql-pre?' and `sql-unpre'
+	and move @twerpdoc for `sql-quote', there.
+
 2005-02-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-qcons.scm (make-ORDER-BY-tree):
