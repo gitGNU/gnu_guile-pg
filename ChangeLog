@@ -1,5 +1,9 @@
 2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostres.c (xr_display): Skip "PGRES_" in status.
+
+2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-meta.scm (make-M:pg-class): No longer take db name.
 	Hardcode "template1" instead.  Update callers.
 
