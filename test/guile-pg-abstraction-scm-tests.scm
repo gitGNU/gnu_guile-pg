@@ -274,6 +274,14 @@
       (pass-if "m2 select"
         (eq? 'PGRES_TUPLES_OK (pg-result-status res))))
 
+    (let ((res ((m2 'select) '(desc n))))
+      (pass-if "objectifier-hints: list of col names"
+        (equal? ((m2 'tuples-result->object-alist) res)
+                '((desc "the answer to the big question"
+                        "a nice prime"
+                        "almost 2^5, eh?")
+                  (n 42 343 31)))))
+
     (pass-if "m2 final drop"
       (command-ok? (car ((m2 'drop))))))) ; use CAR because `drop' => a list
 
@@ -295,7 +303,7 @@
                 (+ (* 2 (length count))
                    (apply + count)))
               1
-              (+ 6 (* 2 2) 7)))         ; m2
+              (+ 6 (* 2 2) 8)))         ; m2
 (test #t test:set!-m)
 (test #t test:m-procs)
 (test #t test:m-help)
