@@ -40,17 +40,17 @@ AC_DEFUN([PQ_FLAGS],[
                           libpq.a in DIR/lib (default=/usr/local)
                              See also --with-libpq-includes and
                           --with-libpq-lib below],
-   [AC_MSG_CHECKING("$withval/include/libpq-fe.h exists")
+   [AC_MSG_CHECKING([$withval/include/libpq-fe.h exists])
     if test ! -f "$withval/include/libpq-fe.h" ; then
       AC_MSG_RESULT(no)
-      AC_ERROR("$withval/include/libpq-fe.h does not exist.")
+      AC_ERROR([$withval/include/libpq-fe.h does not exist.])
     else
       AC_MSG_RESULT(yes)
     fi
-    AC_MSG_CHECKING("$withval/lib/libpq.a exists")
+    AC_MSG_CHECKING([$withval/lib/libpq.a exists])
     if test ! -f "$withval/lib/libpq.a" ; then
       AC_MSG_RESULT(no)
-      AC_ERROR("$withval/include/libpq.a does not exist.")
+      AC_ERROR([$withval/include/libpq.a does not exist.])
     else
       AC_MSG_RESULT(yes)
     fi
@@ -60,27 +60,27 @@ AC_DEFUN([PQ_FLAGS],[
     AC_ARG_WITH(libpq-includes,
 [  --with-libpq-includes=DIR    look for libpq includes in DIR ],[
        if test ! -f "$withval/libpq-fe.h" ; then
-        AC_ERROR("$withval/libpq-fe.h does not exist.")
+        AC_ERROR([$withval/libpq-fe.h does not exist.])
        fi
        PQ_CFLAGS="-I$withval"],[
        AC_CHECK_HEADERS(libpq-fe.h)
        if test ! "$ac_cv_header_libpq_fe_h" = yes ; then
-         AC_ERROR("Cannot build without libpq-fe.h. Use --with-libpq-includes ?")
+         AC_ERROR([Cannot find libpq-fe.h; try "--with-libpq-includes=DIR"])
        fi
     ])
     AC_ARG_WITH(libpq-lib,
 [  --with-libpq-lib=DIR    look for libpq libraries in DIR ],[
-       AC_MSG_CHECKING("$withval/libpq.a exists")
+       AC_MSG_CHECKING([$withval/libpq.a exists])
        if test ! -f "$withval/libpq.a" ; then
         AC_MSG_RESULT(no)
-        AC_ERROR("$withval/libpq.a does not exist.")
+        AC_ERROR([$withval/libpq.a does not exist.])
        else
         AC_MSG_RESULT(yes)
        fi
        PQ_LDFLAGS="-L$withval -lpq"],[
        AC_CHECK_LIB(pq,PQsetdbLogin)
        if test ! "$ac_cv_lib_pq_PQsetdbLogin" = yes ; then
-         AC_ERROR("Cannot build without libpq. Use --with-libpq-lib ?")
+         AC_ERROR([Cannot find libpq; try "--with-libpq-lib=DIR"])
        fi
        PQ_LDFLAGS="-lpq"
     ])
