@@ -1,5 +1,10 @@
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm (sql<-trees): Mark rv w/ `sql-pre'.
+	(sql-command<-trees): Mention marking in docstring; nfc.
+
+2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Query Construction):
 	Add section "Prefix-Style Expressions".
 
