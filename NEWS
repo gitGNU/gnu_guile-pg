@@ -64,6 +64,8 @@ NEWS for Guile-PG
 	Alternatively, you can use the procs without such a pre-check,
 	and instead check the return value.
 
+  - ChangeLog for subdir test/ split out
+
 
 - 0.17 | 2004-02-02
 
