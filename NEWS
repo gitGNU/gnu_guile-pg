@@ -14,6 +14,26 @@ NEWS for Guile-PG
 
   - New (database postgres-meta) proc: `infer-defs'
 
+  - New module: (database postgres-col-defs)
+  - New module: (database postgres-resx)
+
+	These provide procedures to handle column definitions and to
+	transform result objects in various ways, respectively.
+
+  - WARNING: column definition procs have moved
+
+	The following procedures continue to be exported from (database
+	postgres-table), but are now in (database postgres-col-defs):
+
+                bye-bye                 hello
+                -------                 -----
+                def:col-name            column-name
+                def:type-name           type-name
+                def:type-options        type-options
+
+	Sometime before 1.0 release they will no longer be exported from
+	the (database postgres-table) module.
+
 
 - 0.14 | 2002-12-27
 
