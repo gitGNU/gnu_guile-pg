@@ -17,3 +17,4 @@ stamp-h1
 config.cache
 .doc-index
 *.doc
+wily-guile
