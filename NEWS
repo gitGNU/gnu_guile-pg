@@ -1,7 +1,7 @@
 NEWS for Guile-PG
 
 
-- 0.23 | NOT YET RELEASED
+- 0.23 | 2004-11-21
 
   - Print representations of smobs now documented
 
@@ -16,6 +16,13 @@ NEWS for Guile-PG
 
 	Before: #<PG-CONN:1:ttn:localhost:5432:>
         Now:    #<PG-CONN:1:ttn:::>
+
+  - More verbosity for "make check DEBUG=1"
+
+	The database drop and create commands that surround some of the
+	tests now honor DEBUG=1, not sending their output to /dev/null
+	in that case.  Also, the README file explains uid preparations
+	required for "make check".
 
 
 - 0.22 | 2004-08-07
