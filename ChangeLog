@@ -1,5 +1,10 @@
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-gxrepl.scm (help): For this comma-command,
+	use #\ht and #\newline instead of embedded in a string.
+
+2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-gxrepl.scm: Autoload (ice-9 pretty-print).
 	From (database postgres-qcons), select also `make-SELECT/OUT-tree'.
 	(obvious): New comma-command.
