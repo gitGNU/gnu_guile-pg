@@ -13,8 +13,16 @@
 
 test x"$1" = x--libtoolize && libtoolize --force
 test -f ltmain.sh || libtoolize --force
-aclocal -I `guile-config info datadir`/aclocal
+
+# guile.m4.snap is from unreleased guile 1.4.1.99, so for now we use it
+# explicitly; after guile 1.4.1.99 is released, this part should be rewritten
+# in similar style to the modsup.h wrangling below.
+fresh_guile_m4="guile.m4.snap"
+ln -sf $fresh_guile_m4 guile.m4
+aclocal -I .
+# voodoo to avoid ridiculous C++ and FORTRAN probing
 ( echo ; echo 'AC_DEFUN([_LT_AC_TAGCONFIG],[])' ) >> aclocal.m4
+
 autoheader
 autoconf
 # prep automake
