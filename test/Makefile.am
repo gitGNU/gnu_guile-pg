@@ -19,9 +19,9 @@
 ##   to the Free Software Foundation, Inc., 59 Temple Place, Suite
 ##   330, Boston, MA 02111-1307 USA
 
-TESTS_ENVIRONMENT =				\
-  top_builddir=$(top_builddir_absolute)		\
-  top_srcdir=$(top_srcdir)			\
+TESTS_ENVIRONMENT =                             \
+  top_builddir=$(top_builddir_absolute)         \
+  top_srcdir=$(top_srcdir)                      \
   srcdir=$(srcdir)
 
 TESTS = alive.sh                                \
@@ -38,7 +38,9 @@ CLEANFILES = basic-tests.log                    \
 
 EXTRA_DIST = $(TESTS)                           \
              testing.scm                        \
-	     guile-pg-abstraction-scm-tests.scm \
+             guile-pg-basic-tests.scm           \
+             guile-pg-lo-tests.scm              \
+             guile-pg-abstraction-scm-tests.scm \
              cov
 
 dist-hook:
