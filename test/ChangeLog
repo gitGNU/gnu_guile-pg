@@ -1,3 +1,9 @@
+2004-03-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* testing.scm (*all-tests*): New var.
+	(reset-all-tests!): New proc.
+	(add-test, test-one!, test!): Likewise.
+
 2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm:

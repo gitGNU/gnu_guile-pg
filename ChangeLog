@@ -1,23 +1,5 @@
 2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* test/guile-pg-basic-tests.scm:
-	(test:pg-error-message): New proc.
-	(main): Add test using new proc.
-
-2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
-
-	* test/guile-pg-basic-tests.scm:
-	(test:pg-conndefaults): New proc.
-	(main): New proc. Call it from top-level.
-
-2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
-
-	* test/coverage.sh: New file.
-	* test/Makefile.am: Update copyright.
-	(TESTS): Add coverage.sh.
-
-2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
-
 	* libpostgres.c (pg_sym_envvar): Delete symbol.
 	(pg_sym_compiled, pg_sym_val, pg_sym_label,
 	pg_sym_dispchar, pg_sym_dispsize): Likewise.
@@ -200,17 +182,6 @@
 
 2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* test/show-platform (go): Omit `uname -p' and `uname -v' output.
-	(gosexp): New func. Use it for mailing intead of `go'.
-
-2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
-
-	* test/show-platform (go): Invoke uname separately w/
-	opts -m, -s, -r, -p, -v; one per line.
-	Also, for libtool version, keep only the first line.
-
-2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
-
 	* scm/postgres-table.scm (def:col-name): Delete unused alias.
 	Also, no longer re-export proc.
 	(def:type-name): No longer re-export proc.
@@ -373,20 +344,6 @@
 	`objectifier-hints' property if available, over the full
 	list of objectifiers.
 
-	* test/guile-pg-abstraction-scm-tests.scm: For `m2',
-	also test `tuples-result->object-alist'.
-
-2004-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
-
-	* test/testing.scm: Update copyright.
-	(test-report): Return #f on count mismatch,
-	non-zero `xpass-count', or non-zero `fail-count'.
-
-	* test/guile-pg-lo-tests.scm: Update copyright.
-	Use `test-report' return value as exit value.
-	* test/guile-pg-basic-tests.scm: Likewise.
-	* test/guile-pg-abstraction-scm-tests.scm: Likewise.
-
 2004-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-meta.scm (put, get): New aliases.
@@ -421,15 +378,6 @@
 	(lob_lo_get_oid, lob_lo_tell, lob_lo_seek,
 	lol_lo_import, lol_lo_export): Likewise.
 
-2004-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
-
-	* test/show-platform (go): Also include guile-pg version.
-
-2004-01-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
-
-	* test/guile-pg-lo-tests.scm: Update copyright.
-	(eval-port): Use `eval-in-module' instead of naked `eval'.
-
 2004-01-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-meta.scm (describe-table!):
@@ -459,10 +407,6 @@
 
 	* doc/guile-pg.twerp (Database Connections): Add blurb about notices.
 	Also, add @twerpdoc for `pg-set-notice-out!'.
-
-2003-11-27  Thien-Thi Nguyen  <ttn@surf.glug.org>
-
-	* test/Makefile.am (TESTS_ENVIRONMENT): Also define var `GUILE'.
 
 2003-11-27  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -502,12 +446,6 @@
 
 	* Makefile.am (noinst_DATA): New directive.
 	(pre-inst.merged-module-catalog): New target.
-
-2003-11-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
-
-	* test/guile-pg-basic-tests.scm (result->output-string): New proc.
-	(test:count-records): Also do a manual line count to check backend
-	count as well as exercise `pg-print' via `result->output-string'.
 
 2003-11-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -600,7 +538,6 @@
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* README: Mention test/show-platform and how to use it.
-	* test/Makefile.am (EXTRA_DIST): Add show-platform.
 
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -611,22 +548,13 @@
 
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* test/guile-pg-abstraction-scm-tests.scm
-	(mtest:select-*-error_condition): Handle array output
-	representation for cases both prior to, as well as, starting from,
-	PostgreSQL 7.2.
-	(mtest:select-*-read, mtest:select-count): Likewise.
-
-2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
-
 	* THANKS: Add Russ McManus (moved from AUTHORS).
 	* AUTHORS: Rewrite.
 
 	* gpl-text.scm, gpl-text.c: Update copyright. Remove author blurb.
 
 	* libpostgres.c, libpostgres.h, libpostgres_lo.c,
-	scm/Makefile.am, scm/postgres.scm.in,
-	test/guile-pg-basic-tests.scm, test/guile-pg-lo-tests.scm:
+	scm/Makefile.am, scm/postgres.scm.in:
 	Separate author and copyright comments; nfc.
 
 2003-01-30  Thien-Thi Nguyen  <ttn@giblet.glug.org>
@@ -684,10 +612,6 @@
 	* scm/Makefile.am (guile_postgres_sources): Add
 	postgres-col-defs.scm and postgres-resx.scm.
 
-	* test/abstraction-scm-tests.sh: Also
-	load $top_srcdir/scm/postgres-col-defs.scm
-	and $top_srcdir/scm/postgres-resx.scm.
-
 	* Makefile.am (DOTDOCFILES): Add scm/postgres-col-defs.doc
 	and scm/postgres-resx.doc.
 
@@ -703,33 +627,10 @@
 	* Makefile.am (libpostgres_la_LDFLAGS): Update vers to "4:0:2".
 	* scm/postgres.scm.in (pg-connection?): Export.
 
-	* test/guile-pg-basic-tests.scm (test:make-connection):
-	Also test using `pg-connection?'.
-
 	* doc/guile-pg.twerp (Database Connections): Add intro blurb.
 	Also, add directive for `pg-connection?'.
 
 2002-12-29  Thien-Thi Nguyen  <ttn@giblet.glug.org>
-
-	* test/config.scm.in: New file.
-
-	* test/basic-tests.sh: Also load config.scm.
-	* test/lo-tests.sh: Likewise.
-	* test/abstraction-scm-tests: Likewise.
-
-	* test/guile-pg-abstraction-scm-tests.scm:
-	Look for testing.scm in `*srcdir*'.
-
-	* test/guile-pg-basic-tests.scm: New file converted from .in file.
-	* test/guile-pg-lo-tests.scm: Likewise.
-
-	* test/guile-pg-basic-tests.scm.in: Delete.
-	* test/guile-pg-lo-tests.scm.in: Likewise.
-
-	* test/Makefile.am (EXTRA_DIST): Add guile-pg-basic-tests.scm
-	and guile-pg-lo-tests.scm.
-
-	* test/cov: Update grep target.
 
 	* configure.in (AC_CONFIG_FILES): Delete test/guile-pg-basic-tests.scm
 	and test/guile-pg-lo-tests.scm.  Add test/config.scm.
@@ -737,14 +638,6 @@
 2002-12-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* configure.in (VERSION): Bump to 0.14 for release.
-
-2002-12-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
-
-	* test/Makefile.am (TESTS_ENVIRONMENT): Add `top_srcdir' and `srcdir'.
-
-	* test/abstraction-scm-tests.sh:
-	Look for guile-pg-abstraction-scm-tests.scm under $srcdir.
-	Look for postgres-types.scm and postgres-table.scm under $top_srcdir.
 
 2002-12-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
@@ -785,8 +678,6 @@
 
 	* scm/postgres.scm.in (pg-result?): Export.
 
-	* test/guile-pg-basic-tests.scm.in (run-cmd): Also use `pg-result?'.
-
 	* doc/guile-pg.twerp (Retrieving Data):
 	Add intro blurb and twerpdoc for `pg-result?'.
 
@@ -797,7 +688,6 @@
 2002-12-23  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* doc/cov: Use "PG_DEFINE" instead of "SCM_PROC".
-	* test/cov: Likewise.
 
 2002-12-23  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
@@ -879,18 +769,6 @@
 
 2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
-	* test/abstraction-scm-tests.sh: New file.
-	* test/guile-pg-abstraction-scm-tests.scm: New file.
-
-	* test/Makefile.am (TESTS): Add abstraction-scm-tests.sh.
-	(CLEANFILES): Add abstraction-scm-tests.log.
-	(EXTRA_DIST): Remove alive.sh, basic-tests.sh, lo-tests.sh,
-	guile-pg-basic-tests.scm.in, guile-pg-lo-tests.scm.in.
-	Add $(TESTS) and guile-pg-abstraction-scm-tests.scm.
-	(DISTCLEANFILES): Delete directive.
-
-2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
-
 	* scm/postgres-table.scm: New file.
 	* scm/Makefile.am (guile_postgres_sources): Add postgres-table.scm.
 
@@ -903,27 +781,13 @@
 
 	* HACKING: Mention test/cov.
 
-2002-12-18  Thien-Thi Nguyen  <ttn@giblet.glug.org>
-
-	* test/alive.sh: Use guile exit val for script exit val.
-	* test/basic-tests.sh: Likewise.
-	* test/lo-tests.sh: Likewise.
-
-2002-12-18  Thien-Thi Nguyen  <ttn@giblet.glug.org>
-
-	* test/guile-pg-lo-tests.scm.in: Look for testing.scm in @srcdir@.
-	* test/guile-pg-basic-tests.scm.in: Likewise.
-
 2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* doc/Makefile.am (EXTRA_DIST): New var.
 
-	* test/Makefile.am (EXTRA_DIST): Add cov.
-
 2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* doc/Makefile.am (dist-hook): New directive.
-	* test/Makefile.am: Likewise.
 
 2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
@@ -968,9 +832,6 @@
 	(lob_lo_seek): No longer construct args for, or
 	call, `lo_lseek'; use `lob_seek' instead.
 
-	* test/guile-pg-lo-tests.scm.in (test:lo-tell): Also check
-	equivalency of "seek 0 SEEK_CUR".
-
 2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* autogen.sh: Invoke "libtoolize --force" if no ltmain.sh in cwd.
@@ -986,17 +847,7 @@
 
 2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
-	* doc/cov, test/cov: New maintenance scripts.
-
-2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
-
-	* test/guile-pg-lo-tests.scm.in: Delete files "lo-tests-data-1"
-	and "lo-tests-data-2" when done.
-
-2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
-
-	* test/guile-pg-lo-tests.scm.in, test/guile-pg-basic-tests.scm.in:
-	Rework "if" constructs using "and".  Refill.
+	* doc/cov: New maintenance script.
 
 2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
@@ -1082,21 +933,6 @@
 
 	(install-data-hook): New target.
 
-	* test/basic-tests.sh, test/lo-tests.sh: Use dropdb if available,
-	otherwise destroydb.
-	No longer user guile-pg interpreter; instead use guile directly.
-
-	* test/guile-pg-basic-tests.scm.in, test/guile-pg-lo-tests.scm.in:
-	Update copyright.
-	Use module (database postgres).
-	Convert PGRES_foo references to symbols.
-
-	* test/Makefile.am: Update copyright.
-	(TESTS, EXTRA_DIST): Add alive.sh.
-	(TESTS_ENVIRONMENT): New directive.
-
-	* test/alive.sh: New file.
-
 	* doc/guile-pg.texi: Update pg-result-status docs and examples.
 
 2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
@@ -1107,9 +943,6 @@
 	Instead, use GUILE_PROGS and GUILE_FLAGS.
 
 2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
-
-	* .cvsignore, doc/.cvsignore, scm/.cvsignore, test/.cvsignore:
-	New files.
 
 	* HACKING: Remove RCS tag.
 	Refill.
@@ -1144,7 +977,7 @@
 	* acconfig.h, aclocal.m4, configure, Makefile.in, INSTALL, ANNOUNCE,
 	config.guess, config.h.in, config.sub, install-sh, ltmain.sh,
 	missing, mkinstalldirs, stamp-h.in, doc/Makefile.in, doc/texinfo.tex,
-	scm/Makefile.in, test/Makefile.in: Delete.
+	scm/Makefile.in: Delete.
 
 	* autogen.sh: Take "--libtoolize" option;
 	conditionalize libtoolize invocation.
@@ -1161,8 +994,8 @@
 
 	* libpostgres.c: Fixed use of deprecated scm_smobfuns struct.
 
-	* libpostgres.c configure.in doc/guile-pg.texi
-	  test/guile-pg-basic-tests.scm.in: Added pg-oid-value function.
+	* libpostgres.c, configure.in, doc/guile-pg.texi:
+	  Added pg-oid-value function.
 
 2000-06-02  Ian Grant  <Ian.Grant@cl.cam.ac.uk>
 
@@ -1265,12 +1098,6 @@
 
 	* README: Added info on building guile-pg and intalling
 	  PostgreSQL from the Red Hat RPMS.
-
-	* test/guile-pg-basic-tests.scm: New file. Uses testing.scm in the
-	  same directory.
-
-	* test/guile-pg-lo-tests.scm: New file. Uses testing.scm in the
-	  same directory.
 
 	* Makefile.am, configure.in: Added test subdirectory.
 
