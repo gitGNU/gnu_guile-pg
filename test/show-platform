@@ -1,0 +1,32 @@
+#!/bin/sh
+# usage: show-platform      # display "uname -a" and "tool: version" info
+#        show-platform -m   # also mail info to good-news-guile-pg@glug.org
+
+recip='good-news-guile-pg@glug.org'
+
+go ()
+{
+    echo uname: `uname -a`
+    echo autoconf: `autoconf --version | head -1 | sed -e 's/[^0-9.]*//g'`
+    echo automake: `automake --version | head -1 | sed -e 's/[^0-9.]*//g'`
+    echo libtool: `libtool --version | sed 's/([^)]*)//g;s/^[^0-9]*//'`
+    echo gcc: `gcc --version`
+    echo cc: `cc --version`
+    echo psql: `psql --version | head -1 | sed -e 's/[^0-9.]*//g'`
+    echo guile: `guile-config info guileversion`
+    echo libguile: `guile-config info libguileinterface`
+}
+
+if [ x"$1" = x-m ] ; then
+    tmp="show-platform.$$"
+    go > $tmp
+    mail -s "show-platform.sh output" $recip < $tmp
+    rv=$?
+    cat $tmp
+    rm $tmp
+    [ $rv = 0 ] && echo "(mail successfully sent to $recip)"
+else
+    go
+fi
+
+# show-platform ends here
