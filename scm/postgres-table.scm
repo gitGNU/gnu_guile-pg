@@ -36,6 +36,7 @@
   #:use-module (database postgres-types)
   #:use-module ((database postgres-col-defs)
                 #:renamer (symbol-prefix-proc 'def:))
+  #:use-module ((database postgres-qcons) #:select (sql-quote))
   #:use-module (database postgres-resx)
   #:export (sql-pre
             tuples-result->table
@@ -64,29 +65,6 @@
 
 (define (string* ls)
   (string-append/separator #\space ls))
-
-(define (sql-quote s)                   ; also surrounds w/ single quote
-  (let* ((olen (string-length s))
-         (len (+ 2 olen))
-         (cuts (let loop ((stop olen) (acc (list olen)))
-                 (cond ((string-rindex s #\' 0 stop)
-                        => (lambda (hit)
-                             (loop hit (cons hit (cons hit acc)))))
-                       (else (cons 0 acc)))))
-         (rv (make-string len)))
-    (string-set! rv 0 #\')
-    (string-set! rv (1- len) #\')
-    (let loop ((put 1) (ls cuts))
-      (if (null? ls)
-          rv
-          (let* ((one (car ls))
-                 (two (cadr ls))
-                 (end (+ put (- two one)))
-                 (tail (cddr ls)))
-            (substring-move! s one two rv put)
-            (or (null? tail)
-                (string-set! rv end #\\))
-            (loop (1+ end) tail))))))
 
 (define (char-sep char)
   (lambda (proc ls . more-ls)
