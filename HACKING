@@ -36,4 +36,17 @@ environment variable.  On Linux, SunOS etc you can say:
 
        LD_LIBRARY_PATH=/opt/guile/lib make distcheck
 
-Of course the Postgres server must be running when you do this.
+Of course the PostgreSQL server must be running when you do this.
+
+Some notes on portability: There are (at least) two dimensions to portability
+in the case of Guile-PG, the "Guile dimension" and the "platform dimension".
+
+For the former, see AC_GUILE_PG_BCOMPAT and AC_GUILE_PG_FCOMPAT macros in
+acinclude.m4, and the corresponding bcruft.h and fcruft.h headers.  Guile-PG
+is presently targeted at the latest 1.4.1.x (and eventually 1.4.x) Guile
+versions, so "backwards" refers to prior versions in that series as well as
+Guile 1.3.4, and "forwards" refers to series outside 1.3.x and 1.4.x.
+
+For the latter dimension, we have been fortunate (to date) in that the tools
+mentioned in autogen.sh have done a thorough job of hiding this concern from
+us.  Let's hope this situation will stand the test of time!
