@@ -1,0 +1,17 @@
+#!/bin/sh
+
+create="@CREATEDB@"
+
+if [ -z "$create" -o "$create" = no ] ; then
+    echo ERROR: no idea how to create a database
+    exit 1
+fi
+if [ -z "$PGDATABASE" ] ; then echo PGDATABASE not set. ; exit 1 ; fi
+
+$create $PGDATABASE >/dev/null 2>&1 || {
+   echo ERROR: $create failed. Giving up. 1>&2
+   exit 1
+}
+exit 0
+
+# create.sh ends here
