@@ -32,7 +32,7 @@
 
 2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
-	* acconfig.h, aclocal.m4, configure, Makefile.in, INSTALL,
+	* acconfig.h, aclocal.m4, configure, Makefile.in, INSTALL, ANNOUNCE,
 	config.guess, config.h.in, config.sub, install-sh, ltmain.sh,
 	missing, mkinstalldirs, stamp-h.in, doc/Makefile.in, doc/texinfo.tex,
 	scm/Makefile.in, test/Makefile.in: Delete.
