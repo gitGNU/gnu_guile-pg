@@ -1194,9 +1194,9 @@ value (if any).  There is no @dfn{undeclare} support.
 @twerpdoc (make-GROUP-BY-tree)
 @twerpdoc (make-HAVING-tree)
 @twerpdoc (make-ORDER-BY-tree)
-@twerpdoc (make-SELECT/OUT-tree)
+@twerpdoc (make-SELECT/COLS-tree)
 @twerpdoc (make-FROM-tree)
-@twerpdoc (make-SELECT/FROM/OUT-tree)
+@twerpdoc (make-SELECT/FROM/COLS-tree)
 @twerpdoc (parse+make-SELECT/tail-tree)
 
 @section Output
