@@ -131,7 +131,10 @@
 ;; Test pg-connectdb
 ;; expect #t
 (define (test:make-connection)
-  (->bool (false-if-exception (set! conn (pg-connectdb "")))))
+  (let ((new (false-if-exception (pg-connectdb ""))))
+    (and (pg-connection? new)
+         (begin (set! conn new)
+                #t))))
 
 ;; Test pg-reset
 ;; expect #t
