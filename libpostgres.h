@@ -36,10 +36,10 @@ typedef struct _scm_extended_result {
     PGresult    *result;        /* Postgres result structure */
 } scm_extended_result;
 
-extern int sec_p(SCM obj);
-extern scm_extended_dbconn *sec_unbox(SCM obj);
+extern int                  guile_pg_sec_p (SCM obj);
+extern scm_extended_dbconn *guile_pg_sec_unbox (SCM obj);
 
-extern void init_libpostgres_lo(void);
+extern void init_libpostgres_lo (void);
 
 /* SCM_DEFINE alone doesn't declare static, so we prefix that decl.  */
 #define PG_DEFINE(FNAME, PRIMNAME, REQ, OPT, VAR, ARGLIST, DOCSTRING) \

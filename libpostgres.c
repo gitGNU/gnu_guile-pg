@@ -90,16 +90,20 @@ static int pgrs_count = sizeof (pgrs) / sizeof (pgrs_t);
  * boxing, unboxing, gc functions
  */
 int
-sec_p (SCM obj)
+guile_pg_sec_p (SCM obj)
 {
   return (SCM_NIMP (obj) && SCM_CAR (obj) == pg_conn_tag.type_tag);
 }
 
+#define sec_p guile_pg_sec_p
+
 scm_extended_dbconn *
-sec_unbox (SCM obj)
+guile_pg_sec_unbox (SCM obj)
 {
   return ((scm_extended_dbconn *) SCM_CDR (obj));
 }
+
+#define sec_unbox guile_pg_sec_unbox
 
 static SCM
 sec_box (scm_extended_dbconn *sec)
