@@ -1,3 +1,13 @@
+2004-12-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.h (ASSERT_CONNECTION): New macro.
+
+	* libpostgres_lo.c: Use `ASSERT_CONNECTION'.
+
+	* libpostgres.c: Use `ASSERT_CONNECTION'.
+	(ASSERT_RESULT): New macro. Use throughout.
+	(ASSERT_CONNECTION_OR_RESULT): Likewise.
+
 2004-11-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/Makefile.am (install-data-hook): Ignore ls(1) errors.
