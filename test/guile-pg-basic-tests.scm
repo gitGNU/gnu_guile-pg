@@ -38,7 +38,12 @@
   (lambda (result)
     (and result (eq? expected-status (pg-result-status result)))))
 
-(define tuples-ok? (ok? 'PGRES_TUPLES_OK))
+(define tuples-ok? (let ((check (ok? 'PGRES_TUPLES_OK)))
+                     (lambda (result)
+                       (and (check result)
+                            ;; this test never uses a binary cursor
+                            (not (pg-binary-tuples? result))))))
+
 (define command-ok? (ok? 'PGRES_COMMAND_OK))
 
 (define (field-info access)
@@ -57,17 +62,6 @@
          (pg-getvalue result 0 0))))
 
 (define ftype-names (field-info ftype-name))
-
-(define (getvalues result tuple)
-  (map (lambda (fn)
-         (pg-getvalue result tuple fn))
-       (iota (pg-nfields result))))
-
-(define (gettuple result tuple)
-  (map (lambda (n v)
-         (cons (string->symbol n) v))
-       (field-names result)
-       (getvalues result tuple)))
 
 (define (run-cmd n sql-proc)
   (define (iter n)
@@ -112,6 +106,13 @@
                             fields))))
 
 ;; Here we define procedures to carry out the tests.
+
+(define test:pg-guile-pg-loaded
+  (add-test #t
+    (lambda ()
+      (and (defined? 'pg-guile-pg-loaded)
+           (list? (pg-guile-pg-loaded))
+           (and-map symbol? (pg-guile-pg-loaded))))))
 
 (define test:pg-conndefaults
   (add-test #t
@@ -398,8 +399,8 @@
   (set! verbose #t)
   (test-init "basic-tests" 35)
   (test *VERSION* pg-guile-pg-version)
-  (test #t pg-guile-pg-loaded)
-  (test! test:pg-conndefaults
+  (test! test:pg-guile-pg-loaded
+         test:pg-conndefaults
          test:make-connection
          test:various-connection-info
          test:set-client-data
