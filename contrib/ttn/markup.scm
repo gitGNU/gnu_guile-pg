@@ -6,8 +6,7 @@
   #:use-module ((srfi srfi-13) #:select (string-join))
   #:use-module ((database postgres) #:select (pg-print
                                               pg-ntuples))
-  #:use-module ((database postgres-table) #:select (pgtable-manager
-                                                    where-clausifier))
+  #:use-module ((database postgres-table) #:select (pgtable-manager))
   #:use-module ((ice-9 pretty-print) #:select (pretty-print))
   #:use-module ((ice-9 common-list) #:select (pick-mappings)))
 
@@ -36,11 +35,11 @@
   (let* ((key-names (map (lambda (n)
                            (string->symbol (format #f "k~A" n)))
                          (iota (length key-types))))
-         (key-match (string-join
-                     (map (lambda (name)
-                            (format #f "~A = '~A'" name "~A"))
-                          key-names)
-                     " AND "))
+         (key-match-proc (lambda (keys)
+                           `(and ,@(map (lambda (name key)
+                                          `(= ,name ,key))
+                                        key-names
+                                        keys))))
          (m (pgtable-manager
              db name
              ;;
@@ -67,7 +66,7 @@
               (loop (cdr ls) (1+ count))))))
 
     (define (del keys)
-      ((m #:delete-rows) (apply format #f key-match keys)))
+      ((m #:delete-rows) (key-match-proc keys)))
 
     (define (upd ls keys . canonicalize)
       (del keys)                        ; ugh
@@ -75,8 +74,8 @@
 
     (define (->tree keys render)
       (let ((res ((m #:select) #t
-                  (where-clausifier (apply format #f key-match keys))
-                  "ORDER BY seq")))
+                  #:where (key-match-proc keys)
+                  #:order-by '((< seq)))))
         (and (not (= 0 (pg-ntuples res)))
              (let ((alist ((m #:tuples-result->object-alist) res)))
                (map (lambda (raw mtype mdata)
@@ -156,8 +155,7 @@
 
   (define (find-proj name)
     (let ((alist (car ((c #:tuples-result->alists)
-                       ((c #:select) #t (where-clausifier
-                                         (format #f "name = '~A'" name)))))))
+                       ((c #:select) #t #:where `(= name ,name))))))
       (lambda (key) (assq-ref alist key))))
 
   (define (htmlize-markup raw mtype mdata)
@@ -186,7 +184,7 @@
     (for-each (lambda (field)
                 ((m #:del) (list (symbol->string field) name)))
               *markup-fields*)
-    ((c #:delete-rows) (format #f "name = '~A'" name)))
+    ((c #:delete-rows) `(= name ,name)))
 
   (define (externalize-markup raw mtype mdata)
     (case mtype
