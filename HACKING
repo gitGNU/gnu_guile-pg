@@ -1,3 +1,8 @@
+HACKING Guile-PG		-*- outline -*-
+
+
+* Coding standards
+
 Please read the GNU Coding Standards.  We try to conform to these.
 If there are any violations of them then please let us know.
 
@@ -5,7 +10,7 @@ One exception is the provision of non-ANSI function prototypes, which
 Guile doesn't do.  Since you can't build a working Guile without an ANSI
 C compiler it's no great problem that you can't build Guile-PG either.
 
-Quick start:
+* Quick start
 
  $ CVSROOT=':pserver:anonymous@cvs.glug.org:/home/ttn/cvsroot'
  $ export CVSROOT
@@ -25,6 +30,8 @@ To be able to extract (and build) documentation automatically from the source
 you need a Guile that installs "guile-tools twerp2texi", such as those in the
 1.4.x series (http://www.glug.org/people/ttn/software/guile/).
 
+* Testing
+
 Please add test cases to the tests in the test/ directory, and run 'make check'
 to test them.  Use script "cov" to see what new tests need to be written.
 
@@ -38,6 +45,8 @@ environment variable.  On Linux, SunOS etc you can say:
 
 Of course the PostgreSQL server must be running when you do this.
 
+* Portability
+
 Some notes on portability: There are (at least) two dimensions to portability
 in the case of Guile-PG, the "Guile dimension" and the "platform dimension".
 
@@ -50,3 +59,15 @@ Guile 1.3.4, and "forwards" refers to series outside 1.3.x and 1.4.x.
 For the latter dimension, we have been fortunate (to date) in that the tools
 mentioned in autogen.sh have done a thorough job of hiding this concern from
 us.  Let's hope this situation will stand the test of time!
+
+* Expiration
+
+Sometimes module interface design is not done w/ enough forethought and an
+interface element (procedure or variable) needs to be deleted.
+
+For releases prior to 1.0, we "expire" the element like so: pick a date a few
+months to a year in the future and mark the element for expiration.  After
+that date (and still before 1.0), delete the element.  Add a blurb in the docs
+and in NEWS.
+
+Presently, there is no defined methodology for post-1.0 releases.
