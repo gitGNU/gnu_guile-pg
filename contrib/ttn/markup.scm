@@ -4,11 +4,13 @@
 
 (define-module (markup)
   #:use-module ((srfi srfi-13) #:select (string-join))
-  #:use-module (database postgres)
-  #:use-module (database postgres-table)
-  #:use-module (ice-9 rdelim)
-  #:autoload (ice-9 pretty-print) (pretty-print)
-  #:autoload (ice-9 common-list) (pick-mappings))
+  #:use-module ((database postgres) #:select (pg-print
+                                              pg-ntuples))
+  #:use-module ((database postgres-table) #:select (pgtable-manager
+                                                    where-clausifier))
+  #:use-module ((ice-9 rdelim) #:select (write-line))
+  #:use-module ((ice-9 pretty-print) #:select (pretty-print))
+  #:use-module ((ice-9 common-list) #:select (pick-mappings)))
 
 ;;; version: 5
 
