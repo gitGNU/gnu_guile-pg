@@ -1471,17 +1471,20 @@ you can concentrate on varying the rest.
 For example:
 
 @example
-,fix froms icbmcoords
+,fix #:from icbmcoords
 Use the table `icbmcoords' (with columns `one', `two' and `importance').
 
 ,fsel one two #:where (< 9 importance)
 Select some tuples.
 
-,fix outs ("latitude" . one) ("longitude" . two)
-Easy to read format.
+,fix #:cols ("latitude" . one) ("longitude" . two)
+More descriptive titles.
 
-,fix where (< 9 importance) (> 3 importance)
+,fix #:where (< 9 importance) (> 3 importance)
 We are scatterbrained, which helps ameliorate the evilness.
+
+,fix #:where/combiner or
+Uh oh, wits recovered, we once again are a menace.
 @end example
 
 For comparison, here is the last example again, recast into SQL:
@@ -1489,7 +1492,7 @@ For comparison, here is the last example again, recast into SQL:
 @example
 SELECT one AS "latitude", two AS "longitude"
   FROM icbmcoords
- WHERE ((9 < importance) AND (3 > importance));
+ WHERE ((9 < importance) OR (3 > importance));
 @end example
 
 @c ---------------------------------------------------------------------------
