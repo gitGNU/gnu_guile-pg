@@ -50,6 +50,7 @@
 (export pg-guile-pg-loaded)             ; ugh
 
 (export pg-connectdb)
+(export pg-connection?)
 (export pg-setdb)
 (export pg-reset)
 (export pg-get-client-data)
