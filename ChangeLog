@@ -1,3 +1,8 @@
+2003-11-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* Makefile.am (libpostgres_la_SOURCES):
+	Remove libpostgres.x and libpostgres_lo.x.
+
 2003-10-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* doc/Makefile.am (.twerp.texi):
