@@ -1,6 +1,8 @@
 2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* libpostgres_lo.c (lob_seek): Only adjust return value on SEEK_CUR.
+	(lob_lo_seek): No longer construct args for, or
+	call, `lo_lseek'; use `lob_seek' instead.
 
 2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
