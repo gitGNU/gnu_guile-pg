@@ -18,7 +18,7 @@ Thanks go to these people for their help in improving Guile-PG.
   - wrote `sybase_glue' which was used as a framework for Guile-PG
 
 - Greg Troxel
-  - portability bug reports
+  - portability bug reports, testing
   - abstraction (interface) design hints
 
 - Shan Shan Huang
