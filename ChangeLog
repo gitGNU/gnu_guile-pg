@@ -1,5 +1,10 @@
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm (preformatted): New object property.
+	(sql-pre, ->db-insert-string): Use `preformatted'.
+
+2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-table.scm: From module (database postgres-qcons),
 	also select `make-comma-separated-tree' and `sql<-trees'.
 	(string-append/separator): Delete proc.
