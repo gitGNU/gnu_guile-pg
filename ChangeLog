@@ -1,5 +1,10 @@
 2004-07-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* Makefile.am (install-data-hook): In $(ddir),
+	symlink each foo.la in $(d_LTLIBRARIES) to libfoo.la.
+
+2004-07-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* HACKING: Spell "PostgreSQL" in full. Add portability notes.
 
 2004-07-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
