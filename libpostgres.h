@@ -33,6 +33,7 @@ typedef struct
 
 extern int   xc_p (SCM obj);
 extern xc_t *xc_unbox (SCM obj);
+extern int   xc_display (SCM exp, SCM port, scm_print_state *pstate);
 
 extern void init_libpostgres_lo (void);
 
