@@ -1,5 +1,12 @@
 2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/guile-pg.twerp (Top): Move "Query Construction"
+	to head of second block of chapters.
+	(Query Construction): Expand "Prefix-Style Expressions".
+	Add intro blurbs for other sections.
+
+2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-gxrepl.scm (fsel): For this comma-command,
 	handle arbitrary number of related expressions, not just one.
 	(gxrepl): Init connection property `#:cols'.
