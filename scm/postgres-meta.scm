@@ -105,7 +105,8 @@
 ;;
 (define (describe-table! db-name table-name)
   (let ((M:pg-class (make-M:pg-class db-name)))
-    (for-each write-line (infer-defs (M:pg-class 'pgdb) table-name))
+    (for-each (lambda (x) (format #t "~A\n" x))
+              (infer-defs (M:pg-class 'pgdb) table-name))
     (for-each (lambda (x) (display-table
                            (cond ((pg-result? x)
                                   (tuples-result->table x))
