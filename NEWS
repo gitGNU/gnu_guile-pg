@@ -25,10 +25,10 @@ NEWS for Guile-PG
   - Return-value changes for (database postgres) procs
 
 	The return value for `pg-putline' used to be unspecified.  Now
-	it is #t if the operation was successful.
+	it is non-#f if the operation was successful.
 
 	The return value for `pg-endcopy' used to be an integer (zero if
-	successful).  Now it is #t if successful.
+	successful).  Now it is non-#f if successful.
 
 
 - 0.21 | 2004-07-03
