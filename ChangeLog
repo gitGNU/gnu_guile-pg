@@ -1,5 +1,9 @@
 2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-types.scm (real): New built-in type converter.
+
+2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-meta.scm (put, get): Delete aliases.
 	(describe-table!): Use `pg-print' instead of `describe-table'.
 	(display-table): Delete proc.
