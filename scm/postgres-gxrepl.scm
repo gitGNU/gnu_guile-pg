@@ -74,14 +74,16 @@
    (cond ((null? command)
           (apply string-append
                  (map (lambda (ent)
-                        (fs "~A\t-- ~A\n"
+                        (fs "~A~A-- ~A~A"
                             (car ent)
+                            #\ht
                             (get-doc (cdr ent)
                                      (lambda (doc)
                                        (cond ((string-index doc #\nl)
                                               => (lambda (cut)
                                                    (substring doc 0 cut)))
-                                             (else doc))))))
+                                             (else doc))))
+                            #\newline))
                       (reverse *comma-commands*))))
          ((assq-ref *comma-commands* (car command))
           => (lambda (proc)
