@@ -96,6 +96,7 @@ abstractions and convenience procedures.
 * Large Objects::               Large-Object support.
 * Miscellaneous::               Everything else starting with "pg-".
 
+* Displaying Results::          Module: (database postgres-resdisp).
 * Types Conversion::            Module: (database postgres-types).
 * Column Definitions::          Module: (database postgres-col-defs).
 * Query Construction::          Module: (database postgres-qcons).
@@ -790,6 +791,22 @@ opens the required file and starts/stops the trace.
            (close-port port)
            (pg-untrace conn)))))
 @end lisp
+
+@c ---------------------------------------------------------------------------
+@node    Displaying Results
+@chapter Displaying Results
+
+If procedure @code{pg-print} does not do what you want (@pxref{Writing/Reading
+Data}), you can try a slightly more customizable method for displaying
+results.
+
+To get started, load the @code{postgres-resdisp} module:
+
+@lisp
+(use-modules (database postgres-resdisp))
+@end lisp
+
+@twerpdoc (display-result)
 
 @c ---------------------------------------------------------------------------
 @node    Types Conversion
