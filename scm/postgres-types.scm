@@ -274,10 +274,19 @@
   number->string
   string->number)
 
+(define-db-col-type 'name "???"
+  (lambda (val) (substring val 0 31))   ; PostgreSQL's User's Guide 3.3
+  identity)
+
+(define-db-col-type 'aclitem "?"
+  identity
+  identity)
+
 ;; array variants
 
 (define-db-col-type-array-variant 'text[]   'text double-quote identity)
 (define-db-col-type-array-variant 'text[][] 'text double-quote identity)
 (define-db-col-type-array-variant 'int4[]   'int4)
+(define-db-col-type-array-variant 'aclitem[] 'aclitem double-quote identity)
 
 ;;; postgres-types.scm ends here
