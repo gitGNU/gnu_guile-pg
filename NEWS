@@ -35,7 +35,7 @@ NEWS for Guile-PG
 
 	(pg-conndefaults) => alist of alists
 
-  - conditional definitions now unconditional
+  - Conditional definitions now unconditional
 
 	The following procedures used to be conditionally defined
 	(compiled).  Now they are present unconditionally, although

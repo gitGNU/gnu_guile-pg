@@ -1,5 +1,14 @@
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* guile-pg-basic-tests.scm
+	(tuples-ok?): Also check `pg-binary-tuples?'.
+	(getvalues, gettuple): Delete unused procs.
+	(test:pg-guile-pg-loaded): New test proc.
+	(main): Use new test proc to replace
+	raw `pg-guile-pg-loaded' test.
+
+2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* guile-pg-basic-tests.scm (count-records): Fix typo.
 	(test:ftypes): Rename to `test:fmod+ftypes'.
 	Add `pg-fmod' checks for each field.
