@@ -172,7 +172,6 @@ AC_CONFIG_FILES([
   Makefile
   scm/Makefile
   doc/Makefile
-  scm/postgres.scm
   test/Makefile
   test/config.scm
   test/drop.sh
