@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl  Copyright (C) 1998, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright (C) 1998, 2002, 2003, 2004 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of GUILE-PG
 dnl
@@ -43,11 +43,16 @@ GUILE_FLAGS
 
 AC_CHECK_HEADERS([guile/modsup.h])
 
+AC_GUILE_PG_FCOMPAT
+
 AH_BOTTOM([
 #ifdef HAVE_GUILE_MODSUP_H
 #include <guile/modsup.h>
 #else
 #include "modsup.h"
+#endif
+#ifdef HAVE_SCM_GC_PROTECT_OBJECT
+#define scm_protect_object(x)  (scm_gc_protect_object (x))
 #endif
 ])
 
