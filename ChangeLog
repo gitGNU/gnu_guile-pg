@@ -1,5 +1,9 @@
 2004-08-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* Makefile.am (postgres_la_SOURCES): Add bcruft.h and fcruft.h.
+
+2004-08-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Writing/Reading Data): Fix typo.
 
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
