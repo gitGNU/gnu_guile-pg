@@ -1,5 +1,10 @@
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/.make-automake-frags (TAB): Delete var.
+	(spew_twerp_stuff): Rewrite.
+
+2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Writing/Reading Data): In example, use
 	module (ice-9 rdelim), and replace "if + begin" with cond.
 
