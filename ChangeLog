@@ -1,5 +1,10 @@
 2002-12-16  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* THANKS: New file.
+	* Makefile.am (EXTRA_DIST): Add THANKS.
+
+2002-12-16  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* configure.in: Add multiple checks for `InvalidOid' decl.
 	Signal error if not found.
 
