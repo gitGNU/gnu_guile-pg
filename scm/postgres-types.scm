@@ -22,6 +22,7 @@
 ;;; Commentary:
 
 ;; This module provides the procs:
+;;  (dbcoltypes) => list of names
 ;;  (dbcoltype-lookup NAME) => tobj
 ;;  (dbcoltype:name TOBJ) => symbol
 ;;  (dbcoltype:stringifier TOBJ) => proc
@@ -48,7 +49,8 @@
 ;;; Code:
 
 (define-module (database postgres-types)
-  :export (dbcoltype-lookup
+  :export (dbcoltypes
+           dbcoltype-lookup
            dbcoltype:name
            dbcoltype:stringifier
            dbcoltype:default
@@ -59,6 +61,11 @@
 ;; column types / definition
 
 (define *db-col-types* '())     ; (NAME STRINGIFIER DEFAULT OBJECTIFIER)
+
+;; Return all type names.
+;;
+(define (dbcoltypes)
+  (map car *db-col-types*))
 
 ;; Return lookup value of TYPE-NAME, a symbol, from `*db-col-types*'.
 ;; Use procs `dbcoltype:name', `dbcoltype:default', `dbcoltype:stringifier'
