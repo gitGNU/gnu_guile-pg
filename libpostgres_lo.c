@@ -95,7 +95,7 @@ PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
   Oid oid;
   int pg_modes = 0;
 
-  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  ASSERT_CONNECTION (1, conn);
   SCM_ASSERT (SCM_NIMP (modes) && SCM_ROSTRINGP (modes),
               modes, SCM_ARG2, FUNC_NAME);
   ROZT_X (modes);
@@ -154,7 +154,7 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
   Oid pg_oid;
   int pg_modes = 0;
 
-  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  ASSERT_CONNECTION (1, conn);
   SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (modes) && SCM_ROSTRINGP (modes),
               modes, SCM_ARG3, FUNC_NAME);
@@ -265,7 +265,7 @@ PG_DEFINE (lob_lo_unlink, "pg-lo-unlink", 2, 0, 0,
   int ret;
   PGconn *dbconn;
 
-  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  ASSERT_CONNECTION (1, conn);
   SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
 
   dbconn = XCONN (conn);
@@ -668,7 +668,7 @@ PG_DEFINE (lob_lo_import, "pg-lo-import", 2, 0, 0,
   PGconn *dbconn;
   int ret;
 
-  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  ASSERT_CONNECTION (1, conn);
   SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename),
               filename, SCM_ARG2, FUNC_NAME);
   ROZT_X (filename);
@@ -700,7 +700,7 @@ PG_DEFINE (lob_lo_export, "pg-lo-export", 3, 0, 0,
   Oid pg_oid;
   int ret;
 
-  SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  ASSERT_CONNECTION (1, conn);
   SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename), filename,
               SCM_ARG3, FUNC_NAME);
