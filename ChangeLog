@@ -1,5 +1,12 @@
 2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-resx.scm (result->object-rows): New proc, exported.
+
+	* doc/guile-pg.twerp (Result Transforms):
+	Add @twerpdoc for `result->object-rows'.  Update intro.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Result Transforms): Mention `identity'.
 
 2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
