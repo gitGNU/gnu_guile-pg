@@ -1,3 +1,9 @@
+2005-03-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (AC_INIT): Use "modern" two-arg form.
+	(AC_CONFIG_SRCDIR): New macro call.
+	(AM_INIT_AUTOMAKE): Use "modern" no-arg form.
+
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in (VERSION): Bump to "0.27" for release.
