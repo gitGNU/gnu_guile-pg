@@ -21,7 +21,10 @@
 ##   330, Boston, MA 02111-1307 USA
 
 info_TEXINFOS = guile-pg.texi
-guile_pg_TEXINFOS = guile-pg.texi
+guile_pg_TEXINFOS = guile-pg.texi qcons-tables.texi
+
+qcons-tables.texi: $(top_srcdir)/scm/postgres-qcons.scm
+	$(srcdir)/mkinc $< > $@
 
 CLEANFILES = guile-pg.info guile-pg.dvi guile-pg_toc.html guile-pg.html
 
