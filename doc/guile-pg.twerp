@@ -1146,6 +1146,27 @@ This provides procedures to @dfn{render} sexps to SQL syntax, essentially by
 constructing stylized trees (nested lists) and then flattening them to a
 string on output.
 
+@section Prefix-Style Expressions
+
+To be brutally honest, both SQL and Scheme revolve around structured
+expressions (also known as @dfn{sexps}), so ascribing some elevated status to
+the representation that ``supports sexps'' is really not saying much.  In the
+Guile-PG maintainer's humble opinion, the advantage in expressivity of Scheme
+over SQL is not in the presence or lack of structure, but rather in the
+regularity of the structure.  Scheme syntax is (as you probably already know)
+exceedingly easy to describe: first there is the opening parenthesis, then the
+operator or function, then the argument(s), and finally the matching closing
+parenthesis.  The argument(s) can in turn be sub-expressions of their own.
+
+In any case, we call the mini-language described in this chapter
+@dfn{prefix-style expressions} because it borrows from Scheme's regularity
+even though it is not Scheme, per se.  Its components are symbols, keywords,
+numbers, strings and the dot (aka period aka full-stop), arranged in nested
+lists delimited by matching pairs of parentheses.  Unlike Scheme, it does not
+have quote, quasiquote, unquote or unquote-splicing, although those facilities
+can (and should) be used in a Scheme program to construct a prefix-style
+expression.
+
 @section Lookup Tables Extension
 
 During tree construction, internal lookup tables control the rendering
