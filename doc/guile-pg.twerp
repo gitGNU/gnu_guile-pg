@@ -354,6 +354,11 @@ The client's character encoding, represented by a string such as
 @twerpdoc (pg-client-encoding)
 @twerpdoc (pg-set-client-encoding!)
 
+@section Non-Blocking Mode
+
+@twerpdoc (pg-set-nonblocking!)
+@twerpdoc (pg-is-nonblocking?)
+
 @c ---------------------------------------------------------------------------
 @node    Retrieving Data
 @chapter Procedures for Retrieving Data
@@ -458,11 +463,11 @@ command can be determined by a call to @code{pg-cmdtuples}.
 It is not known under which circumstances this result-status is returned.
 
 @item PGRES_COPY_OUT
-The statement was a @code{COPY <table> TO stdout}.  The data can be read using
+The statement was a @code{COPY <table> TO STDOUT}.  The data can be read using
 @code{pg-getline} or @code{pg-getlineasync}.
 
 @item PGRES_COPY_IN
-The statement was a @code{COPY <table> FROM stdin}.  The rows should be written
+The statement was a @code{COPY <table> FROM STDIN}.  The rows should be written
 using @code{pg-putline}.
 
 @item PGRES_BAD_RESPONSE
