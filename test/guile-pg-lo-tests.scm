@@ -40,7 +40,7 @@
 ;; transaction THUNK
 ;; Expand into an expression that returns the result of evaluating BODY forms
 ;; within a PostgreSQL transaction, or #f in the event of an error.
-(defmacro transaction body
+(define-macro (transaction . body)
   `(and (cexec "BEGIN TRANSACTION")
         (let* ((res-apply ((lambda () ,@body)))
                (res-end (cexec "END TRANSACTION")))

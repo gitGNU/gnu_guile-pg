@@ -41,10 +41,10 @@
 (define (command-ok? raw)
   (eq? 'PGRES_COMMAND_OK (pg-result-status raw)))
 
-(defmacro pass-if (ignored:explanation exp)
+(define-macro (pass-if ignored:explanation exp)
   `(test #t (lambda () ,exp)))
 
-(defmacro sel/check (sel . body)
+(define-macro (sel/check sel . body)
   `(let* ((tupres ,sel)
           (table (tuples-result->table tupres))
           (tref (lambda (tn fn) (array-ref table tn fn))))
@@ -202,7 +202,7 @@
 ;;+ (define pgtable:exception:malformed-defs
 ;;+   (cons 'misc-error "malformed def"))
 ;;+
-;;+ (defmacro expect-bad-defs (defs)
+;;+ (define-macro (expect-bad-defs defs)
 ;;+   `(pass-if-exception (format #f "~S" ,defs)
 ;;+        pgtable:exception:malformed-defs
 ;;+      (pgtable-manager db-name "dontcare" ,defs)))
