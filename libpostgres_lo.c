@@ -69,10 +69,6 @@ typedef struct lob_stream_tag {
   (((0xffff | SCM_OPN | SCM_RDNG) & (int) gh_car (x)) \
    == (lob_ptype | SCM_OPN | SCM_RDNG))
 
-#define SCM_OPOUTLOBPORTP(x)                            \
-  (((0xffff | SCM_OPN | SCM_WRTNG) & (int) gh_car (x))  \
-   == (lob_ptype | SCM_OPN | SCM_WRTNG))
-
 /* ttn hack */
 #define TTN_COERCE_INT(x) ((int)(x))
 
