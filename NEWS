@@ -3,6 +3,49 @@ NEWS for Guile-PG
 
 - 0.26 | NOT YET RELEASED
 
+  - Expiration date set for opaque string support
+
+	With the introduction of module (database postgres-qcons),
+	Guile-PG continues moving towards fully symbolic schema and SQL
+	functions/operations mirroring, and away from requiring (and
+	thus accepting) SQL expressions to be "pre-rendered" as strings
+	in its higher-abstraction convenience procedures.  The low-level
+	`pg-exec' still requires a string, of course; the trick is how
+	to derive that string from other non-string components.
+
+	More concretely: `compile-outspec', used by the `#:select'
+	message in `pgtable-manager', presently accepts a string as the
+	SQL expression to compute for a particular column.  This support
+	WILL BE REMOVED after 2005-12-31; DO NOT rely on it.
+
+	Following are some examples of how to migrate away from using
+	strings as SQL expressions.  We focus on the EXPR in:
+
+	(((pgtable-manager ...) #:select) EXPR ...)
+
+	string: "*"
+	symbol: #t
+	result: SELECT * ...
+
+	string: "a,b,c.d"
+	symbol: (a b c.d)
+	result: SELECT a, b, c.d ...
+
+	string: "count(*),avg(*)"
+	symbol: ((integer #f (count *)) (real "average" (avg *)))
+	result: SELECT count(*), avg(*) AS "average" ...
+
+	string: "(6 * 6 + 6) AS obvious"
+	symbol: ((integer "obvious" (+ 6 (* 6 6))))
+	result: SELECT (6 + (6 * 6)) AS "obvious" ...
+
+	string: ((integer #f "6 * 6 + 6"))
+	symbol: ((integer #f (+ 6 (* 6 6))))
+	result: SELECT (6 + (6 * 6)) ...
+
+	Note that the result is for the most part the same as you would
+	achieve using a string (if not, that's a bug, please report it!).
+
   - Dropped (database postgres-types) proc: dbcoltype:name
 
 	This proc takes a column-type object returned from calling
@@ -21,6 +64,7 @@ NEWS for Guile-PG
 
   - New module: (database postgres-resdisp)
   - New module: (database postgres-qcons)
+  - New module: (database postgres-gxrepl)
 
 
 - 0.25 | 2005-01-02
