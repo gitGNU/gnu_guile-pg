@@ -77,11 +77,12 @@
 ;;
 ;; @example
 ;; no-top-hr no-mid-hr no-bot-hr
+;; no-L no-R no-LR
 ;; @end example
 ;;
 ;; These inhibit the @dfn{horizonal rule} at the top of the output,
 ;; between the header and the table body, and at the bottom of the
-;; output, respectively.
+;; output, respectively; as well as the left and right decorations.
 ;;
 ;;-sig: (result [decor [flags...]])
 ;;
@@ -104,6 +105,8 @@
                       (if (and (pair? rest) (pair? (car rest)))
                           (car rest)
                           rest))))
+         (L? (not (or (memq 'no-L flags) (memq 'no-LR flags))))
+         (R? (not (or (memq 'no-R flags) (memq 'no-LR flags))))
          (v-init (v-init-proc ftot))
          (names  (v-init (lambda (fn) (pg-fname result fn))))
          (widths (v-init (lambda (fn)
@@ -115,11 +118,12 @@
     (define (display-row sep producer padding)
       (do ((fn 0 (1+ fn)))
           ((= ftot fn))
-        (display sep)
+        (and (if (= 0 fn) L? #t)
+             (display sep))
         (let ((s (producer fn)))
           (display s)
           (display (make-string (- (vr widths fn) (string-length s)) padding))))
-      (display sep)
+      (and R? (display sep))
       (newline))
 
     (define (hr inhibit)
