@@ -20,7 +20,7 @@
 	(CLEANFILES): Add abstraction-scm-tests.log.
 	(EXTRA_DIST): Remove alive.sh, basic-tests.sh, lo-tests.sh,
 	guile-pg-basic-tests.scm.in, guile-pg-lo-tests.scm.in.
-	Add $(TESTS).
+	Add $(TESTS) and guile-pg-abstraction-scm-tests.scm.
 	(DISTCLEANFILES): Delete directive.
 
 2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
