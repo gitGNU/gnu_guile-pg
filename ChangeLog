@@ -1,5 +1,10 @@
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm (pgdb-connection): Delete proc.
+	(pgtable-manager): Incorporate `pgdb-connection'.
+
+2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-table.scm: From module (ice-9 common-list),
 	no longer select `every' or `pick-mappings.
 	From module (database postgres-col-defs), select also `validate-def'.
