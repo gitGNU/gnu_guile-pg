@@ -4,7 +4,7 @@
 
 Thien-Thi Nguyen <ttn@gnu.org> wrote:
   ./
-      tmpfile.h    tmpfile.c
+      tmpfile.h    tmpfile.c    fcruft.h
   scm/
       postgres-col-defs.scm             postgres-meta.scm
       postgres-ql.scm                   postgres-resx.scm
