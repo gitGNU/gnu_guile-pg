@@ -1,4 +1,8 @@
 $Id$
+Thu Jun 15 11:09:34 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+
+        * libpostgres.c: Fixed use of deprecated scm_smobfuns struct.
+
 Fri Jun  2 10:30:43 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
 
         * NEW FILE: ANNOUNCE

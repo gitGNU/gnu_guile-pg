@@ -1094,11 +1094,14 @@ pg_untrace (SCM obj)
 void
 init_postgres(void)
 {
+#ifdef USE_OLD_SMOB_INTERFACE
     static scm_smobfuns type_rec;
+#endif
     extern void init_libpostgres_lo(void);
 
     INIT_PRINT(fprintf(stderr, "entered init_postgres function.\n"));
 
+#ifdef USE_OLD_SMOB_INTERFACE
     /* add new scheme type for connections */
     type_rec.mark = sec_mark;
     type_rec.free = sec_free;
@@ -1112,6 +1115,12 @@ init_postgres(void)
     type_rec.print = ser_display;
     type_rec.equalp = 0;
     pg_result_tag.type_tag = scm_newsmob(&type_rec);
+#else
+    pg_conn_tag.type_tag = scm_make_smob_type_mfpe("PG-CONN", 0,
+                                        sec_mark, sec_free, sec_display, NULL);
+    pg_result_tag.type_tag = scm_make_smob_type_mfpe("PG-RESULT", 0,
+                                        ser_mark, ser_free, ser_display, NULL);
+#endif
 
 #include <libpostgres.x>
 
