@@ -1,0 +1,9 @@
+$Id$
+To find out what should go in this file, see "Information For
+Maintainers of GNU Software" (maintain.texi), the section called
+"Recording Changes".
+
+Ian Grant <Ian.Grant@cl.cam.ac.uk> is the author of guile-pg.
+
+Russ McManus wrote the sybase_glue which was used as a framework
+for this interface.

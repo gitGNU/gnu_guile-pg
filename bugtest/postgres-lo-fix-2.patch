@@ -1,0 +1,191 @@
+
+From t-ishii@sra.co.jp Thu Apr  8 15:11:28 1999
+Date: Fri, 12 Feb 1999 23:12:07 +0900
+From: Tatsuo Ishii <t-ishii@sra.co.jp>
+To: t-ishii@sra.co.jp
+Cc: Ian Grant <I.A.N.Grant@damtp.cam.ac.uk>,
+    Bruce Momjian <maillist@candle.pha.pa.us>, pgsql-hackers@postgreSQL.org
+Subject: Re: [HACKERS] Backend problem with large objects 
+
+> >Many thanks indeed for this. Unfortunately it doesn't completely work:  it
+> >fixes the problem as reported, but when, instead of writing five
+> >characters, one at a time, I write five at once, the backend dies in
+> >the same place it did before. Here's the C code slightly modified to
+> >reproduce the problem:
+> 
+> Give me some time. I'm not sure if I could solve new problem, though.
+> --
+> Tatsuo Ishii
+
+I think I have fixed the problem you mentioned. Ian, could you apply
+included patches and test again? Note that those are for 6.4.2 and
+additions to the previous patches.
+
+BTW, lobj strangely added a 0 filled disk block at the head of the
+heap. As a result, even 1-byte-user-data lobj consumes at least 16384
+bytes (2 disk blocks)! Included patches also fix this problem.
+
+To Bruce:
+Thanks for taking care of my previous patches for current.  If
+included patch is ok, I will make one for current.
+
+---------------------------- cut here ---------------------------------
+*** postgresql-6.4.2/src/backend/storage/large_object/inv_api.c.orig	Sun Dec 13 14:08:19 1998
+--- postgresql-6.4.2/src/backend/storage/large_object/inv_api.c	Fri Feb 12 20:21:05 1999
+***************
+*** 624,648 ****
+  		|| obj_desc->offset < obj_desc->lowbyte
+  		|| !ItemPointerIsValid(&(obj_desc->htid)))
+  	{
+  
+  		/* initialize scan key if not done */
+  		if (obj_desc->iscan == (IndexScanDesc) NULL)
+  		{
+- 			ScanKeyData skey;
+- 
+  			/*
+  			 * As scan index may be prematurely closed (on commit), we
+  			 * must use object current offset (was 0) to reinitialize the
+  			 * entry [ PA ].
+  			 */
+- 			ScanKeyEntryInitialize(&skey, 0x0, 1, F_INT4GE,
+- 								   Int32GetDatum(obj_desc->offset));
+  			obj_desc->iscan =
+  				index_beginscan(obj_desc->index_r,
+  								(bool) 0, (uint16) 1,
+  								&skey);
+  		}
+- 
+  		do
+  		{
+  			res = index_getnext(obj_desc->iscan, ForwardScanDirection);
+--- 630,655 ----
+  		|| obj_desc->offset < obj_desc->lowbyte
+  		|| !ItemPointerIsValid(&(obj_desc->htid)))
+  	{
++ 		ScanKeyData skey;
++ 
++ 		ScanKeyEntryInitialize(&skey, 0x0, 1, F_INT4GE,
++ 				       Int32GetDatum(obj_desc->offset));
+  
+  		/* initialize scan key if not done */
+  		if (obj_desc->iscan == (IndexScanDesc) NULL)
+  		{
+  			/*
+  			 * As scan index may be prematurely closed (on commit), we
+  			 * must use object current offset (was 0) to reinitialize the
+  			 * entry [ PA ].
+  			 */
+  			obj_desc->iscan =
+  				index_beginscan(obj_desc->index_r,
+  								(bool) 0, (uint16) 1,
+  								&skey);
++ 		} else {
++ 			index_rescan(obj_desc->iscan, false, &skey);
+  		}
+  		do
+  		{
+  			res = index_getnext(obj_desc->iscan, ForwardScanDirection);
+***************
+*** 666,672 ****
+  			tuple = heap_fetch(obj_desc->heap_r, SnapshotNow,
+  							   &res->heap_iptr, buffer);
+  			pfree(res);
+! 		} while (tuple == (HeapTuple) NULL);
+  
+  		/* remember this tid -- we may need it for later reads/writes */
+   		ItemPointerCopy(&tuple->t_ctid, &obj_desc->htid);
+--- 673,679 ----
+  			tuple = heap_fetch(obj_desc->heap_r, SnapshotNow,
+  							   &res->heap_iptr, buffer);
+  			pfree(res);
+! 		} while (!HeapTupleIsValid(tuple));
+  
+  		/* remember this tid -- we may need it for later reads/writes */
+   		ItemPointerCopy(&tuple->t_ctid, &obj_desc->htid);
+***************
+*** 675,680 ****
+--- 682,691 ----
+  	{
+  		tuple = heap_fetch(obj_desc->heap_r, SnapshotNow,
+  						   &(obj_desc->htid), buffer);
++ 		if (!HeapTupleIsValid(tuple)) {
++ 		  elog(ERROR,
++ 		       "inv_fetchtup: heap_fetch failed");
++ 		}
+  	}
+  
+  	/*
+***************
+*** 746,757 ****
+  
+  	nblocks = RelationGetNumberOfBlocks(hr);
+  
+! 	if (nblocks > 0)
+  		buffer = ReadBuffer(hr, nblocks - 1);
+! 	else
+  		buffer = ReadBuffer(hr, P_NEW);
+! 
+! 	page = BufferGetPage(buffer);
+  
+  	/*
+  	 * If the last page is too small to hold all the data, and it's too
+--- 757,771 ----
+  
+  	nblocks = RelationGetNumberOfBlocks(hr);
+  
+! 	if (nblocks > 0) {
+  		buffer = ReadBuffer(hr, nblocks - 1);
+! 		page = BufferGetPage(buffer);
+! 	}
+! 	else {
+  		buffer = ReadBuffer(hr, P_NEW);
+! 		page = BufferGetPage(buffer);
+! 		PageInit(page, BufferGetPageSize(buffer), 0);
+! 	}
+  
+  	/*
+  	 * If the last page is too small to hold all the data, and it's too
+***************
+*** 865,876 ****
+  
+  		nblocks = RelationGetNumberOfBlocks(hr);
+  
+! 		if (nblocks > 0)
+  			newbuf = ReadBuffer(hr, nblocks - 1);
+! 		else
+  			newbuf = ReadBuffer(hr, P_NEW);
+  
+- 		newpage = BufferGetPage(newbuf);
+  		freespc = IFREESPC(newpage);
+  
+  		/*
+--- 879,894 ----
+  
+  		nblocks = RelationGetNumberOfBlocks(hr);
+  
+! 		if (nblocks > 0) {
+  			newbuf = ReadBuffer(hr, nblocks - 1);
+! 			newpage = BufferGetPage(newbuf);
+! 		}
+! 		else {
+  			newbuf = ReadBuffer(hr, P_NEW);
++ 			newpage = BufferGetPage(newbuf);
++ 			PageInit(newpage, BufferGetPageSize(newbuf), 0);
++ 		}
+  
+  		freespc = IFREESPC(newpage);
+  
+  		/*
+***************
+*** 973,978 ****
+--- 991,999 ----
+  	WriteBuffer(buffer);
+  	if (newbuf != buffer)
+  		WriteBuffer(newbuf);
++ 
++ 	/* Tuple id is no longer valid */
++ 	ItemPointerSetInvalid(&(obj_desc->htid));
+  
+  	/* done */
+  	return nwritten;

@@ -1,0 +1,47 @@
+This directory contains test cases for bugs (suspected or actual) in the
+PostgreSQL backend.
+
+I hope these are just relics now and that that the bugs are all gone, but
+you never know.
+
+Update 29 May 2000 - There are still problems with the large object interface.
+The bug is reproduced by testloseek.c and testloseek.scm and has been reported:
+
+To: pgsql-bugs@postgresql.org
+Cc: t-ishii@sra.co.jp, Ian.Grant@cl.cam.ac.uk
+Subject: Bug in libpq large-object interface
+Date: Mon, 29 May 2000 16:48:40 +0100
+From: Ian Grant <Ian.Grant@cl.cam.ac.uk>
+
+Hi PostgreSQL people in general and Tatsuo in particular,
+
+I'm using V 7.0 on a Linux machine and I believe I have found a bug in the 
+large object interface provided by libpq.  The code below will reproduce it, I 
+hope.  Basically it creates a large object, writes six 'a' characters to it, 
+then closes it.  Then, in another transaction, it opens the object, seeks to 
+position 1 from the start, writes a 'b', then seeks to position 3 from the 
+start and writes another 'b'. Then it closes the object and COMMITs the 
+transaction.  Finally, in a further separate transaction, it calls lo_export 
+to write out the resulting object to a file testloseek.c.lobj  I find this 
+file, instead of containing the string 'ababaa' as expected, contains 
+'^@b^@baa' where ^@ is ASCII NUL.
+
+Compile with something like
+
+       gcc -o testloseek testloseek.c -lpq
+
+The program sets the PQtrace to STDOUT and writes messages to STDERR, so run 
+it with STDOUT redirected to a log file.
+
+This is a C version of a basic regression test of guile-pg, my Guile language 
+bindings for libpq.  You may recall I reported a similar bug a year or so ago, 
+and I believed it was then fixed by Tatsuo, after a couple of iterations.  I'm 
+sorry to be the bearer of bad news ...
+
+Please reply to me directly since I'm not on the list.
+
+Thanks
+Ian
+-- 
+Ian Grant, Computer Lab., New Museums Site, Pembroke Street, Cambridge
+Phone: +44 1223 334420          Personal e-mail: iang at pobox dot com 

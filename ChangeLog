@@ -1,0 +1,112 @@
+$Id$
+Tue May 30 08:20:09 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+        * Fixed large object ports so that they work with the further
+          changes to the ports interface.
+
+          Note: because of this, guile-pg no-longer builds with guile
+          versions prior to 1.3.4
+
+        * Changed all function names from pg:name to pg-name.  This
+          removes the need for a hacked texi2html so that is now gone.
+
+        * Removed pq-setdb  entirely.  It has been replaced by
+          pq-connectdb which is much more flexible.
+
+        * Changed the installation directory of libpostgres.so.  This
+          used to be in an architecture dependent subdirectory, with a
+          symbolic link from an architecture-independent directory, but
+          this was still not compatible with multiple architectures.
+          Instead we install the .so in the $(library) directory and
+          load it explicitly using the scheme interface to dlopen etc.
+
+        * Updated README
+
+        * Added $Id$ all over the place in preparation for CVS use.
+
+Sun Jun 27 14:50:09 BST 1999 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+        * Changes to configure.in to check for Postgres 6.4 features.
+
+        * Changes to libpostgres.c to conditionally compile procedures
+          depending on post 6.4 functionality in libpq.
+
+        * Split libpostgres.c into two files. Added libpostgres_lo.c 
+          containing the large object code.
+
+        * Changes to libpostgres_lo.c to deal with Guile's new ptobfuns
+          interface. Changes to configure.in to detect the new ptobfuns
+          interface.
+
+Sun Jan 31 19:05:32 GMT 1999 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+        * Changes to work with libpq from PostgreSQL 6.4.2 these were:
+
+        * libpostgres.c: Added new primitives pg:binary-tuples? and pg:fmod.
+          Changed pg:error-message to work with either a PG-CONN or a
+          PG-RESULT object, calling PQresultErrorMessage in the latter case
+
+          Changed pg:getvalue to work with binary data. Now PQbinaryTuples
+          is called to check whether the returned value is binary and
+          if it is a string of the appropriate length is returned.
+
+          Changed pg:putline so that it actually calls PQputnbytes with
+          the correct length. This works with null-terminated strings
+          as it did before, but now works with strings containing embedded
+          nulls as well.
+
+        * Makefile.am: Added -lcrypt to the dependency list for libpostgres.so
+          This is actually wrong though: -lcrypt should only be linked if
+          necessary, since it doesn't exist on some systems. We need to
+          check whether or not it exists in configure.in and only if does
+          should we include it. I don't have enough brains to do this
+          right now though.
+
+Sun Jan 24 11:05:19 GMT 1999 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+        * HACKING: New File.
+
+        * README: Added info on building guile-pg and intalling
+          PostgreSQL from the Red Hat RPMS.
+
+        * test/guile-pg-basic-tests.scm: New file. Uses testing.scm in the
+          same directory.
+
+        * test/guile-pg-lo-tests.scm: New file. Uses testing.scm in the
+          same directory.
+
+        * Makefile.am, configure.in: Added test subdirectory.
+
+Sun Jan 17 17:02:42 1999  Ian Grant <I.A.N.Grant@damtp.cam.ac.uk>
+        * acinclude.m4: Added new macro definition GUILE_MODULE
+          which sets up the necessary install targets for a guile
+          module. It gets these from guile-config.
+
+        * configure.in: Changed to use GUILE_MODULE.
+
+        * libpostgres.c: Changed all scheme i/f functions to use
+          guile-snarf to make libpostgres.x
+
+        * Makefile.am: Added lines to allow .x in .deps and to run
+          guile-snarf to create the .x files when necessary.
+
+        * libpostgres.c: Added pg:reset and pg:trace and pg:untrace
+
+Tue Jan 12 20:14:06 1999  Ian Grant <I.A.N.Grant@damtp.cam.ac.uk>
+        * libpostgres.c: Completed large obect support
+
+        * libpostgres.c: Added support for PQputline/PQgetline/PQendcopy
+
+        * doc/guile-pg.texi: Function descriptions
+
+Sat Dec  5 14:29:54 1998  Ian Grant <I.A.N.Grant@damtp.cam.ac.uk>
+        * libtoolized
+
+        * acinclude.m4: new file defining PQ library autoconf macro
+
+Thu Dec  3 23:14:38 1998  Ian Grant <I.A.N.Grant@damtp.cam.ac.uk>
+        * AUTHORS: New file, in accordance with the GNU maintainers'
+        standards.
+
+        * README: New file, in accordance with the GNU maintainers'
+        standards.
+
+        * Makefile.am: New file for automake.
+
+        * configure.in and friends: new files for autoconf.

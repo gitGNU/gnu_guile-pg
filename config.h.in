@@ -1,0 +1,53 @@
+/* config.h.in.  Generated automatically from configure.in by autoheader.  */
+
+/* Define if you have the ANSI C header files.  */
+#undef STDC_HEADERS
+
+/* Define if you have the PQbackendPID function.  */
+#undef HAVE_PQBACKENDPID
+
+/* Define if you have the PQbinaryTuples function.  */
+#undef HAVE_PQBINARYTUPLES
+
+/* Define if you have the PQfmod function.  */
+#undef HAVE_PQFMOD
+
+/* Define if you have the PQpass function.  */
+#undef HAVE_PQPASS
+
+/* Define if you have the PQputnbytes function.  */
+#undef HAVE_PQPUTNBYTES
+
+/* Define if you have the PQresultErrorMessage function.  */
+#undef HAVE_PQRESULTERRORMESSAGE
+
+/* Define if you have the <libpq-fe.h> header file.  */
+#undef HAVE_LIBPQ_FE_H
+
+/* Define if you have the <malloc.h> header file.  */
+#undef HAVE_MALLOC_H
+
+/* Define if you have the <stdio.h> header file.  */
+#undef HAVE_STDIO_H
+
+/* Define if you have the <stdlib.h> header file.  */
+#undef HAVE_STDLIB_H
+
+/* Define if you have the <string.h> header file.  */
+#undef HAVE_STRING_H
+
+/* Define if you have the <unistd.h> header file.  */
+#undef HAVE_UNISTD_H
+
+/* Define if you have the crypt library (-lcrypt).  */
+#undef HAVE_LIBCRYPT
+
+/* Define if you have the pq library (-lpq).  */
+#undef HAVE_LIBPQ
+
+/* Name of package */
+#undef PACKAGE
+
+/* Version number of package */
+#undef VERSION
+

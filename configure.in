@@ -1,0 +1,82 @@
+dnl $Id$
+dnl Process this file with autoconf to produce a configure script.
+dnl
+dnl  Copyright (C) 1998 Free Software Foundation, Inc.
+dnl
+dnl  This file is part of GUILE-PG
+dnl
+dnl  GUILE-PG is free software; you can redistribute it and/or modify it
+dnl  under the terms of the GNU General Public License as published by
+dnl  the Free Software Foundation; either version 2, or (at your
+dnl  option) any later version.
+dnl
+dnl  GUILE-PG is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  General Public License for more details.
+dnl
+dnl  You should have received a copy of the GNU General Public License
+dnl  along with GUILE-PG; see the file COPYING.  If not, write to the
+dnl  Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+dnl  Boston, MA 02111-1307, USA.
+
+AC_INIT(guile-pg.c)
+AM_INIT_AUTOMAKE(guile-pg, 0.06)
+AM_CONFIG_HEADER(config.h)
+
+AM_PROG_LIBTOOL
+
+AC_PROG_CC
+
+AC_STDC_HEADERS
+
+AC_HAVE_HEADERS(string.h stdio.h stdlib.h malloc.h unistd.h)
+
+dnl This little hack allows the tests for libpq etc. to be overridden by
+dnl setting the environment variables PQ_CFLAGS and PQ_LDFLAGS.  This is
+dnl useful e.g. when running 'Make distcheck', which runs ./configure.
+
+GUILE_MODULE
+if test "x$PQ_LDFLAGS" = "x" -a "x$PQ_CFLAGS" = "x" ; then
+PQ_FLAGS
+fi
+
+saved_CFLAGS="$CFLAGS"
+saved_LDFLAGS="$LDFLAGS"
+CFLAGS="$CFLAGS $PQ_CFLAGS"
+LDFLAGS="$LDFLAGS $PQ_LDFLAGS"
+
+AC_CHECK_LIB(pq, PQconnectdb, , AC_MSG_ERROR(Cannot find libpq (CFLAGS= $CFLAGS 
+LDLFAGS= $LDFLAGS) on the system))
+AC_CHECK_FUNCS(PQfmod PQbinaryTuples PQbackendPID PQresultErrorMessage PQpass PQputnbytes)
+CFLAGS="$saved_CFLAGS"
+LDFLAGS="$saved_LDFLAGS"
+
+saved_CFLAGS="$CFLAGS"
+CFLAGS="$CFLAGS $GUILE_CFLAGS"
+
+AC_CACHE_CHECK([for fill_input in struct scm_ptob_descriptor], ac_cv_struct_fill_input,
+[AC_TRY_COMPILE([#include <libguile.h>], [struct scm_ptob_descriptor s; s.fill_input;],
+ac_cv_struct_fill_input=yes, ac_cv_struct_fill_input=no)])
+if test $ac_cv_struct_fill_input = no; then
+  AC_ERROR("Cannot build with guile versions prior to 1.3.4")
+fi
+
+CFLAGS="$saved_CFLAGS"
+
+GUILE_PG_STAMP="`date`"
+AC_SUBST(GUILE_PG_STAMP)
+
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PATH_PROG(DIFF_PATH, diff)
+AC_PATH_PROG(MD5SUM_PATH, md5sum)
+
+## If we're using GCC, ask for aggressive warnings.
+case "$GCC" in
+  yes )
+#   CFLAGS="$CFLAGS -Wall -Wpointer-arith -Wmissing-prototypes" ;;
+    CFLAGS="$CFLAGS -Wall -Wmissing-prototypes" ;;
+esac
+
+AC_OUTPUT(Makefile scm/Makefile doc/Makefile scm/postgres.scm test/Makefile test/guile-pg-basic-tests.scm test/guile-pg-lo-tests.scm)

@@ -1,0 +1,388 @@
+;; $Id$
+;;    Guile-pg - A Guile interface to PostgreSQL
+;;    Copyright (C) 1999 The Free Software Foundation
+;;
+;;    This program is free software; you can redistribute it and/or modify
+;;    it under the terms of the GNU General Public License as published by
+;;    the Free Software Foundation; either version 2 of the License, or
+;;    (at your option) any later version.
+;;
+;;    This program is distributed in the hope that it will be useful,
+;;    but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;    GNU General Public License for more details.
+;;
+;;    You should have received a copy of the GNU General Public License
+;;    along with this program; if not, write to the Free Software
+;;    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+;;
+;;    Guile-pg was written by Ian Grant <I.A.N.Grant@damtp.cam.ac.uk>
+
+; uncomment the following line if testing under plain guile
+;; (use-modules (database interface postgres))
+
+(define (pg-fnames result)
+  (let ((nfields (pg-nfields result)))
+    (define (iter i)
+      (if (= i nfields) '()
+          (cons (pg-fname result i) (iter (+ i 1)))))
+    (iter 0)))
+
+(define (pg-ftype-name result fnum)
+  (let ((result (pg-exec (pg-get-connection result)
+                         (string-append 
+                           "SELECT typname FROM pg_type WHERE oid = "
+                            (number->string (pg-ftype result fnum))))))
+       (if (and result
+                (eq? (pg-result-status result) PGRES_TUPLES_OK)
+                (> (pg-ntuples result) 0))
+           (pg-getvalue result 0 0)
+           #f)))
+
+(define (pg-ftype-names result)
+  (let ((nfields (pg-nfields result)))
+    (define (iter i)
+      (if (= i nfields) '()
+          (cons (pg-ftype-name result i) (iter (+ i 1)))))
+    (iter 0)))
+
+(define (pg-getvalues result tuple)
+  (let ((nfields (pg-nfields result)))
+    (define (iter i)
+      (if (= i nfields) '()
+          (cons (pg-getvalue result tuple i) (iter (+ i 1)))))
+    (iter 0)))
+
+(define (pg-gettuple result tuple)
+  (map (lambda (n v) (cons (string->symbol n) v))
+       (pg-fnames result)
+       (pg-getvalues result tuple)))
+
+(define (pg-for-each proc result)
+  (let ((ntuples (pg-ntuples result)))
+    (define (iter i)
+      (cond ((= i ntuples) ntuples)
+            (else (proc (pg-gettuple result i))
+                  (iter (+ i 1)))))
+    (iter 0)))
+
+(define (pg-tuples result)
+  (let ((ntuples (pg-ntuples result)))
+    (define (iter i)
+      (cond ((= i ntuples) '())
+            (else (cons (pg-gettuple result i)
+                  (iter (+ i 1))))))
+    (iter 0)))
+
+(define (run-cmd n sql-proc)
+  (define (iter n)
+    (let ((res (pg-exec conn (sql-proc n))))
+      (if (eq? n 1)
+          #t
+          (if (and res (not (eq? (pg-result-status res) PGRES_COMMAND_OK)))
+              #f
+              (iter (- n 1))))))
+  (iter n))
+
+(define (as-string obj)
+  (cond ((string? obj)    obj)
+        ((char? obj)      (make-string 1 obj))
+        ((symbol? obj)    (symbol->string obj))
+        ((number? obj)    (number->string obj))
+        ((procedure? obj) (as-string (obj)))
+        ((pair? obj) (interpolate-list "(" " " ")" 
+                       (lambda (x) (as-string x)) obj))
+        (else (call-with-output-string (lambda (port) (write obj port))))))
+
+(define (interpolate-list afore twixt aft proc lst)
+  (define (iter lst)
+    (let ((elt (car lst))
+          (tail (cdr lst)))
+       (string-append (proc elt)
+         (if (not (null? tail))
+           (string-append (as-string twixt) (iter tail))
+           (as-string aft)))))
+  (string-append (as-string afore) (iter lst)))
+
+(define (make-table! conn tablename fields)
+  (let ((sql-string (string-append
+                      "CREATE TABLE " tablename " "
+                      (interpolate-list "(" ", " ")" 
+                        (lambda (p)
+                          (string-append 
+                            (as-string (car p)) " " (as-string (cdr p))))
+                        fields))))
+       (pg-exec conn sql-string)))
+
+(define (insert-record-sql conn tablename record)
+  (string-append "INSERT INTO " tablename " "
+                 (interpolate-list "(" ", " ")" 
+                    (lambda (p)
+                      (string-append (as-string (car p)) " "))
+                    record)
+                 " VALUES "
+                 (interpolate-list "(" ", " ")" 
+                    (lambda (p)
+                      (string-append (as-string (cdr p)) " "))
+                    record)))
+
+;; Here we define procedures to carry out the tests
+
+;; We want to keep one connection hanging around for the duration of all the
+;; tests
+
+(define conn #f)
+
+;; Test pg-connectdb
+;; expect #t
+(define (test:make-connection)
+  (if (false-if-exception (set! conn (pg-connectdb ""))) #t #f))
+
+;; Test pg-reset
+;; expect #t
+(define (test:reset)
+  (pg-reset conn)
+  #t)
+
+;; Test pg-set-client-data
+;; expect #t
+(define (test:set-client-data)
+  (if (equal? (pg-set-client-data! conn '(elt1 elt2 elt3))
+              '(elt1 elt2 elt3))
+      #t #f))
+
+;; Test pg-get-client-data
+;; expect #t
+(define (test:get-client-data)
+  (if (equal? (pg-get-client-data conn) '(elt1 elt2 elt3)) #t #f))
+
+;; Test pg-exec
+;; expect #f
+(define (test:make-table)
+  (let ((res (make-table! conn "test" '(("col1" . "int4") ("col2" . "text")))))
+       (if res
+           (if (eq? (pg-result-status res) PGRES_COMMAND_OK)
+               #t #f)
+           #f)))
+
+;; Test pg-exec
+;; expect #t
+(define (test:load-records)
+  (run-cmd 100 (lambda (n) (string-append "INSERT INTO test VALUES ("
+                                           (number->string n) ", 'Column "
+                                           (number->string n) "')"))))
+;; Test pg-getvalue
+;; expect 100
+(define (test:count-records)
+  (let ((res (pg-exec conn "SELECT COUNT(*) FROM test WHERE col1 <= 100")))
+       (if (and res (eq? (pg-result-status res) PGRES_TUPLES_OK))
+           (string->number (pg-getvalue res 0 0))
+           #f)))
+
+;; Test pg-get-xxx
+;; expect #t
+(define (test:get-proc proc)
+  (and (string? (proc conn))
+       (not (false-if-exception (proc #f)))))
+
+;; Test pg-cmdtuples
+;; expect 50
+(define (test:delete-some-records)
+  (let ((res (pg-exec conn "DELETE FROM test WHERE col1 > 50")))
+       (if (and res (eq? (pg-result-status res) PGRES_COMMAND_OK))
+           (string->number (pg-cmdtuples res))
+           #f)))
+
+;; Test pg-fname
+;; expect ("col1" "col2")
+(define (test:fname)
+  (let ((res (pg-exec conn "SELECT * FROM test WHERE col1 = 1")))
+       (if (and res (eq? (pg-result-status res) PGRES_TUPLES_OK))
+           (pg-fnames res)
+           #f)))
+
+;; Test pg-ftype
+;; expect ("int4" "text")
+(define (test:ftypes)
+  (let ((res (pg-exec conn "SELECT * FROM test WHERE col1 = 1")))
+       (if (and res (eq? (pg-result-status res) PGRES_TUPLES_OK))
+           (pg-ftype-names res)
+           #f)))
+  
+;; Test pg-get-connection
+;; expect conn
+(define (test:get-connection)
+  (let ((res (pg-exec conn "SELECT * FROM test WHERE col1 = 1")))
+       (if (and res (eq? (pg-result-status res) PGRES_TUPLES_OK))
+           (if (eq? (pg-get-connection res) conn)
+               #t
+               #f)
+           #f)))
+
+;; Test pg-ntuples
+;; expect #t
+(define (test:ntuples)
+  (let ((res (pg-exec conn "SELECT col1 FROM test WHERE col1 = 1")))
+       (if (and res (eq? (pg-result-status res) PGRES_TUPLES_OK))
+           (if (eq? (pg-ntuples res) 1)
+               #t
+               #f)
+           #f)))
+
+;; Test pg-nfields
+;; expect #t
+(define (test:nfields)
+  (let ((res (pg-exec conn "SELECT col1 FROM test WHERE col1 = 1")))
+       (if (and res (eq? (pg-result-status res) PGRES_TUPLES_OK))
+           (if (eq? (pg-nfields res) 1)
+               #t
+               #f)
+           #f)))
+
+;; Test pg-oid-status, pg-cmdtuples
+;; expect #t
+(define (test:oid-status)
+  (let ((res (pg-exec conn "INSERT INTO test VALUES (10000, 'Column 10000')"))
+        (oid #f))
+       (if (and res (eq? (pg-result-status res) PGRES_COMMAND_OK))
+           (begin
+             (set! oid (pg-oid-status res))
+             (set! res (pg-exec conn "DELETE FROM test WHERE col1 = 10000"))
+             (and res (eq? (pg-result-status res) PGRES_COMMAND_OK)
+                      (string? oid)
+                      (> (string->number oid 0))
+                      (eq? (string->number (pg-cmdtuples res)) 1)))
+           #f)))
+
+;; Test pg-fnumber
+;; expect #t
+(define (test:fnumber)
+  (let ((res (pg-exec conn "SELECT col1, col2 FROM test WHERE col1 <= 100")))
+       (and res
+            (eq? (pg-result-status res) PGRES_TUPLES_OK)
+            (eq? (pg-fnumber res "col1") 0)
+            (eq? (pg-fnumber res "col2") 1)
+            (eq? (pg-fnumber res "invalid_column_name") -1))))
+
+;; Test pg-getvalue
+;; expect #t
+(define (test:getvalue)
+  (let ((res (pg-exec conn "SELECT col1, col2 FROM test WHERE col1 = 1")))
+       (and res
+            (eq? (pg-result-status res) PGRES_TUPLES_OK)
+            (string=? (pg-getvalue res 0 0) "1")
+            (string=? (pg-getvalue res 0 1) "Column 1")
+            (not (false-if-exception (pg-getvalue res 0 2)))
+            (not (false-if-exception (pg-getvalue res -1 0))))))
+
+;; Test pg-isnull
+;; expect #t
+(define (test:getisnull)
+  (let ((res (pg-exec conn "INSERT INTO test VALUES (10000)"))
+        (res2 #f))
+       (if (and res (eq? (pg-result-status res) PGRES_COMMAND_OK))
+           (begin
+             (set! res (pg-exec conn "SELECT * FROM test WHERE col1 = 10000"))
+             (set! res2 (pg-exec conn "DELETE FROM test WHERE col1 = 10000"))
+             (and res (eq? (pg-result-status res) PGRES_TUPLES_OK)
+                      (not (pg-getisnull res 0 0))
+                      (pg-getisnull res 0 1)
+                      (not (false-if-exception (pg-getisnull res 0 2)))
+                      (not (false-if-exception (pg-getisnull res -1 0)))
+                      res2 (eq? (pg-result-status res2) PGRES_COMMAND_OK)))
+           #f)))
+
+;; Test pg-fsize
+;; expect #t
+(define (test:fsize)
+  (let ((res (pg-exec conn "SELECT col1, col2 FROM test WHERE col1 = 1")))
+       (and res
+            (eq? (pg-result-status res) PGRES_TUPLES_OK)
+            (eq? (pg-fsize res 0) 4)
+            (eq? (pg-fsize res 1) -1)
+            (not (false-if-exception (pg-fsize res 2))))))
+
+;; Test pg-getlength
+;; expect #t
+(define (test:getlength)
+  (let ((res (pg-exec conn "SELECT col1, col2 FROM test WHERE col1 = 1")))
+       (and res
+            (eq? (pg-result-status res) PGRES_TUPLES_OK)
+            (eq? (pg-getlength res 0 0) 1)
+            (eq? (pg-getlength res 0 1) (string-length "Column 1"))
+            (not (false-if-exception (pg-getlength res 0 2)))
+            (not (false-if-exception (pg-getlength res 1 0))))))
+
+;; Test pg-getline
+;; expect #t
+(define (test:getline)
+  (let ((res (pg-exec conn "SELECT * INTO test2 FROM test WHERE col1 = 1")))
+       (if (and res
+                (eq? (pg-result-status res) PGRES_COMMAND_OK))
+           (let ((res (pg-exec conn "COPY test2 TO STDOUT")))
+                (if (and res
+                         (eq? (pg-result-status res) PGRES_COPY_OUT))
+                    (let ((line (pg-getline conn)))
+                         (if (and (string=? (pg-getline conn) "\\.")
+                                  (eq? (pg-endcopy conn) 0)
+                                  (string=? line "1\tColumn 1"))
+                             #t
+                             #f))
+                    #f))
+           #f)))
+
+;; Test pg-putline
+;; expect #t
+(define (test:putline)
+   (let ((res (pg-exec conn "COPY test2 FROM STDIN")))
+        (if (and res (eq? (pg-result-status res) PGRES_COPY_IN))
+            (begin
+              (for-each (lambda (s) (pg-putline conn s))
+                        '("2\tColumn 2" "\n" "\\." "\n"))
+              (if (not (eq? (pg-endcopy conn) 0))
+                  #f
+                  (let ((res (pg-exec conn
+                                    "SELECT * FROM test2 WHERE col1 = 2")))
+                       (if (and res (eq? (pg-result-status res)
+                                         PGRES_TUPLES_OK)
+                                (string=? (pg-getvalue res 0 0) "2")
+                                (string=? (pg-getvalue res 0 1) "Column 2"))
+                           #t
+                           #f)))))))
+
+(load "testing.scm")
+(set! verbose #t)
+(test-init "basic-tests" 30)
+(test "@VERSION@" pg-guile-pg-version)
+(test #t test:make-connection)
+(test #t test:set-client-data)
+(test #t test:make-table)
+(test #t test:load-records)
+(test 100 test:count-records)
+(test #t test:reset)
+(test 100 test:count-records)
+(test 50 test:delete-some-records)
+(test 50 test:count-records)
+(test '("col1" "col2") test:fname)
+(test '("int4" "text") test:ftypes)
+(test #t test:get-client-data)
+(test #t test:get-connection)
+(test #t test:ntuples)
+(test #t test:nfields)
+(test #t test:oid-status)
+(test #t test:fnumber)
+(test #t test:getvalue)
+(test #t test:getisnull)
+(test #t test:fsize)
+(test #t test:getlength)
+(test #t test:getline)
+(test #t test:putline)
+(test #t test:get-proc pg-get-db)
+(test #t test:get-proc pg-get-user)
+(test #t test:get-proc pg-get-pass)
+(test #t test:get-proc pg-get-tty)
+(test #t test:get-proc pg-get-port)
+(test #t test:get-proc pg-get-options)
+(set! conn #f)
+(test-report)
+

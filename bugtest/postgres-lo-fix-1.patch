@@ -1,0 +1,65 @@
+
+From t-ishii@sra.co.jp Thu Apr  8 15:09:50 1999
+Date: Thu, 04 Feb 1999 23:14:01 +0900
+From: Tatsuo Ishii <t-ishii@sra.co.jp>
+To: Ian Grant <I.A.N.Grant@damtp.cam.ac.uk>
+Cc: Tatsuo Ishii <t-ishii@sra.co.jp>, pgsql-hackers@postgreSQL.org
+Subject: Re: [HACKERS] Backend problem with large objects 
+
+> On Tue, 2 Feb 1999, Tatsuo Ishii wrote:
+> 
+> > Reproduced here too. Seems very old and known problem of large object
+> > (writing into in the middle of a large object does not work).
+> 
+> Many thanks, does this mean it's not likely to be fixed? If so I'll take
+> this to the documentation list, if there is one. But first, can anyone
+> explain what *is* allowed in lo_write after lo_lseek? Is it OK to
+> overwrite a large object for example? 
+
+Ok. I think I have found the source of the problem. Please apply
+included patches and try again.
+
+> I also note that there is no way to truncate a large object without
+> reading the beginning bit and copying it out to another new large object,
+> which involves it going down the wire to the client and then back again. 
+> Are there any plans to implement lo_trunc or something? Perhaps this is
+> difficult for the same reason lo_write is difficult inside a large object.
+
+Seems not too difficult, but I don't have time to do that.
+---
+Tatsuo Ishii
+
+----------------------------- cut here ----------------------------------
+*** postgresql-6.4.2/src/backend/storage/large_object/inv_api.c.orig	Sun Dec 13 14:08:19 1998
+--- postgresql-6.4.2/src/backend/storage/large_object/inv_api.c	Thu Feb  4 22:02:43 1999
+***************
+*** 545,555 ****
+  			tuplen = inv_wrnew(obj_desc, buf, nbytes - nwritten);
+  		else
+  		{
+! 			if (obj_desc->offset > obj_desc->highbyte)
+  				tuplen = inv_wrnew(obj_desc, buf, nbytes - nwritten);
+  			else
+  				tuplen = inv_wrold(obj_desc, buf, nbytes - nwritten, tuple, buffer);
+! 			ReleaseBuffer(buffer);
+  		}
+  
+  		/* move pointers past the amount we just wrote */
+--- 545,561 ----
+  			tuplen = inv_wrnew(obj_desc, buf, nbytes - nwritten);
+  		else
+  		{
+!           		if (obj_desc->offset > obj_desc->highbyte) {
+  				tuplen = inv_wrnew(obj_desc, buf, nbytes - nwritten);
++ 				ReleaseBuffer(buffer);
++ 			}
+  			else
+  				tuplen = inv_wrold(obj_desc, buf, nbytes - nwritten, tuple, buffer);
+! 			/* inv_wrold() has already issued WriteBuffer()
+! 			   which has decremented local reference counter
+! 			   (LocalRefCount). So we should not call
+! 			   ReleaseBuffer() here. -- Tatsuo 99/2/4
+! 			ReleaseBuffer(buffer); */
+  		}
+  
+  		/* move pointers past the amount we just wrote */
