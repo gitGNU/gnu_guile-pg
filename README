@@ -1,5 +1,5 @@
 $Id$
-guile-pg 0.07
+guile-pg 0.08
 =============
 
 This is a set of bindings providing a Guile interface to the

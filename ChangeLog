@@ -1,4 +1,13 @@
 $Id$
+
+Thu Mar  8 13:53:15 GMT 2001 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+
+        * Added explicit exports to scm/postgres.scm.in so that the
+          module works properly when used by another module.  Thanks
+          to David Pirotte for finding this bug.
+
+        * Bumped VERSION to 0.08
+
 Sat Jul  8 09:54:01 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
 
         * Bumped VERSION prior to releasing 0.07
