@@ -1,3 +1,9 @@
+2005-02-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (qcons-declare!): Fix omission bug:
+	For #:sql-function, add the entire entry, not just the name.
+	(make-SELECT/OUT-tree): Stringify and double-quote plain symbols.
+
 2005-02-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-qcons.scm (qcons-declare!):
