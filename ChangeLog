@@ -1,5 +1,9 @@
 2004-05-17  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c (strip_newlines): Do not modify `str'.
+
+2004-05-17  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c (strip_newlines): Use `scm_makfromstr'.
 	Update callers to no longer use `strdup' and `free'.
 
