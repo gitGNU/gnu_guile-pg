@@ -5,7 +5,7 @@
 
   - Install compiled modules under ${GUILE_SITE} and ${GUILE_LIBSITE}.
 
-  - Add convenience Makefile target: clean-libdir-guile-pg.
+  - Add convenience Makefile target: clean-nonmodule-guile-pg.
 
   + Fix incorrect objectifiers selection bug in pgtable-manager.
 
