@@ -1,5 +1,9 @@
 2002-12-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* configure.in (VERSION): Bump to 0.14 for release.
+
+2002-12-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* test/Makefile.am (TESTS_ENVIRONMENT): Add `top_srcdir' and `srcdir'.
 
 	* test/abstraction-scm-tests.sh:
