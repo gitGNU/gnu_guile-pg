@@ -19,9 +19,10 @@
 ##   to the Free Software Foundation, Inc., 59 Temple Place, Suite
 ##   330, Boston, MA 02111-1307 USA
 
-TESTS_ENVIRONMENT =                             \
-  top_builddir=$(top_builddir_absolute)         \
-  top_srcdir=$(top_srcdir)                      \
+TESTS_ENVIRONMENT =				\
+  GUILE=$(top_builddir_absolute)/wily-guile	\
+  top_builddir=$(top_builddir_absolute)		\
+  top_srcdir=$(top_srcdir)			\
   srcdir=$(srcdir)
 
 TESTS = alive.sh                                \
