@@ -1,9 +1,9 @@
 
 - 0.17
 
-  - Use module abstraction for shared object libraries.
+  + Use module abstraction for shared object libraries.
 
-  - Install compiled modules under ${GUILE_SITE} and ${GUILE_LIBSITE}.
+  + Install compiled modules under ${GUILE_SITE} and ${GUILE_LIBSITE}.
 
   - Add convenience Makefile target: clean-nonmodule-guile-pg.
 
