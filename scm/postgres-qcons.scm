@@ -36,6 +36,7 @@
 (define-module (database postgres-qcons)
   #:export (qcons-declare!
             sql-quote
+            make-comma-separated-tree
             make-WHERE-tree
             make-GROUP-BY-tree
             make-HAVING-tree
@@ -119,10 +120,12 @@
   (apply simple-format #f s args))
 
 (define (list-sep-proc sep)
-  (lambda (proc ls)
+  (lambda (proc ls . more-ls)
     (if (null? ls)
         ls
-        (let* ((ls (map proc ls))
+        (let* ((ls (if (null? more-ls)  ; optimization; not strictly necessary
+                       (map proc ls)
+                       (apply map proc ls more-ls)))
                (rv (list (car ls))))
           (let loop ((tail (cdr ls)) (tp rv))
             (cond ((null? tail) rv)
@@ -132,6 +135,21 @@
 (define andsep   (list-sep-proc #:AND))
 (define orsep    (list-sep-proc #:OR))
 (define commasep (list-sep-proc ","))
+
+;; Return a tree made by mapping @var{proc} over list @var{ls},
+;; w/ elements separated by commas.  Optional third arg @var{parens?}
+;; non-#f includes surrounding parentheses.  The rest of the args
+;; are more lists, whose @sc{car}s are passed as additional args
+;; to @var{proc}.
+;;
+;;-sig: (proc ls [parens? [more-ls...]])
+;;
+(define (make-comma-separated-tree proc ls . opts)
+  (let* ((parens? (and (not (null? opts)) (car opts)))
+         (more-ls (and (not (null? opts)) (cdr opts)))
+         (L (if parens? "(" ""))
+         (R (if parens? ")" "")))
+    (list L (apply commasep proc ls more-ls) R)))
 
 (define (expr tree)
 
@@ -309,7 +327,7 @@
   ;; do it!
   (with-output-to-string
     (lambda ()
-      (for-each out trees))))
+      (out trees))))
 
 ;; Return a string made from flattening @var{trees} (a list).
 ;; See @code{sql<-trees} for a description of @var{trees}.
