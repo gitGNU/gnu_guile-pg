@@ -1,5 +1,24 @@
 2003-11-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* autogen.sh: Update tool version comments.
+	Use "guile-config info datadir" to compute aclocal include dir.
+	Append override for macro `_LT_AC_TAGCONFIG' to aclocal.m4.
+	Add symlinking of modsup.h.
+	Add creation of .last-release file.
+
+	* configure.in: Add check for <guile/modsup.h>.
+	(AH_BOTTOM): New directive.
+	(AC_CONFIG_FILES): Add wily-guile.
+	(module-catalog-prep): New AC_CONFIG_COMMANDS block.
+	(chmod-plus-x): New AC_CONFIG_COMMANDS block.
+
+	* wily-guile.in: New file.
+
+	* Makefile.am (noinst_DATA): New directive.
+	(pre-inst.merged-module-catalog): New target.
+
+2003-11-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* test/guile-pg-basic-tests.scm (result->output-string): New proc.
 	(test:count-records): Also do a manual line count to check backend
 	count as well as exercise `pg-print' via `result->output-string'.
