@@ -1,3 +1,10 @@
+2004-07-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* acinclude.m4 (PQ_FLAGS):
+	Use var `PQ_CPPFLAGS' instead of `PQ_CFLAGS'.
+	* configure.in: Likewise.
+	* Makefile.am: Likewise.
+
 2004-07-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* aclocal-suffix: New file.
