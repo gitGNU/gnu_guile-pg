@@ -381,6 +381,16 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
 }
 #undef FUNC_NAME
 
+PG_DEFINE (pg_connection_p, "pg-connection?", 1, 0, 0,
+           (SCM obj),
+           "Return #t iff @var{obj} is a connection object\n"
+           "returned by @code{pg-connectdb}.")
+#define FUNC_NAME s_pg_connection_p
+{
+  return sec_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
+}
+#undef FUNC_NAME
+
 PG_DEFINE (pg_reset, "pg-reset", 1, 0, 0,
            (SCM conn),
            "Reset the connection @var{conn} with the backend.\n"
