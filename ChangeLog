@@ -1,5 +1,9 @@
 2004-07-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* configure.in (GUILE_PG_STAMP): Delete var.
+
+2004-07-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* acinclude.m4 (PQ_FLAGS):
 	Use var `PQ_CPPFLAGS' instead of `PQ_CFLAGS'.
 	* configure.in: Likewise.
