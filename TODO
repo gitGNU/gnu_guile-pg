@@ -46,6 +46,11 @@
 
   - Keep an eye out for methodology to replace --with-libpq*
 
+  - Clean up port type-hackery in libpostgres_lo.c.
+
+    The weirdness is probably unavoidably related to Guile's port
+    implementation.  However, the least we can do is understand it better.
+
 
 
 	Local Variables:
