@@ -1,6 +1,6 @@
 /* bcruft.h --- sometimes foresight was incomplete
 
-   Copyright (C) 2004 Thien-Thi Nguyen
+   Copyright (C) 2004,2005 Thien-Thi Nguyen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 ## Process this file with Automake to create Makefile.in
 ##
 ##	Copyright (C) 1998 Ian Grant
-##	Copyright (C) 2003,2004 Thien-Thi Nguyen
+##	Copyright (C) 2003,2004,2005 Thien-Thi Nguyen
 ##
 ##   This file is part of GUILE-PG.
 ##

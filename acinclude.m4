@@ -1,7 +1,7 @@
 dnl   Some -*-autoconf-*- macros for Guile-PG
 dnl
 dnl	Copyright (C) 1998 Ian Grant
-dnl	Copyright (C) 2002, 2003, 2004 Thien-Thi Nguyen
+dnl	Copyright (C) 2002, 2003, 2004, 2005 Thien-Thi Nguyen
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License as published by
