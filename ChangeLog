@@ -1,5 +1,13 @@
 2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/guile-pg.twerp (Retrieving Data): Add menu.
+	Move non-intro text into children nodes.
+	(Synchronous Retrieval): New node/section.
+	(Asynchronous Retrieval): Likewise.
+	(Processing Results): Likewise.
+
+2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostres_lo.c (XCONN): New macro. Use throughout.
 
 	* libpostgres.c (XCONN, RESULT): New macros. Use throughout.
