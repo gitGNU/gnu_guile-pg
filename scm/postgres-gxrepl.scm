@@ -41,9 +41,7 @@
                           pg-connectdb
                           pg-print))
   #:use-module ((database postgres-qcons)
-                #:select (sql-quote
-                          make-SELECT/OUT-tree
-                          make-SELECT/FROM/OUT-tree
+                #:select (make-SELECT/FROM/OUT-tree
                           parse+make-SELECT/tail-tree
                           sql-command<-trees))
   #:autoload (ice-9 pretty-print) (pretty-print)
@@ -111,11 +109,11 @@ is normal."
                                           (cdddr all)))))))))
         (else
          (sql-command<-trees
-          #:SELECT (make-SELECT/OUT-tree
-                    `((,(if (null? something)
-                            "obvious"
-                            (fs "~A" (car something)))
-                       . (+ 6 (* 6 6)))))))))
+          (make-SELECT/FROM/OUT-tree
+           #f `((,(if (null? something)
+                      "obvious"
+                      (fs "~A" (car something)))
+                 . (+ 6 (* 6 6)))))))))
 
 (defcc (dt . which)
   "Describe columns in table TABLE-NAME.
@@ -123,17 +121,17 @@ Output includes the name, type, length, mod (?), and other information
 extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
   (if (null? which)
       (sql-command<-trees
-       #:SELECT (make-SELECT/OUT-tree
-                 '(("schema" . n.nspname)
-                   ("name"   . c.relname)
-                   ("type"   . (case c.relkind
-                                 ("r" "table")
-                                 ("v" "view")
-                                 ("i" "index")
-                                 ("S" "sequence")
-                                 ("s" "special")
-                                 (else "huh?")))
-                   ("owner"  . u.usename)))
+       (make-SELECT/FROM/OUT-tree
+        #f '(("schema" . n.nspname)
+             ("name"   . c.relname)
+             ("type"   . (case c.relkind
+                           ("r" "table")
+                           ("v" "view")
+                           ("i" "index")
+                           ("S" "sequence")
+                           ("s" "special")
+                           (else "huh?")))
+             ("owner"  . u.usename)))
        ;; todo: arrive at this via tree build call, not manually
        '(#:FROM               pg_catalog.pg_class c
                 #:LEFT #:JOIN pg_catalog.pg_user u
@@ -322,11 +320,7 @@ series of keywords and EXPR.  EXPR indicates a prefix-style SQL expression."
              (for-display "No columns selected"))
             (else
              (sql-command<-trees
-              (cond ((o/f #:from)
-                     => (lambda (from)
-                          (make-SELECT/FROM/OUT-tree from cols)))
-                    (else
-                     (list #:SELECT (make-SELECT/OUT-tree cols))))
+              (make-SELECT/FROM/OUT-tree (o/f #:from) cols)
               (parse+make-SELECT/tail-tree
                (append (decide #:where
                                (lambda (v)
