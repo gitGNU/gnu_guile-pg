@@ -133,12 +133,16 @@ xc_display (SCM exp, SCM port, scm_print_state *pstate)
   char *portstr = PQport (xc->dbconn);
   char *optionsstr = PQoptions (xc->dbconn);
 
+  /* A port without a host is misleading.  */
+  if (! hoststr)
+    portstr = NULL;
+
   scm_puts ("#<PG-CONN:", port);
   scm_intprint (xc->count, 10, port); scm_putc (':', port);
-  scm_puts (IFNULL (dbstr,"db?"), port); scm_putc (':', port);
-  scm_puts (IFNULL (hoststr,"localhost"), port); scm_putc (':', port);
-  scm_puts (IFNULL (portstr,"port?"), port); scm_putc (':', port);
-  scm_puts (IFNULL (optionsstr,"options?"), port);
+  scm_puts (IFNULL (dbstr, "?"), port); scm_putc (':', port);
+  scm_puts (IFNULL (hoststr, ""), port); scm_putc (':', port);
+  scm_puts (IFNULL (portstr, ""), port); scm_putc (':', port);
+  scm_puts (IFNULL (optionsstr, ""), port);
   scm_puts (">", port);
 
   return 1;
