@@ -1246,13 +1246,10 @@ PG_DEFINE (pg_guile_pg_version, "pg-guile-pg-version", 0, 0, 0,
 
 PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
            (SCM conn),
-           "Read a line from a connection on which a @code{COPY <table> TO\n"
+           "Read a line from @var{conn} on which a @code{COPY <table> TO\n"
            "STDOUT} has been issued.  Return a string from the connection.\n"
-           "If the returned string consists of only a backslash followed by\n"
-           "a full stop, then the results from the @code{COPY} command have\n"
-           "all been read and @code{pg-endcopy} should be called to\n"
-           "resynchronise the connection before any further calls to\n"
-           "@code{pg-exec} on this connection.")
+           "A returned string consisting of a backslash followed by a full\n"
+           "stop signifies an end-of-copy marker.")
 #define FUNC_NAME s_pg_getline
 {
   char buf[BUF_LEN];
@@ -1271,6 +1268,30 @@ PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
         str = scm_string_append (SCM_LIST2 (str, scm_makfrom0str (buf)));
     }
   return str;
+}
+#undef FUNC_NAME
+
+PG_DEFINE (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
+           (SCM conn, SCM buf, SCM tickle),
+           "Read a line from @var{conn} on which a @code{COPY <table> TO\n"
+           "STDOUT} has been issued, into @var{buf} (a string).\n"
+           "Return -1 to mean end-of-copy marker recognized, or a number\n"
+           "(possibly zero) indicating how many bytes of data were read.\n"
+           "The returned data may contain at most one newline (in the last\n"
+           "byte position).\n"
+           "Optional arg @var{tickle} non-#f means to do a\n"
+           "\"consume input\" operation prior to the read.")
+#define FUNC_NAME s_pg_getlineasync
+{
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_STRINGP (buf), buf, SCM_ARG2, FUNC_NAME);
+
+  if (tickle != SCM_UNDEFINED && SCM_NFALSEP (tickle))
+    PQconsumeInput (sec_unbox (conn)->dbconn);
+
+  return SCM_MAKINUM (PQgetlineAsync (sec_unbox (conn)->dbconn,
+                                      SCM_CHARS (buf),
+                                      SCM_ROLENGTH (buf)));
 }
 #undef FUNC_NAME
 
