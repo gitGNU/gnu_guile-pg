@@ -19,8 +19,6 @@
 ##   to the Free Software Foundation, Inc., 59 Temple Place, Suite
 ##   330, Boston, MA 02111-1307 USA
 
-##   Author: Ian grant <Ian.Grant@cl.cam.ac.uk>
-
 AUTOMAKE_OPTIONS = foreign
 
 # These files should be installed and distributed.
