@@ -45,7 +45,7 @@
                           make-SELECT/OUT-tree
                           make-SELECT/FROM/OUT-tree
                           make-WHERE-tree
-                          make-ORDER-BY-tree
+                          parse+make-SELECT/tail-tree
                           sql-command<-trees))
   #:autoload (ice-9 pretty-print) (pretty-print)
   #:export (gxrepl))
@@ -139,35 +139,37 @@ extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
                 #:ON                             u.usesysid = c.relowner
                 #:LEFT #:JOIN pg_catalog.pg_namespace n
                 #:ON                                  n.oid = c.relnamespace)
-       (make-WHERE-tree
-        '(and (not (= n.nspname "pg_catalog"))
-              (not (= n.nspname "pg_toast"))))
-       (make-ORDER-BY-tree
-        '((< 1) (< 2))))
+       (parse+make-SELECT/tail-tree
+        '(#:where
+          (and (not (= n.nspname "pg_catalog"))
+               (not (= n.nspname "pg_toast")))
+          #:order-by
+          ((< 1) (< 2)))))
       (let ((table-name (symbol->string (car which))))
-  (sql-command<-trees
-   (make-SELECT/FROM/OUT-tree
-    '((c . pg_class) (a . pg_attribute) (t . pg_type))
-    '(("name"   . a.attname)
-      ("type"   . t.typname)
-      (" bytes" . (if (< 0 a.attlen)
-                      (to_char a.attlen "99999")
-                      "varies"))
-      ("mod"    . (to_char a.atttypmod "999"))
-      ("etc"    . (|| (if a.attnotnull
-                          "NOT NULL"
-                          "NULL ok")
-                      ", "
-                      (if a.atthasdef
-                          "has defs"
-                          "no defs")))))
-   (make-WHERE-tree
-          `(and (= c.relname ,table-name)
-                (> a.attnum 0)
-                (= a.attrelid c.oid)
-                (= a.atttypid t.oid)))
-   (make-ORDER-BY-tree
-          '((< a.attnum)))))))
+        (sql-command<-trees
+         (make-SELECT/FROM/OUT-tree
+          '((c . pg_class) (a . pg_attribute) (t . pg_type))
+          '(("name"   . a.attname)
+            ("type"   . t.typname)
+            (" bytes" . (if (< 0 a.attlen)
+                            (to_char a.attlen "99999")
+                            "varies"))
+            ("mod"    . (to_char a.atttypmod "999"))
+            ("etc"    . (|| (if a.attnotnull
+                                "NOT NULL"
+                                "NULL ok")
+                            ", "
+                            (if a.atthasdef
+                                "has defs"
+                                "no defs")))))
+         (parse+make-SELECT/tail-tree
+          `(#:where
+            (and (= c.relname ,table-name)
+                 (> a.attnum 0)
+                 (= a.attrelid c.oid)
+                 (= a.atttypid t.oid))
+            #:order-by
+            ((< a.attnum))))))))
 
 (defcc (gxrepl conn)
   "Run a recursive repl, talking to database CONN.
@@ -244,8 +246,8 @@ alias can be used in `outs' and `where' sets.
 
 If PART is `outs', each element of SET is either a column name, possibly
 qualified by the table name with a dot), e.g., `t.oid'; a prefix-style
-SQL expression, e.g., `(to_char 42 \"999\")'; or pair with the cdr one
-of the previous options and the car a string, e.g., `(\"id\" . t.oid)'.
+SQL expression, e.g., `(to_char 42 \"999\")'; or pair with the car a
+string and the cdr one of the previous options, e.g., `(\"id\" . t.oid)'.
 
 If PART is `where', each element of SET is prefix-style SQL expression,
 .e.g, `(= t.oid 42)', and there is an implicit \"and\" clause surrounding
