@@ -1,5 +1,12 @@
 2003-11-27  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres.scm.in: Use module (database postgres-sup).
+	No longer manually load the shared object library.  Instead,
+	replace public interface w/ that of module (database postgres-sup),
+	and delete all the now-defunct `export' forms.
+
+2003-11-27  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* bugtest/testloseek.scm (pg-exec-cmd): Use symbol
 	`PGRES_COMMAND_OK' instead of variable by same name.
 
