@@ -12,7 +12,7 @@
 
   + Use tmpfile(3) for pg_print.
 
-  - Review error handling; regularize; document.
+  + Review error handling; document.
 
   + Implement these calls:
 
@@ -93,6 +93,8 @@
 
 
 - Eventually
+
+  - Regularize error handling.
 
   - Fix places where SCM_ROSTRINGs are treated as null-terminated strings.
     We need to make sure they aren't substrings.
