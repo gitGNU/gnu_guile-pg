@@ -15,7 +15,10 @@ PGDATABASE=guile_pg_test
 export PGDATABASE
 
 ${GUILE-guile} -l $top_builddir/scm/postgres.scm -s guile-pg-lo-tests.scm
+rv=$?
 
 $dropdb guile_pg_test
+
+exit $rv
 
 # lo-tests.sh ends here
