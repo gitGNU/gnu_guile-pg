@@ -35,6 +35,34 @@ NEWS for Guile-PG
 
 	(pg-conndefaults) => alist of alists
 
+  - conditional definitions now unconditional
+
+	The following procedures used to be conditionally defined
+	(compiled).  Now they are present unconditionally, although
+	their return values are still influenced by the condition:
+
+	Procedure          Conditional           Return value if
+	                                      conditional is not met
+        ============================================================
+	pg-get-pass        HAVE_PQPASS                 #f
+	pg-backend-pid     HAVE_PQBACKENDPID           -1
+	pg-oid-value       HAVE_PQOIDVALUE             #f
+	pg-binary-tuples   HAVE_PQBINARYTUPLES         #f
+	pg-fmod            HAVE_PQFMOD                 -1
+
+	The idiom for using these procs used to be:
+
+	(and (defined? 'PROC)
+	     (PROC ...))
+
+	Now, `pg-guile-pg-loaded' returns a list of symbols which
+	include the conditionals, sans "HAVE_" prefix, to check.  E.g.:
+
+	(and (memq 'PQFMOD (pg-guile-pg-loaded))
+	     (pg-fmod ...))
+
+	Alternatively, you can use the procs without such a pre-check,
+	and instead check the return value.
 
 
 - 0.17 | 2004-02-02
