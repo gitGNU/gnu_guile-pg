@@ -12,3 +12,6 @@ Thanks go to these people for their help in improving guile-pg.
 
 - Stan Pinte
   - bug report: configure runs twerp2texi unconditionally
+
+- Russ McManus
+  - wrote `sybase_glue' which was used as a framework for guile-pg
