@@ -142,6 +142,11 @@
              (begin (set! *C* new)
                     #t))))))
 
+(define test:untracing-untraced-connection
+  (add-test (if #f #f)
+    (lambda ()
+      (pg-untrace *C*))))               ; used to segfault
+
 (define test:various-connection-info
   (add-test #t
     (lambda ()
@@ -491,10 +496,11 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 40)
+  (test-init "basic-tests" 41)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:make-connection
+         test:untracing-untraced-connection
          test:various-connection-info
          test:set-notice-out!-1
          test:set-client-data
