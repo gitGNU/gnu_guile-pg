@@ -6,8 +6,7 @@
   #:use-module ((database postgres) #:select (pg-print
                                               pg-ntuples))
   #:use-module ((database postgres-table) #:select (pgtable-manager))
-  #:use-module ((ice-9 pretty-print) #:select (pretty-print))
-  #:use-module ((ice-9 common-list) #:select (pick-mappings)))
+  #:use-module ((ice-9 pretty-print) #:select (pretty-print)))
 
 ;;; version: 5
 
@@ -171,12 +170,13 @@
               (-td (lambda x (list "<TD>" x "</TD>")))
               (-pair (lambda (x y) (-tr (-td x) (-td y)))))
          (list (-tr name)
-               (pick-mappings (lambda (field)
-                                (and (get field)
-                                     (let ((sf (symbol->string field)))
-                                       (-pair sf ((m #:->tree) (list sf name)
-                                                  htmlize-markup)))))
-                              *markup-fields*)))))
+               (map (lambda (field)
+                      (if (get field)
+                          (let ((sf (symbol->string field)))
+                            (-pair sf ((m #:->tree) (list sf name)
+                                       htmlize-markup)))
+                          '()))
+                    *markup-fields*)))))
     (newline))
 
   (define (delete-project name)
@@ -198,13 +198,15 @@
            (name (get 'name)))
       (pretty-print
        `((name ,name)
-         ,@(pick-mappings (lambda (field)
-                            (and (get field)
-                                 (cons field
-                                       ((m #:->tree)
-                                        (list (symbol->string field) name)
-                                        externalize-markup))))
-                          *markup-fields*)))))
+         ,@(apply append
+                  (map (lambda (field)
+                         (if (get field)
+                             (cons field
+                                   ((m #:->tree)
+                                    (list (symbol->string field) name)
+                                    externalize-markup))
+                             '()))
+                       *markup-fields*))))))
 
   (define *samples*
     (list
