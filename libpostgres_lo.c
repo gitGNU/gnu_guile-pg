@@ -62,16 +62,25 @@ typedef struct lob_stream_tag {
 #define LOB_CONN(x) (sec_unbox ((x)->conn)->dbconn)
 
 #define SCM_LOBPORTP(x) (SCM_TYP16 (x)==lob_ptype)
-#define SCM_OPLOBPORTP(x) (((0xffff | SCM_OPN) & (int)SCM_CAR (x))== (lob_ptype | SCM_OPN))
-#define SCM_OPINLOBPORTP(x) (((0xffff | SCM_OPN | SCM_RDNG) & (int)SCM_CAR (x))== (lob_ptype | SCM_OPN | SCM_RDNG))
-#define SCM_OPOUTLOBPORTP(x) (((0xffff | SCM_OPN | SCM_WRTNG) & (int)SCM_CAR (x))== (lob_ptype | SCM_OPN | SCM_WRTNG))
+
+#define SCM_OPLOBPORTP(x) \
+  (((0xffff | SCM_OPN) & (int)SCM_CAR (x)) == (lob_ptype | SCM_OPN))
+
+#define SCM_OPINLOBPORTP(x)                             \
+  (((0xffff | SCM_OPN | SCM_RDNG) & (int)SCM_CAR (x))   \
+   == (lob_ptype | SCM_OPN | SCM_RDNG))
+
+#define SCM_OPOUTLOBPORTP(x)                            \
+  (((0xffff | SCM_OPN | SCM_WRTNG) & (int)SCM_CAR (x))  \
+   == (lob_ptype | SCM_OPN | SCM_WRTNG))
 
 /* ttn hack */
 #define TTN_COERCE_INT(x) ((int)(x))
 
 long lob_ptype;
 
-static SCM lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller);
+static SCM lob_mklobport (SCM conn, Oid oid, int fd,
+                          long modes, const char *caller);
 
 PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
            (SCM conn, SCM modes),
@@ -120,12 +129,13 @@ PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
   if (oid <= 0)
     return SCM_BOOL_F;
 
-  if (fd < 0) {
-    SCM_DEFER_INTS;
-    (void) lo_unlink (dbconn, oid);
-    SCM_ALLOW_INTS;
-    return SCM_BOOL_F;
-  }
+  if (fd < 0)
+    {
+      SCM_DEFER_INTS;
+      (void) lo_unlink (dbconn, oid);
+      SCM_ALLOW_INTS;
+      return SCM_BOOL_F;
+    }
   return lob_mklobport (conn, oid, fd, mode_bits, FUNC_NAME);
 }
 #undef FUNC_NAME
@@ -181,15 +191,17 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
   if (fd < 0)
     return SCM_BOOL_F;
 
-  if (strchr (SCM_ROCHARS (modes), 'a')) {
-    SCM_DEFER_INTS;
-    if (lo_lseek (dbconn, fd, 0, SEEK_END) < 0) {
-      (void) lo_close (dbconn, fd);
+  if (strchr (SCM_ROCHARS (modes), 'a'))
+    {
+      SCM_DEFER_INTS;
+      if (lo_lseek (dbconn, fd, 0, SEEK_END) < 0)
+        {
+          (void) lo_close (dbconn, fd);
+          SCM_ALLOW_INTS;
+          return SCM_BOOL_F;
+        }
       SCM_ALLOW_INTS;
-      return SCM_BOOL_F;
     }
-    SCM_ALLOW_INTS;
-  }
   return lob_mklobport (conn, pg_oid, fd, mode_bits, FUNC_NAME);
 }
 #undef FUNC_NAME
@@ -216,26 +228,35 @@ lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller)
   SCM_SETSTREAM (port, (SCM) lobp);
 
   pt->rw_random = 1;
-  if (SCM_INPUT_PORT_P (port)) {
-    pt->read_buf = malloc (LOB_BUFLEN);
-    if (pt->read_buf == NULL)
-      scm_memory_error (s_lob_mklobport);
-    pt->read_pos = pt->read_end = pt->read_buf;
-    pt->read_buf_size = LOB_BUFLEN;
-  } else {
-    pt->read_buf = ((unsigned char *) pt->read_pos) = pt->read_end = &pt->shortbuf;
-    pt->read_buf_size = 1;
-  }
-  if (SCM_OUTPUT_PORT_P (port)) {
-    pt->write_buf = malloc (LOB_BUFLEN);
-    if (pt->write_buf == NULL)
-      scm_memory_error (s_lob_mklobport);
-    pt->write_pos = pt->write_buf;
-    pt->write_buf_size = LOB_BUFLEN;
-  } else {
-    pt->write_buf = pt->write_pos = &pt->shortbuf;
-    pt->write_buf_size = 1;
-  }
+  if (SCM_INPUT_PORT_P (port))
+    {
+      pt->read_buf = malloc (LOB_BUFLEN);
+      if (pt->read_buf == NULL)
+        scm_memory_error (s_lob_mklobport);
+      pt->read_pos = pt->read_end = pt->read_buf;
+      pt->read_buf_size = LOB_BUFLEN;
+    }
+  else
+    {
+      pt->read_buf
+        = ((unsigned char *) pt->read_pos)
+        = pt->read_end
+        = &pt->shortbuf;
+      pt->read_buf_size = 1;
+    }
+  if (SCM_OUTPUT_PORT_P (port))
+    {
+      pt->write_buf = malloc (LOB_BUFLEN);
+      if (pt->write_buf == NULL)
+        scm_memory_error (s_lob_mklobport);
+      pt->write_pos = pt->write_buf;
+      pt->write_buf_size = LOB_BUFLEN;
+    }
+  else
+    {
+      pt->write_buf = pt->write_pos = &pt->shortbuf;
+      pt->write_buf_size = 1;
+    }
   pt->write_end = pt->write_buf + pt->write_buf_size;
 
   SCM_SETCAR (port, TTN_COERCE_INT (SCM_CAR (port)) & ~SCM_BUF0);
@@ -337,49 +358,55 @@ lob_flush (SCM port)
   int init_size = pt->write_pos - pt->write_buf;
   int remaining = init_size;
 
-  while (remaining > 0) {
-    int count;
+  while (remaining > 0)
+    {
+      int count;
 #ifdef DEBUG_TRACE_LO_WRITE
-    fprintf (stderr, "lob_flush (): lo_write (%.*s, %d) ... ", remaining, ptr, remaining);
+      fprintf (stderr, "lob_flush (): lo_write (%.*s, %d) ... ",
+               remaining, ptr, remaining);
 #endif
-    SCM_DEFER_INTS;
-    count = lo_write (conn, lobp->fd, ptr, remaining);
-    SCM_ALLOW_INTS;
+      SCM_DEFER_INTS;
+      count = lo_write (conn, lobp->fd, ptr, remaining);
+      SCM_ALLOW_INTS;
 #ifdef DEBUG_TRACE_LO_WRITE
-    fprintf (stderr, "returned %d\n", count);
+      fprintf (stderr, "returned %d\n", count);
 #endif
-    if (count < remaining) {
-      /* error.  assume nothing was written this call, but
-         fix up the buffer for any previous successful writes.  */
-      int done = init_size - remaining;
-
-      if (done > 0) {
-        int i;
-
-        for (i = 0; i < remaining; i++) {
-          * (pt->write_buf + i) = * (pt->write_buf + done + i);
-        }
-        pt->write_pos = pt->write_buf + remaining;
-      }
-#if defined (HAVE_SCM_TERMINATING) || defined (HAVE_LIBGUILE_TERMINATING)
-      if (! scm_terminating)
-        scm_syserror ("lob_flush");
-      else
-#endif /* HAVE_LIBGUILE_TERMINATING || HAVE_LIBGUILE_TERMINATING */
+      if (count < remaining)
         {
-          const char *msg = "Error: could not flush large object file descriptor ";
-          char buf[11];
+          /* error.  assume nothing was written this call, but
+             fix up the buffer for any previous successful writes.  */
+          int done = init_size - remaining;
 
-          write (2, msg, strlen (msg));
-          sprintf (buf, "%d\n", lobp->fd);
-          write (2, buf, strlen (buf));
+          if (done > 0)
+            {
+              int i;
 
-          count = remaining;
+              for (i = 0; i < remaining; i++)
+                {
+                  * (pt->write_buf + i) = * (pt->write_buf + done + i);
+                }
+              pt->write_pos = pt->write_buf + remaining;
+            }
+#if defined (HAVE_SCM_TERMINATING) || defined (HAVE_LIBGUILE_TERMINATING)
+          if (! scm_terminating)
+            scm_syserror ("lob_flush");
+          else
+#endif /* HAVE_LIBGUILE_TERMINATING || HAVE_LIBGUILE_TERMINATING */
+            {
+              const char *msg = "Error: could not"
+                " flush large object file descriptor ";
+              char buf[11];
+
+              write (2, msg, strlen (msg));
+              sprintf (buf, "%d\n", lobp->fd);
+              write (2, buf, strlen (buf));
+
+              count = remaining;
+            }
         }
+      ptr += count;
+      remaining -= count;
     }
-    ptr += count;
-    remaining -= count;
-  }
   pt->write_pos = pt->write_buf;
 }
 
@@ -393,15 +420,16 @@ lob_end_input (SCM port, int offset)
 
   offset += pt->read_end - pt->read_pos;
 
-  if (offset > 0) {
-    pt->read_pos = pt->read_end;
-    SCM_DEFER_INTS;
-    ret = lo_lseek (conn, lobp->fd, -offset, SEEK_CUR);
-    SCM_ALLOW_INTS;
-    if (ret == -1)
-      scm_misc_error ("lob_end_input", "Error seeking on lo port %s",
-                      scm_listify (port, SCM_UNDEFINED));
-  }
+  if (offset > 0)
+    {
+      pt->read_pos = pt->read_end;
+      SCM_DEFER_INTS;
+      ret = lo_lseek (conn, lobp->fd, -offset, SEEK_CUR);
+      SCM_ALLOW_INTS;
+      if (ret == -1)
+        scm_misc_error ("lob_end_input", "Error seeking on lo port %s",
+                        scm_listify (port, SCM_UNDEFINED));
+    }
   pt->rw_active = SCM_PORT_NEITHER;
 }
 
@@ -457,15 +485,17 @@ lob_fill_input (SCM port)
   ret = lo_read (conn, lobp->fd, pt->read_buf, pt->read_buf_size);
   SCM_ALLOW_INTS;
 #ifdef DEBUG_LO_READ
-  fprintf (stderr, "lob_fill_input: lo_read (%d) returned %d.\n", pt->read_buf_size, ret);
+  fprintf (stderr, "lob_fill_input: lo_read (%d) returned %d.\n",
+           pt->read_buf_size, ret);
 #endif
-  if (ret != pt->read_buf_size) {
-    if (ret == 0)
-      return EOF;
-    else if (ret < 0)
-      scm_misc_error ("lob_fill_buffer","Error (%s) reading from lo port %s",
-                      scm_listify (SCM_MAKINUM (ret), port, SCM_UNDEFINED));
-  }
+  if (ret != pt->read_buf_size)
+    {
+      if (ret == 0)
+        return EOF;
+      else if (ret < 0)
+        scm_misc_error ("lob_fill_buffer","Error (%s) reading from lo port %s",
+                        scm_listify (SCM_MAKINUM (ret), port, SCM_UNDEFINED));
+    }
   pt->read_pos = pt->read_buf;
   pt->read_end = pt->read_buf + ret;
 #ifdef DEBUG_LO_READ
@@ -479,32 +509,36 @@ lob_write (SCM port, const void *data, size_t size)
 {
   scm_port *pt = SCM_PTAB_ENTRY (port);
 
-  if (pt->write_buf == &pt->shortbuf) {
-    /* "unbuffered" port.  */
-    int fdes = SCM_FSTREAM (port)->fdes;
+  if (pt->write_buf == &pt->shortbuf)
+    {
+      /* "unbuffered" port.  */
+      int fdes = SCM_FSTREAM (port)->fdes;
 
-    if (write (fdes, data, size) == -1)
-      scm_syserror ("fport_write");
-  } else {
-    const char *input = (char *) data;
-    size_t remaining = size;
+      if (write (fdes, data, size) == -1)
+        scm_syserror ("fport_write");
+    }
+  else
+    {
+      const char *input = (char *) data;
+      size_t remaining = size;
 
-    while (remaining > 0) {
-      int space = pt->write_end - pt->write_pos;
-      int write_len = (remaining > space) ? space : remaining;
+      while (remaining > 0)
+        {
+          int space = pt->write_end - pt->write_pos;
+          int write_len = (remaining > space) ? space : remaining;
 
-      memcpy (pt->write_pos, input, write_len);
-      pt->write_pos += write_len;
-      remaining -= write_len;
-      input += write_len;
-      if (write_len == space)
+          memcpy (pt->write_pos, input, write_len);
+          pt->write_pos += write_len;
+          remaining -= write_len;
+          input += write_len;
+          if (write_len == space)
+            lob_flush (port);
+        }
+      /* handle line buffering.  */
+      if ((TTN_COERCE_INT (SCM_CAR (port)) & SCM_BUFLINE)
+          && memchr (data, '\n', size))
         lob_flush (port);
     }
-    /* handle line buffering.  */
-    if ((TTN_COERCE_INT (SCM_CAR (port)) & SCM_BUFLINE)
-        && memchr (data, '\n', size))
-      lob_flush (port);
-  }
 }
 
 static off_t
@@ -522,10 +556,11 @@ lob_seek (SCM port, off_t offset, int whence)
                     scm_listify (SCM_MAKINUM (ret), port, SCM_UNDEFINED));
 
   /* Adjust return value to account for guile port buffering.  */
-  if (SEEK_CUR == whence) {
-    scm_port *pt = SCM_PTAB_ENTRY (port);
-    ret -= (pt->read_end - pt->read_pos);
-  }
+  if (SEEK_CUR == whence)
+    {
+      scm_port *pt = SCM_PTAB_ENTRY (port);
+      ret -= (pt->read_end - pt->read_pos);
+    }
 
   return ret;
 }
@@ -556,25 +591,29 @@ PG_DEFINE (lob_lo_read, "pg-lo-read", 3, 0, 0,
 
   len = SCM_INUM (siz) * SCM_INUM (num);
   str = scm_make_string (SCM_MAKINUM (len), SCM_UNDEFINED);
-  for (n = 0 ; n < SCM_INUM (num) && ! done; n++) {
-    scm_sizet m;
-    int c;
-    for (m = 0; m < SCM_INUM (siz); m++) {
-      c = scm_getc (port);
-      if (c == EOF) {
-        done = 1;
-        break;
-      }
-      * (SCM_CHARS (str) + n * SCM_INUM (siz) + m) = c;
+  for (n = 0 ; n < SCM_INUM (num) && ! done; n++)
+    {
+      scm_sizet m;
+      int c;
+      for (m = 0; m < SCM_INUM (siz); m++)
+        {
+          c = scm_getc (port);
+          if (c == EOF)
+            {
+              done = 1;
+              break;
+            }
+          * (SCM_CHARS (str) + n * SCM_INUM (siz) + m) = c;
+        }
     }
-  }
   if (n < 0)
     return SCM_BOOL_F;
-  if (n < SCM_INUM (num)) {
-    SCM_DEFER_INTS; /* See comment re scm_vector_set_len in libguile/unif.c */
-    scm_vector_set_length_x (str, SCM_MAKINUM (n * SCM_INUM (siz)));
-    SCM_ALLOW_INTS;
-  }
+  if (n < SCM_INUM (num))
+    {
+      SCM_DEFER_INTS; /* See comment re scm_vector_set_len in libguile/unif.c */
+      scm_vector_set_length_x (str, SCM_MAKINUM (n * SCM_INUM (siz)));
+      SCM_ALLOW_INTS;
+    }
   return str;
 }
 #undef FUNC_NAME
@@ -608,10 +647,11 @@ lob_mark (SCM port)
 {
   lob_stream *lobp;
 
-  if (SCM_OPENP (port)) {
-    lobp = (lob_stream *) SCM_STREAM (port);
-    return lobp->conn;
-  }
+  if (SCM_OPENP (port))
+    {
+      lobp = (lob_stream *) SCM_STREAM (port);
+      return lobp->conn;
+    }
   return SCM_BOOL_F;
 }
 
@@ -621,9 +661,8 @@ lob_free (SCM port)
   lob_stream *lobp = (lob_stream *) SCM_STREAM (port);
   int ret;
 
-  if (SCM_OPENP (port)) {
+  if (SCM_OPENP (port))
     ret = lob_close (port);
-  }
   free (lobp);
   return 0;
 }
@@ -698,24 +737,25 @@ lob_printpt (SCM exp, SCM port, scm_print_state *pstate)
 {
   scm_puts ("#<PG-LO-PORT:", port);
   scm_print_port_mode (exp, port);
-  if (SCM_OPENP (exp)) {
-    lob_stream *lobp = (lob_stream *) SCM_STREAM (exp);
-    scm_extended_dbconn *sec = sec_unbox (lobp->conn);
-    char *dbstr = PQdb (sec->dbconn);
-    char *hoststr = PQhost (sec->dbconn);
-    char *portstr = PQport (sec->dbconn);
-    char *optionsstr = PQoptions (sec->dbconn);
+  if (SCM_OPENP (exp))
+    {
+      lob_stream *lobp = (lob_stream *) SCM_STREAM (exp);
+      scm_extended_dbconn *sec = sec_unbox (lobp->conn);
+      char *dbstr = PQdb (sec->dbconn);
+      char *hoststr = PQhost (sec->dbconn);
+      char *portstr = PQport (sec->dbconn);
+      char *optionsstr = PQoptions (sec->dbconn);
 
-    scm_intprint (lobp->fd, 10, port); scm_puts (":", port);
-    scm_intprint (lobp->oid, 10, port); scm_puts (":", port);
-    scm_puts ("#<PG-CONN:", port);
-    scm_intprint (sec->count, 10, port); scm_putc (':', port);
-    scm_puts (IFNULL (dbstr,"db?"), port); scm_putc (':', port);
-    scm_puts (IFNULL (hoststr,"localhost"), port); scm_putc (':', port);
-    scm_puts (IFNULL (portstr,"port?"), port); scm_putc (':', port);
-    scm_puts (IFNULL (optionsstr,"options?"), port);
-    scm_putc ('>', port);
-  }
+      scm_intprint (lobp->fd, 10, port); scm_puts (":", port);
+      scm_intprint (lobp->oid, 10, port); scm_puts (":", port);
+      scm_puts ("#<PG-CONN:", port);
+      scm_intprint (sec->count, 10, port); scm_putc (':', port);
+      scm_puts (IFNULL (dbstr,"db?"), port); scm_putc (':', port);
+      scm_puts (IFNULL (hoststr,"localhost"), port); scm_putc (':', port);
+      scm_puts (IFNULL (portstr,"port?"), port); scm_putc (':', port);
+      scm_puts (IFNULL (optionsstr,"options?"), port);
+      scm_putc ('>', port);
+    }
   scm_putc ('>', port);
   return 1;
 }
