@@ -103,6 +103,7 @@ abstractions and convenience procedures.
 * Result Transforms::           Module: (database postgres-resx).
 * Single-Table Abstraction::    Module: (database postgres-table).
 * Introspection::               Module: (database postgres-meta).
+* Easy Interaction::            Module: (database postgres-gxrepl).
 
 * Procedure Index::
 * Error Index::
@@ -1381,6 +1382,28 @@ for the table @code{updok} in database @code{glug}; use @code{type-name} to
 get the types (@pxref{Column Definitions}); and finally check to see which
 ones, if any, are unknown to Guile-PG.  The error output lists @code{real}
 twice because two of the @code{DEFS} have that type.
+
+@c ---------------------------------------------------------------------------
+@node    Easy Interaction
+@chapter Easy Interaction
+
+Sometimes you just want to poke around manually, interacting with a database
+connection by typing in exploratory commands, and the external command-line
+program psql(1) does not provide enough insight or customizability (or perhaps
+is not available).  This chapter presents an alternative method for running
+such a repl (read-eval-print loop).
+
+To get started, load the @code{postgres-gxrepl} module:
+
+@lisp
+(use-modules (database postgres-gxrepl))
+@end lisp
+
+This provides the procedure @code{gxrepl}.  The ``gx'' stands for ``guile
+extensible'', which is not the case at the moment, but we have great and
+humble plans for this module...
+
+@twerpdoc (gxrepl)
 
 @c ---------------------------------------------------------------------------
 @c ---------------------------------------------------------------------------
