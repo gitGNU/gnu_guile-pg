@@ -1,6 +1,8 @@
 
 - 0.17
 
+  - Add tests for pg-print and pg-make-print-options.
+
   - Use tmpfile(3), if available, as fallback for dup(3).
     + pg_print [ttn]
     - pg_trace
