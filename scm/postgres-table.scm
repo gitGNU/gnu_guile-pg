@@ -50,7 +50,9 @@
                           objectifiers)
                 #:renamer (symbol-prefix-proc 'def:))
   #:use-module ((database postgres-qcons)
-                #:select (sql-quote
+                #:select (sql-pre
+                          sql-pre?
+                          sql-quote
                           (make-comma-separated-tree . cseptree)
                           make-WHERE-tree
                           make-SELECT/FROM/OUT-tree
@@ -60,8 +62,8 @@
   #:use-module ((database postgres-resx)
                 #:select (result->object-alist
                           result->object-alists))
-  #:export (sql-pre
-            tuples-result->table
+  #:re-export (sql-pre)
+  #:export (tuples-result->table
             pgtable-manager
             pgtable-worker
             compile-outspec
@@ -77,24 +79,6 @@
 
 (define (symbol->qstring symbol)
   (fmt "~S" (symbol->string symbol)))
-
-(define preformatted (make-object-property))
-
-;; Return STRING marked w/ an unspecified property.
-;; This property disables type conversion and other formatting
-;; when the string is used for "insert" and "update" operations.
-;; (The "pre" means "preformatted".)
-;;
-;; For example, assume column `count' has type `int4'.  The following
-;; fragment increments this value for all rows:
-;; @lisp
-;; (let ((m (pgtable-manager ...)))
-;;   ((m 'update-col) '(count) `(,(sql-pre "count + 1"))))
-;; @end lisp
-;;
-(define (sql-pre string)
-  (set! (preformatted string) #t)
-  string)
 
 (define (serial? def)
   (eq? 'serial (def:type-name def)))
@@ -151,7 +135,7 @@
 ;;; inserts
 
 (define (->db-insert-string db-col-type x)
-  (or (and (preformatted x) x)
+  (or (and (sql-pre? x) x)
       (let ((def (dbcoltype-lookup db-col-type)))
         (sql-quote (or (false-if-exception ((dbcoltype:stringifier def) x))
                        (dbcoltype:default def))))))
@@ -212,9 +196,10 @@
   (define (make-cmd where-condition)
     (sql-command<-trees
      (force pre)
-     (if (string? where-condition)      ; todo: zonk after 2005-12-31
-         (list #:WHERE where-condition)
-         (make-WHERE-tree (list #:q* where-condition)))))
+     (make-WHERE-tree
+      (if (string? where-condition)     ; todo: zonk after 2005-12-31
+          (sql-pre where-condition)
+          where-condition))))
   ;; rv
   (lambda (where-condition)
     (beex (make-cmd where-condition))))
@@ -232,9 +217,10 @@
                        (->db-insert-string (def:type-name def) val)))
                (col-defs defs cols)
                #f data)
-     (if (string? where-condition)      ; todo: zonk after 2005-12-31
-         (list #:WHERE where-condition)
-         (make-WHERE-tree (list #:q* where-condition)))))
+     (make-WHERE-tree
+      (if (string? where-condition)     ; todo: zonk after 2005-12-31
+          (sql-pre where-condition)
+          where-condition))))
   ;; rv
   (lambda (cols data where-condition)
     (beex (make-cmd cols data where-condition))))
@@ -342,15 +328,16 @@
                              => set-hints!+sel)
                             ;; todo: zonk after 2005-12-31
                             ((string? outspec)
-                             (list outspec))
+                             (list (sql-pre outspec)))
                             (else
                              (set-hints!+sel
                               (cdr (compile-outspec outspec defs))))))
                      (cond ((null? rest-clauses) '())
                            ;; todo: zonk after 2005-12-31
-                           ((string? (car rest-clauses)) rest-clauses)
+                           ((string? (car rest-clauses))
+                            (map sql-pre rest-clauses))
                            (else (parse+make-SELECT/tail-tree
-                                  rest-clauses #t)))))
+                                  rest-clauses)))))
                (res (beex cmd)))
           (and hints (put res #:pgtable-ohints hints))
           res)))))
