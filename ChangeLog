@@ -1,5 +1,9 @@
 2005-01-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm (sql-quote): Rewrite for speed.
+
+2005-01-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-meta.scm (defs-from-psql): Use `reverse!'.
 	* scm/postgres-table.scm (sql-quote): Likewise.
 	* scm/postgres-types.scm (read-pgarray-1): Likewise.
