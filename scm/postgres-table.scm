@@ -53,7 +53,9 @@
                 #:renamer (symbol-prefix-proc 'def:))
   #:use-module ((database postgres-qcons)
                 #:select (sql-quote
+                          (make-comma-separated-tree . cseptree)
                           make-SELECT/FROM/OUT-tree
+                          sql<-trees
                           sql-command<-trees))
   #:use-module ((database postgres-resx)
                 #:select (result->object-alist
@@ -69,28 +71,6 @@
 
 (define put set-object-property!)
 (define get object-property)
-
-(define (string-append/separator c ls)
-  (let* ((len-ls (map string-length ls))
-         (rv (make-string (max 0 (apply + (length len-ls) -1 len-ls)))))
-    (let loop ((put -1) (ls ls) (len-ls len-ls))
-      (if (null? ls)
-          rv
-          (let ((s (car ls))
-                (len (car len-ls)))
-            (or (= -1 put)
-                (string-set! rv put c))
-            (substring-move! s 0 len rv (1+ put))
-            (loop (+ put 1 len) (cdr ls) (cdr len-ls)))))))
-
-(define (char-sep char)
-  (lambda (proc ls . more-ls)
-    (if (null? ls)
-        ""
-        (string-append/separator char (apply map proc ls more-ls)))))
-
-(define ssep (char-sep #\space))
-(define csep (char-sep #\,))
 
 (define (fmt . args)
   (apply simple-format #f args))
@@ -130,18 +110,21 @@
 (define (drop-proc beex table-name defs)
   (define cmds
     (delay (let loop ((ls defs)
-                      (acc (list (fmt "DROP TABLE ~A;" table-name))))
+                      (acc (list (sql-command<-trees
+                                  #:DROP #:TABLE table-name))))
              (if (null? ls)
                  (reverse! acc)
                  ;; Also drop associated sequences created by magic
                  ;; `serial' type.  Apparently, this was not handled
                  ;; automatically in old PostgreSQL versions.  See
-                 ;; PostgreSQL User Guide, Chapter 3: Data Types.
+                 ;; PostgreSQL User Guide, 5.1.4: The Serial Types.
                  (loop (cdr ls)
                        (if (serial? (car ls))
-                           (cons (fmt "DROP SEQUENCE ~A_~A_seq;"
-                                      table-name
-                                      (def:column-name (car ls)))
+                           (cons (sql-command<-trees
+                                  #:DROP #:SEQUENCE
+                                  (fmt "~A_~A_seq"
+                                       table-name
+                                       (def:column-name (car ls))))
                                  acc)
                            acc))))))
   ;; rv
@@ -151,18 +134,14 @@
 ;;; create table
 
 (define (create-proc beex table-name defs)
-  (define (fmt-col def)
-    (let ((name (symbol->qstring (def:column-name def)))
-          (type (string-upcase
-                 (symbol->string
-                  (def:type-name def))))
-          (opts (let ((opts (def:type-options def)))
-                  (if (null? opts)
-                      ""
-                      (ssep identity (cons "" opts))))))
-      (fmt "~A ~A~A" name type opts)))
   (define cmd
-    (delay (fmt "CREATE TABLE ~A (~A);" table-name (csep fmt-col defs))))
+    (delay (sql-command<-trees
+            #:CREATE #:TABLE table-name
+            (cseptree (lambda (def)
+                        (list (symbol->qstring (def:column-name def))
+                              (symbol->string (def:type-name def))
+                              (def:type-options def)))
+                      defs #t))))
   ;; rv
   (lambda ()
     (beex (force cmd))))
@@ -179,35 +158,38 @@
   (remove-if serial? defs))
 
 (define (pre-insert-into table-name)
-  (fmt "INSERT INTO ~A" table-name))
+  (sql<-trees #:INSERT #:INTO table-name))
 
 (define (insert-values-proc beex table-name defs)
   (define cdefs (delay (clean-defs defs)))
-  (define pre (delay (fmt "~A (~A) VALUES"
-                          (pre-insert-into table-name)
-                          (csep (lambda (def)
+  (define pre (delay (sql<-trees
+                      (pre-insert-into table-name)
+                      (cseptree (lambda (def)
                                   (symbol->qstring (def:column-name def)))
-                                (force cdefs)))))
+                                (force cdefs)
+                                #t)
+                      #:VALUES)))
   (define types (delay (map def:type-name (force cdefs))))
   (define (make-cmd data)
-    (fmt "~A (~A);" (force pre)
-         (csep ->db-insert-string (force types) data)))
+    (sql-command<-trees
+     (force pre) (cseptree ->db-insert-string (force types) #t
+                           data)))
   ;; rv
   (lambda data
     (beex (make-cmd data))))
 
 (define (insert-col-values-cmd pre defs cols data)
   (let ((cdefs (clean-defs (col-defs defs cols))))
-    (fmt "~A (~A) VALUES (~A);" pre
-         (csep symbol->qstring cols)    ;;; cols
-         (csep ->db-insert-string       ;;; values
-               (map def:type-name cdefs)
-               data))))
+    (sql-command<-trees
+     pre (cseptree symbol->qstring cols #t)
+     #:VALUES (cseptree ->db-insert-string (map def:type-name cdefs) #t
+                        data))))
 
 (define (insert-col-values-proc beex table-name defs)
   (define pre (delay (pre-insert-into table-name)))
   (define (make-cmd cols data)
     (insert-col-values-cmd (force pre) defs cols data))
+  ;; rv
   (lambda (cols . data)
     (beex (make-cmd cols data))))
 
@@ -217,32 +199,34 @@
     (insert-col-values-cmd (force pre) defs
                            (map car alist)        ;;; cols
                            (map cdr alist)))      ;;; values
+  ;; rv
   (lambda (alist)
     (beex (make-cmd alist))))
 
 ;;; delete
 
 (define (delete-rows-proc beex table-name ignored-defs)
-  (define pre (delay (fmt "DELETE FROM ~A WHERE" table-name)))
+  (define pre (delay (sql<-trees #:DELETE #:FROM table-name #:WHERE)))
   (define (make-cmd where-condition)
-    (fmt "~A ~A;" (force pre) where-condition))
+    (sql-command<-trees
+     (force pre) where-condition))
   (lambda (where-condition)
     (beex (make-cmd where-condition))))
 
 ;;; update
 
 (define (update-col-proc beex table-name defs)
-  (define pre (delay (fmt "UPDATE ~A SET" table-name)))
+  (define pre (delay (sql<-trees #:UPDATE table-name #:SET)))
   (define (make-cmd cols data where-condition)
-    (let* ((cdefs (col-defs defs cols))
-           (stuff (csep (lambda (def val)
-                          (let* ((col (symbol->qstring (def:column-name def)))
-                                 (type (def:type-name def))
-                                 (instr (->db-insert-string type val)))
-                            (fmt "~A=~A" col instr)))
-                        cdefs
-                        data)))
-      (fmt "~A ~A WHERE ~A;" (force pre) stuff where-condition)))
+    (sql-command<-trees
+     (force pre)
+     (cseptree (lambda (def val)
+                 (list (symbol->qstring (def:column-name def))
+                       #:=
+                       (->db-insert-string (def:type-name def) val)))
+               (col-defs defs cols)
+               #f data)
+     #:WHERE where-condition))
   (lambda (cols data where-condition)
     (beex (make-cmd cols data where-condition))))
 
