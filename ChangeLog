@@ -1,3 +1,15 @@
+2004-01-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-col-defs.scm: Update copyright.
+	Use "#:" in `define-module' form.
+	* scm/postgres-meta.scm: Likewise.
+	* scm/postgres-resx.scm: Likewise.
+	* scm/postgres-table.scm: Likewise.
+	* scm/postgres-types.scm: Likewise.
+
+	* doc/guile-pg.twerp: Update copyright.
+	Use "#:" in `use-modules' forms.
+
 2003-12-29  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.h (scm_extended_dbconn): Add member `SCM notice'.
