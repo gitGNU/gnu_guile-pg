@@ -94,8 +94,8 @@ PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
            "the connection should give some idea of what happened.\n\n"
            "In addition to returning @code{#f} on failure this procedure\n"
            "throws a @code{misc-error} if the @code{modes} string is invalid.")
-#define FUNC_NAME s_lob_lo_creat
 {
+#define FUNC_NAME s_lob_lo_creat
   long mode_bits;
   PGconn *dbconn;
   int fd = 0;
@@ -134,8 +134,8 @@ PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
       return SCM_BOOL_F;
     }
   return lob_mklobport (conn, oid, fd, mode_bits, FUNC_NAME);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
            (SCM conn, SCM oid, SCM modes),
@@ -153,8 +153,8 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
            "case @code{pg-error-message} from the connection should give\n"
            "some idea of what happened.\n\n"
            "Throw @code{misc-error} if the @code{modes} is invalid.")
-#define FUNC_NAME s_lob_lo_open
 {
+#define FUNC_NAME s_lob_lo_open
   long mode_bits;
   PGconn *dbconn;
   int fd;
@@ -198,8 +198,8 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
       SCM_ALLOW_INTS;
     }
   return lob_mklobport (conn, pg_oid, fd, mode_bits, FUNC_NAME);
-}
 #undef FUNC_NAME
+}
 
 static SCM
 lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller)
@@ -267,8 +267,8 @@ PG_DEFINE (lob_lo_unlink, "pg-lo-unlink", 2, 0, 0,
            "Return @code{#t} if the object was successfully deleted,\n"
            "@code{#f} otherwise, in which case @code{pg-error-message}\n"
            "applied to @code{conn} should give an idea of what went wrong.")
-#define FUNC_NAME s_lob_lo_unlink
 {
+#define FUNC_NAME s_lob_lo_unlink
   int ret;
   PGconn *dbconn;
 
@@ -284,35 +284,35 @@ PG_DEFINE (lob_lo_unlink, "pg-lo-unlink", 2, 0, 0,
     return SCM_BOOL_F;
 
   return SCM_BOOL_T;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (lob_lo_get_connection, "pg-lo-get-connection", 1, 0, 0,
            (SCM port),
            "Return the connection associated with a given large object port.\n"
            "@var{port} must be a large object port returned from\n"
            "@code{pg-lo-creat} or @code{pg-lo-open}.")
-#define FUNC_NAME s_lob_lo_get_connection
 {
+#define FUNC_NAME s_lob_lo_get_connection
   SCM_ASSERT (SCM_NIMP (port) && SCM_OPLOBPORTP (port),
               port, SCM_ARG1, FUNC_NAME);
 
   return ((lob_stream *)SCM_STREAM (port))->conn;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (lob_lo_get_oid, "pg-lo-get-oid", 1, 0, 0,
            (SCM port),
            "Return the integer identifier of the object to which a given\n"
            "port applies.  @var{port} must be a large object port returned\n"
            "from @code{pg-lo-creat} or @code{pg-lo-open}.")
-#define FUNC_NAME s_lob_lo_get_oid
 {
+#define FUNC_NAME s_lob_lo_get_oid
   SCM_ASSERT (SCM_NIMP (port) && SCM_LOBPORTP (port),
               port, SCM_ARG1, FUNC_NAME);
   return SCM_MAKINUM (((lob_stream *)SCM_STREAM (port))->oid);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (lob_lo_tell, "pg-lo-tell", 1, 0, 0,
            (SCM port),
@@ -323,13 +323,13 @@ PG_DEFINE (lob_lo_tell, "pg-lo-tell", 1, 0, 0,
            "@code{#f} if an error occurred.  In the latter case\n"
            "@code{pg-error-message} applied to @code{conn} should\n"
            "explain what went wrong.")
-#define FUNC_NAME s_lob_lo_tell
 {
+#define FUNC_NAME s_lob_lo_tell
   SCM_ASSERT (SCM_NIMP (port)&&SCM_OPLOBPORTP (port),port,SCM_ARG1,FUNC_NAME);
 
   return scm_seek (port, SCM_INUM0, SCM_MAKINUM (SEEK_CUR));
-}
 #undef FUNC_NAME
+}
 
 /* During lob_flush error, we decide whether to use scm_syserror ("normal"
    error mechanism) or to write directly to stderr, depending on libguile's
@@ -448,8 +448,8 @@ PG_DEFINE (lob_lo_seek, "pg-lo-seek", 3, 0, 0,
            "The return value is an integer which is the new position\n"
            "relative to the beginning of the object, or a number less than\n"
            "zero if an error occurred.")
-#define FUNC_NAME s_lob_lo_seek
 {
+#define FUNC_NAME s_lob_lo_seek
   SCM_ASSERT (SCM_NIMP (port) && SCM_OPLOBPORTP (port),
               port, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_INUMP (where), where, SCM_ARG2, FUNC_NAME);
@@ -458,8 +458,8 @@ PG_DEFINE (lob_lo_seek, "pg-lo-seek", 3, 0, 0,
   lob_flush (port);
 
   return SCM_MAKINUM (lob_seek (port, SCM_INUM (where), SCM_INUM (whence)));
-}
 #undef FUNC_NAME
+}
 
 /* fill a port's read-buffer with a single read.
    returns the first char and moves the read_pos pointer past it.
@@ -572,8 +572,8 @@ PG_DEFINE (lob_lo_read, "pg-lo-read", 3, 0, 0,
            "Read @var{num} objects each of length @var{siz} from @var{port}.\n"
            "Return a string containing the data read from the port or\n"
            "@code{#f} if an error occurred.")
-#define FUNC_NAME s_lob_lo_read
 {
+#define FUNC_NAME s_lob_lo_read
   scm_sizet n;
   SCM str;
   int len;
@@ -610,8 +610,8 @@ PG_DEFINE (lob_lo_read, "pg-lo-read", 3, 0, 0,
       SCM_ALLOW_INTS;
     }
   return str;
-}
 #undef FUNC_NAME
+}
 
 static int
 lob_close (SCM port)
@@ -671,8 +671,8 @@ PG_DEFINE (lob_lo_import, "pg-lo-import", 2, 0, 0,
            "or @code{#f} if an error occurred, in which case\n"
            "@code{pg-error-message} should be consulted to determine\n"
            "the failure.")
-#define FUNC_NAME s_lob_lo_import
 {
+#define FUNC_NAME s_lob_lo_import
   PGconn *dbconn;
   int ret;
 
@@ -691,8 +691,8 @@ PG_DEFINE (lob_lo_import, "pg-lo-import", 2, 0, 0,
     return SCM_BOOL_F;
 
   return SCM_MAKINUM (ret);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (lob_lo_export, "pg-lo-export", 3, 0, 0,
            (SCM conn, SCM oid, SCM filename),
@@ -702,8 +702,8 @@ PG_DEFINE (lob_lo_export, "pg-lo-export", 3, 0, 0,
            "object data.  Return @code{#t} on success, @code{#f} otherwise,\n"
            "in which case @code{pg-error-message} may offer an explanation\n"
            "of the failure.")
-#define FUNC_NAME s_lob_lo_export
 {
+#define FUNC_NAME s_lob_lo_export
   PGconn *dbconn;
   Oid pg_oid;
   int ret;
@@ -724,8 +724,8 @@ PG_DEFINE (lob_lo_export, "pg-lo-export", 3, 0, 0,
     return SCM_BOOL_F;
 
   return SCM_BOOL_T;
-}
 #undef FUNC_NAME
+}
 
 static int lob_printpt (SCM exp, SCM port, scm_print_state *pstate);
 

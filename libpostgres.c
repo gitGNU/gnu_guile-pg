@@ -321,11 +321,9 @@ PG_DEFINE (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
            "@lisp\n"
            "(defined? 'pg-guile-pg-loaded)\n"
            "@end lisp")
-#define FUNC_NAME s_pg_guile_pg_loaded
 {
   return SCM_BOOL_T;
 }
-#undef FUNC_NAME
 
 #define SIMPLE_KEYWORD(name) \
   SCM_KEYWORD (kwd_ ## name, # name)
@@ -359,7 +357,6 @@ PG_DEFINE (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
            "the value; while @code{#\\D} means the option is for\n"
            "debugging purposes: probably a good idea to entirely avoid\n"
            "presenting this option in the first place.")
-#define FUNC_NAME s_pg_conndefaults
 {
   PQconninfoOption *opt, *head;
   SCM tem, pdl, rv = SCM_EOL;
@@ -408,7 +405,6 @@ PG_DEFINE (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
 
   return rv;
 }
-#undef FUNC_NAME
 
 static void
 notice_processor (void *xc, const char *message)
@@ -503,8 +499,8 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
            "escaped.  Note that if the @var{constr} is a Guile\n"
            "string literal then all the backslashes will themselves\n"
            "need to be escaped a second time.")
-#define FUNC_NAME s_pg_connectdb
 {
+#define FUNC_NAME s_pg_connectdb
   xc_t *xc;
   SCM z;
   PGconn *dbconn;
@@ -542,18 +538,16 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
 
   PQsetNoticeProcessor (dbconn, &notice_processor, xc);
   return z;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_connection_p, "pg-connection?", 1, 0, 0,
            (SCM obj),
            "Return #t iff @var{obj} is a connection object\n"
            "returned by @code{pg-connectdb}.")
-#define FUNC_NAME s_pg_connection_p
 {
   return xc_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
 }
-#undef FUNC_NAME
 
 PG_DEFINE (pg_reset, "pg-reset", 1, 0, 0,
            (SCM conn),
@@ -562,39 +556,39 @@ PG_DEFINE (pg_reset, "pg-reset", 1, 0, 0,
            "with the same connect options as given to @code{pg-connectdb}.\n"
            "@var{conn} must be a valid @code{PG_CONN} object returned by\n"
            "@code{pg-connectdb}.")
-#define FUNC_NAME s_pg_reset
 {
+#define FUNC_NAME s_pg_reset
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_DEFER_INTS;
   PQreset (XCONN (conn));
   SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_get_client_data, "pg-get-client-data", 1, 0, 0,
            (SCM conn),
            "Return the the client data associated with @var{conn}.")
-#define FUNC_NAME s_pg_get_client_data
 {
+#define FUNC_NAME s_pg_get_client_data
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   return (xc_unbox (conn)->client);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_set_client_data, "pg-set-client-data!", 2, 0, 0,
            (SCM conn, SCM data),
            "Associate @var{data} with @var{conn}.")
-#define FUNC_NAME s_pg_set_client_data
 {
+#define FUNC_NAME s_pg_set_client_data
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_DEFER_INTS;
   xc_unbox (conn)->client = data;
   SCM_ALLOW_INTS;
   return (data);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
            (SCM conn, SCM statement),
@@ -606,8 +600,8 @@ PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
            "on which the statement was attempted.  Note that the error\n"
            "message is available only until the next call to @code{pg-exec}\n"
            "on this connection.")
-#define FUNC_NAME s_pg_exec
 {
+#define FUNC_NAME s_pg_exec
   SCM z;
   PGconn *dbconn;
   PGresult *result;
@@ -626,26 +620,24 @@ PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
   return z;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_result_p, "pg-result?", 1, 0, 0,
            (SCM obj),
            "Return #t iff @var{obj} is a result object\n"
            "returned by @code{pg-exec}.")
-#define FUNC_NAME s_pg_result_p
 {
   return xr_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
 }
-#undef FUNC_NAME
 
 PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
            (SCM obj),
            "Return the most-recent error message that occurred on this\n"
            "connection, or an empty string if the previous @code{pg-exec}\n"
            "succeeded.")
-#define FUNC_NAME s_pg_error_message
 {
+#define FUNC_NAME s_pg_error_message
   SCM rv = SCM_BOOL_F;
   char *pgerrormsg;
 
@@ -668,15 +660,15 @@ PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
   SCM_ALLOW_INTS;
 
   return rv;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_get_db, "pg-get-db", 1, 0, 0,
            (SCM conn),
            "Return a string containing the name of the database\n"
            "to which @var{conn} represents a connection.")
-#define FUNC_NAME s_pg_get_db
 {
+#define FUNC_NAME s_pg_get_db
   const char *rv;
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
@@ -685,15 +677,15 @@ PG_DEFINE (pg_get_db, "pg-get-db", 1, 0, 0,
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_get_user, "pg-get-user", 1, 0, 0,
            (SCM conn),
            "Return a string containing the user name used to\n"
            "authenticate the connection @var{conn}.")
-#define FUNC_NAME s_pg_get_user
 {
+#define FUNC_NAME s_pg_get_user
   const char *rv;
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
@@ -702,16 +694,16 @@ PG_DEFINE (pg_get_user, "pg-get-user", 1, 0, 0,
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
-}
 #undef FUNC_NAME
+}
 
 #ifdef HAVE_PQPASS
 PG_DEFINE (pg_get_pass, "pg-get-pass", 1, 0, 0,
            (SCM conn),
            "Return a string containing the password used to\n"
            "authenticate the connection @var{conn}.")
-#define FUNC_NAME s_pg_get_pass
 {
+#define FUNC_NAME s_pg_get_pass
   const char *rv;
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
@@ -720,16 +712,16 @@ PG_DEFINE (pg_get_pass, "pg-get-pass", 1, 0, 0,
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
-}
 #undef FUNC_NAME
+}
 #endif /* HAVE_PQPASS */
 
 PG_DEFINE (pg_get_host, "pg-get-host", 1, 0, 0,
            (SCM conn),
            "Return a string containing the name of the host to which\n"
            "@var{conn} represents a connection.")
-#define FUNC_NAME s_pg_get_host
 {
+#define FUNC_NAME s_pg_get_host
   const char *rv;
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
@@ -738,15 +730,15 @@ PG_DEFINE (pg_get_host, "pg-get-host", 1, 0, 0,
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_get_port,"pg-get-port", 1, 0, 0,
            (SCM conn),
            "Return a string containing the port number to which\n"
            "@var{conn} represents a connection.")
-#define FUNC_NAME s_pg_get_port
 {
+#define FUNC_NAME s_pg_get_port
   const char *rv;
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
@@ -755,15 +747,15 @@ PG_DEFINE (pg_get_port,"pg-get-port", 1, 0, 0,
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_get_tty, "pg-get-tty", 1, 0, 0,
            (SCM conn),
            "Return a string containing the the name of the\n"
            "diagnostic tty for @var{conn}.")
-#define FUNC_NAME s_pg_get_tty
 {
+#define FUNC_NAME s_pg_get_tty
   const char *rv;
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
@@ -772,14 +764,14 @@ PG_DEFINE (pg_get_tty, "pg-get-tty", 1, 0, 0,
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_get_options, "pg-get-options", 1, 0, 0,
            (SCM conn),
            "Return a string containing the the options string for @var{conn}.")
-#define FUNC_NAME s_pg_get_options
 {
+#define FUNC_NAME s_pg_get_options
   const char *rv;
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
@@ -788,27 +780,27 @@ PG_DEFINE (pg_get_options, "pg-get-options", 1, 0, 0,
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (rv);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_get_connection, "pg-get-connection", 1, 0, 0,
            (SCM result),
            "Return the @code{PG_CONN} object representing the connection\n"
            "from which a @var{result} was returned.")
-#define FUNC_NAME s_pg_get_connection
 {
+#define FUNC_NAME s_pg_get_connection
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   return (xr_unbox (result)->conn);
-}
 #undef FUNC_NAME
+}
 
 #ifdef HAVE_PQBACKENDPID
 PG_DEFINE (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
            (SCM conn),
            "Return an integer which is the the PID of the backend\n"
            "process for @var{conn}.")
-#define FUNC_NAME s_pg_backend_pid
 {
+#define FUNC_NAME s_pg_backend_pid
   int pid;
 
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
@@ -818,16 +810,16 @@ PG_DEFINE (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
   SCM_ALLOW_INTS;
 
   return SCM_MAKINUM (pid);
-}
 #undef FUNC_NAME
+}
 #endif /* HAVE_PQBACKENDPID */
 
 PG_DEFINE (pg_result_status, "pg-result-status", 1, 0, 0,
            (SCM result),
            "Return the symbolic status of a @code{PG_RESULT} object\n"
            "returned by @code{pg-exec}.")
-#define FUNC_NAME s_pg_result_status
 {
+#define FUNC_NAME s_pg_result_status
   int result_status;
   int pgrs_index;
 
@@ -844,14 +836,14 @@ PG_DEFINE (pg_result_status, "pg-result-status", 1, 0, 0,
   /* FIXME: Although we should never get here, be slackful for now.  */
   /* abort(); */
   return SCM_MAKINUM (result_status);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_ntuples, "pg-ntuples", 1, 0, 0,
            (SCM result),
            "Return the number of tuples in @var{result}.")
-#define FUNC_NAME s_pg_ntuples
 {
+#define FUNC_NAME s_pg_ntuples
   int ntuples;
 
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
@@ -861,14 +853,14 @@ PG_DEFINE (pg_ntuples, "pg-ntuples", 1, 0, 0,
   SCM_ALLOW_INTS;
 
   return SCM_MAKINUM (ntuples);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_nfields, "pg-nfields", 1, 0, 0,
            (SCM result),
            "Return the number of fields in @var{result}.")
-#define FUNC_NAME s_pg_nfields
 {
+#define FUNC_NAME s_pg_nfields
   SCM scm_inum;
 
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
@@ -878,8 +870,8 @@ PG_DEFINE (pg_nfields, "pg-nfields", 1, 0, 0,
   SCM_ALLOW_INTS;
 
   return scm_inum;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_cmdtuples, "pg-cmdtuples", 1, 0, 0,
            (SCM result),
@@ -887,8 +879,8 @@ PG_DEFINE (pg_cmdtuples, "pg-cmdtuples", 1, 0, 0,
            "command.  This is a string which is empty in the case of\n"
            "commands like @code{CREATE TABLE}, @code{GRANT}, @code{REVOKE}\n"
            "etc. which don't affect tuples.")
-#define FUNC_NAME s_pg_cmdtuples
 {
+#define FUNC_NAME s_pg_cmdtuples
   const char *cmdtuples;
 
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
@@ -898,16 +890,16 @@ PG_DEFINE (pg_cmdtuples, "pg-cmdtuples", 1, 0, 0,
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (cmdtuples);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_oid_status, "pg-oid-status", 1, 0, 0,
            (SCM result),
            "Return a string which contains the integer OID (greater than\n"
            "or equal to 0) of the tuple inserted, or is empty if the\n"
            "command to which @var{result} pertains was not @code{INSERT}.")
-#define FUNC_NAME s_pg_oid_status
 {
+#define FUNC_NAME s_pg_oid_status
   const char *oid_status;
 
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
@@ -917,8 +909,8 @@ PG_DEFINE (pg_oid_status, "pg-oid-status", 1, 0, 0,
   SCM_ALLOW_INTS;
 
   return scm_makfrom0str (oid_status);
-}
 #undef FUNC_NAME
+}
 
 #ifdef HAVE_PQOIDVALUE
 PG_DEFINE (pg_oid_value, "pg-oid-value", 1, 0, 0,
@@ -926,8 +918,8 @@ PG_DEFINE (pg_oid_value, "pg-oid-value", 1, 0, 0,
            "If the @var{result} is that of an SQL @code{INSERT} command,\n"
            "return the integer OID of the inserted tuple, otherwise return\n"
            "@code{#f}.")
-#define FUNC_NAME s_pg_oid_value
 {
+#define FUNC_NAME s_pg_oid_value
   Oid oid_value;
 
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
@@ -940,8 +932,8 @@ PG_DEFINE (pg_oid_value, "pg-oid-value", 1, 0, 0,
     return SCM_BOOL_F;
 
   return SCM_MAKINUM (oid_value);
-}
 #undef FUNC_NAME
+}
 #endif /* HAVE_PQOIDVALUE */
 
 PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
@@ -949,8 +941,8 @@ PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
            "Return a string containing the canonical lower-case name\n"
            "of the field number @var{num} in @var{result}.  SQL variables\n"
            "and field names are not case-sensitive.")
-#define FUNC_NAME s_pg_fname
 {
+#define FUNC_NAME s_pg_fname
   int field;
   const char *fname;
 
@@ -972,16 +964,16 @@ PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
                       scm_listify (num, SCM_UNDEFINED));
     }
   return scm_makfrom0str (fname);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_fnumber, "pg-fnumber", 2, 0, 0,
            (SCM result, SCM fname),
            "Return the integer field-number corresponding to field\n"
            "@var{fname} if this exists in @var{result}, or @code{-1}\n"
            "otherwise.")
-#define FUNC_NAME s_pg_fnumber
 {
+#define FUNC_NAME s_pg_fnumber
   int fnum;
 
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
@@ -994,8 +986,8 @@ PG_DEFINE (pg_fnumber, "pg-fnumber", 2, 0, 0,
   SCM_ALLOW_INTS;
 
   return SCM_MAKINUM (fnum);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
            (SCM result, SCM num),
@@ -1005,8 +997,8 @@ PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
            "reference a tuple from the system table @code{pg_type}.  A\n"
            "@code{misc-error} is thrown if the @code{field-number} is\n"
            "not valid for the given @code{result}.")
-#define FUNC_NAME s_pg_ftype
 {
+#define FUNC_NAME s_pg_ftype
   int field;
   int ftype;
   SCM scm_inum;
@@ -1029,15 +1021,15 @@ PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
 
   scm_inum = SCM_MAKINUM (ftype);
   return scm_inum;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
            (SCM result, SCM num),
            "Return the size of a @var{result} field @var{num} in bytes,\n"
            "or -1 if the field is variable-length.")
-#define FUNC_NAME s_pg_fsize
 {
+#define FUNC_NAME s_pg_fsize
   int field;
   int fsize;
   SCM scm_inum;
@@ -1060,16 +1052,16 @@ PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
 
   scm_inum = SCM_MAKINUM (fsize);
   return scm_inum;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_getvalue, "pg-getvalue", 3, 0, 0,
            (SCM result, SCM stuple, SCM sfield),
            "Return a string containing the value of the attribute\n"
            "@var{sfield}, tuple @var{stuple} of @var{result}.  It is\n"
            "up to the caller to convert this to the required type.")
-#define FUNC_NAME s_pg_getvalue
 {
+#define FUNC_NAME s_pg_getvalue
   int maxtuple, tuple;
   int maxfield, field;
   const char *val;
@@ -1111,14 +1103,14 @@ PG_DEFINE (pg_getvalue, "pg-getvalue", 3, 0, 0,
     srv = scm_makfrom0str (val);
 
   return srv;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_getlength, "pg-getlength", 3, 0, 0,
            (SCM result, SCM stuple, SCM sfield),
            "The size of the datum in bytes.")
-#define FUNC_NAME s_pg_getlength
 {
+#define FUNC_NAME s_pg_getlength
   int maxtuple, tuple;
   int maxfield, field;
   int len;
@@ -1147,15 +1139,15 @@ PG_DEFINE (pg_getlength, "pg-getlength", 3, 0, 0,
 
   ret = SCM_MAKINUM (len);
   return ret;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_getisnull, "pg-getisnull", 3, 0, 0,
            (SCM result, SCM stuple, SCM sfield),
            "Return @code{#t} if the attribute is @code{NULL},\n"
            "@code{#f} otherwise.")
-#define FUNC_NAME s_pg_getisnull
 {
+#define FUNC_NAME s_pg_getisnull
   int maxtuple, tuple;
   int maxfield, field;
   SCM scm_bool;
@@ -1185,16 +1177,16 @@ PG_DEFINE (pg_getisnull, "pg-getisnull", 3, 0, 0,
   SCM_ALLOW_INTS;
 
   return scm_bool;
-}
 #undef FUNC_NAME
+}
 
 #ifdef HAVE_PQBINARYTUPLES
 PG_DEFINE (pg_binary_tuples, "pg-binary-tuples?", 1, 0, 0,
            (SCM result),
            "Return @code{#t} if @var{result} contains binary tuple\n"
            "data, @code{#f} otherwise.")
-#define FUNC_NAME s_pg_binary_tuples
 {
+#define FUNC_NAME s_pg_binary_tuples
   SCM rv;
 
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
@@ -1207,8 +1199,8 @@ PG_DEFINE (pg_binary_tuples, "pg-binary-tuples?", 1, 0, 0,
   SCM_ALLOW_INTS;
 
   return rv;
-}
 #undef FUNC_NAME
+}
 #endif /* HAVE_PQBINARYTUPLES */
 
 #ifdef HAVE_PQFMOD
@@ -1216,8 +1208,8 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
            (SCM result, SCM num),
            "Return the integer type-specific modification data for\n"
            "the given field (field number @var{num}) of @var{result}.")
-#define FUNC_NAME s_pg_fmod
 {
+#define FUNC_NAME s_pg_fmod
   int field;
   int fmod;
   SCM scm_inum;
@@ -1240,19 +1232,17 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
 
   scm_inum = SCM_MAKINUM (fmod);
   return scm_inum;
-}
 #undef FUNC_NAME
+}
 #endif /* HAVE_PQFMOD */
 
 PG_DEFINE (pg_guile_pg_version, "pg-guile-pg-version", 0, 0, 0,
            (void),
            "Return a string giving the version of @code{guile-pg}.\n"
            "The form is \"M.m\" giving major and minor versions.")
-#define FUNC_NAME s_pg_guile_pg_version
 {
   return scm_makfrom0str (VERSION);
 }
-#undef FUNC_NAME
 
 PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
            (SCM conn),
@@ -1260,8 +1250,8 @@ PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
            "STDOUT} has been issued.  Return a string from the connection.\n"
            "A returned string consisting of a backslash followed by a full\n"
            "stop signifies an end-of-copy marker.")
-#define FUNC_NAME s_pg_getline
 {
+#define FUNC_NAME s_pg_getline
   char buf[BUF_LEN];
   int ret = 1;
   SCM str = SCM_UNDEFINED;
@@ -1278,8 +1268,8 @@ PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
         str = scm_string_append (SCM_LIST2 (str, scm_makfrom0str (buf)));
     }
   return str;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
            (SCM conn, SCM buf, SCM tickle),
@@ -1291,8 +1281,8 @@ PG_DEFINE (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
            "byte position).\n"
            "Optional arg @var{tickle} non-#f means to do a\n"
            "\"consume input\" operation prior to the read.")
-#define FUNC_NAME s_pg_getlineasync
 {
+#define FUNC_NAME s_pg_getlineasync
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_STRINGP (buf), buf, SCM_ARG2, FUNC_NAME);
 
@@ -1302,8 +1292,8 @@ PG_DEFINE (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
   return SCM_MAKINUM (PQgetlineAsync (XCONN (conn),
                                       SCM_ROCHARS (buf),
                                       SCM_ROLENGTH (buf)));
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_putline, "pg-putline", 2, 0, 0,
            (SCM conn, SCM str),
@@ -1314,8 +1304,8 @@ PG_DEFINE (pg_putline, "pg-putline", 2, 0, 0,
            "@code{pg-endcopy} procedure should be called for this\n"
            "connection before any further @code{pg-exec} call is made.\n"
            "The return value is undefined.")
-#define FUNC_NAME s_pg_putline
 {
+#define FUNC_NAME s_pg_putline
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (str)&&SCM_ROSTRINGP (str), str, SCM_ARG2, FUNC_NAME);
   SCM_DEFER_INTS;
@@ -1327,8 +1317,8 @@ PG_DEFINE (pg_putline, "pg-putline", 2, 0, 0,
 #endif
   SCM_ALLOW_INTS;
   return SCM_UNSPECIFIED;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_endcopy, "pg-endcopy", 1, 0, 0,
            (SCM conn),
@@ -1336,8 +1326,8 @@ PG_DEFINE (pg_endcopy, "pg-endcopy", 1, 0, 0,
            "must be called after the last line of a table has been\n"
            "transferred using @code{pg-getline} or ???.\n\n"
            "Return an integer: zero if successful, non-zero otherwise.")
-#define FUNC_NAME s_pg_endcopy
 {
+#define FUNC_NAME s_pg_endcopy
   int ret;
   SCM scm_inum;
 
@@ -1348,8 +1338,8 @@ PG_DEFINE (pg_endcopy, "pg-endcopy", 1, 0, 0,
 
   scm_inum = SCM_MAKINUM (ret);
   return scm_inum;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
            (SCM conn, SCM port),
@@ -1358,8 +1348,8 @@ PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
            "opened for writing.  This trace is more useful for debugging\n"
            "Postgres than it is for debugging applications.\n"
            "The return value is unspecified.")
-#define FUNC_NAME s_pg_trace
 {
+#define FUNC_NAME s_pg_trace
   struct scm_fport *fp = SCM_FSTREAM (port);
   int fd;
   FILE *fpout;
@@ -1384,15 +1374,15 @@ PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
   SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_untrace, "pg-untrace", 1, 0, 0,
            (SCM conn),
            "Stop tracing on connection @var{conn}.\n"
            "The return value is unspecified.")
-#define FUNC_NAME s_pg_untrace
 {
+#define FUNC_NAME s_pg_untrace
   int ret;
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
@@ -1405,8 +1395,8 @@ PG_DEFINE (pg_untrace, "pg-untrace", 1, 0, 0,
     scm_syserror (FUNC_NAME);
 
   return SCM_UNSPECIFIED;
-}
 #undef FUNC_NAME
+}
 
 
 /*
@@ -1554,8 +1544,8 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
            "@item field-names\n\n"
            "List of replacement field names, each a string.\n"
            "@end itemize\n\n")
-#define FUNC_NAME s_pg_make_print_options
 {
+#define FUNC_NAME s_pg_make_print_options
   PQprintOpt *po;
   int count = 0;                        /* of substnames */
   SCM check, substnames = SCM_BOOL_F, flags = SCM_EOL, keys = SCM_EOL;
@@ -1647,8 +1637,8 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
     }
 
   return sepo_box (po);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
            (SCM result, SCM options),
@@ -1656,8 +1646,8 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
            "Optional second arg @var{options} is an\n"
            "object returned by @code{pg-make-print-options} that\n"
            "specifies various parameters of the output format.")
-#define FUNC_NAME s_pg_print
 {
+#define FUNC_NAME s_pg_print
   FILE *fout;
   int redir_p;
 
@@ -1696,8 +1686,8 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
     }
 
   return SCM_UNSPECIFIED;
-}
 #undef FUNC_NAME
+}
 
 
 /* Modify notice processing.
@@ -1716,8 +1706,8 @@ PG_DEFINE (pg_set_notice_out_x, "pg-set-notice-out!", 2, 0, 0,
            "takes one argument, the notice string.  It's usually a good\n"
            "idea to call @code{pg-set-notice-out!} soon after establishing\n"
            "the connection.")
-#define FUNC_NAME s_pg_set_notice_out_x
 {
+#define FUNC_NAME s_pg_set_notice_out_x
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   if (SCM_EQ_P (SCM_BOOL_T, out) ||
@@ -1729,8 +1719,8 @@ PG_DEFINE (pg_set_notice_out_x, "pg-set-notice-out!", 2, 0, 0,
     SCM_WTA (SCM_ARG2, out);
 
   return SCM_UNSPECIFIED;
-}
 #undef FUNC_NAME
+}
 
 
 /* Fetch asynchronous notifications.  */
@@ -1744,8 +1734,8 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
            "of the backend delivering the notification.\n"
            "Optional arg @var{tickle} non-#f means to do a\n"
            "\"consume input\" operation prior to the query.")
-#define FUNC_NAME s_pg_notifies
 {
+#define FUNC_NAME s_pg_notifies
   PGnotify *n;
   SCM rv = SCM_BOOL_F;
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
@@ -1760,8 +1750,8 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
       free (n);
     }
   return rv;
-}
 #undef FUNC_NAME
+}
 
 
 /* Client encoding.  */
@@ -1774,8 +1764,8 @@ extern char * pg_encoding_to_char (int encoding);
 PG_DEFINE (pg_client_encoding, "pg-client-encoding", 1, 0, 0,
            (SCM conn),
            "Return the current client encoding for @var{conn}.")
-#define FUNC_NAME s_pg_client_encoding
 {
+#define FUNC_NAME s_pg_client_encoding
   SCM enc;
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
@@ -1783,15 +1773,15 @@ PG_DEFINE (pg_client_encoding, "pg-client-encoding", 1, 0, 0,
                          (PQclientEncoding
                           (XCONN (conn))));
   return enc;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
            (SCM conn, SCM encoding),
            "Set the client encoding for @var{conn} to @var{encoding}.\n"
            "Return #t if successful, #f otherwise.")
-#define FUNC_NAME s_pg_set_client_encoding_x
 {
+#define FUNC_NAME s_pg_set_client_encoding_x
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_STRINGP (encoding), encoding, SCM_ARG2, FUNC_NAME);
   ROZT_X (encoding);
@@ -1799,8 +1789,8 @@ PG_DEFINE (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
   return (0 == (PQsetClientEncoding (XCONN (conn), ROZT (encoding)))
           ? SCM_BOOL_T
           : SCM_BOOL_F);
-}
 #undef FUNC_NAME
+}
 
 
 /*
@@ -1812,8 +1802,8 @@ PG_DEFINE (pg_send_query, "pg-send-query", 2, 0, 0,
            "Send @var{conn} a non-blocking @var{query} (string).\n"
            "Return #t iff successful.  If not successful, error\n"
            "message is retrievable with @code{pg-error-message}.")
-#define FUNC_NAME s_pg_send_query
 {
+#define FUNC_NAME s_pg_send_query
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_STRINGP (query), query, SCM_ARG2, FUNC_NAME);
   ROZT_X (query);
@@ -1821,14 +1811,14 @@ PG_DEFINE (pg_send_query, "pg-send-query", 2, 0, 0,
   return (PQsendQuery (XCONN (conn), ROZT (query))
           ? SCM_BOOL_T
           : SCM_BOOL_F);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_get_result, "pg-get-result", 1, 0, 0,
            (SCM conn),
            "Return a result from @var{conn}, or #f.")
-#define FUNC_NAME s_pg_send_query
 {
+#define FUNC_NAME s_pg_send_query
   PGresult *result;
   SCM z;
 
@@ -1841,35 +1831,35 @@ PG_DEFINE (pg_get_result, "pg-get-result", 1, 0, 0,
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
   return z;
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_consume_input, "pg-consume-input", 1, 0, 0,
            (SCM conn),
            "Consume input from @var{conn}.  Return #t iff successful.")
-#define FUNC_NAME s_pg_consume_input
 {
+#define FUNC_NAME s_pg_consume_input
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   return (PQconsumeInput (XCONN (conn))
           ? SCM_BOOL_T
           : SCM_BOOL_F);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_is_busy_p, "pg-is-busy?", 1, 0, 0,
            (SCM conn),
            "Return #t if there is data waiting for\n"
            "@code{pg-consume-input}, otherwise #f.")
-#define FUNC_NAME s_pg_is_busy_p
 {
+#define FUNC_NAME s_pg_is_busy_p
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   return (PQisBusy (XCONN (conn))
           ? SCM_BOOL_T
           : SCM_BOOL_F);
-}
 #undef FUNC_NAME
+}
 
 PG_DEFINE (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
            (SCM conn),
@@ -1888,15 +1878,15 @@ PG_DEFINE (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
            "will be no visible result at all.\n\n"
            "Note that if the current query is part of a transaction,\n"
            "cancellation will abort the whole transaction.")
-#define FUNC_NAME s_pg_is_busy_p
 {
+#define FUNC_NAME s_pg_is_busy_p
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
   return (PQrequestCancel (XCONN (conn))
           ? SCM_BOOL_T
           : SCM_BOOL_F);
-}
 #undef FUNC_NAME
+}
 
 
 /*
