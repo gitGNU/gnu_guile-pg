@@ -267,6 +267,25 @@ ser_free (SCM obj)
   return size;
 }
 
+static SCM
+make_ser (PGresult *result, SCM conn)
+{
+  scm_extended_result *ser;
+  SCM z;
+
+  /* This looks weird, but they're SCM_DEFERred in ser_box.  */
+  SCM_ALLOW_INTS;
+  z = ser_box ((scm_extended_result *)
+               scm_must_malloc (sizeof (scm_extended_result), "PG-RESULT"));
+  ser = ser_unbox (z);
+  SCM_DEFER_INTS;
+
+  ser->result = result;
+  ser->count = ++pg_result_tag.count;
+  ser->conn = conn;
+  return z;
+}
+
 
 /*
  * string munging
@@ -604,7 +623,6 @@ PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
            "on this connection.")
 #define FUNC_NAME s_pg_exec
 {
-  scm_extended_result *ser;
   SCM z;
   PGconn *dbconn;
   PGresult *result;
@@ -622,22 +640,9 @@ PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
   if (pgquery_freshp)
     free (pgquery);
 
-  if (result != NULL)
-    {
-      /* successfully exec'ed command; create data structure */
-      SCM_ALLOW_INTS; /* Looks weird, but they're SCM_DEFERred in ser_box. */
-      z = ser_box ((scm_extended_result *)
-                   scm_must_malloc (sizeof (scm_extended_result), "PG-RESULT"));
-      ser = ser_unbox (z);
-      SCM_DEFER_INTS;
-
-      /* initialize the dbconn */
-      ser->result = result;
-      ser->count = ++pg_result_tag.count;
-      ser->conn = conn;
-    }
-  else
-    z = SCM_BOOL_F;
+  z = (result
+       ? make_ser (result, conn)
+       : SCM_BOOL_F);
   SCM_ALLOW_INTS;
   return z;
 }
@@ -1722,7 +1727,7 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
    Note that this is not a simple wrap of `PQsetNoticeProcessor'.  Instead, we
    simply modify `sec->notice'.  Also, the value can either be a port or
    procedure that takes a string.  For these reasons, we name the procedure
-   `pg-set-notice-out' to help avoid confusion.  */
+   `pg-set-notice-out!' to help avoid confusion.  */
 
 PG_DEFINE (pg_set_notice_out_x, "pg-set-notice-out!", 2, 0, 0,
            (SCM conn, SCM out),
@@ -1814,6 +1819,108 @@ PG_DEFINE (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
 
   return (0 == (PQsetClientEncoding
                 (sec_unbox (conn)->dbconn, SCM_CHARS (encoding)))
+          ? SCM_BOOL_T
+          : SCM_BOOL_F);
+}
+#undef FUNC_NAME
+
+
+/*
+ * non-blocking query operations
+ */
+
+PG_DEFINE (pg_send_query, "pg-send-query", 2, 0, 0,
+           (SCM conn, SCM query),
+           "Send @var{conn} a non-blocking @var{query} (string).\n"
+           "Return #t iff successful.  If not successful, error\n"
+           "message is retrievable with @code{pg-error-message}.")
+#define FUNC_NAME s_pg_send_query
+{
+  char *q; int q_freshp;
+  SCM rv;
+
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_STRINGP (query), query, SCM_ARG2, FUNC_NAME);
+
+  q = maybe_strcpy (query, &q_freshp);
+  rv = (PQsendQuery (sec_unbox (conn)->dbconn, q)
+        ? SCM_BOOL_T
+        : SCM_BOOL_F);
+  if (q_freshp)
+    free (q);
+  return rv;
+}
+#undef FUNC_NAME
+
+PG_DEFINE (pg_get_result, "pg-get-result", 1, 0, 0,
+           (SCM conn),
+           "Return a result from @var{conn}, or #f.")
+#define FUNC_NAME s_pg_send_query
+{
+  PGresult *result;
+  SCM z;
+
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+
+  SCM_DEFER_INTS;
+  result = PQgetResult (sec_unbox (conn)->dbconn);
+  z = (result
+       ? make_ser (result, conn)
+       : SCM_BOOL_F);
+  SCM_ALLOW_INTS;
+  return z;
+}
+#undef FUNC_NAME
+
+PG_DEFINE (pg_consume_input, "pg-consume-input", 1, 0, 0,
+           (SCM conn),
+           "Consume input from @var{conn}.  Return #t iff successful.")
+#define FUNC_NAME s_pg_consume_input
+{
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+
+  return (PQconsumeInput (sec_unbox (conn)->dbconn)
+          ? SCM_BOOL_T
+          : SCM_BOOL_F);
+}
+#undef FUNC_NAME
+
+PG_DEFINE (pg_is_busy_p, "pg-is-busy?", 1, 0, 0,
+           (SCM conn),
+           "Return #t if there is data waiting for\n"
+           "@code{pg-consume-input}, otherwise #f.")
+#define FUNC_NAME s_pg_is_busy_p
+{
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+
+  return (PQisBusy (sec_unbox (conn)->dbconn)
+          ? SCM_BOOL_T
+          : SCM_BOOL_F);
+}
+#undef FUNC_NAME
+
+PG_DEFINE (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
+           (SCM conn),
+           "Request a cancellation on @var{conn}.\n"
+           "Return #t iff the cancel request was successfully\n"
+           "dispatched, #f if not.  (If not, @code{pg-error-message}\n"
+           "tells why not.)  Successful dispatch is no guarantee\n"
+           "that the request will have any effect, however.\n"
+           "Regardless of the return value,\n"
+           "the application must continue with the normal\n"
+           "result-reading sequence using @code{pg-get-result}.\n"
+           "If the cancellation is effective, the current query\n"
+           "will terminate early and return an error result.\n"
+           "If the cancellation fails (say because the backend was\n"
+           "already done processing the query), then there\n"
+           "will be no visible result at all.\n\n"
+           "Note that if the current query is part of a transaction,\n"
+           "cancellation will abort the whole transaction.")
+#define FUNC_NAME s_pg_is_busy_p
+{
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+
+  return (PQrequestCancel (sec_unbox (conn)->dbconn)
           ? SCM_BOOL_T
           : SCM_BOOL_F);
 }
