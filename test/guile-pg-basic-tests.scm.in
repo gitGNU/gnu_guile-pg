@@ -254,6 +254,21 @@
                       (eq? (string->number (pg-cmdtuples res)) 1)))
            #f)))
 
+;; Test pg-oid-value, pg-cmdtuples
+;; expect #t
+(define (test:oid-value)
+  (let ((res (pg-exec conn "INSERT INTO test VALUES (10000, 'Column 10000')"))
+        (oid #f))
+       (if (and res (eq? (pg-result-status res) PGRES_COMMAND_OK))
+           (begin
+             (set! oid (pg-oid-value res))
+             (set! res (pg-exec conn "DELETE FROM test WHERE col1 = 10000"))
+             (and res (eq? (pg-result-status res) PGRES_COMMAND_OK)
+                      oid
+                      (> oid 0)
+                      (eq? (string->number (pg-cmdtuples res)) 1)))
+           #f)))
+
 ;; Test pg-fnumber
 ;; expect #t
 (define (test:fnumber)
@@ -352,7 +367,7 @@
 
 (load-from-path "testing.scm")
 (set! verbose #t)
-(test-init "basic-tests" 31)
+(test-init "basic-tests" 32)
 (test "@VERSION@" pg-guile-pg-version)
 (test #t pg-guile-pg-loaded)
 (test #t test:make-connection)
@@ -371,6 +386,7 @@
 (test #t test:ntuples)
 (test #t test:nfields)
 (test #t test:oid-status)
+(test #t test:oid-value)
 (test #t test:fnumber)
 (test #t test:getvalue)
 (test #t test:getisnull)

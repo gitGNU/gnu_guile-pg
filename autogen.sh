@@ -1,6 +1,6 @@
 #! /bin/sh
 # $Id$
-aclocal -I.
+aclocal -I .
 libtoolize --copy --automake
 autoheader
 autoconf

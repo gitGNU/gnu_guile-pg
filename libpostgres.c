@@ -37,6 +37,7 @@ static char rcsid[] = "$Id$";
 #include <guile/gh.h>
 
 #include <libpq-fe.h>
+#include <postgres.h>
 #include <libpq/libpq-fs.h>
 
 #include <libpostgres.h>
@@ -707,6 +708,27 @@ pg_oid_status (SCM obj)
 
     return scm_makfrom0str(oid_status);
 }
+
+#ifdef HAVE_PQOIDVALUE
+SCM_PROC(s_pg_oid_value, "pg-oid-value",1,0,0, pg_oid_value);
+
+static SCM
+pg_oid_value (SCM obj)
+{
+    Oid oid_value;
+
+    SCM_ASSERT(ser_p(obj), obj, SCM_ARG1, s_pg_oid_value);
+
+    SCM_DEFER_INTS;
+    oid_value = PQoidValue(ser_unbox(obj)->result);
+    SCM_ALLOW_INTS;
+
+    if (oid_value == InvalidOid)
+       return SCM_BOOL_F;
+
+    return SCM_MAKINUM(oid_value);
+}
+#endif
 
 SCM_PROC(s_pg_fname, "pg-fname",2,0,0, pg_fname);
 

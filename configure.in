@@ -48,7 +48,7 @@ LDFLAGS="$LDFLAGS $PQ_LDFLAGS"
 
 AC_CHECK_LIB(pq, PQconnectdb, , AC_MSG_ERROR(Cannot find libpq (CFLAGS= $CFLAGS 
 LDLFAGS= $LDFLAGS) on the system))
-AC_CHECK_FUNCS(PQfmod PQbinaryTuples PQbackendPID PQresultErrorMessage PQpass PQputnbytes)
+AC_CHECK_FUNCS(PQfmod PQbinaryTuples PQbackendPID PQresultErrorMessage PQpass PQputnbytes PQoidValue)
 CFLAGS="$saved_CFLAGS"
 LDFLAGS="$saved_LDFLAGS"
 

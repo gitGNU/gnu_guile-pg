@@ -185,7 +185,7 @@
                  (pg-untrace conn)
                  (close-port trace-port))))))
 
-;; Test pg-lo-seek
+;; Test pg-lo-seek pg-lo-read
 ;; expect "ababaa"
 
 (define (test:lo-seek2)

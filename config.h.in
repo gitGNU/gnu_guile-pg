@@ -12,6 +12,9 @@
 /* Define if you have the PQfmod function.  */
 #undef HAVE_PQFMOD
 
+/* Define if you have the PQoidValue function.  */
+#undef HAVE_PQOIDVALUE
+
 /* Define if you have the PQpass function.  */
 #undef HAVE_PQPASS
 

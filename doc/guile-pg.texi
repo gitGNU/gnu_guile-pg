@@ -559,6 +559,13 @@ which is empty in the case of commands like @code{CREATE TABLE}, @code{GRANT},
 Returns a string which contains the integer OID (greater than or equal to 0)
 of the tuple inserted, or is empty if the command to which @var{result}
 pertains was not @code{INSERT}.
+
+@emph{NOTE:} This function is deprecated.  Use @code{pg-oid-value} instead.
+@end defun
+
+@defun pg-oid-value result
+If the @var{result} is that of an SQL @code{INSERT} command, this function
+returns the integer OID of the inserted tuple, otherwise it returns @code{#f}.
 @end defun
 
 @defun pg-fname result field-number
