@@ -1,6 +1,15 @@
 NEWS for Guile-PG
 
 
+- 0.26 | NOT YET RELEASED
+
+  - Dropped (database postgres-types) proc: dbcoltype:name
+
+	This proc takes a column-type object returned from calling
+	`dbcoltype-lookup', which takes the type name.  Thus, it is
+	redundant.  Removing it increases encapsulation.
+
+
 - 0.25 | 2005-01-02
 
   - New (database postgres) proc: pg-result-error-message
