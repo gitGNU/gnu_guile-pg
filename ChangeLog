@@ -1,3 +1,9 @@
+2004-11-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* doc/guile-pg.twerp (Database Connections):
+	Add xref to "Asynchronous Retrieval".
+	(Asynchronous Retrieval): Add intro blurb.
+
 2004-11-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres_lo.c (lob_mklobport, lob_write):
