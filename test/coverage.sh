@@ -1,5 +1,7 @@
 #!/bin/sh
 
+if [ -z "$srcdir" ] ; then echo $0: error: Bad env. ; exit 1 ; fi
+
 cd $srcdir
 ./cov | sed '/^yes/d' > UNTESTED
 
