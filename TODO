@@ -28,6 +28,22 @@
 
     We need to make sure they aren't substrings.
 
+  - Clean up module (database postgres-meta)
+
+    + Replace display-table with pg-print
+
+    + Add proc to parse output from: psql -c '\d TABLE'
+
+    + Add procs to validate defs and extend Guile-PG array variants
+
+    - Document new procs
+    
+    + Add necessary types to handle PostgreSQL 7.3.5 pg_class
+
+    - Write/document proc that updates (database postgres-meta) *class-defs*
+
+    - Use it at "make" time
+
   - Write tests for non-blocking query support
 
   - Implement these calls:
