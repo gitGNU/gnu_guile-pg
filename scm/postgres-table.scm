@@ -75,11 +75,11 @@
 (define ssep (char-sep #\space))
 (define csep (char-sep #\,))
 
-(define (symbol->qstring symbol)
-  (format #f "~S" (symbol->string symbol)))
-
 (define (fmt . args)
-  (apply format #f args))
+  (apply simple-format #f args))
+
+(define (symbol->qstring symbol)
+  (fmt "~S" (symbol->string symbol)))
 
 ;; Return STRING w/ its `ttn-pgtable-sql-pre' property set.
 ;; This property disables type conversion and other formatting
