@@ -35,6 +35,23 @@ libpostgres_la_SOURCES = libpostgres.c libpostgres_lo.c libpostgres.h \
 libpostgres_la_LDFLAGS = -export-dynamic -version-info 4:0:2 \
                          @LDFLAGS@ @PQ_LDFLAGS@
 
+noinst_DATA = pre-inst.merged-module-catalog
+
+pre-inst.merged-module-catalog:
+	guile-tools make-module-catalog -d lo,o -X '~$$' -X CVS \
+	  `pwd` `test "$(srcdir)" = "." || { cd $(srcdir) ; pwd ; }`
+	if [ x"$(srcdir)" = x"." ] ; then		\
+	  mv .module-catalog $@ ;			\
+	else						\
+	  guile-tools merge-module-catalogs -o $@	\
+	              .module-catalog			\
+	    $(srcdir)/.module-catalog ;			\
+	fi
+	rm -f .module-catalog $(srcdir)/.module-catalog
+	( echo $@ : \\ ; \
+	  sed '\,((.*).*"/.*"),!d;s/"[^"]*$$/ \\/;s/^.*"/ /' $@ ; \
+	  echo ' # elephant' ) > .deps/pre-inst.Pmerged-module-catalog
+
 SUFFIXES = .x .doc
 
 snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS)
