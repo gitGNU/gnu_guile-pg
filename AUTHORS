@@ -1,5 +1,3 @@
-;;; $Id$
-;;;
 ;;; To find out what should go in this file, see "Information For
 ;;; Maintainers of GNU Software" (maintain.texi), the section called
 ;;; "Recording Changes".
@@ -14,13 +12,7 @@ Thien-Thi Nguyen <ttn@gnu.org> wrote:
     test/abstraction-scm-tests.sh    test/guile-pg-abstraction-scm-tests.scm
     tmpfile.h    tmpfile.c
 and modified:
-    configure.in
-    libpostgres.h    libpostgres.c    libpostgres_lo.c
-    scm/postgres.scm.in
-    doc/guile-pg.texi
-    test/basic-tests.sh		test/guile-pg-basic-tests.scm
-    test/lo-tests.sh		test/guile-pg-lo-tests.scm
-    test/testing.scm
+    everything else.
 
 
 Ian Grant <Ian.Grant@cl.cam.ac.uk> wrote:
