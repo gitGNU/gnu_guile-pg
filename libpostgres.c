@@ -57,6 +57,11 @@
 #define INIT_PRINT(x) (void)0;
 #endif
 
+
+/*
+ * support
+ */
+
 static char *strncpy0 (char *dest, const char *source, int maxlen);
 static char *strip_newlines (char *str);
 void init_postgres (void);
@@ -86,6 +91,7 @@ static pgrs_t pgrs[] = {
 
 static int pgrs_count = sizeof (pgrs) / sizeof (pgrs_t);
 
+
 /*
  * boxing, unboxing, gc functions
  */
@@ -280,6 +286,9 @@ strip_newlines (char *str)
 }
 
 
+/*
+ * everything (except printing and lo support)
+ */
 
 PG_DEFINE (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
            (void),
@@ -1228,6 +1237,255 @@ PG_DEFINE (pg_untrace, "pg-untrace", 1, 0, 0,
 }
 #undef FUNC_NAME
 
+
+/*
+ * printing -- this is arguably more trouble than it's worth
+ */
+
+static long sepo_type_tag;
+
+static int
+sepo_p (SCM obj)
+{
+  return (SCM_NIMP (obj) && SCM_CAR (obj) == sepo_type_tag);
+}
+
+static SCM
+sepo_box (PQprintOpt *sepo)
+{
+  SCM z;
+
+  SCM_ENTER_A_SECTION;
+  SCM_NEWCELL (z);
+  SCM_SETCDR (z, (SCM)sepo);
+  SCM_SETCAR (z, sepo_type_tag);
+  SCM_EXIT_A_SECTION;
+
+  return z;
+}
+
+static PQprintOpt *
+sepo_unbox (SCM obj)
+{
+  return ((PQprintOpt *) SCM_CDR (obj));
+}
+
+static SCM
+sepo_mark (SCM obj)
+{
+  GC_PRINT (fprintf (stderr, "marking PG-PRINT-OPTION %p\n", obj));
+  return SCM_BOOL_F;
+}
+
+static scm_sizet
+sepo_free (SCM obj)
+{
+  PQprintOpt *po = sepo_unbox (obj);
+  scm_sizet size = 0;
+
+  GC_PRINT (fprintf (stderr, "sweeping PG-PRINT-OPTION %p\n", obj));
+
+#define _FREE_STRING(p)                         \
+  do {                                          \
+    if (p) {                                    \
+      size += 1 + strlen (p);                   \
+      free (p);                                 \
+    }                                           \
+  } while (0)
+
+  _FREE_STRING (po->fieldSep);
+  _FREE_STRING (po->tableOpt);
+  _FREE_STRING (po->caption);
+
+  if (po->fieldName) {
+    int i = 0;
+    while (po->fieldName[i]) {
+      _FREE_STRING (po->fieldName[i]);
+      i++;
+    }
+    size += i * sizeof (char *);
+    free (po->fieldName);
+  }
+#undef _FREE_STRING
+
+  size += sizeof (PQprintOpt);
+  free (po);
+
+  /* set extension data to NULL */
+  SCM_SETCDR (obj, (SCM)NULL);
+
+  return size;
+}
+
+static int
+sepo_display (SCM sepo, SCM port, scm_print_state *pstate)
+{
+  scm_puts ("#<PG-PRINT-OPTION>", port);
+  return 1;
+}
+
+static PQprintOpt default_print_options = {
+  1,            /* print output field headings and row count */
+  1,            /* fill align the fields */
+  0,            /* old brain dead format */
+  0,            /* output html tables */
+  0,            /* expand tables */
+  0,            /* use pager for output if needed */
+  "|",          /* field separator */
+  NULL,         /* insert to HTML <table ...> */
+  NULL,         /* HTML <caption> */
+  NULL          /* null terminated array of replacement field names */
+};
+
+SCM_SYMBOL (pg_sym_header, "header");
+SCM_SYMBOL (pg_sym_no_header, "no-header");
+SCM_SYMBOL (pg_sym_align, "align");
+SCM_SYMBOL (pg_sym_no_align, "no-align");
+SCM_SYMBOL (pg_sym_standard, "standard");
+SCM_SYMBOL (pg_sym_no_standard, "no-standard");
+SCM_SYMBOL (pg_sym_html3, "html3");
+SCM_SYMBOL (pg_sym_no_html3, "no-html3");
+SCM_SYMBOL (pg_sym_expanded, "expanded");
+SCM_SYMBOL (pg_sym_no_expanded, "no-expanded");
+SCM_SYMBOL (pg_sym_field_sep, "field-sep");
+SCM_SYMBOL (pg_sym_table_opt, "table-opt");
+SCM_SYMBOL (pg_sym_caption, "caption");
+SCM_SYMBOL (pg_sym_field_names, "field-names");
+
+static SCM valid_print_option_flags;
+static SCM valid_print_option_keys;
+
+PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
+           (SCM spec),
+           "Return an opaque print options object created from @var{spec},\n"
+           "suitable for use with @code{pg-print}.  @var{spec} is a list\n"
+           "of elements, each either a flag (symbol) or a key-value pair\n"
+           "(with the key being a symbol).  Recognized flags:\n\n"
+           "@itemize\n"
+           "@item header: Print output field headings and row count.\n"
+           "@item align: Fill align the fields.\n"
+           "@item standard: Old brain-dead format.\n"
+           "@item html3: Output HTML tables.\n"
+           "@item expand: Expand tables.\n"
+           "@end itemize\n"
+           "To specify a disabled flag, use @dfn{no-FLAG}, e.g.,"
+           "@code{no-header}.  Recognized keys:\n\n"
+           "@itemize\n"
+           "@item field-sep\n\n"
+           "String specifying field separator.\n"
+           "@item table-opt\n\n"
+           "String specifying HTML table attributes.\n"
+           "@item caption\n\n"
+           "String specifying caption to use in HTML table.\n"
+           "@item field-names\n\n"
+           "List of replacement field names, each a string.\n"
+           "@end itemize\n\n")
+#define FUNC_NAME s_pg_make_print_options
+{
+  PQprintOpt *po;
+  int count = 0;                        /* of substnames */
+  SCM check, substnames = SCM_BOOL_F, flags = SCM_EOL, keys = SCM_EOL;
+
+  SCM_ASSERT (SCM_NULLP (spec) || SCM_CONSP (spec),
+              spec, SCM_ARG1, FUNC_NAME);
+
+  /* hairy validation/collection: symbols in `flags', pairs in `keys' */
+  check = spec;
+  while (SCM_NNULLP (check)) {
+    SCM head = SCM_CAR (check);
+    if (SCM_SYMBOLP (head)) {
+      SCM_ASSERT (SCM_NFALSEP (scm_memq (head, valid_print_option_flags)),
+                  head, SCM_ARG1, FUNC_NAME);
+      flags = scm_cons (head, flags);
+    } else if (SCM_CONSP (head)) {
+      SCM key = SCM_CAR (head);
+      SCM val = SCM_CDR (head);
+      SCM_ASSERT (SCM_NFALSEP (scm_memq (key, valid_print_option_keys)),
+                  key, SCM_ARG1, FUNC_NAME);
+      if (key == pg_sym_field_names) {
+        SCM_ASSERT (SCM_NNULLP (val), head, SCM_ARG1, FUNC_NAME);
+        while (SCM_NNULLP (val)) {
+          SCM_ASSERT (SCM_STRINGP (SCM_CAR (val)), head, SCM_ARG1, FUNC_NAME);
+          count++;
+          val = SCM_CDR (val);
+        }
+        substnames = SCM_CDR (head);    /* i.e., `val' */
+      } else {
+        SCM_ASSERT (SCM_STRINGP (val), val, SCM_ARG1, FUNC_NAME);
+        keys = scm_cons (head, keys);
+      }
+    }
+    check = SCM_CDR (check);
+  }
+
+  po = scm_must_malloc (sizeof (PQprintOpt), "PG-PRINT-OPTION");
+
+#define _FLAG_CHECK(m)                                  \
+  (SCM_NFALSEP (scm_memq (pg_sym_no_ ## m, flags))      \
+   ? 0 : (SCM_NFALSEP (scm_memq (pg_sym_ ## m, flags))  \
+          ? 1 : default_print_options.m))
+
+  po->header   = _FLAG_CHECK (header);
+  po->align    = _FLAG_CHECK (align);
+  po->standard = _FLAG_CHECK (standard);
+  po->html3    = _FLAG_CHECK (html3);
+  po->expanded = _FLAG_CHECK (expanded);
+  po->pager    = 0;                     /* never */
+#undef _FLAG_CHECK
+
+#define _STRING_CHECK_SETX(k,m)                         \
+  do {                                                  \
+    SCM stemp = scm_assq_ref (keys, pg_sym_ ## k);      \
+    po->m = (SCM_NFALSEP (stemp)                        \
+             ? strdup (SCM_ROCHARS (stemp))             \
+             : (default_print_options.m                 \
+                ? strdup (default_print_options.m)      \
+                : NULL));                               \
+  } while (0)
+
+  _STRING_CHECK_SETX (field_sep, fieldSep);
+  _STRING_CHECK_SETX (table_opt, tableOpt);
+  _STRING_CHECK_SETX (caption, caption);
+#undef _STRING_CHECK_SETX
+
+  if (SCM_FALSEP (substnames)) {
+    po->fieldName = NULL;
+  } else {
+    int i;
+    po->fieldName = (char **) scm_must_malloc ((1 + count) * sizeof (char *),
+                                               "PG-PRINT-OPTION fieldname");
+    po->fieldName[count] = NULL;
+    for (i = 0; i < count; i++) {
+      po->fieldName[i] = strdup (SCM_ROCHARS (SCM_CAR (substnames)));
+      substnames = SCM_CDR (substnames);
+    }
+  }
+
+  return sepo_box (po);
+}
+#undef FUNC_NAME
+
+PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
+           (SCM result, SCM options),
+           "Display @var{result} to current output port.\n"
+           "Optional second arg @var{options} is a pg-print options\n"
+           "object returned by @code{pg-make-print-options}, q.v.")
+#define FUNC_NAME s_pg_print
+{
+  SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (sepo_p (options), options, SCM_ARG2, FUNC_NAME);
+
+  PQprint (stdout, ser_unbox (result)->result, sepo_unbox (options));
+
+  return SCM_UNSPECIFIED;
+}
+#undef FUNC_NAME
+
+
+/*
+ * init
+ */
+
 void
 init_postgres (void)
 {
@@ -1239,6 +1497,7 @@ init_postgres (void)
   INIT_PRINT (fprintf (stderr, "entered init_postgres function.\n"));
 
 #ifdef USE_OLD_SMOB_INTERFACE
+
   /* add new scheme type for connections */
   type_rec.mark = sec_mark;
   type_rec.free = sec_free;
@@ -1252,7 +1511,16 @@ init_postgres (void)
   type_rec.print = ser_display;
   type_rec.equalp = 0;
   pg_result_tag.type_tag = scm_newsmob (&type_rec);
-#else
+
+  /* add new scheme type for print options */
+  type_rec.mark = sepo_mark;
+  type_rec.free = sepo_free;
+  type_rec.print = sepo_display;
+  type_rec.equalp = 0;
+  sepo_type_tag = scm_newsmob (&type_rec);
+
+#else /* !USE_OLD_SMOB_INTERFACE */
+
   pg_conn_tag.type_tag = scm_make_smob_type ("PG-CONN", 0);
   scm_set_smob_mark (pg_conn_tag.type_tag, sec_mark);
   scm_set_smob_free (pg_conn_tag.type_tag, sec_free);
@@ -1262,9 +1530,35 @@ init_postgres (void)
   scm_set_smob_mark (pg_result_tag.type_tag, ser_mark);
   scm_set_smob_free (pg_result_tag.type_tag, ser_free);
   scm_set_smob_print (pg_result_tag.type_tag, ser_display);
-#endif
+
+  sepo_type_tag = scm_make_smob_type ("PG-PRINT-OPTION", 0);
+  scm_set_smob_mark (sepo_type_tag, sepo_mark);
+  scm_set_smob_free (sepo_type_tag, sepo_free);
+  scm_set_smob_print (sepo_type_tag, sepo_display);
+
+#endif /* !USE_OLD_SMOB_INTERFACE */
 
 #include <libpostgres.x>
+
+  valid_print_option_keys
+    = (scm_protect_object (SCM_LIST4 (pg_sym_field_sep,
+                                      pg_sym_table_opt,
+                                      pg_sym_caption,
+                                      pg_sym_field_names)));
+
+  valid_print_option_flags
+    = (scm_protect_object
+       (scm_append (SCM_LIST2
+                    (SCM_LIST5 (pg_sym_header,
+                                pg_sym_align,
+                                pg_sym_standard,
+                                pg_sym_html3,
+                                pg_sym_expanded),
+                     SCM_LIST5 (pg_sym_no_header,
+                                pg_sym_no_align,
+                                pg_sym_no_standard,
+                                pg_sym_no_html3,
+                                pg_sym_no_expanded)))));
 
   {
     int i;
