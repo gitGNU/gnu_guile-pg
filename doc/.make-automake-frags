@@ -11,6 +11,24 @@ sed 's,^\(.*\)$,	rm -f $(distdir)/\1.texi,g' $stems
 #               ^^^^^^^^ single embedded tab
 }
 
+prep_dummy_texi ()
+{
+stems=$1
+for stem in `cat $stems` ; do
+  texi=$stem.texi
+  if [ ! -f $texi ] ; then
+    echo '@setfilename guile-pg.info' > $texi
+    touch -m -t 01010000 $texi
+  fi
+done
+}
+
+main ()
+{
 spew_twerp_stuff .twerp-list > twerp.mk-am-frag
+prep_dummy_texi .twerp-list
+}
+
+main
 
 # .make-automake-frags ends here
