@@ -46,7 +46,7 @@
 	Convert PGRES_foo references to symbols.
 
 	* test/Makefile.am: Update copyright.
-	(TESTS): Add alive.sh.
+	(TESTS, EXTRA_DIST): Add alive.sh.
 	(TESTS_ENVIRONMENT): New directive.
 
 	* test/alive.sh: New file.
