@@ -1,3 +1,10 @@
+2004-06-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c
+	(strip_newlines): Fix OBOE: Correctly compute string length.
+	(pg_connectdb): Fix liveness bug: Call `PQerrorMessage'
+	before `PQfinish' to avoid accessing stale `dbconn' storage.
+
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* Makefile.am (CLEANFILES): Add $(noinst_DATA).
