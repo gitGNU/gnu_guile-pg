@@ -17,8 +17,8 @@ Quick start:
 See autogen.sh comments for which versions of the auto* tools to install on
 your system (minimally -- probably later versions work, too).
 
-Please add test cases to the tests in the test directory, and run 'make check'
-to test them.
+Please add test cases to the tests in the test/ directory, and run 'make check'
+to test them.  Use script "cov" to see what new tests need to be written.
 
 The `dist' and `distcheck' targets are supremeley useful.  To use distcheck
 though you need to make sure that the shared libguile is on the load path
