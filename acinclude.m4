@@ -94,6 +94,13 @@ AC_DEFUN([PQ_FLAGS],[
 ])
 
 
+# AC_GUILE_PG_CONFIG_SCRIPT(FILE)
+#
+AC_DEFUN([AC_GUILE_PG_CONFIG_SCRIPT],[
+  AC_CONFIG_FILES([$1],[chmod +x $1])
+])
+
+
 # AC_GUILE_PG_BCOMPAT --- figure out some "backward compatability" cruft
 #
 AC_DEFUN([AC_GUILE_PG_BCOMPAT],[
