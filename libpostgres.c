@@ -200,8 +200,12 @@ xr_unbox (SCM obj)
 
 #define RESULT(x)  (xr_unbox (x)->result)
 
-#define ASSERT_RESULT(n,arg) \
-  SCM_ASSERT (xr_p (arg), arg, SCM_ARG ## n, FUNC_NAME)
+#define VALIDATE_RESULT_UNBOX2(pos,arg,cvar1,cvar2)             \
+  do {                                                          \
+    SCM_ASSERT (xr_p (arg), arg, SCM_ARG ## pos, FUNC_NAME);    \
+    cvar1 = xr_unbox (arg);                                     \
+    cvar2 = cvar1->result;                                      \
+  } while (0)
 
 #define ASSERT_CONNECTION_OR_RESULT(n,arg) \
   SCM_ASSERT ((xc_p (arg) || xr_p (arg)), arg, SCM_ARG ## n, FUNC_NAME)
@@ -316,6 +320,14 @@ strip_newlines (char *str)
 
   return gh_str2scm (str, lc + 1 - str);
 }
+
+
+/*
+ * other abstractions
+ */
+
+#define VALIDATE_FIELD_NUMBER_COPY(pos,num,res,cvar) \
+  SCM_VALIDATE_INUM_RANGE_COPY (pos, num, 0, PQnfields (res), cvar)
 
 
 /*
@@ -809,8 +821,9 @@ PG_DEFINE (pg_get_connection, "pg-get-connection", 1, 0, 0,
            "from which a @var{result} was returned.")
 {
 #define FUNC_NAME s_pg_get_connection
-  ASSERT_RESULT (1, result);
-  return (xr_unbox (result)->conn);
+  xr_t *xr; PGresult *res;
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  return (xr->conn);
 #undef FUNC_NAME
 }
 
@@ -848,13 +861,14 @@ PG_DEFINE (pg_result_status, "pg-result-status", 1, 0, 0,
            "returned by @code{pg-exec}.")
 {
 #define FUNC_NAME s_pg_result_status
+  xr_t *xr; PGresult *res;
   int result_status;
   int pgrs_index;
 
-  ASSERT_RESULT (1, result);
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
 
   SCM_DEFER_INTS;
-  result_status = PQresultStatus (RESULT (result));
+  result_status = PQresultStatus (res);
   SCM_ALLOW_INTS;
 
   for (pgrs_index = 0; pgrs_index < pgrs_count; pgrs_index++)
@@ -872,12 +886,13 @@ PG_DEFINE (pg_ntuples, "pg-ntuples", 1, 0, 0,
            "Return the number of tuples in @var{result}.")
 {
 #define FUNC_NAME s_pg_ntuples
+  xr_t *xr; PGresult *res;
   int ntuples;
 
-  ASSERT_RESULT (1, result);
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
 
   SCM_DEFER_INTS;
-  ntuples = PQntuples (RESULT (result));
+  ntuples = PQntuples (res);
   SCM_ALLOW_INTS;
 
   return gh_int2scm (ntuples);
@@ -889,12 +904,13 @@ PG_DEFINE (pg_nfields, "pg-nfields", 1, 0, 0,
            "Return the number of fields in @var{result}.")
 {
 #define FUNC_NAME s_pg_nfields
+  xr_t *xr; PGresult *res;
   SCM rv;
 
-  ASSERT_RESULT (1, result);
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
 
   SCM_DEFER_INTS;
-  rv = gh_int2scm (PQnfields (RESULT (result)));
+  rv = gh_int2scm (PQnfields (res));
   SCM_ALLOW_INTS;
 
   return rv;
@@ -909,12 +925,13 @@ PG_DEFINE (pg_cmdtuples, "pg-cmdtuples", 1, 0, 0,
            "etc. which don't affect tuples.")
 {
 #define FUNC_NAME s_pg_cmdtuples
+  xr_t *xr; PGresult *res;
   const char *cmdtuples;
 
-  ASSERT_RESULT (1, result);
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
 
   SCM_DEFER_INTS;
-  cmdtuples = PQcmdTuples (RESULT (result));
+  cmdtuples = PQcmdTuples (res);
   SCM_ALLOW_INTS;
 
   return gh_str02scm (cmdtuples);
@@ -931,12 +948,13 @@ PG_DEFINE (pg_oid_value, "pg-oid-value", 1, 0, 0,
 #ifdef HAVE_PQOIDVALUE
 
 #define FUNC_NAME s_pg_oid_value
+  xr_t *xr; PGresult *res;
   Oid oid_value;
 
-  ASSERT_RESULT (1, result);
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
 
   SCM_DEFER_INTS;
-  oid_value = PQoidValue (RESULT (result));
+  oid_value = PQoidValue (res);
   SCM_ALLOW_INTS;
 
   if (oid_value == InvalidOid)
@@ -959,23 +977,13 @@ PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
            "and field names are not case-sensitive.")
 {
 #define FUNC_NAME s_pg_fname
+  xr_t *xr; PGresult *res;
   int field;
   const char *fname;
 
-  ASSERT_RESULT (1, result);
-  SCM_VALIDATE_INUM_MIN_COPY (2, num, 0, field);
-  SCM_DEFER_INTS;
-  if (field < PQnfields (RESULT (result)))
-    {
-      fname = PQfname (RESULT (result), field);
-      SCM_ALLOW_INTS;
-    }
-  else
-    {
-      SCM_ALLOW_INTS;
-      scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
-                      scm_listify (num, SCM_UNDEFINED));
-    }
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
+  fname = PQfname (res, field);
   return gh_str02scm (fname);
 #undef FUNC_NAME
 }
@@ -987,15 +995,16 @@ PG_DEFINE (pg_fnumber, "pg-fnumber", 2, 0, 0,
            "otherwise.")
 {
 #define FUNC_NAME s_pg_fnumber
+  xr_t *xr; PGresult *res;
   int fnum;
 
-  ASSERT_RESULT (1, result);
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
   SCM_ASSERT (SCM_NIMP (fname) && SCM_ROSTRINGP (fname), fname,
               SCM_ARG2, FUNC_NAME);
   ROZT_X (fname);
 
   SCM_DEFER_INTS;
-  fnum = PQfnumber (RESULT (result), ROZT (fname));
+  fnum = PQfnumber (res, ROZT (fname));
   SCM_ALLOW_INTS;
 
   return gh_int2scm (fnum);
@@ -1012,25 +1021,15 @@ PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
            "not valid for the given @code{result}.")
 {
 #define FUNC_NAME s_pg_ftype
+  xr_t *xr; PGresult *res;
   int field;
   int ftype;
-  SCM rv;
 
-  ASSERT_RESULT (1, result);
-  SCM_VALIDATE_INUM_MIN_COPY (2, num, 0, field);
-  SCM_DEFER_INTS;
-  if (field < PQnfields (RESULT (result)))
-    ftype = PQftype (RESULT (result), field);
-  else
-    {
-      SCM_ALLOW_INTS;
-      scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
-                      scm_listify (num, SCM_UNDEFINED));
-    }
-  SCM_ALLOW_INTS;
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
+  ftype = PQftype (res, field);
 
-  rv = gh_int2scm (ftype);
-  return rv;
+  return gh_int2scm (ftype);
 #undef FUNC_NAME
 }
 
@@ -1040,25 +1039,14 @@ PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
            "or -1 if the field is variable-length.")
 {
 #define FUNC_NAME s_pg_fsize
+  xr_t *xr; PGresult *res;
   int field;
   int fsize;
-  SCM rv;
 
-  ASSERT_RESULT (1, result);
-  SCM_VALIDATE_INUM_MIN_COPY (2, num, 0, field);
-  SCM_DEFER_INTS;
-  if (field < PQnfields (RESULT (result)))
-    fsize = PQfsize (RESULT (result), field);
-  else
-    {
-      SCM_ALLOW_INTS;
-      scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
-                      scm_listify (num, SCM_UNDEFINED));
-    }
-  SCM_ALLOW_INTS;
-
-  rv = gh_int2scm (fsize);
-  return rv;
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
+  fsize = PQfsize (res, field);
+  return gh_int2scm (fsize);
 #undef FUNC_NAME
 }
 
@@ -1069,6 +1057,7 @@ PG_DEFINE (pg_getvalue, "pg-getvalue", 3, 0, 0,
            "up to the caller to convert this to the required type.")
 {
 #define FUNC_NAME s_pg_getvalue
+  xr_t *xr; PGresult *res;
   int maxtuple, tuple;
   int maxfield, field;
   const char *val;
@@ -1077,20 +1066,20 @@ PG_DEFINE (pg_getvalue, "pg-getvalue", 3, 0, 0,
 #endif
   SCM srv;
 
-  ASSERT_RESULT (1, result);
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
   SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, tuple);
   SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, field);
   SCM_DEFER_INTS;
-  maxtuple = PQntuples (RESULT (result));
-  maxfield = PQnfields (RESULT (result));
+  maxtuple = PQntuples (res);
+  maxfield = PQnfields (res);
   SCM_ALLOW_INTS;
   SCM_ASSERT (tuple < maxtuple, stuple, SCM_OUTOFRANGE, FUNC_NAME);
   SCM_ASSERT (field < maxfield, sfield, SCM_OUTOFRANGE, FUNC_NAME);
   SCM_DEFER_INTS;
-  val = PQgetvalue (RESULT (result), tuple, field);
+  val = PQgetvalue (res, tuple, field);
 #ifdef HAVE_PQBINARYTUPLES
-  if ((isbinary = PQbinaryTuples (RESULT (result))) != 0)
-    veclen = PQgetlength (RESULT (result), tuple, field);
+  if ((isbinary = PQbinaryTuples (res)) != 0)
+    veclen = PQgetlength (res, tuple, field);
 #endif
   SCM_ALLOW_INTS;
 
@@ -1110,22 +1099,23 @@ PG_DEFINE (pg_getlength, "pg-getlength", 3, 0, 0,
            "The size of the datum in bytes.")
 {
 #define FUNC_NAME s_pg_getlength
+  xr_t *xr; PGresult *res;
   int maxtuple, tuple;
   int maxfield, field;
   int len;
   SCM ret;
 
-  ASSERT_RESULT (1, result);
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
   SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, tuple);
   SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, field);
   SCM_DEFER_INTS;
-  maxtuple = PQntuples (RESULT (result));
-  maxfield = PQnfields (RESULT (result));
+  maxtuple = PQntuples (res);
+  maxfield = PQnfields (res);
   SCM_ALLOW_INTS;
   SCM_ASSERT (tuple < maxtuple, stuple, SCM_OUTOFRANGE, FUNC_NAME);
   SCM_ASSERT (field < maxfield, sfield, SCM_OUTOFRANGE, FUNC_NAME);
   SCM_DEFER_INTS;
-  len = PQgetlength (RESULT (result), tuple, field);
+  len = PQgetlength (res, tuple, field);
   SCM_ALLOW_INTS;
 
   ret = gh_int2scm (len);
@@ -1139,21 +1129,22 @@ PG_DEFINE (pg_getisnull, "pg-getisnull", 3, 0, 0,
            "@code{#f} otherwise.")
 {
 #define FUNC_NAME s_pg_getisnull
+  xr_t *xr; PGresult *res;
   int maxtuple, tuple;
   int maxfield, field;
   SCM rv;
 
-  ASSERT_RESULT (1, result);
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
   SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, tuple);
   SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, field);
   SCM_DEFER_INTS;
-  maxtuple = PQntuples (RESULT (result));
-  maxfield = PQnfields (RESULT (result));
+  maxtuple = PQntuples (res);
+  maxfield = PQnfields (res);
   SCM_ALLOW_INTS;
   SCM_ASSERT (tuple < maxtuple, stuple, SCM_OUTOFRANGE, FUNC_NAME);
   SCM_ASSERT (field < maxfield, sfield, SCM_OUTOFRANGE, FUNC_NAME);
   SCM_DEFER_INTS;
-  if (PQgetisnull (RESULT (result), tuple, field))
+  if (PQgetisnull (res, tuple, field))
     rv = SCM_BOOL_T;
   else
     rv = SCM_BOOL_F;
@@ -1173,12 +1164,13 @@ PG_DEFINE (pg_binary_tuples, "pg-binary-tuples?", 1, 0, 0,
 #ifdef HAVE_PQBINARYTUPLES
 
 #define FUNC_NAME s_pg_binary_tuples
+  xr_t *xr; PGresult *res;
   SCM rv;
 
-  ASSERT_RESULT (1, result);
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
 
   SCM_DEFER_INTS;
-  if (PQbinaryTuples (RESULT (result)))
+  if (PQbinaryTuples (res))
     rv = SCM_BOOL_T;
   else
     rv = SCM_BOOL_F;
@@ -1203,25 +1195,14 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
 #ifdef HAVE_PQFMOD
 
 #define FUNC_NAME s_pg_fmod
+  xr_t *xr; PGresult *res;
   int field;
   int fmod;
-  SCM rv;
 
-  ASSERT_RESULT (1, result);
-  SCM_VALIDATE_INUM_MIN_COPY (2, num, 0, field);
-  SCM_DEFER_INTS;
-  if (field < PQnfields (RESULT (result)))
-    fmod = PQfmod (RESULT (result), field);
-  else
-    {
-      SCM_ALLOW_INTS;
-      scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
-                      scm_listify (num, SCM_UNDEFINED));
-    }
-  SCM_ALLOW_INTS;
-
-  rv = gh_int2scm (fmod);
-  return rv;
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
+  fmod = PQfmod (res, field);
+  return gh_int2scm (fmod);
 #undef FUNC_NAME
 
 #else /* !HAVE_PQFMOD */
@@ -1638,10 +1619,11 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
            "specifies various parameters of the output format.")
 {
 #define FUNC_NAME s_pg_print
+  xr_t *xr; PGresult *res;
   FILE *fout;
   int redir_p;
 
-  ASSERT_RESULT (1, result);
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
   options = ((options == SCM_UNDEFINED)
              ? pg_make_print_options (SCM_EOL)
              : options);
@@ -1654,7 +1636,7 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
   if (fout == NULL)
     scm_syserror (FUNC_NAME);
 
-  (void) PQprint (fout, RESULT (result), sepo_unbox (options));
+  (void) PQprint (fout, res, sepo_unbox (options));
 
   if (redir_p)
     {
