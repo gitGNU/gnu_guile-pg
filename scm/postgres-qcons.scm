@@ -111,7 +111,7 @@
 (define --preformatted (make-object-property))
 
 ;; Return @var{string} marked as @dfn{preformatted}.
-;; This inhibits certains types of processing when passed
+;; This inhibits certain types of processing when passed
 ;; through the other procedures defined in this module.
 ;; Repeated calls do not nest.
 ;;
