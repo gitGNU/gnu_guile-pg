@@ -57,7 +57,7 @@
 ;; Test pg-connectdb
 ;; expect #t
 (define (test:make-connection)
-  (if (false-if-exception (set! conn (pg-connectdb ""))) #t #f))
+  (->bool (false-if-exception (set! conn (pg-connectdb "")))))
 
 ;; Test pg-exec
 ;; expect #f
@@ -110,6 +110,7 @@
     (lambda (conn)
       (let ((lo-port (pg-lo-open conn oid "r")))
         (and lo-port
+             (eq? conn (pg-lo-get-connection lo-port))
              (equal? (eval-port lo-port) '(testing testing one two three))
              (close-port lo-port))))))
 
