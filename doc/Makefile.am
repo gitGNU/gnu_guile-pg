@@ -50,6 +50,9 @@ doc-index-prep:
 
 include twerp.mk-am-frag
 
+html: guile-pg.texi
+	$(MAKEINFO) --html $< -o $@
+
 endif # MAINTAINER_MODE
 
 ## Makefile.am ends here
