@@ -35,6 +35,9 @@
 
 (define-module (database postgres-qcons)
   #:export (qcons-declare!
+            sql-pre
+            sql-pre?
+            sql-unpre
             sql-quote
             make-comma-separated-tree
             make-WHERE-tree
@@ -80,7 +83,6 @@
 ;; @item #:infix
 ;; Render @code{(x A B ...)} as @code{( A x B x ...)}.
 ;;
-;; @table @code
 ;; @item #:postfix
 ;; Render @code{(x A)} as @code{( A x )}.
 ;;
@@ -107,6 +109,30 @@
      (error "bad category:" category))))
 
 
+(define --preformatted (make-object-property))
+
+;; Return @var{string} marked as @dfn{preformatted}.
+;; This inhibits certains types of processing when passed
+;; through the other procedures defined in this module.
+;; Repeated calls do not nest.
+;;
+(define (sql-pre string)
+  (or (string? string) (error "not a string:" string))
+  (set! (--preformatted string) #t)
+  string)
+
+;; Return #t if @var{string} is marked as preformatted.
+;;
+(define (sql-pre? string)
+  (--preformatted string))
+
+;; Return @var{string}, undoing the effect of @code{sql-pre}.
+;;
+(define (sql-unpre string)
+  (or (string? string) (error "not a string:" string))
+  (set! (--preformatted string) #f)
+  string)
+
 ;; Return a new string made by preceding each single quote in string
 ;; @var{s} with a backslash, and prefixing and suffixing with single quote.
 ;; For example:
@@ -136,7 +162,7 @@
     (string-set! rv (1- len) #\')
     (let loop ((put 1) (ls cuts))
       (if (null? ls)
-          rv
+          (sql-pre rv)                  ; rv
           (let* ((one (car ls))
                  (two (cadr ls))
                  (end (+ put (- two one)))
@@ -156,7 +182,7 @@
     ;; that happens to be a keyword (e.g., `desc')
     (if (string-index s #\.)
         sym
-        (fs "~S" s))))
+        (sql-pre (fs "~S" s)))))
 
 (define (list-sep-proc sep)
   (lambda (proc ls . more-ls)
@@ -203,15 +229,6 @@
                   #:THEN (expr res)))))
 
     (case op
-      ((#:q*)
-       (letrec ((q (lambda (x)
-                     (cond ((string? x) (sql-quote x))
-                           ((pair? x) (if (eq? #:q* (car x))
-                                          ;; neutralize meddlesome kids
-                                          (q (cadr x))
-                                          (map q x)))
-                           (else x)))))
-         (expr (q (car rest)))))
       ((and)
        (list "(" (andsep expr rest) ")"))
       ((or)
@@ -239,8 +256,9 @@
               (list op "(" (commasep expr rest) ")"))))))
 
   ;; do it!
-  (cond ((eq? #t tree) "'t'")
-        ((eq? #f tree) "'f'")
+  (cond ((eq? #t tree) (sql-pre "'t'"))
+        ((eq? #f tree) (sql-pre "'f'"))
+        ((string? tree) (if (--preformatted tree) tree (sql-quote tree)))
         ((pair? tree) (add-noise! (car tree) (cdr tree)))
         (else tree)))
 
@@ -309,9 +327,10 @@
         (expr x)))
   (commasep (lambda (x)
               (cond ((symbol? x) (maybe-dq x))
-                    ((string? x) x)     ; todo: zonk after 2005-12-31
+                    ((string? x) (sql-pre x)) ; todo: zonk after 2005-12-31
                     ((and (pair? x) (string? (car x)))
-                     (list (expr-nostring (cdr x)) #:AS (fs "~S" (car x))))
+                     (list (expr-nostring (cdr x))
+                           #:AS (sql-pre (fs "~S" (car x)))))
                     ((pair? x) (expr-nostring x))
                     (else (error "bad out spec:" x))))
             outs))
@@ -341,48 +360,42 @@
         (make-FROM-tree froms)))
 
 ;; Return a @dfn{select tail} tree for @var{plist}, a list of
-;; alternating keywords and sexps.  Currently, these keywords
-;; are recognized:
+;; alternating keywords and sexps.  These subsequences are recognized:
 ;;
 ;; @table @code
-;; @item #:where
-;; Pass the associated sexp to @code{make-WHERE-tree}.
+;; @item #:where sexp
+;; Pass @var{sexp} to @code{make-WHERE-tree}.
 ;;
-;; @item #:group-by
-;; Pass the associated sexp to @code{make-GROUP-BY-tree}.
+;; @item #:group-by sexp
+;; Pass @var{sexp} to @code{make-GROUP-BY-tree}.
 ;;
-;; @item #:having
-;; Pass the associated sexp to @code{make-HAVING-tree}.
+;; @item #:having sexp
+;; Pass @var{sexp} to @code{make-HAVING-tree}.
 ;;
-;; @item #:order-by
-;; Pass the associated sexp to @code{make-ORDER-BY-tree}.
+;; @item #:order-by sexp
+;; Pass @var{sexp} to @code{make-ORDER-BY-tree}.
+;;
+;; @item #:limit n
+;; Arrange for the tree to include @code{LIMIT n}.
+;; @var{n} is an integer.
 ;; @end table
 ;;
-;; Optional second arg @var{quote?} non-#f means to arrange to use the
-;; @code{#:q*} operator for the structured expressions.
-;;
-;;-sig: (plist [quote?])
-;;
-(define (parse+make-SELECT/tail-tree plist . opts)
-  (define (q-ok? kw)
-    (case kw
-      ((#:order-by #:group-by) #f)
-      (else #t)))
-  (let ((quote? (and (not (null? opts)) (car opts)))
-        (acc (list '())))
+(define (parse+make-SELECT/tail-tree plist)
+  (let ((acc (list '())))
     (let loop ((ls plist) (tp acc))
       (if (null? ls)
           (cdr acc)                     ; rv
-          (begin
-            (set-cdr! tp (list ((case (car ls)
-                                  ((#:where) make-WHERE-tree)
-                                  ((#:group-by) make-GROUP-BY-tree)
-                                  ((#:having) make-HAVING-tree)
-                                  ((#:order-by) make-ORDER-BY-tree))
-                                ((if (and quote? (q-ok? (car ls)))
-                                     (lambda (x) (list #:q* x))
-                                     identity)
-                                 (cadr ls)))))
+          (let* ((kw (car ls))
+                 (mk (case kw
+                       ((#:where)    make-WHERE-tree)
+                       ((#:group-by) make-GROUP-BY-tree)
+                       ((#:having)   make-HAVING-tree)
+                       ((#:order-by) make-ORDER-BY-tree)
+                       ((#:limit)    (lambda (n) (list #:LIMIT n)))
+                       (else         (error "bad keyword:" kw)))))
+            (set-cdr! tp (list (mk (if (null? (cdr ls))
+                                       (error "lonely keyword:" kw)
+                                       (cadr ls)))))
             (loop (cddr ls) (cdr tp)))))))
 
 ;; Return a string made from flattening @var{trees} (a list).
