@@ -1,6 +1,11 @@
 2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* acconfig.h, aclocal.m4, configure: Delete.
+	* autogen.sh: Take "--libtoolize" option;
+	conditionalize libtoolize invocation.
+	Pass "-I ." to aclocal.
+	Pass "--force" to automake.
+	Record dev box tool versions in comment.
 
 2000-06-20  Ian Grant  <Ian.Grant@cl.cam.ac.uk>
 
