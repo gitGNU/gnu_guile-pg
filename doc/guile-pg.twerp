@@ -1,7 +1,7 @@
 \input texinfo  @c -*-texinfo-*-
 @c %**start of header
 @setfilename guile-pg.info
-@settitle Guile-PG Command Reference
+@settitle The (database postgres*) Modules
 @paragraphindent 0
 @c %**end of header
 @code{}
@@ -16,7 +16,7 @@
 @end direntry
 
 @ifinfo
-This file is the Guile-PG Command Reference
+This file is the Reference Guide for the (database postgres*) Modules.
 
 Copyright @copyright{} 1998, 2002, 2003, 2004 Free Software Foundation, Inc.
 
@@ -47,7 +47,7 @@ approved by the Free Software Foundation.
 @titlepage
 @sp 10
 @comment The title is printed in a large font.
-@center @titlefont{Guile-PG Command Reference}
+@center @titlefont{The (database postgres*) Modules}
 
 @c The following two commands start the copyright page.
 @page
@@ -74,25 +74,15 @@ translation approved by the Free Software Foundation.
 
 @c ---------------------------------------------------------------------------
 @node Top
-@top  Guile-PG Command Reference
+@top  The (database postgres*) Modules
 
-Guile-PG is a Guile module providing a set of procedures to allow
-access to the PostgreSQL RDBMS from Scheme programs.
+Guile-PG is a collection of modules for Guile allowing access to the
+PostgreSQL RDBMS from Scheme programs.
 
-Guile is an interpreter for the Scheme programming language: a dialect of
-Lisp.  PostgreSQL is a free SQL database management system.
-Guile-PG is intended as but one of the low-level drivers for the
-forthcoming Guile database module which will provide a portable interface
-to many different SQL database servers.  In the mean-time
-it will still be a useful module for those who want just a low-level
-interface to PostgreSQL.
-
-The Guile-PG procedures have an almost one-one correspondence
-with the PostgreSQL @code{libpq} C library interface so those familiar with
-the @code{libpq} library and other similar interfaces like Edmund Mergl's
-@code{Pg} Perl module will find it familiar.
-
-Guile-PG is based on Russ McManus's ``Sybase glue'' code.
+The low-level module @code{(database postgres)} provides an almost one-to-one
+correspondence with the PostgreSQL @code{libpq} C library interface.  Other
+higher-level modules, typically named @code{(database postgres-FOO)}, provide
+abstractions and convenience procedures.
 
 @menu
 * Legalities::                  Your rights and freedoms.
