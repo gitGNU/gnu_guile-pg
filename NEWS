@@ -1,6 +1,21 @@
 NEWS for Guile-PG
 
 
+- 0.22 | NOT YET RELEASED
+
+  - Experimental configure script option: --enable-pq-rpath
+
+	The configure script now recognizes `--enable-pq-rpath' and
+	subsequently arranges to pass "-R DIR" to the link command,
+	where DIR is the directory in which libpq.a can be found
+	(typically by specifying --with-libpq or --with-libpq-lib).
+
+	This facility is experimental; `--enable-pq-rpath', along w/ all
+	the other --with-libpq-FOO cruft, may succumb to more general
+	methodology provided by GNU autotools (if / when discovered),
+	prior to the 1.0 release.
+
+
 - 0.21 | 2004-07-03
 
   - Copyright clarification
