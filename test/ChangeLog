@@ -1,5 +1,9 @@
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* drop.sh.in: Check for PGDATABASE env var. Use it instead of $1.
+
+2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* drop.sh.in: New file.
 
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
