@@ -6,7 +6,6 @@
   :use-module ((srfi srfi-13) :select (string-join))
   :use-module (database postgres)
   :use-module (database postgres-table)
-  :autoload (ttn display-table) (display-table)
   :autoload (ice-9 pretty-print) (pretty-print)
   :autoload (ice-9 common-list) (pick-mappings))
 
@@ -20,9 +19,10 @@
       (display tree)))
 
 (define (>>table heading manager)
-  (write-line heading)
-  (display-table (tuples-result->table ((manager 'select) "*"))
-                 'fat-h-only))
+  (format #t "TABLE: ~A\n" heading)
+  (flush-all-ports)
+  (pg-print ((manager 'select) "*"))
+  (flush-all-ports))
 
 ;; markup table interface: extend pgtable-manager
 
