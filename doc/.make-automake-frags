@@ -1,14 +1,29 @@
 #!/bin/sh
 # invoked by $(top_srcdir)/autogen.sh in this directory
 
+xtab='s/@TAB@/	/g'                     # embedded tab!
+
 spew_twerp_stuff ()
 {
 stems=$1
-echo ALL_TWERPS = `sed 's/$/.twerp/g' $stems`
-sed 's,^\(.*\)$,\1.texi : \1.twerp,g' $stems
-echo remove-twerp-shadowed-texi:
-sed 's,^\(.*\)$,	rm -f $(distdir)/\1.texi,g' $stems
-#               ^^^^^^^^ single embedded tab
+
+set \
+  '
+  1i\
+ALL_TWERPS = \\
+  s/.*/  &.twerp/
+  $!s/$/ \\/
+  ' \
+  '
+  s/.*/&.texi : &.twerp/
+  ' \
+  '
+  1i\
+remove-twerp-shadowed-texi:
+  s,.*,@TAB@rm -f $(distdir)/&.texi,
+  '
+
+for p ; do sed "$p;$xtab" $stems ; done
 }
 
 prep_dummy_texi ()
