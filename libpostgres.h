@@ -22,6 +22,8 @@
 /* We fudge this. I wonder why only libguile sources can access this? */
 #define SCM_SYSCALL(line) line
 
+#define IFNULL(x,y) ((x) == NULL ? (y) : (x))
+
 typedef struct _scm_extended_dbconn {
     SCM          client;
     int          count;         /* which dbconn is this? */

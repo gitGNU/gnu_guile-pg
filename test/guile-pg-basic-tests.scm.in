@@ -250,7 +250,7 @@
              (set! res (pg-exec conn "DELETE FROM test WHERE col1 = 10000"))
              (and res (eq? (pg-result-status res) PGRES_COMMAND_OK)
                       (string? oid)
-                      (> (string->number oid 0))
+                      (> (string->number oid) 0)
                       (eq? (string->number (pg-cmdtuples res)) 1)))
            #f)))
 

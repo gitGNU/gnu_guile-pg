@@ -183,7 +183,7 @@ lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller)
   scm_port *pt;
   const char *s_lob_mklobport = "lob_mklobport";
 
-  lobp = (lob_stream *) scm_must_malloc(sizeof(lob_stream), "pg-lo-port");
+  lobp = (lob_stream *) scm_must_malloc(sizeof(lob_stream), "PG-LO-PORT");
 
   SCM_NEWCELL (port);
 
@@ -413,7 +413,7 @@ lob_fill_input (SCM port)
 }
 
 static void
-lob_write (SCM port, void *data, size_t size)
+lob_write (SCM port, const void *data, size_t size)
 {
    scm_port *pt = SCM_PTAB_ENTRY (port);
 
@@ -609,9 +609,23 @@ static int lob_printpt (SCM exp, SCM port, scm_print_state *pstate);
 static int 
 lob_printpt (SCM exp, SCM port, scm_print_state *pstate)
 {
-   scm_puts ("#<", port);
+   lob_stream *lobp = (lob_stream *) SCM_STREAM(exp);
+   scm_extended_dbconn *sec = sec_unbox(lobp->conn);
+   char *dbstr = PQdb(sec->dbconn);
+   char *hoststr = PQhost(sec->dbconn);
+   char *portstr = PQport(sec->dbconn);
+   char *optionsstr = PQoptions(sec->dbconn);
+
+   scm_puts ("#<PG-LO-PORT:", port);
    scm_print_port_mode (exp, port);
-   scm_putc ('>', port);
+   scm_intprint (lobp->fd, 10, port); scm_puts (":", port);
+   scm_puts ("#<PG-CONN:", port);
+   scm_intprint (sec->count, 10, port); scm_putc (':', port);
+   scm_puts (IFNULL(dbstr,"db?"), port); scm_putc (':', port);
+   scm_puts (IFNULL(hoststr,"localhost"), port); scm_putc (':', port);
+   scm_puts (IFNULL(portstr,"port?"), port); scm_putc (':', port);
+   scm_puts (IFNULL(optionsstr,"options?"), port);
+   scm_puts (">>", port);
    return 1;
 }
 

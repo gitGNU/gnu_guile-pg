@@ -166,7 +166,7 @@ sec_free(SCM obj)
     free(sec);
 
     /* set extension data to NULL */
-    SCM_SETCDR(obj, NULL);
+    SCM_SETCDR(obj, (SCM)NULL);
 
     return size;
 }
@@ -253,7 +253,7 @@ ser_free(SCM obj)
     free(ser);
 
     /* set extension data to NULL */
-    SCM_SETCDR(obj, NULL);
+    SCM_SETCDR(obj, (SCM)NULL);
 
     return size;
 }
