@@ -23,3 +23,6 @@ Thanks go to these people for their help in improving Guile-PG.
 
 - Shan Shan Huang
   - c2x portability bug report
+
+- Paolo Bonzini
+  - libtool help
