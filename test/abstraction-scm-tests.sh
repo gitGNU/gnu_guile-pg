@@ -11,7 +11,6 @@ $create || exit 1
 if [ x"$DEBUG" = x ] ; then debug= ; else debug='--debug' ; fi
 
 ${GUILE-guile} $debug \
-               -l $top_builddir/scm/postgres.scm \
                -l $top_srcdir/scm/postgres-types.scm \
                -l $top_srcdir/scm/postgres-col-defs.scm \
                -l $top_srcdir/scm/postgres-resx.scm \

@@ -11,7 +11,6 @@ $create || exit 1
 if [ x"$DEBUG" = x ] ; then debug= ; else debug='--debug' ; fi
 
 ${GUILE-guile} $debug \
-               -l $top_builddir/scm/postgres.scm \
                -l config.scm \
                -s $srcdir/guile-pg-lo-tests.scm
 rv=$?
