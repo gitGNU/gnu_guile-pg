@@ -121,9 +121,6 @@ fi
 ##----------------------------------------------------------------------------
 ## Etc
 
-GUILE_PG_STAMP="`date`"
-AC_SUBST(GUILE_PG_STAMP)
-
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
