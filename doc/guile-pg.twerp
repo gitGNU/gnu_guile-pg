@@ -2,6 +2,7 @@
 @c %**start of header
 @setfilename guile-pg.info
 @settitle @code{Guile-pg} Command Reference
+@paragraphindent 0
 @c %**end of header
 @code{}
 @setchapternewpage odd
