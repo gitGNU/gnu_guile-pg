@@ -2,6 +2,7 @@
 
 	* scm/postgres-table.scm (sql-quote): Rewrite for speed.
 	(string-append/separator): Likewise.
+	(ssep, csep): Pass char instead of string to `char-sep'.
 
 2005-01-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
