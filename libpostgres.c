@@ -963,12 +963,9 @@ PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
   const char *fname;
 
   ASSERT_RESULT (1, result);
-  SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
-
-  field = gh_scm2int (num);
-
+  SCM_VALIDATE_INUM_MIN_COPY (2, num, 0, field);
   SCM_DEFER_INTS;
-  if (field < PQnfields (RESULT (result)) && field >= 0)
+  if (field < PQnfields (RESULT (result)))
     {
       fname = PQfname (RESULT (result), field);
       SCM_ALLOW_INTS;
@@ -1020,12 +1017,9 @@ PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
   SCM rv;
 
   ASSERT_RESULT (1, result);
-  SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
-
-  field = gh_scm2int (num);
-
+  SCM_VALIDATE_INUM_MIN_COPY (2, num, 0, field);
   SCM_DEFER_INTS;
-  if (field < PQnfields (RESULT (result)) && field >= 0)
+  if (field < PQnfields (RESULT (result)))
     ftype = PQftype (RESULT (result), field);
   else
     {
@@ -1051,12 +1045,9 @@ PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
   SCM rv;
 
   ASSERT_RESULT (1, result);
-  SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
-
-  field = gh_scm2int (num);
-
+  SCM_VALIDATE_INUM_MIN_COPY (2, num, 0, field);
   SCM_DEFER_INTS;
-  if (field < PQnfields (RESULT (result)) && field >= 0)
+  if (field < PQnfields (RESULT (result)))
     fsize = PQfsize (RESULT (result), field);
   else
     {
@@ -1087,22 +1078,14 @@ PG_DEFINE (pg_getvalue, "pg-getvalue", 3, 0, 0,
   SCM srv;
 
   ASSERT_RESULT (1, result);
-  SCM_ASSERT (SCM_IMP (stuple) && SCM_INUMP (stuple), stuple, SCM_ARG2,
-              FUNC_NAME);
-  SCM_ASSERT (SCM_IMP (sfield) && SCM_INUMP (sfield), sfield, SCM_ARG3,
-              FUNC_NAME);
-  tuple = gh_scm2int (stuple);
-  field = gh_scm2int (sfield);
-
+  SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, tuple);
+  SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, field);
   SCM_DEFER_INTS;
   maxtuple = PQntuples (RESULT (result));
   maxfield = PQnfields (RESULT (result));
   SCM_ALLOW_INTS;
-
-  SCM_ASSERT (tuple < maxtuple && tuple >= 0, stuple, SCM_OUTOFRANGE,
-              FUNC_NAME);
-  SCM_ASSERT (field < maxfield && field >= 0, sfield, SCM_OUTOFRANGE,
-              FUNC_NAME);
+  SCM_ASSERT (tuple < maxtuple, stuple, SCM_OUTOFRANGE, FUNC_NAME);
+  SCM_ASSERT (field < maxfield, sfield, SCM_OUTOFRANGE, FUNC_NAME);
   SCM_DEFER_INTS;
   val = PQgetvalue (RESULT (result), tuple, field);
 #ifdef HAVE_PQBINARYTUPLES
@@ -1133,22 +1116,14 @@ PG_DEFINE (pg_getlength, "pg-getlength", 3, 0, 0,
   SCM ret;
 
   ASSERT_RESULT (1, result);
-  SCM_ASSERT (SCM_IMP (stuple) && SCM_INUMP (stuple), stuple, SCM_ARG2,
-              FUNC_NAME);
-  SCM_ASSERT (SCM_IMP (sfield) && SCM_INUMP (sfield), sfield, SCM_ARG3,
-              FUNC_NAME);
-  tuple = gh_scm2int (stuple);
-  field = gh_scm2int (sfield);
-
+  SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, tuple);
+  SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, field);
   SCM_DEFER_INTS;
   maxtuple = PQntuples (RESULT (result));
   maxfield = PQnfields (RESULT (result));
   SCM_ALLOW_INTS;
-
-  SCM_ASSERT (tuple < maxtuple && tuple >= 0, stuple, SCM_OUTOFRANGE,
-              FUNC_NAME);
-  SCM_ASSERT (field < maxfield && field >= 0, sfield, SCM_OUTOFRANGE,
-              FUNC_NAME);
+  SCM_ASSERT (tuple < maxtuple, stuple, SCM_OUTOFRANGE, FUNC_NAME);
+  SCM_ASSERT (field < maxfield, sfield, SCM_OUTOFRANGE, FUNC_NAME);
   SCM_DEFER_INTS;
   len = PQgetlength (RESULT (result), tuple, field);
   SCM_ALLOW_INTS;
@@ -1169,22 +1144,14 @@ PG_DEFINE (pg_getisnull, "pg-getisnull", 3, 0, 0,
   SCM rv;
 
   ASSERT_RESULT (1, result);
-  SCM_ASSERT (SCM_IMP (stuple) && SCM_INUMP (stuple), stuple, SCM_ARG2,
-              FUNC_NAME);
-  SCM_ASSERT (SCM_IMP (sfield) && SCM_INUMP (sfield), sfield, SCM_ARG3,
-              FUNC_NAME);
-  tuple = gh_scm2int (stuple);
-  field = gh_scm2int (sfield);
-
+  SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, tuple);
+  SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, field);
   SCM_DEFER_INTS;
   maxtuple = PQntuples (RESULT (result));
   maxfield = PQnfields (RESULT (result));
   SCM_ALLOW_INTS;
-
-  SCM_ASSERT (tuple < maxtuple && tuple >= 0, stuple, SCM_OUTOFRANGE,
-              FUNC_NAME);
-  SCM_ASSERT (field < maxfield && field >= 0, sfield, SCM_OUTOFRANGE,
-              FUNC_NAME);
+  SCM_ASSERT (tuple < maxtuple, stuple, SCM_OUTOFRANGE, FUNC_NAME);
+  SCM_ASSERT (field < maxfield, sfield, SCM_OUTOFRANGE, FUNC_NAME);
   SCM_DEFER_INTS;
   if (PQgetisnull (RESULT (result), tuple, field))
     rv = SCM_BOOL_T;
@@ -1241,12 +1208,9 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
   SCM rv;
 
   ASSERT_RESULT (1, result);
-  SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
-
-  field = gh_scm2int (num);
-
+  SCM_VALIDATE_INUM_MIN_COPY (2, num, 0, field);
   SCM_DEFER_INTS;
-  if (field < PQnfields (RESULT (result)) && field >= 0)
+  if (field < PQnfields (RESULT (result)))
     fmod = PQfmod (RESULT (result), field);
   else
     {
