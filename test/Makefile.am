@@ -1,6 +1,6 @@
 ## Process this file with Automake to create Makefile.in
 ##
-##	Copyright (C) 1998, 2002, 2003 Free Software Foundation, Inc.
+##	Copyright (C) 1998, 2002, 2003, 2004 Free Software Foundation, Inc.
 ##
 ##   This file is part of GUILE-PG.
 ##
@@ -26,6 +26,7 @@ TESTS_ENVIRONMENT =				\
   srcdir=$(srcdir)
 
 TESTS = alive.sh                                \
+	coverage.sh				\
         basic-tests.sh                          \
         lo-tests.sh                             \
         abstraction-scm-tests.sh
