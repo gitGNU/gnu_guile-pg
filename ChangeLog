@@ -1,5 +1,9 @@
 2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* libpostgres_lo.c (lob_seek): Only adjust return value on SEEK_CUR.
+
+2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* autogen.sh: Invoke "libtoolize --force" if no ltmain.sh in cwd.
 
 2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
