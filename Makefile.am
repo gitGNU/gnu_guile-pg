@@ -40,11 +40,11 @@ SUFFIXES = .x .doc
 snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS)
 
 .c.x:
-	guile-snarf -o $@ $< $(snarfcppopts) $(CFLAGS)
+	guile-tools c2x -o $@ $< $(snarfcppopts) $(CFLAGS)
 .c.doc:
-	$(GUILE_TOOLS) c2doc -o $@ $< -- $(snarfcppopts)
+	guile-tools c2doc -o $@ $< -- $(snarfcppopts)
 .scm.doc:
-	$(GUILE_TOOLS) doc-snarf -D -o $@ $<
+	guile-tools doc-snarf -D -o $@ $<
 
 ## Add -MG to make the .x magic work with auto-dep code.
 MKDEP = gcc -M -MG $(snarfcppopts) $(CFLAGS)
@@ -67,7 +67,7 @@ DOTDOCFILES = libpostgres.doc                   \
               scm/postgres-meta.doc
 
 .doc-index: $(DOTDOCFILES)
-	guile-tools twerp2texi --make-index -o $@ $(DOTDOCFILES)
+	guile-tools make-twerp2texi-index -o $@ $(DOTDOCFILES)
 
 endif # MAINTAINER_MODE
 
