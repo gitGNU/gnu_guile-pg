@@ -1,7 +1,6 @@
-dnl $Id$
 dnl   Automake macros for working with PostgreSQL libPQ.
 dnl
-dnl   	Copyright (C) 1998, 2002, 2003 Free Software Foundation, Inc.
+dnl	Copyright (C) 1998, 2002, 2003, 2004 Free Software Foundation, Inc.
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License as published by
@@ -19,21 +18,21 @@ dnl   the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 dnl   Boston, MA 02111-1307 USA
 dnl
 
-dnl   PQ_FLAGS --- set flags for compiling and linking with libpq
-dnl
-dnl   This macro looks for the libpq-fe.h and libpq.a files installed
-dnl   with PostgreSQL.  It sets three variables, marked for substitution, as
-dnl   by AC_SUBST.
-dnl
-dnl	PQ_CFLAGS --- flags to pass to a C or C++ compiler to build
-dnl		code that uses libpq header files.  This is almost
-dnl		always just a -I flag.
-dnl
-dnl     PQ_LDFLAGS --- flags to pass to the linker to link a
-dnl		program against libpq.  This includes `-lpq' for
-dnl		the pq library itself. It may also include a -L
-dnl             flag to tell the compiler where to find the libraries
-
+# PQ_FLAGS --- set flags for compiling and linking with libpq
+#
+# This macro looks for the libpq-fe.h and libpq.a files installed
+# with PostgreSQL.  It sets two variables, marked for substitution,
+# as by AC_SUBST.
+#
+#   PQ_CFLAGS --- flags to pass to a C or C++ compiler to build
+#                 code that uses libpq header files.  This is almost
+#                 always just a -I flag.
+#
+#   PQ_LDFLAGS --- flags to pass to the linker to link a
+#                  program against libpq.  This includes `-lpq' for
+#                  the pq library itself. It may also include a -L
+#                  flag to tell the compiler where to find the libraries
+#
 AC_DEFUN([PQ_FLAGS],[
   AC_ARG_WITH(libpq,
 [  --with-libpq=DIR        look for libpq includes in DIR/include and
@@ -92,3 +91,16 @@ AC_DEFUN([PQ_FLAGS],[
   AC_SUBST(PQ_CFLAGS)
   AC_SUBST(PQ_LDFLAGS)
 ])
+
+
+# AC_GUILE_PG_FCOMPAT --- figure out some "forward compatability" cruft
+#
+AC_DEFUN([AC_GUILE_PG_FCOMPAT],[
+
+AC_CHECK_DECL([scm_gc_protect_object],[
+ AC_DEFINE([HAVE_SCM_GC_PROTECT_OBJECT])
+],,[#include "libguile.h"])
+
+])
+
+dnl acinclude.m4 ends here
