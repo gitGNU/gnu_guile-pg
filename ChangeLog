@@ -1,6 +1,11 @@
 2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/guile-pg.twerp (Single-Table Abstraction): Update example.
+
+2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostres.c (xr_display): Skip "PGRES_" in status.
+	* doc/guile-pg.twerp: Update result object print representation.
 
 2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
