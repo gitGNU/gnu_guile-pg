@@ -402,7 +402,7 @@
                (and ((ok? 'PGRES_COPY_OUT) res)
                     (let ((line (pg-getline *C*)))
                       (and (string=? (pg-getline *C*) "\\.")
-                           (eq? (pg-endcopy *C*) 0)
+                           (eq? #t (pg-endcopy *C*))
                            (string=? line "1\tColumn 1"))))))))))
 
 (define test:getlineasync               ; needs test2
@@ -416,7 +416,7 @@
                      (and (string=? "1\tColumn 1\n"
                                     (apply string-append
                                            (reverse acc)))
-                          (eq? (pg-endcopy *C*) 0))
+                          (eq? #t (pg-endcopy *C*)))
                      (let ((chunk (substring buf 0 count)))
                        (loop (pg-getlineasync *C* buf)
                              (cons chunk acc)))))))))))
@@ -429,7 +429,7 @@
              (begin
                (for-each (lambda (s) (pg-putline *C* s))
                          '("2\tColumn 2" "\n" "\\." "\n"))
-               (and (eq? (pg-endcopy *C*) 0)
+               (and (eq? #t (pg-endcopy *C*))
                     (let ((res (cexec "SELECT * FROM test2 WHERE col1 = 2")))
                       (and res (tuples-ok? res)
                            (string=? (pg-getvalue res 0 0) "2")
