@@ -19,7 +19,7 @@
 ##   to the Free Software Foundation, Inc., 59 Temple Place, Suite
 ##   330, Boston, MA 02111-1307 USA
 
-SUBDIRS = scm doc test
+SUBDIRS = scm test doc
 
 EXTRA_DIST = THANKS contrib acinclude.m4 TODO HACKING autogen.sh
 
@@ -35,18 +35,37 @@ libpostgres_la_SOURCES = libpostgres.c libpostgres_lo.c libpostgres.h \
 libpostgres_la_LDFLAGS = -export-dynamic -version-info 2:0:0 \
                          @LDFLAGS@ @PQ_LDFLAGS@
 
-SUFFIXES = .x
+SUFFIXES = .x .doc
+
+snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS)
+
 .c.x:
-	guile-snarf -o $@ $< $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+	guile-snarf -o $@ $< $(snarfcppopts) $(CFLAGS)
+.c.doc:
+	$(GUILE_TOOLS) c2doc -o $@ $< -- $(snarfcppopts)
+.scm.doc:
+	$(GUILE_TOOLS) doc-snarf -D -o $@ $<
 
 ## Add -MG to make the .x magic work with auto-dep code.
-MKDEP = gcc -M -MG $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+MKDEP = gcc -M -MG $(snarfcppopts) $(CFLAGS)
 
-DISTCLEANFILES = *.x
+DISTCLEANFILES = *.x *.doc
 
 CLEANFILES = *.x
 
 dist-hook:
 	rm -rf `find $(distdir)/contrib -name CVS`
+
+if MAINTAINER_MODE
+
+DOTDOCFILES = libpostgres.doc                   \
+              libpostgres_lo.doc                \
+              scm/postgres-types.doc            \
+              scm/postgres-table.doc
+
+.doc-index: $(DOTDOCFILES)
+	guile-tools twerp2texi --make-index -o $@ $(DOTDOCFILES)
+
+endif # MAINTAINER_MODE
 
 ## Makefile.am ends here
