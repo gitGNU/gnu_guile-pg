@@ -1138,10 +1138,15 @@ init_postgres(void)
     type_rec.equalp = 0;
     pg_result_tag.type_tag = scm_newsmob(&type_rec);
 #else
-    pg_conn_tag.type_tag = scm_make_smob_type_mfpe("PG-CONN", 0,
-                                        sec_mark, sec_free, sec_display, NULL);
-    pg_result_tag.type_tag = scm_make_smob_type_mfpe("PG-RESULT", 0,
-                                        ser_mark, ser_free, ser_display, NULL);
+    pg_conn_tag.type_tag = scm_make_smob_type("PG-CONN", 0);
+    scm_set_smob_mark(pg_conn_tag.type_tag, sec_mark);
+    scm_set_smob_free(pg_conn_tag.type_tag, sec_free);
+    scm_set_smob_print(pg_conn_tag.type_tag, sec_display);
+
+    pg_result_tag.type_tag = scm_make_smob_type("PG-RESULT", 0);
+    scm_set_smob_mark(pg_result_tag.type_tag, ser_mark);
+    scm_set_smob_free(pg_result_tag.type_tag, ser_free);
+    scm_set_smob_print(pg_result_tag.type_tag, ser_display);
 #endif
 
 #include <libpostgres.x>

@@ -1,4 +1,9 @@
 $Id$
+Tue Jun 20 12:38:07 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+
+        * libpostgres.c: Fixed use of soon-to-be-deprecated
+          scm_make_smob_type_mfpe.
+
 Thu Jun 15 11:09:34 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
 
         * libpostgres.c: Fixed use of deprecated scm_smobfuns struct.
