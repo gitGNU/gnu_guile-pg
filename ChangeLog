@@ -4,6 +4,11 @@
 
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/mkinc (symbol->texi): New proc.
+	(pp-ls): Use `symbol->texi'.
+
+2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm (*conditional-operations*): Add a bunch.
 	(*infix-operations*): Likewise.
 	(*postfix-display-aliases*): New var.
