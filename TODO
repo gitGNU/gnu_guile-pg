@@ -26,9 +26,7 @@
     integrity (and thus bugs).  Better to use strictly imperative style
     and use C auto vars for intermediate values, even if it is ugly.
 
-  - Review SCM_ROSTRINGs used as null-terminated strings
-
-    We need to make sure they aren't substrings.
+  + Review SCM_ROSTRINGs used as null-terminated strings
 
   + Clean up module (database postgres-meta)
     + Replace display-table with pg-print
@@ -39,76 +37,34 @@
 
   - Write tests for non-blocking query support
 
-  - Implement these calls:
+  + Implement these calls:
 
     + Asynchronous version of PQgetline
 
-          int      PQgetlineAsync(PGconn *conn, char *buffer, int bufsize)
+          int PQgetlineAsync(PGconn *conn, char *buffer, int bufsize)
 
-    - Non-blocking query support
+    + Non-blocking query support
 
           int PQsendQuery (PGconn *conn, const char *query)
-
           PGresult *PQgetResult (PGconn *conn)
-                 Returns a pointer to a result or NULL if no more
-                  results are due from the given connection.
-
           int PQconsumeInput (PGconn *conn)
-                 Returns 1 if OK, 0 otherwise.
-
           int PQisBusy(PGconn *conn)
-                 Returns TRUE if there is data waiting for PQconsumeInput,
-                 FALSE otherwise.
-
-          int PQsocket(PGconn *conn)
-                 Returns a socket fd for the connection to the backend.
-
           int PQrequestCancel(PGconn *conn)
-
-      The return value is TRUE if the cancel request was successfully
-      dispatched, FALSE if not.  (If not, PQerrorMessage tells why not.)
-      Successful dispatch is no guarantee that the request will have any
-      effect, however.  Regardless of the return value of PQrequestCancel, the
-      application must continue with the normal result-reading sequence using
-      PQgetResult.  If the cancellation is effective, the current query will
-      terminate early and return an error result.  If the cancellation fails
-      (say because the backend was already done processing the query), then
-      there will be no visible result at all.
-
-      Note that if the current query is part of a transaction, cancellation
-      will abort the whole transaction.
 
     + PQconndefaults
 
         PQconninfoOption *PQconndefaults(void)
-
-        struct PQconninfoOption {
-            char   *keyword;   /* The keyword of the option */
-            char   *envvar;    /* Fallback environment variable name */
-            char   *compiled;  /* Fallback compiled in default value */
-            char   *val;       /* Option's value */
-            char   *label;     /* Label for field in connect dialog */
-            char   *dispchar;  /* Character to display for this field
-                                  in a connect dialog. Values are:
-                                  ""        Display entered value as is
-                                  "*"       Password field - hide value
-                                  "D"       Debug options - don't
-                                            create a field by default */
-            int     dispsize;  /* Field size in characters for dialog */
-        };
-
-      Returns the address of the connection options structure.  This may be
-      used to determine all possible PQconnectdb options and their current
-      default values.  The return value points to an array of PQconninfoOption
-      structs, which ends with an entry having a NULL keyword pointer.  Note
-      that the default values ("val" fields) will depend on environment
-      variables and other context. Callers must treat the connection options
-      data as read-only.
+        struct PQconninfoOption { ... }
 
   + Use GNU style curly-brace placement in C code
 
 
 - Eventually
+
+  - Implement these calls:
+
+          int PQsocket(PGconn *conn)
+                 Returns a socket fd for the connection to the backend.
 
   - Regularize error handling.
 
@@ -127,7 +83,7 @@
 	pg-guile-pg-module-config-stamp
 
     Users who want to track changes should check features directly instead
-    of version numbers.
+    of version numbers and time stamps.
 
   - Add to the manual a section giving an overview of using large-objects.
 
