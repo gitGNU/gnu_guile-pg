@@ -44,6 +44,7 @@
             make-SELECT/OUT-tree
             make-FROM-tree
             make-SELECT/FROM/OUT-tree
+            parse+make-SELECT/tail-tree
             sql<-trees
             sql-command<-trees))
 
@@ -229,7 +230,7 @@
                     (or (pair? ord)
                         (error "bad ordering:" ord))
                     (list
-                     (expr (cadr ord))
+                     (expr (fs "~S" (symbol->string (cadr ord))))
                      (case (car ord)
                        ((< #:ASC #:asc) #:ASC)
                        ((> #:DESC #:desc) #:DESC)
@@ -301,6 +302,51 @@
   (list #:SELECT
         (make-SELECT/OUT-tree outs)
         (make-FROM-tree froms)))
+
+;; Return a @dfn{select tail} tree for @var{plist}, a list of
+;; alternating keywords and sexps.  Currently, these keywords
+;; are recognized:
+;;
+;; @table @code
+;; @item #:where
+;; Pass the associated sexp to @code{make-WHERE-tree}.
+;;
+;; @item #:group-by
+;; Pass the associated sexp to @code{make-GROUP-BY-tree}.
+;;
+;; @item #:having
+;; Pass the associated sexp to @code{make-HAVING-tree}.
+;;
+;; @item #:order-by
+;; Pass the associated sexp to @code{make-ORDER-BY-tree}.
+;; @end table
+;;
+;; Optional second arg @var{quote?} non-#f means to arrange to use the
+;; @code{#:q*} operator for the structured expressions.
+;;
+;;-sig: (plist [quote?])
+;;
+(define (parse+make-SELECT/tail-tree plist . opts)
+  (define (q-ok? kw)
+    (case kw
+      ((#:order-by) #f)
+      (else #t)))
+  (let ((quote? (and (not (null? opts)) (car opts)))
+        (acc (list '())))
+    (let loop ((ls plist) (tp acc))
+      (if (null? ls)
+          (cdr acc)                     ; rv
+          (begin
+            (set-cdr! tp (list ((case (car ls)
+                                  ((#:where) make-WHERE-tree)
+                                  ((#:group-by) make-GROUP-BY-tree)
+                                  ((#:having) make-HAVING-tree)
+                                  ((#:order-by) make-ORDER-BY-tree))
+                                ((if (and quote? (q-ok? (car ls)))
+                                     (lambda (x) (list #:q* x))
+                                     identity)
+                                 (cadr ls)))))
+            (loop (cddr ls) (cdr tp)))))))
 
 ;; Return a string made from flattening @var{trees} (a list).
 ;; Each element of @var{trees} is either a string, symbol, number,
