@@ -1487,13 +1487,48 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
            "are not mixed without an intervening port flush.")
 #define FUNC_NAME s_pg_print
 {
+  FILE *fout;
+  int redir_p;
+
   SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
   options = ((options == SCM_UNDEFINED)
              ? pg_make_print_options (SCM_EOL)
              : options);
   SCM_ASSERT (sepo_p (options), options, SCM_ARG2, FUNC_NAME);
 
+#ifdef HAVE_TMPFILE
+
+  redir_p = (! SCM_OPFPORTP (scm_current_output_port ())
+             || (SCM_INUM (scm_fileno (scm_current_output_port ()))
+                 != fileno (stdout)));
+  fout = (redir_p ? tmpfile () : stdout);
+
+  PQprint (fout, ser_unbox (result)->result, sepo_unbox (options));
+
+  if (redir_p)
+    {
+      char buf[BUF_LEN];
+      SCM outp = scm_current_output_port ();
+      int howmuch = 0;
+
+      buf[BUF_LEN - 1] = '\0';          /* elephant */
+      fseek (fout, 0, SEEK_SET);
+
+      while (BUF_LEN - 1 == (howmuch = fread (buf, 1, BUF_LEN - 1, fout)))
+        scm_display (scm_makfrom0str (buf), outp);
+      if (feof (fout))
+        {
+          buf[howmuch] = '\0';
+          scm_display (scm_makfrom0str (buf), outp);
+        }
+      fclose (fout);
+    }
+
+#else /* !defined (HAVE_TMPFILE) */
+
   PQprint (stdout, ser_unbox (result)->result, sepo_unbox (options));
+
+#endif /* !defined (HAVE_TMPFILE) */
 
   return SCM_UNSPECIFIED;
 }
