@@ -101,7 +101,7 @@ sec_unbox (SCM obj)
   return ((scm_extended_dbconn *) SCM_CDR (obj));
 }
 
-SCM
+static SCM
 sec_box (scm_extended_dbconn *sec)
 {
   SCM z;
@@ -166,19 +166,19 @@ sec_free (SCM obj)
   return size;
 }
 
-int
+static int
 ser_p (SCM obj)
 {
   return (SCM_NIMP (obj) && SCM_CAR (obj) == pg_result_tag.type_tag);
 }
 
-scm_extended_result *
+static scm_extended_result *
 ser_unbox (SCM obj)
 {
   return ((scm_extended_result*)SCM_CDR (obj));
 }
 
-SCM
+static SCM
 ser_box (scm_extended_result *ser)
 {
   SCM z;
