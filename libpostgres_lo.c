@@ -232,8 +232,8 @@ lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller)
     }
   else
     {
-      pt->read_buf
-        = ((unsigned char *) pt->read_pos)
+      pt->read_pos
+        = pt->read_buf
         = pt->read_end
         = &pt->shortbuf;
       pt->read_buf_size = 1;
