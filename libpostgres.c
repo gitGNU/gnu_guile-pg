@@ -167,9 +167,8 @@ sec_free (SCM obj)
   GC_PRINT (fprintf (stderr, "sweeping PG-CONN %d\n", sec->count));
 
   /* close connection to postgres */
-  if (sec->dbconn) {
+  if (sec->dbconn)
     PQfinish (sec->dbconn);
-  }
 
   /* free this object itself */
   free (sec);
@@ -217,10 +216,11 @@ ser_display (SCM exp, SCM port, scm_print_state *pstate)
 
   SCM_DEFER_INTS;
   status = PQresultStatus (ser->result);
-  if (status == PGRES_TUPLES_OK) {
-    ntuples = PQntuples (ser->result);
-    nfields = PQnfields (ser->result);
-  }
+  if (status == PGRES_TUPLES_OK)
+    {
+      ntuples = PQntuples (ser->result);
+      nfields = PQnfields (ser->result);
+    }
   SCM_ALLOW_INTS;
 
   for (pgrs_index = 0; pgrs_index < pgrs_count; pgrs_index++)
@@ -518,21 +518,22 @@ PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
 
   dbconn = sec_unbox (conn)->dbconn;
 
-  if ((result= PQexec (dbconn, pgquery)) != NULL) {
-    /* successfully exec'ed command; create data structure */
-    SCM_ALLOW_INTS; /* Looks weird, but they're SCM_DEFERred in ser_box. */
-    z = ser_box ((scm_extended_result *)
-                 scm_must_malloc (sizeof (scm_extended_result), "PG-RESULT"));
-    ser = ser_unbox (z);
-    SCM_DEFER_INTS;
+  if ((result= PQexec (dbconn, pgquery)) != NULL)
+    {
+      /* successfully exec'ed command; create data structure */
+      SCM_ALLOW_INTS; /* Looks weird, but they're SCM_DEFERred in ser_box. */
+      z = ser_box ((scm_extended_result *)
+                   scm_must_malloc (sizeof (scm_extended_result), "PG-RESULT"));
+      ser = ser_unbox (z);
+      SCM_DEFER_INTS;
 
-    /* initialize the dbconn */
-    ser->result = result;
-    ser->count = ++pg_result_tag.count;
-    ser->conn = conn;
-  } else {
+      /* initialize the dbconn */
+      ser->result = result;
+      ser->count = ++pg_result_tag.count;
+      ser->conn = conn;
+    }
+  else
     z = SCM_BOOL_F;
-  }
   SCM_ALLOW_INTS;
   return z;
 }
@@ -570,7 +571,8 @@ PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
 #ifdef HAVE_PQRESULTERRORMESSAGE
   else
     strncpy0 (pgerrormsg,
-              (const char *) PQresultErrorMessage (ser_unbox (obj)->result), BUF_LEN);
+              (const char *) PQresultErrorMessage (ser_unbox (obj)->result),
+              BUF_LEN);
 #endif
   SCM_ALLOW_INTS;
 
@@ -867,14 +869,17 @@ PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
   field = SCM_INUM (num);
 
   SCM_DEFER_INTS;
-  if (field < PQnfields (ser_unbox (result)->result) && field >= 0) {
-    fname = PQfname (ser_unbox (result)->result, field);
-    SCM_ALLOW_INTS;
-  } else {
-    SCM_ALLOW_INTS;
-    scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
-                    scm_listify (num, SCM_UNDEFINED));
-  }
+  if (field < PQnfields (ser_unbox (result)->result) && field >= 0)
+    {
+      fname = PQfname (ser_unbox (result)->result, field);
+      SCM_ALLOW_INTS;
+    }
+  else
+    {
+      SCM_ALLOW_INTS;
+      scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
+                      scm_listify (num, SCM_UNDEFINED));
+    }
   return scm_makfrom0str (fname);
 }
 #undef FUNC_NAME
@@ -923,13 +928,14 @@ PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
   field = SCM_INUM (num);
 
   SCM_DEFER_INTS;
-  if (field < PQnfields (ser_unbox (result)->result) && field >= 0) {
+  if (field < PQnfields (ser_unbox (result)->result) && field >= 0)
     ftype = PQftype (ser_unbox (result)->result, field);
-  } else {
-    SCM_ALLOW_INTS;
-    scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
-                    scm_listify (num, SCM_UNDEFINED));
-  }
+  else
+    {
+      SCM_ALLOW_INTS;
+      scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
+                      scm_listify (num, SCM_UNDEFINED));
+    }
   SCM_ALLOW_INTS;
 
   scm_inum = SCM_MAKINUM (ftype);
@@ -953,13 +959,14 @@ PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
   field = SCM_INUM (num);
 
   SCM_DEFER_INTS;
-  if (field < PQnfields (ser_unbox (result)->result) && field >= 0) {
+  if (field < PQnfields (ser_unbox (result)->result) && field >= 0)
     fsize = PQfsize (ser_unbox (result)->result, field);
-  } else {
-    SCM_ALLOW_INTS;
-    scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
-                    scm_listify (num, SCM_UNDEFINED));
-  }
+  else
+    {
+      SCM_ALLOW_INTS;
+      scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
+                      scm_listify (num, SCM_UNDEFINED));
+    }
   SCM_ALLOW_INTS;
 
   scm_inum = SCM_MAKINUM (fsize);
@@ -1132,13 +1139,14 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
   field = SCM_INUM (num);
 
   SCM_DEFER_INTS;
-  if (field < PQnfields (ser_unbox (result)->result) && field >= 0) {
+  if (field < PQnfields (ser_unbox (result)->result) && field >= 0)
     fmod = PQfmod (ser_unbox (result)->result, field);
-  } else {
-    SCM_ALLOW_INTS;
-    scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
-                    scm_listify (num, SCM_UNDEFINED));
-  }
+  else
+    {
+      SCM_ALLOW_INTS;
+      scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
+                      scm_listify (num, SCM_UNDEFINED));
+    }
   SCM_ALLOW_INTS;
 
   scm_inum = SCM_MAKINUM (fmod);
@@ -1173,15 +1181,16 @@ PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
   SCM str = SCM_UNDEFINED;
 
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
-  while (ret != 0 && ret != EOF) {
-    SCM_DEFER_INTS;
-    ret = PQgetline (sec_unbox (conn)->dbconn, buf, BUF_LEN);
-    SCM_ALLOW_INTS;
-    if (str == SCM_UNDEFINED)
-      str = scm_makfrom0str (buf);
-    else
-      str = scm_string_append (SCM_LIST2 (str, scm_makfrom0str (buf)));
-  }
+  while (ret != 0 && ret != EOF)
+    {
+      SCM_DEFER_INTS;
+      ret = PQgetline (sec_unbox (conn)->dbconn, buf, BUF_LEN);
+      SCM_ALLOW_INTS;
+      if (str == SCM_UNDEFINED)
+        str = scm_makfrom0str (buf);
+      else
+        str = scm_string_append (SCM_LIST2 (str, scm_makfrom0str (buf)));
+    }
   return str;
 }
 #undef FUNC_NAME
@@ -1245,9 +1254,11 @@ PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
   FILE *fpout;
 
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT (sec_unbox (conn)->fptrace == NULL, conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (sec_unbox (conn)->fptrace == NULL,
+              conn, SCM_ARG1, FUNC_NAME);
   port = SCM_COERCE_OUTPORT (port);
-  SCM_ASSERT (SCM_NIMP (port) && SCM_OPOUTFPORTP (port),port,SCM_ARG2,FUNC_NAME);
+  SCM_ASSERT (SCM_NIMP (port) && SCM_OPOUTFPORTP (port),
+              port, SCM_ARG2, FUNC_NAME);
 
   SCM_SYSCALL (fd = dup (fp->fdes));
   if (fd == -1)
@@ -1336,25 +1347,28 @@ sepo_free (SCM obj)
 
 #define _FREE_STRING(p)                         \
   do {                                          \
-    if (p) {                                    \
-      size += 1 + strlen (p);                   \
-      free (p);                                 \
-    }                                           \
+    if (p)                                      \
+      {                                         \
+        size += 1 + strlen (p);                 \
+        free (p);                               \
+      }                                         \
   } while (0)
 
   _FREE_STRING (po->fieldSep);
   _FREE_STRING (po->tableOpt);
   _FREE_STRING (po->caption);
 
-  if (po->fieldName) {
-    int i = 0;
-    while (po->fieldName[i]) {
-      _FREE_STRING (po->fieldName[i]);
-      i++;
+  if (po->fieldName)
+    {
+      int i = 0;
+      while (po->fieldName[i])
+        {
+          _FREE_STRING (po->fieldName[i]);
+          i++;
+        }
+      size += i * sizeof (char *);
+      free (po->fieldName);
     }
-    size += i * sizeof (char *);
-    free (po->fieldName);
-  }
 #undef _FREE_STRING
 
   size += sizeof (PQprintOpt);
@@ -1440,32 +1454,41 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
 
   /* hairy validation/collection: symbols in `flags', pairs in `keys' */
   check = spec;
-  while (SCM_NNULLP (check)) {
-    SCM head = SCM_CAR (check);
-    if (SCM_SYMBOLP (head)) {
-      SCM_ASSERT (SCM_NFALSEP (scm_memq (head, valid_print_option_flags)),
-                  head, SCM_ARG1, FUNC_NAME);
-      flags = scm_cons (head, flags);
-    } else if (SCM_CONSP (head)) {
-      SCM key = SCM_CAR (head);
-      SCM val = SCM_CDR (head);
-      SCM_ASSERT (SCM_NFALSEP (scm_memq (key, valid_print_option_keys)),
-                  key, SCM_ARG1, FUNC_NAME);
-      if (key == pg_sym_field_names) {
-        SCM_ASSERT (SCM_NNULLP (val), head, SCM_ARG1, FUNC_NAME);
-        while (SCM_NNULLP (val)) {
-          SCM_ASSERT (SCM_STRINGP (SCM_CAR (val)), head, SCM_ARG1, FUNC_NAME);
-          count++;
-          val = SCM_CDR (val);
+  while (SCM_NNULLP (check))
+    {
+      SCM head = SCM_CAR (check);
+      if (SCM_SYMBOLP (head))
+        {
+          SCM_ASSERT (SCM_NFALSEP (scm_memq (head, valid_print_option_flags)),
+                      head, SCM_ARG1, FUNC_NAME);
+          flags = scm_cons (head, flags);
         }
-        substnames = SCM_CDR (head);    /* i.e., `val' */
-      } else {
-        SCM_ASSERT (SCM_STRINGP (val), val, SCM_ARG1, FUNC_NAME);
-        keys = scm_cons (head, keys);
-      }
+      else if (SCM_CONSP (head))
+        {
+          SCM key = SCM_CAR (head);
+          SCM val = SCM_CDR (head);
+          SCM_ASSERT (SCM_NFALSEP (scm_memq (key, valid_print_option_keys)),
+                      key, SCM_ARG1, FUNC_NAME);
+          if (key == pg_sym_field_names)
+            {
+              SCM_ASSERT (SCM_NNULLP (val), head, SCM_ARG1, FUNC_NAME);
+              while (SCM_NNULLP (val))
+                {
+                  SCM_ASSERT (SCM_STRINGP (SCM_CAR (val)),
+                              head, SCM_ARG1, FUNC_NAME);
+                  count++;
+                  val = SCM_CDR (val);
+                }
+              substnames = SCM_CDR (head);    /* i.e., `val' */
+            }
+          else
+            {
+              SCM_ASSERT (SCM_STRINGP (val), val, SCM_ARG1, FUNC_NAME);
+              keys = scm_cons (head, keys);
+            }
+        }
+      check = SCM_CDR (check);
     }
-    check = SCM_CDR (check);
-  }
 
   po = scm_must_malloc (sizeof (PQprintOpt), "PG-PRINT-OPTION");
 
@@ -1497,18 +1520,20 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
   _STRING_CHECK_SETX (caption, caption);
 #undef _STRING_CHECK_SETX
 
-  if (SCM_FALSEP (substnames)) {
+  if (SCM_FALSEP (substnames))
     po->fieldName = NULL;
-  } else {
-    int i;
-    po->fieldName = (char **) scm_must_malloc ((1 + count) * sizeof (char *),
-                                               "PG-PRINT-OPTION fieldname");
-    po->fieldName[count] = NULL;
-    for (i = 0; i < count; i++) {
-      po->fieldName[i] = strdup (SCM_ROCHARS (SCM_CAR (substnames)));
-      substnames = SCM_CDR (substnames);
+  else
+    {
+      int i;
+      po->fieldName = (char **) scm_must_malloc ((1 + count) * sizeof (char *),
+                                                 "PG-PRINT-OPTION fieldname");
+      po->fieldName[count] = NULL;
+      for (i = 0; i < count; i++)
+        {
+          po->fieldName[i] = strdup (SCM_ROCHARS (SCM_CAR (substnames)));
+          substnames = SCM_CDR (substnames);
+        }
     }
-  }
 
   return sepo_box (po);
 }
