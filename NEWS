@@ -12,6 +12,8 @@ NEWS for Guile-PG
 	a string of space-separated "var=val" pairs, or an already
 	existing connection object (satisfying `pg-connection?').
 
+  - New (database postgres-meta) proc: `infer-defs'
+
 
 - 0.14 | 2002-12-27
 
