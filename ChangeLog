@@ -1,3 +1,19 @@
+2003-01-30  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* libpostgres.c (sepo_type_tag, default_print_options,
+	valid_print_option_flags, valid_print_option_keys): New static vars.
+	(sepo_p, sepo_box, sepo_unbox, sepo_mark, sepo_free,
+	sepo_display): New static funcs.
+	(pg_sym_header, pg_sym_no_header, pg_sym_align, pg_sym_no_align,
+	pg_sym_standard, pg_sym_no_standard, pg_sym_html3, pg_sym_no_html3,
+	pg_sym_expanded, pg_sym_no_expanded, pg_sym_field_sep, pg_sym_table_opt,
+	pg_sym_caption, pg_sym_field_names): New global vars.
+	(pg_make_print_options, pg_print): New PG_DEFINE funcs.
+	(init_postgres): Add init for sepo smob and valid_print_option_*
+	vars.
+
+	* scm/postgres.scm.in (pg-make-print-options, pg-print): New exports.
+
 2003-01-15  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* configure.in (VERSION): Bump to 0.15 for release.
