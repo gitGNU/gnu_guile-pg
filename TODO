@@ -1,6 +1,9 @@
 
 - 0.17
 
+  - Use tmpfile(3) if available.
+    - pg_print [ttn]
+
   - Review error handling; regularize; document.
 
   - Implement these calls:
@@ -204,6 +207,6 @@
 
 	Local Variables:
 	mode: outline
-	outline-regexp: "\\([ ][ ]\\)*- "
+	outline-regexp: "\\([ ][ ]\\)*[-+] "
 	fill-column: 78
 	End:
