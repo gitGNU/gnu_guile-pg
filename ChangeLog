@@ -1,3 +1,9 @@
+2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-types.scm (dbcoltype:name): Delete proc.
+	* doc/guile-pg.twerp (Types Conversion):
+	Remove `dbcoltype:name' @twerpdoc.
+
 2005-01-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-types.scm
