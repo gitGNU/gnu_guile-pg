@@ -1,6 +1,7 @@
 2005-01-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm (sql-quote): Rewrite for speed.
+	(string-append/separator): Likewise.
 
 2005-01-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
