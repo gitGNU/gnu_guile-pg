@@ -1,3 +1,13 @@
+2004-07-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* acinclude.m4 (AC_GUILE_PG_CONFIG_SCRIPT): New AC_DEFUN.
+
+	* configure.in (test/drop.sh): Use AC_GUILE_PG_CONFIG_SCRIPT.
+	(test/create.sh): Likewise.
+	(wily-guile): Likewise.
+	(module-catalog-prep): Replace this AC_CONFIG_COMMANDS
+	block with a call to GUILE_MODULE_CATALOG_PREP.
+
 2004-07-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* acinclude.m4 (AC_GUILE_PG_FCOMPAT): Check for
