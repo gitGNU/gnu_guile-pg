@@ -808,6 +808,7 @@ To get started, load the @code{postgres-types} module:
 @end lisp
 
 But before we get to conversions, recall that the @code{pg-ftype} example
+(@pxref{Processing Results})
 defines a procedure that returns the name of a PostgreSQL type by doing a
 query on the @code{pg_type} (internal) table.  Here is a more efficient
 implementation:
@@ -822,11 +823,19 @@ It uses a bonus procedure in this module:
 
 @twerpdoc (oid-type-name-cache)
 
+@menu
+* Consulting Existing Type Converters::
+* Selected Notes About Some Types::
+* Defining New Type Converters::
+@end menu
+
+@node    Consulting Existing Type Converters
 @section Consulting Existing Type Converters
 
 To see what type converters are already defined, use the @code{dbcoltypes}
 procedure.  To get a @dfn{type-converter object} that encapsulates
 the @dfn{stringifier}, the @dfn{objectifier} and the @dfn{default}, use
+the procedure
 @code{dbcoltype-lookup}.  The components of the returned object can be read
 using the @code{dbcoltype:FOO} procedures.
 
@@ -855,6 +864,168 @@ PostgreSQL: dimensionality is not stored for array types, so the conversion
 cannot be done in a random-access manner.  Perhaps this will change in the
 future.
 
+@node    Selected Notes About Some Types
+@section Selected Notes About Some Types
+
+For the most part, the built-in converters map Scheme types to PostgreSQL
+types almost transparently (@pxref{Consulting Existing Type Converters}).
+This section lists the PostgreSQL types not (yet) covered, describes the major
+weakness in the mapping approach, and then finally touches upon some of the
+rough edges to be found in selected cases.  We hope to resolve these issues
+(and thus be able to revise this section significantly) before Guile-PG 1.0 is
+released.
+
+Converters for the following PostgresSQL 7.3.8 types are not provided.
+(Dot-separated numbers indicate a section in the PostgreSQL User's Guide
+describing the type.)
+
+@table @code
+
+@item decimal
+@itemx numeric
+@itemx double precision
+Numeric Types (5.1).  Guile-PG provides @code{double} instead of @code{double
+precision}.  Guile supports bignums, so the @code{decimal} and @code{numeric}
+converters can probably be provided w/ a SMOP.
+
+@item money
+Monetary Type (5.2).  Since PostgreSQL itself deprecates this type,
+it is unlikely Guile-PG will support it ever.
+
+@item character varying (n)
+@itemx varchar (n)
+@itemx character (n)
+@itemx char (n)
+Character Types (5.3).
+
+@item bytea
+Binary Strings (5.4).
+
+@item timestamp [ (p) ] with time zone
+@itemx interval [ (p) ]
+@itemx date
+@itemx time [ (p) ] with time zone
+@itemx time [ (p) ] without time zone
+Date/Time Types (5.5).
+
+@item point
+@itemx line
+@itemx lseg
+@itemx box
+@itemx path
+@itemx polygon
+@itemx circle
+Geometric Types (5.7).
+
+@item bit (n)
+@itemx bit varying (n)
+Bit String Types (5.9).
+
+@item regproc
+@itemx regprocedure
+@itemx regoper
+@itemx regoperator
+@itemx regclass
+@itemx regtype
+Object Identifier Types (5.10).
+
+@item record
+@itemx any
+@itemx anyarray
+@itemx void
+@itemx trigger
+@itemx language_handler
+@itemx cstring
+@itemx internal
+@itemx opaque
+Pseudo-Types (5.11).
+
+@end table
+
+The large table above hints at the major weakness in Guile-PG's type mapping
+approach: the names of type converters and the names of the PostgreSQL types
+are not decoupled at all.  This has several negative consequences:
+
+@enumerate
+
+@item Non-alphanumeric characters in the PostgreSQL type name are not handled
+gracefully.  For example, @code{double precision} has a space; Guile-PG can
+provide @code{double}, but now there is ambiguity upon reflection, and
+the single-table abstraction @code{#:create} method fails.
+
+@item When there is no native Guile type that maps cleanly, Guile-PG must
+choose an object representation, which may not be ideal for the application.
+For example, Guile-PG defines an @code{inet} object to be a two-element
+vector; perhaps an application uses a cons or simply one number, since all its
+@code{inet} objects are host addresses (constant netmask).  Sure, it is no big
+deal to box/unbox, but that's an extra level of conversion that the whole
+system was trying to avoid in the first place.
+
+@item User-defined types can clobber internals.
+(Actually, this may not be a problem in practice.)
+
+@item Parameterized types cannot be specified.
+
+@item Non-array derived types cannot express their lineage.
+For example, Guile-PG provides @code{inet-host}, but the
+single-table abstraction @code{#:create} method fails because
+it has no way of finding out that this type is based on @code{inet}.
+
+@item [probably other things i can't recall at the moment... --ttn]
+
+@end enumerate
+
+The rest of this section is a table delving into some of the more quirky type
+converters provided, including those that do not have a PostgreSQL type.
+Entries marked @code{NOCREATE} indicate that the converter is for a synthetic
+type and that it cannot be used in the single-table abstraction to create a
+table, either because there is no underlying PostgreSQL type, or because
+information about such an underlying type is not (presently) available.
+Entries marked @code{INTERNAL} are ``not intended for use by the general
+user'', according to the PostgreSQL User's Guide.  Entries marked
+@code{EXPERIMENTAL} should probably be avoided unless you are interested in
+debugging Guile-PG itself.
+
+@table @code
+
+@item double
+NOCREATE.  This can be used to access data of PostgreSQL type
+@code{double precision}.
+
+@item char
+@itemx name
+NOCREATE, INTERNAL.  PostgreSQL actually provides a @code{"char"} type (name
+includes the double quotes) that this type (name does not include the double
+quotes) mimics.
+
+@item timestamp
+This can be used to access data of PostgreSQL type @code{timestamp (0) without
+time zone}.
+
+@item inet
+@itemx cidr
+Guile has no native type that aggregates the address and the netmask, so
+Guile-PG defines the Scheme @code{inet} or @code{cidr} object to be a vector
+of two elements @code{#(ADDRESS MASKCOUNT)} where @var{address} is a positive
+integer zero through #xffffffff (32 bits) and @var{maskcount} is the number of
+bits in the netmask.  If @var{maskcount} has value 32, that indicates that
+@var{address} is a host address (not a network).
+
+@item inet-host
+NOCREATE.  The @code{inet-host} converter can be used to access data of
+PostgreSQL type @code{inet} or @code{cidr} when all the data values have a
+netmask value of 32.  The Scheme @code{inet-host} object is a positive integer
+zero through #xffffffff (32 bits).
+
+@item aclitem
+EXPERIMENTAL.  Presently used by module @code{(database postgres-meta)}
+in a pass-through (semantically opaque) manner.  (This is another way
+of saying we don't know what the hell this is good for, but there it is,
+anyway. ;-)
+
+@end table
+
+@node    Defining New Type Converters
 @section Defining New Type Converters
 
 To define a new non-array type means associating with the type name a
