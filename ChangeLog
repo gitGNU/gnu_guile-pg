@@ -1,5 +1,25 @@
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm: From module (database postgres-qcons),
+	also select `make-comma-separated-tree' and `sql<-trees'.
+	(string-append/separator): Delete proc.
+	(char-sep, ssep, csep): Likewise.
+	(drop-proc): Compose SQL using trees, not strings.
+	(create-proc): Likewise.
+	(pre-insert-into): Likewise.
+	(insert-values-proc): Likewise.
+	(insert-col-values-cmd): Likewise.
+	(delete-rows-proc): Likewise.
+	(update-col-proc): Likewise.
+
+2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (list-sep-proc): Return multi-arity proc.
+	(make-comma-separated-tree): New proc, exported.
+	(sql<-trees): Recurse immediately; do not use `for-each'.
+
+2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-table.scm (string*): Delete proc.
 	(select-proc): Use `sql-command<-trees' to flatten rest clauses.
 
