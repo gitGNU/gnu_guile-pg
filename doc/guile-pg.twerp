@@ -1,0 +1,817 @@
+\input texinfo  @c -*-texinfo-*-
+@c %**start of header
+@setfilename guile-pg.info
+@settitle @code{Guile-pg} Command Reference
+@c %**end of header
+@code{}
+@setchapternewpage odd
+
+@dircategory Guile modules
+@direntry
+* Guile-pg: (guile-pg).           Access to PostgreSQL databases from Guile.
+@end direntry
+
+@ifinfo
+This file is the Guile-pg Command Reference
+
+Copyright @copyright{} 1998, 2002 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+@ignore
+Permission is granted to process this file through TeX and
+print the results, provided the printed document carries a copying
+permission notice identical to this one except for the removal of this
+paragraph (this paragraph not being relevant to the printed manual).
+
+@end ignore
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided also that the
+sections entitled ``Copying'' and ``GNU General Public License'' are
+included exactly as in the original, and provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation
+approved by the Free Software Foundation.
+
+@end ifinfo
+@titlepage
+@sp 10
+@comment The title is printed in a large font.
+@center @titlefont{@code{Guile-pg} Command Reference}
+
+@c The following two commands start the copyright page.
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 1998, 2002 Free Software Foundation, Inc.
+
+     Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+     Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the sections entitled ``Copying'' and ``GNU General Public
+License'' are included exactly as in the original, and provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+     Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.
+
+@end titlepage
+
+@c ---------------------------------------------------------------------------
+@node Top
+@top  Guile-pg
+
+@code{Guile-pg} is a Guile module providing a set of procedures to allow
+access to the PostgreSQL RDBMS from Scheme programs.
+
+Guile is an interpreter for the Scheme programming language: a dialect of
+Lisp.  PostgreSQL is a free SQL database management system.
+@code{Guile-pg} is intended as but one of the low-level drivers for the
+forthcoming Guile database module which will provide a portable interface
+to many different SQL database servers.  In the mean-time
+it will still be a useful module for those who want just a low-level
+interface to PostgreSQL.
+
+The @code{Guile-pg} procedures have an almost one-one correspondence
+with the PostgreSQL @code{libpq} C library interface so those familiar with
+the @code{libpq} library and other similar interfaces like Edmund Mergl's
+@code{Pg} Perl module will find it familiar.
+
+@code{Guile-pg} is based on Russ McManus's ``Sybase glue'' code.
+
+@menu
+* Legalities::                  Your rights and freedoms.
+* Quick Start::                 Overview and brief examples.
+
+* Database Connections::        Groundwork for database interaction.
+* Retrieving Data::             Making queries and accessing results.
+* Writing/Reading Data::        Bulk data movement and I/O.
+* Large Objects::               Large-Object support.
+* Miscellaneous::               Everything else starting with "pg-".
+
+* Types Conversion::            Module: (database postgres-types).
+* Single-Table Abstraction::    Module: (database postgres-table).
+
+* Procedure Index::
+@end menu
+
+@c ---------------------------------------------------------------------------
+@node    Legalities
+@chapter Legalities
+
+Guile-PG is released under the GNU General Public License; a copy of this
+document is included in the distribution as file @file{COPYING}.
+
+Please support free software by visiting @url{http://www.gnu.org} and
+contributing fixes and other improvements to guile-pg.
+
+@c ---------------------------------------------------------------------------
+@node    Quick Start
+@chapter Quick Start
+
+To access a PostgreSQL database from Guile, first load the @code{postgres}
+database module. This is done using the @code{use-modules} syntax:
+@example
+     (use-modules (database postgres))
+@end example
+
+The next step is to make a connection to the database using the
+@code{pg-connectdb} procedure. Then, having created a valid connection to a
+database server, we can use the @code{pg-exec} procedure to execute
+queries and the other @code{pg-} procedures to retrieve the results of the
+queries.
+
+The following Guile session opens a connection and executes an
+SQL statement on the @code{test} database on the default host (either
+@code{localhost} or the host specified in the @code{PGHOST} environment
+variable.)
+
+@cartouche
+@example
+guile> (use-modules (database postgres))
+guile> (define test (pg-connectdb "dbname=test"))
+guile> test
+#<PG-CONN:1:test::5432:>
+guile> (define result (pg-exec test "SELECT * FROM PEOPLE"))
+guile> result
+#<PG-RESULT:1:PGRES_TUPLES_OK:3:5>
+@end example
+@end cartouche
+
+The @code{test} object is a @code{PG-CONN} type representing the database
+connection.  Displaying the @code{PG-CONN} object shows that the serial number
+of the connection is 1, that the database name is @code{test} on the default
+host (the hostname field is empty) on port number 5432 and that the default
+options were passed to the backend.  This object is passed to @code{pg-exec}
+which returns a @code{PG-RESULT} object representing the result of the SQL
+statement executed on the server.  In this case, displaying the @code{PG-RESULT}
+object shows us that the serial number of the result is 2, that the return code
+from the database was @code{PGRES_TUPLES_OK} and that we have received 3 tuples
+with 5 fields.
+
+Having obtained a result object from the database we can find out how
+many rows and how many columns are in the result.  We can also find out the
+names of the columns:
+
+@cartouche
+@example
+guile> (pg-ntuples result)
+3
+guile> (pg-nfields result)
+5
+guile> (pg-fname result 0)
+"surname"
+guile> (pg-fname result 1)
+"firstname"
+@end example
+@end cartouche
+
+To retrieve the data from the result we use the @code{pg-getvalue} procedure.
+This takes a result object along with the row and column numbers and returns a
+string containing that value.  @code{pg-getvalue} always returns a string: it
+is up to the caller to convert this to whatever type they require.
+
+@cartouche
+@example
+guile> (pg-getvalue result 0 0)
+"Bitdiddle"
+guile> (pg-getvalue result 0 1)
+"Ben"
+guile> (pg-getvalue result 1 0)
+"Ator"
+guile> (pg-getvalue result 1 1)
+"Eva Lu"
+@end example
+@end cartouche
+
+@code{Guile-pg} connections are closed when Guile's garbage collector
+collects the discarded object.  This only happens when the connection itself
+and all of the results of @code{pg-exec} are unreachable.  So to close the
+connection we just rebind the results from that connection and the connection
+symbol itself:
+
+@cartouche
+@example
+guile> (define result '())
+guile> (define test '())
+@end example
+@end cartouche
+
+Typically though the result and connection variables will be @code{let}
+bindings so the connection will usually be closed soon after the body of the
+@code{let} returns.
+
+@c ---------------------------------------------------------------------------
+@node    Database Connections
+@chapter Procedures for managing connections
+
+@twerpdoc (pg-connectdb)
+@heading Example
+@lisp
+(define (user-count host tcp-port)
+  (let* ((conn (pg-connectdb
+                (format #f "host=~A port=~A dbname=template1"
+                        host tcp-port)))
+         (result (pg-exec conn "SELECT COUNT(*) FROM pg_user")))
+    (and result
+         (eq? 'PGRES_TUPLES_OK (pg-result-status result))
+         (string->number (pg-getvalue result 0 0)))))
+@end lisp
+
+@twerpdoc (pg-reset)
+
+@twerpdoc (pg-get-db)
+
+@twerpdoc (pg-get-user)
+
+@twerpdoc (pg-get-pass)
+
+@twerpdoc (pg-get-host)
+
+@twerpdoc (pg-get-port)
+
+@twerpdoc (pg-get-tty)
+
+@twerpdoc (pg-get-options)
+
+@twerpdoc (pg-backend-pid)
+
+@twerpdoc (pg-get-client-data)
+
+@twerpdoc (pg-set-client-data!)
+
+@heading Example
+The following is a set of three procedures which implement a database
+connection object that logs all the SQL statements it executes.
+
+@lisp
+(define (pg-connectdb-logged options)
+  (let ((conn (pg-connectdb options)))
+    (if conn
+        (begin (pg-set-client-data! conn '())
+               conn)
+        #f)))
+
+(define (pg-exec-logged conn sql)
+  (pg-set-client-data! conn (append (pg-get-client-data conn)
+                                    (list sql)))
+  (pg-exec conn sql))
+
+(define (pg-conn-log conn)
+  (pg-get-client-data conn))
+@end lisp
+
+@c ---------------------------------------------------------------------------
+@node    Retrieving Data
+@chapter Procedures for Retrieving Data
+
+@twerpdoc (pg-exec)
+
+@heading Example
+This example defines a procedure @code{pg-execute} which wraps @code{pg-exec}
+so that a @code{misc-error} is thrown instead of returning false.  There are
+numerous other examples of @code{pg-exec} calls throughout this chapter.
+
+@lisp
+(define (pg-execute conn sql)
+  (let ((result (pg-exec conn sql)))
+    (or result
+        (error (pg-error-message conn)))))
+@end lisp
+
+@heading Notes
+The entire result set is returned at once from a call to to @code{pg-exec}.
+If a @code{SELECT} results in a very large number of tuples then this can be
+a problem because it requires a large amount of memory.  In these cases it is
+better to @code{DECLARE} a cursor over the @code{SELECT} and retrive small
+numbers of rows at a time using @code{FETCH}.  These commands can only be
+issued between @code{BEGIN TRANSACTION/END TRANSACTION} pairs.  See the
+PostgreSQL @code{declare(l)} and @code{fetch(l)} man pages for more details.
+
+@twerpdoc (pg-error-message)
+
+@twerpdoc (pg-result-status)
+
+@heading Result Status Values
+@table @code
+
+@item PGRES_TUPLES_OK
+The statement returned zero or more tuples.  The number of fields and tuples
+returned can be determined from calls to @code{pg-nfields} and
+@code{pg-ntuples} respectively.  The value of a given attribute (field)
+of a given tuple can be determined by calling @code{pg-getvalue}.
+
+@item PGRES_COMMAND_OK
+The statement was a command (@code{INSERT}, @code{UPDATE}, @code{DELETE}
+@code{CREATE TABLE}, @code{DROP TABLE} etc.),
+which was executed without error.  The number of tuples affected by the
+command can be determined by a call to @code{pg-cmdtuples}.
+
+@item PGRES_EMPTY_QUERY
+It is not known under which circumstances this result-status is returned.
+
+@item PGRES_COPY_OUT
+The statement was a @code{COPY <table> TO stdout}.  The data can be read using
+@code{pg-getline}.
+
+@item PGRES_COPY_IN
+The statement was a @code{COPY <table> FROM stdin}.  The rows should be written
+using @code{pg-putline}.
+
+@item PGRES_BAD_RESPONSE
+This occurs when the @code{libpq} interface receives an unexpected response
+from the backend.  It indicates a problem with Postgres.
+
+@item PGRES_NONFATAL_ERROR
+It is not known under which circumstances this result-status is returned.
+
+@item PGRES_FATAL_ERROR
+The command was not executable for some reason.  This is the returned status
+when a syntax error is detected in the command, for example.
+
+@end table
+
+@heading Example
+This contrived example defines a procedure to insert records into a given
+table, returning the number of tuples inserted (always one) or @code{#f} if an
+error occurred.
+
+@lisp
+(define (pg-insert conn table record)
+  (let ((result (pg-exec conn
+                         (format #f "INSERT INTO ~A VALUES ~A"
+                                 table record))))
+    (and result
+         (eq? 'PGRES_COMMAND_OK (pg-result-status result))
+         (string->number (pg-cmdtuples result)))))
+@end lisp
+
+The procedure could be called as follows
+
+@lisp
+(pg-insert conn "people" "('Warbucks', 'Oliver')")
+@end lisp
+
+@twerpdoc (pg-get-connection)
+
+@twerpdoc (pg-binary-tuples?)
+
+@twerpdoc (pg-fmod)
+
+@twerpdoc (pg-ntuples)
+
+@twerpdoc (pg-nfields)
+
+@twerpdoc (pg-cmdtuples)
+
+@twerpdoc (pg-oid-status)
+
+@emph{NOTE:} @code{pg-oid-status} is deprecated.  Use @code{pg-oid-value} instead.
+
+@twerpdoc (pg-oid-value)
+
+@twerpdoc (pg-fname)
+
+@twerpdoc (pg-fnumber)
+
+@twerpdoc (pg-getvalue)
+
+This example defines a procedure @code{pg-gettuple} which returns a given
+tuple as an alist, keyed on the field name.  It's not an especially efficient
+procedure because it constructs the list of field-names afresh each time it's
+called.
+
+@lisp
+(define (pg-fnames result)
+  (let ((nfields (pg-nfields result)))
+    (define (iter i)
+      (if (= i nfields) '()
+          (cons (pg-fname result i) (iter (+ i 1)))))
+    (iter 0)))
+
+(define (pg-getvalues result tuple)
+  (let ((nfields (pg-nfields result)))
+    (define (iter i)
+      (if (= i nfields) '()
+          (cons (pg-getvalue result tuple i) (iter (+ i 1)))))
+    (iter 0)))
+
+(define (pg-gettuple result tuple)
+  (map (lambda (n v) (cons (string->symbol n) v))
+       (pg-fnames result)
+       (pg-getvalues result tuple)))
+@end lisp
+
+Field values can be extracted from the tuple using @code{assq-ref}, eg:
+
+@lisp
+(define tup (pg-gettuple result 0))
+(assq-ref tup 'firstname)
+@end lisp
+
+Using this procedure we can define a version of @code{for-each} which
+iterates through the tuples returned from a given @code{SELECT} query:
+
+@lisp
+(define (pg-for-each proc result)
+  (let ((ntuples (pg-ntuples result)))
+    (define (iter i)
+      (cond ((= i ntuples) ntuples)
+            (else (proc (pg-gettuple result i))
+                  (iter (+ i 1)))))
+    (iter 0)))
+@end lisp
+
+This implementation of @code{pg-for-each} inherits inefficiency from the
+@code{pg-gettuple} procedure.
+
+@heading Notes
+The @code{pg-getvalue} procedure throws
+@code{out-of-range} errors if either the @code{tuple} or @code{field-number}
+arguments are out of range.
+
+@twerpdoc (pg-getisnull)
+
+@twerpdoc (pg-ftype)
+
+@heading Example
+This defines a procedure @code{pg-ftype-name} which returns the type
+name of a given attribute in a string.
+
+A more efficient implementation would be to define
+a type of connection which, when opened, issued the query to retrieve the
+@code{pg_type} system table once.  An alist for looking up type names could
+then be associated with each connection using @code{pg-set-client-data!}.
+
+@lisp
+(define (pg-ftype-name result fnum)
+  (let ((result (pg-exec
+                 (pg-get-connection result)
+                 (format #f "SELECT typname FROM pg_type WHERE oid = ~A"
+                         (pg-ftype result fnum)))))
+    (or (and result
+             (eq? 'PGRES_TUPLES_OK (pg-result-status result))
+             (> (pg-ntuples result) 0)
+             (pg-getvalue result 0 0))
+        "")))
+@end lisp
+
+@twerpdoc (pg-fsize)
+
+@twerpdoc (pg-getlength)
+
+@c ---------------------------------------------------------------------------
+@node    Writing/Reading Data
+@chapter Procedures for Copying Data
+
+@twerpdoc (pg-getline)
+
+@heading Example
+This example defines a procedure @code{pg-copy-to-port} which can be used
+to retrieve the results of a @code{COPY <table> TO STDOUT} command.
+
+@lisp
+(define (pg-copy-to-port conn port)
+  (define (iter)
+    (let ((line (pg-getline conn)))
+      (if (string=? line "\\.")
+          (pg-endcopy conn)
+          (begin (write-line line port)
+                 (iter)))))
+  (iter))
+@end lisp
+@heading Notes
+It is an error to call @code{pg-getline} on a connection without first
+executing a @code{COPY <table> TO STDOUT} command on that connection.
+It is also an error to call @code{pg-getline} after a terminating line has
+been received, without an intervening @code{COPY} command being issued on
+that connection.
+
+@twerpdoc (pg-putline)
+
+@heading Example
+This example defines a procedure @code{pg-copy-from-port} which can be used
+to supply data to a @code{COPY <table> TO STDIN} command.
+
+@lisp
+(define (pg-copy-from-port conn port)
+  (define (iter)
+    (let ((line (read-line port)))
+      (if (eof-object? line)
+          (begin (pg-putline conn "\\.\n")
+                 (pg-endcopy conn))
+          (begin (pg-putline conn line)
+                 (pg-putline conn "\n")
+                 (if (string=? line "\\.")
+                     (pg-endcopy conn)
+                     (iter))))))
+  (iter))
+@end lisp
+
+@twerpdoc (pg-endcopy)
+
+@c ---------------------------------------------------------------------------
+@node    Large Objects
+@chapter Procedures for Managing Large Objects
+
+@heading Note
+All of the operations on large objects must be carried out inside a
+@code{BEGIN TRANSACTION/END TRANSACTION} pair.  Failure to do this
+will result in a loss of synchronisation between the backend and the
+@code{libpq} library, resulting in an unusable connection to the
+database, and possible corruption of data.
+
+@twerpdoc (pg-lo-creat)
+
+@twerpdoc (pg-lo-open)
+
+@twerpdoc (pg-lo-unlink)
+
+@twerpdoc (pg-lo-get-connection)
+
+@twerpdoc (pg-lo-get-oid)
+
+@twerpdoc (pg-lo-tell)
+
+@twerpdoc (pg-lo-seek)
+
+@heading Note
+It is possible to seek beyond the end of file opened only for reading, in
+which case subsequent reads of the port will return an EOF object.
+
+@twerpdoc (pg-lo-read)
+
+@twerpdoc (pg-lo-import)
+
+@twerpdoc (pg-lo-export)
+
+@c ---------------------------------------------------------------------------
+@node    Miscellaneous
+@chapter Miscellaneous Procedures
+
+This chapter describes procedures whose name begins with "pg-" that do not
+necessarily belong in the other chapters.
+
+@twerpdoc (pg-guile-pg-loaded)
+
+@heading Note
+This procedure is guaranteed to be present in all future versions of
+@code{guile-pg}.
+
+@twerpdoc (pg-guile-pg-version)
+
+@c leave in for now --ttn
+@c + @twerpdoc (pg-guile-pg-module-version)
+@deffn {Scheme Procedure} pg-guile-pg-module-version
+Return a string giving the version of the scheme module @code{postgres.scm}.
+The string is always of the form "M.m" giving major and minor versions.
+Unless something is wrong with the installation, this should be the same as
+@code{pg-guile-pg-version}.
+@end deffn
+
+@c leave in for now --ttn
+@c + @twerpdoc (pg-guile-pg-module-config-stamp)
+@deffn {Scheme Procedure} pg-guile-pg-module-config-stamp
+Return a string containing the date and time at which @code{guile-pg}
+was configured (this is probably the build time).
+@end deffn
+
+@twerpdoc (pg-trace)
+@twerpdoc (pg-untrace)
+
+@heading Example
+This example defines a pair of procedures @code{pg-trace-on} and
+@code{pg-trace-off} which implement a higher-level trace procedure which
+opens the required file and starts/stops the trace.
+
+@lisp
+(define (pg-trace-on conn filename)
+  (let ((port (open-file filename "w")))
+    (pg-set-client-data! conn port)
+    (pg-trace conn port)))
+
+(define (pg-trace-off conn)
+  (let ((port (pg-get-client-data conn)))
+    (and port
+         (begin
+           (close-port port)
+           (pg-untrace conn)))))
+@end lisp
+
+@c ---------------------------------------------------------------------------
+@node    Types Conversion
+@chapter Types Conversion
+
+Normally, the result of a @code{pg-exec} query is an object from which Scheme
+strings can be extracted to represent the datum from a particular tuple/field
+pair, using @code{pg-getvalue}.  If this string is sufficient for your needs,
+you can skip this chapter, which describes how to use the PostgreSQL-to-Scheme
+(and back) type conversion support installed with Guile-PG, including how to
+register new types/converters.
+
+To get started, load the @code{postgres-types} module:
+@example
+(use-modules (database postgres-types))
+@end example
+
+Here is a snapshot of the commentary (in lieu of better documentation, while
+we get our doc-harvesting methodology up to speed):
+
+@example
+This module provides the procs:
+ (dbcoltypes) => list of names
+ (dbcoltype-lookup NAME) => tobj
+ (dbcoltype:name TOBJ) => symbol
+ (dbcoltype:stringifier TOBJ) => proc
+ (dbcoltype:objectifier TOBJ) => proc
+ (dbcoltype:default) => string
+ (define-db-col-type NAME DEFAULT STRINGIFY OBJECTIFY)
+ (define-db-col-type-array-variant COMPOSED SIMPLE [STRINGIFY [OBJECTIFY]])
+
+NAME, COMPOSED and SIMPLE are symbols naming a type.  COMPOSED is
+conventionally formed by appending square-bracket paris to SIMPLE.  For
+example, we can declare a two-dimensional array type of text elements:
+
+ (define-db-col-type-array-variant 'text[][] 'text ...)
+
+STRINGIFY is a procedure that takes a Scheme object and returns a string,
+suitable for sending to PostgreSQL.  OBJECTIFY does the opposite: it takes
+a string from PostgreSQL and returns a Scheme object.
+
+DEFAULT is a string.  TOBJ is a "type object" which should be considered
+opaque (use the dbcoltype:foo procs to access the components).
+@end example
+
+To see what types are already defined, use the @code{dbcoltypes} procedure.
+
+@twerpdoc (dbcoltypes)
+
+Here is a simple example that uses @code{dbcoltype-lookup} and
+@code{dbcoltype:objectifier} to convert a @code{text[][]} value
+into a nested list:
+
+@lisp
+(let ((raw (pg-getvalue result 0 0))
+      (conv (dbcoltype:objectifier (dbcoltype-lookup 'text[][]))))
+  (write-line raw)
+  (write-line (conv raw)))
+@print{} @{@{a,b@},@{c,d@}@}
+@print{} (("a" "b") ("c" "d"))
+@end lisp
+
+Note that even though the type is an "array", as implied by the square
+brackets, the result is a list.  This is mostly due to a limitation in
+PostgreSQL: dimensionality is not stored for array types, so the conversion
+cannot be done in a random-access manner.  Perhaps this will change in the
+future.
+
+@section Defining New Types
+
+To define a new non-array type means associating with the type name a
+procedure for converting from a PostgreSQL string representation to a Scheme
+object (the @dfn{objectifier}), a procedure to do the conversion in the
+opposite direction (the @dfn{stringifier}), and a default string to use if
+none is specified (for example, during an @code{INSERT} operation).  For this,
+use the @code{define-db-col-type} procedure.
+
+@twerpdoc (define-db-col-type)
+
+To express conversion of arrays (no matter the dimensionality) of non-array
+types, use the @code{define-db-col-type-array-variant} procedure.
+
+@twerpdoc (define-db-col-type-array-variant)
+
+@c ---------------------------------------------------------------------------
+@node    Single-Table Abstraction
+@chapter Single-Table Abstraction
+
+For some database usages, it is convenient to focus on a single table, adding
+rows to it or drawing queries from it exclusively of any other tables in the
+database.  This chapter describes Guile-PG facilities for this kind of use.
+
+To get started, load the @code{postgres-table} module:
+@example
+(use-modules (database postgres-table))
+@end example
+
+Here is a snapshot of the commentary (in lieu of better documentation, while
+we get our doc-harvesting methodology up to speed):
+
+@example
+This module exports these procedures:
+ (sql-pre string)
+ (tuples-result->table res)
+ (where-clausifier string)
+ (pgtable-manager db-name table-name defs)
+ (def:col-name def)
+ (def:type-name def)
+ (def:type-options def)
+@end example
+
+Basically, the @code{pgtable-manager} procedure encapsulates specification,
+query and mutation (including create/delete) of a PostgreSQL table.  The
+@var{defs} are a list of the columns, each element having the form:
+
+@example
+        (NAME TYPE [OPTIONS...])
+@end example
+
+@var{name} and @var{type} are symbols specifying the name and type of the
+column, respectively (@pxref{Types Conversion}).  @var{options} are strings
+passed directly to PostgreSQL as part of a @code{CREATE TABLE} command.  For
+example, the status output of the rsync(1) program can be specified by the
+form:
+
+@example
+(define rsync-defs
+        '((time            timestamp)
+          (error_condition text)
+          (files           text[])
+          (wrote           int4)          ; bytes
+          (read            text[][])
+          (rate            float4)
+          (total           int4)          ; bytes
+          (speedup         float4)
+          (etc             int4[])))
+@end example
+
+Note that there are no options in this example.
+
+@twerpdoc (pgtable-manager)
+
+The other procedures are useful for succintly codifying queries, and
+translating the result en mass to Scheme objects.
+
+@twerpdoc (tuples-result->table)
+
+@twerpdoc (sql-pre)
+
+@twerpdoc (where-clausifier)
+
+@example
+(define m (pgtable-manager "ttn" "guile_pg_demo"
+                           '((i          serial)
+                             (date       timestamp)
+                             (amount     float4)
+                             (catcode    text)
+                             (details    text[]))))
+
+((m 'create))
+@result{} #<PG-RESULT:1:PGRES_COMMAND_OK:0:0>
+
+(define add (m 'insert-col-values))
+(define sel (m 'select))
+
+(add '(date amount) (current-time) 1.98)
+@result{} #<PG-RESULT:2:PGRES_COMMAND_OK:0:0>
+
+(add '(date amount) (current-time) 2.98)
+@result{} #<PG-RESULT:3:PGRES_COMMAND_OK:0:0>
+
+(define result (sel "count(*)" (where-clausifier "amount < 2.00")))
+
+result
+@result{} #<PG-RESULT:4:PGRES_TUPLES_OK:1:1>
+
+(tuples-result->table result)
+@result{} #2(("1"))
+
+((m 'drop))
+@result{} (#<PG-RESULT:5:PGRES_COMMAND_OK:0:0> #<PG-RESULT:6:PGRES_COMMAND_OK:0:0>)
+@end example
+
+Two things to note in this example: (1) Both @code{create} and @code{drop}
+invocations evaluate the operating thunk directly (double parentheses); and
+(2) The drop returns a list of result values to accomodate the possibility
+(shown here) of a @code{serial} column type, which requires an additional drop
+of the associated PostgreSQL @dfn{sequence} used to implement the expected
+serial behavior.  (As of PostgreSQL 7.x, the sequence name is constructed like
+so: TABLENAME_COLNAME_seq.  For more info, see the PostgreSQL User Guide,
+Chapter 3: Data Types.
+
+@c ---------------------------------------------------------------------------
+@c + @node       Concept Index
+@c + @unnumbered Concept Index
+@c +
+@c + @printindex cp
+
+@c ---------------------------------------------------------------------------
+@node       Procedure Index
+@unnumbered Procedure Index
+
+@printindex fn
+
+@contents
+
+@bye
