@@ -49,8 +49,13 @@
             infer-defs
             describe-table!))
 
+;; Return a @dfn{defs} form for db @var{db-name} table @var{table-name}, as
+;; determined by the external program @file{psql}, which must be findable
+;; using the @var{PATH} environment variable.  The column names are exact.
+;; The column types and options are only as exact as @file{psql} can produce.
+;;
 (define (defs-from-psql db-name table-name)
-  (define (read-def p)                  ; FIELD TYPE [OPTIONS...]
+  (define (read-def p)                  ; NAME TYPE [OPTIONS...]
     (let ((name (read p)))
       (if (eof-object? name)
           name
@@ -88,6 +93,12 @@
             (reverse acc))              ; rv
           (loop (next) (cons def acc))))))
 
+;; Check type of column definition @var{def}.  If it not an array variant,
+;; return non-#f only if type converters are already registered with Guile-PG.
+;; If it is an array variant, check the base (non-array) type first, and use
+;; @code{define-db-col-type-array-variant} if possible (and necessary) to
+;; ensure the array variant type is registered.  Return non-#f if successful.
+;;
 (define (check-def/elaborate def)
   (let* ((s (symbol->string (type-name def)))
          (n (string-index s #\[))
@@ -100,6 +111,11 @@
                      (define-db-col-type-array-variant array-variant base)
                      array-variant)))))))
 
+;; For table @var{table-name}, check the @var{defs} with
+;; @code{check-def/elaborate} and signal error for those defs that do not
+;; validate, or return non-#f otherwise.  The @var{table-name} is used only to
+;; form the error message.
+;;
 (define (strictly-check-defs/elaborate! table-name defs)
   (let ((bad '()))
     (for-each (lambda (def)
