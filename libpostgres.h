@@ -46,4 +46,17 @@ extern void init_libpostgres_lo (void);
   SCM_SNARF_HERE(static SCM FNAME ARGLIST;) \
   SCM_DEFINE (FNAME, PRIMNAME, REQ, OPT, VAR, ARGLIST, DOCSTRING)
 
+/* string munging */
+
+/* Return a string that is to be used in contexts where the extracted C
+   string is expected to be zero-terminated and is read-only.  We check
+   this condition precisely instead of simply coercing all substrings,
+   to avoid waste for those substrings that may in fact already satisfy
+   the condition.  Callers should extract w/ ROZT.  */
+#define ROZT_X(x)                                               \
+  if (SCM_ROCHARS (x) [SCM_ROLENGTH (x)] != '\0')               \
+    x = scm_makfromstr (SCM_ROCHARS (x), SCM_ROLENGTH (x), 0)
+
+#define ROZT(x)  (SCM_ROCHARS (x))
+
 /* libpostgres.h ends here */
