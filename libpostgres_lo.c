@@ -178,7 +178,7 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
   if (pg_modes == 0)
     scm_misc_error (FUNC_NAME, "Invalid mode specification: ~S",
                     scm_listify (modes, SCM_UNDEFINED));
-  pg_oid = SCM_INUM (oid);
+  pg_oid = gh_scm2int (oid);
   SCM_DEFER_INTS;
   alod = lo_open (dbconn, pg_oid, pg_modes);
   SCM_ALLOW_INTS;
@@ -278,7 +278,7 @@ PG_DEFINE (lob_lo_unlink, "pg-lo-unlink", 2, 0, 0,
   dbconn = XCONN (conn);
 
   SCM_DEFER_INTS;
-  ret = lo_unlink (dbconn, SCM_INUM (oid));
+  ret = lo_unlink (dbconn, gh_scm2int (oid));
   SCM_ALLOW_INTS;
   return (ret < 0
           ? SCM_BOOL_F
@@ -456,7 +456,7 @@ PG_DEFINE (lob_lo_seek, "pg-lo-seek", 3, 0, 0,
 
   lob_flush (port);
 
-  return gh_int2scm (lob_seek (port, SCM_INUM (where), SCM_INUM (whence)));
+  return gh_int2scm (lob_seek (port, gh_scm2int (where), gh_scm2int (whence)));
 #undef FUNC_NAME
 }
 
@@ -583,13 +583,13 @@ PG_DEFINE (lob_lo_read, "pg-lo-read", 3, 0, 0,
   SCM_ASSERT (SCM_NIMP (port) && SCM_OPINLOBPORTP (port),
               port, SCM_ARG3, FUNC_NAME);
 
-  len = SCM_INUM (siz) * SCM_INUM (num);
+  len = gh_scm2int (siz) * gh_scm2int (num);
   str = scm_make_string (gh_int2scm (len), SCM_UNDEFINED);
-  for (n = 0 ; n < SCM_INUM (num) && ! done; n++)
+  for (n = 0 ; n < gh_scm2int (num) && ! done; n++)
     {
       scm_sizet m;
       int c;
-      for (m = 0; m < SCM_INUM (siz); m++)
+      for (m = 0; m < gh_scm2int (siz); m++)
         {
           c = scm_getc (port);
           if (c == EOF)
@@ -597,15 +597,15 @@ PG_DEFINE (lob_lo_read, "pg-lo-read", 3, 0, 0,
               done = 1;
               break;
             }
-          * (SCM_CHARS (str) + n * SCM_INUM (siz) + m) = c;
+          * (SCM_CHARS (str) + n * gh_scm2int (siz) + m) = c;
         }
     }
   if (n < 0)
     return SCM_BOOL_F;
-  if (n < SCM_INUM (num))
+  if (n < gh_scm2int (num))
     {
       SCM_DEFER_INTS; /* See comment re scm_vector_set_len in libguile/unif.c */
-      scm_vector_set_length_x (str, gh_int2scm (n * SCM_INUM (siz)));
+      scm_vector_set_length_x (str, gh_int2scm (n * gh_scm2int (siz)));
       SCM_ALLOW_INTS;
     }
   return str;
@@ -713,7 +713,7 @@ PG_DEFINE (lob_lo_export, "pg-lo-export", 3, 0, 0,
               SCM_ARG3, FUNC_NAME);
   ROZT_X (filename);
   dbconn = XCONN (conn);
-  pg_oid = SCM_INUM (oid);
+  pg_oid = gh_scm2int (oid);
 
   SCM_DEFER_INTS;
   ret = lo_export (dbconn, pg_oid, ROZT (filename));
