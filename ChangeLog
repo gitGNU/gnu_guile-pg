@@ -1,5 +1,32 @@
 2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.h (scm_extended_dbconn): Rename to `xc_t'.
+	(scm_extended_result): Move to libpostgres.c.
+	(guile_pg_sec_p): Rename to `xc_p'.
+	(guile_pg_sec_unbox): Rename to `xc_unbox'.
+
+	* libpostgres.c (guile_pg_sec_p): Rename to `xc_p'.
+	(sec_p): Delete macro.
+	(guile_pg_sec_unbox): Rename to `xc_unbox'.
+	(sec_unbox): Delete macro.
+	(sec_box): Rename to `xc_box'.
+	(sec_display): Rename to `xc_display'.
+	(sec_mark): Rename to `xc_mark'.
+	(sec_free): Rename to `xc_free'.
+	(xr_t): New struct typedef, from libpostgres.h.
+	(ser_p): Rename to `xr_p'.
+	(ser_unbox): Rename to `xr_unbox'.
+	(ser_box): Rename to `xr_box'.
+	(ser_display): Rename to `xr_display'.
+	(ser_mark): Rename to `xr_mark'.
+	(ser_free): Rename to `xr_free'.
+	(make_ser): Rename to `make_xr'.
+
+	* libpostgres_lo.c (sec_p): Delete macro.
+	(sec_unbox): Likewise.
+
+2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.h (ROZT_X, ROZT): New macros.
 
 	* libpostgres.c (maybe_strcpy): Delete func.
