@@ -24,7 +24,8 @@ NEWS for Guile-PG
 	match the selected columns.  Here is an example to demonstrate
 	the bug:
 
-	(define M (pgtable-manager "ttn" "t42" '((a int4) (b text))))
+	(define DEFS '((a int4) (b text)))
+	(define M (pgtable-manager "ttn" "t42" DEFS))
 	(define SHOW (M 'tuples-result->object-alist))
 	(define SEL (M 'select))
 
@@ -68,6 +69,23 @@ NEWS for Guile-PG
   - New (database postgres-table) proc: `compile-outspec'
 
 	This is documented in the manual under "Single-Table Abstraction".
+	A continuation of the example above, using `compile-outspec':
+
+	(define (CSHOW spec)
+	  (SHOW (SEL (compile-outspec spec DEFS) "limit 2")))
+
+	(CSHOW '((#f "label" "upper(b)") (int4 "bella" "11 * a")))
+	=> ((label "NOTHING IS REAL" "DEADLY") (bella 462 209))
+
+	(CSHOW '((int4 "label" "upper(b)") ((#t . b) "bella" "11 * a"))
+	=> ((label #f #f) (bella "462" "209"))
+
+	(CSHOW #t)
+	=> ((a 42 19) (b "nothing is real" "deadly"))
+
+	(CSHOW "*")
+	error--> ERROR: bad select part: "*"
+	         ABORT: (misc-error)
 
   - "make check" fails on test failure
 
