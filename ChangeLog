@@ -1,5 +1,12 @@
 2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* acinclude.m4 (GUILE_MODULE): Delete.
+
+	* configure.in: No longer use GUILE_MODULE.
+	Instead, use GUILE_PROGS and GUILE_FLAGS.
+
+2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* .cvsignore, doc/.cvsignore, scm/.cvsignore, test/.cvsignore:
 	New files.
 
