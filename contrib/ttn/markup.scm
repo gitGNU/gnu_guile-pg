@@ -20,8 +20,9 @@
 ;; table defs
 
 (define *markup-defs*
-  '((raw    text)
-    (markup text[])))
+  '((raw   text)
+    (mtype text)
+    (mdata text)))
 
 (define *client-defs*
   '((i           serial)
@@ -55,52 +56,62 @@
     (pg-oid-value
      (let ((insert (m 'insert-values)))
        (if (string? possibly-marked-text)
-           (insert possibly-marked-text '())
+           (insert possibly-marked-text #f #f)
            (let* ((form possibly-marked-text)
                   (type (car form)))
              (insert (case type
                        ((url) ((if (= 3 (length form)) caddr cadr) form))
                        ((email) (cadr form))
                        (else (error (format #f "bad form: ~A" form))))
-                     (list (symbol->string (car form))
-                           ((case type
-                              ((url) cadr)
-                              ((email) caddr))
-                            form))))))))
+                     (symbol->string (car form))
+                     ((case type
+                        ((url) cadr)
+                        ((email) caddr))
+                      form)))))))
 
   (define (add-description ls)
-    ((c 'insert-col-values) '(description)
-     (map add-possibly-marked-text ls)))
+    (pg-oid-value
+     ((c 'insert-col-values) '(description)
+      (map add-possibly-marked-text ls))))
 
   (define (>>table heading manager)
     (write-line heading)
     (display-table (tuples-result->table ((manager 'select) "*"))))
 
-  (define (tree<-possibly-marked-text oid)
-    (let* ((alist (car                   ; only one
-                   ((m 'tuples-result->alists)
-                    ((m 'select) "*" (where-clausifier
-                                      (format #f "oid = ~A" oid))))))
-           (raw (assq-ref alist 'raw))
-           (markup (assq-ref alist 'markup)))
-      (if (null? markup)
-          raw
-          (case (string->symbol (car markup))
-            ((url) (list "<A HREF=\"" (cadr markup) "\">" raw "</A>"))
-            ((email) (list "<A HREF=\"mailto:" (cadr markup) "\">" raw "</A>"))
-            (else (error (format #f "bad markup: ~A" markup)))))))
+  (define (get-one-row manager oid)
+    (car ((manager 'tuples-result->alists)
+          ((manager 'select) "*" (where-clausifier
+                                  (format #f "oid = ~A" oid))))))
 
-  (define (>>description i)
-    (format #t "description for: ~A\n" i)
-    (for-each (lambda (oid)
-                (display-tree (tree<-possibly-marked-text oid)))
-              (assq-ref
-               (car                     ; only one
-                ((c 'tuples-result->alists)
-                 ((c 'select) '(description)
-                  (where-clausifier (format #f "i = ~A" i)))))
-               'description))
+  (define (tree<-possibly-marked-text oid)
+    (let* ((alist (get-one-row m oid))
+           (raw (assq-ref alist 'raw))
+           (mtype (assq-ref alist 'mtype))
+           (mdata (assq-ref alist 'mdata)))
+      (if (string=? "" mtype)
+          raw
+          (case (string->symbol mtype)
+            ((url) (list "<A HREF=\"" mdata "\">" raw "</A>"))
+            ((email) (list "<A HREF=\"mailto:" mdata "\">" raw "</A>"))
+            (else (error (format #f "bad markup type: ~A" mtype)))))))
+
+  (define (>>description oid)
+    (let* ((alist (get-one-row c oid))
+           (i (assq-ref alist 'i))
+           (description (assq-ref alist 'description)))
+      (format #t "description for: ~A\n" i)
+      (for-each (lambda (oid)
+                  (display-tree (tree<-possibly-marked-text oid)))
+                description))
     (newline))
+
+  (define (delete-description oid)
+    (let* ((alist (get-one-row c oid))
+           (description (assq-ref alist 'description)))
+      (for-each (lambda (oid)
+                  ((m 'delete-rows) (format #f "oid = ~A" oid)))
+                description)
+      ((c 'delete-rows) (format #f "oid = ~A" oid))))
 
   (define *samples*
     (list
@@ -119,22 +130,22 @@
   (write-line ((m 'create)))
   (write-line ((c 'create)))
 
-  (for-each (lambda (sample)
-              (write-line (add-description sample)))
-            *samples*)
+  (let ((desc-oids (map add-description *samples*)))
+    (format #t "desc-oids: ~A\n" desc-oids)
 
-  (>>table "markup" m)
-  (>>table "client" c)
+    (>>table "markup" m)
+    (>>table "client" c)
 
-  (let ((read-i (lambda ()
-                  (format #t "i: ")
-                  (flush-all-ports)
-                  (read))))
-    (let loop ((i (read-i)))
-      (or (= 0 i)
-          (begin
-            (>>description i)
-            (loop (read-i))))))
+    (for-each >>description desc-oids)
+
+    (write-line (delete-description (list-ref desc-oids 0)))
+    (write-line (delete-description (list-ref desc-oids 1)))
+    (set! desc-oids (cddr desc-oids))
+
+    (for-each >>description desc-oids)
+
+    (>>table "markup" m)
+    (>>table "client" c))
 
   (write-line ((c 'drop)))
   (write-line ((m 'drop))))
