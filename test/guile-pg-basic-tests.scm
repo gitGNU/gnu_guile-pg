@@ -37,7 +37,8 @@
 
 (define (ok? expected-status)
   (lambda (result)
-    (and result (eq? expected-status (pg-result-status result)))))
+    (and result (string=? "" (pg-result-error-message result))
+                (eq? expected-status (pg-result-status result)))))
 
 (define tuples-ok? (let ((check (ok? 'PGRES_TUPLES_OK)))
                      (lambda (result)
