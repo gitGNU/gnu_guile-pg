@@ -81,6 +81,8 @@ NEWS for Guile-PG
 	Alternatively, you can use the procs without such a pre-check,
 	and instead check the return value.
 
+  - New (database postgres-table) proc: pgtable-worker
+
   - New (database postgres-types) converter: real
 
   - New (database postgres) procs
