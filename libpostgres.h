@@ -38,10 +38,7 @@ typedef struct _scm_extended_result {
 
 extern int sec_p(SCM obj);
 extern scm_extended_dbconn *sec_unbox(SCM obj);
-extern SCM sec_box(scm_extended_dbconn *sec);
-extern int ser_p(SCM obj);
-extern scm_extended_result *ser_unbox(SCM obj);
-extern SCM ser_box(scm_extended_result *ser);
+
 extern void init_libpostgres_lo(void);
 
 /* SCM_DEFINE alone doesn't declare static, so we prefix that decl.  */
