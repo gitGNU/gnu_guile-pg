@@ -148,7 +148,13 @@
 (define (mtest:select-*-error_condition) ; 3
   (sel/check (select "*" "where error_condition = 'foo'")
              (pass-if "size" (equal? '(1 9) (array-dimensions table)))
-             (pass-if "files" (string=? "{\"d\",\"e\",\"f\"}" (tref 0 2)))
+             (pass-if "files"
+               (let ((val (tref 0 2)))
+                 (or
+                  ;; before postgresql 7.2
+                  (string=? val "{\"d\",\"e\",\"f\"}")
+                  ;; postgresql 7.2 and later
+                  (string=? val "{d,e,f}"))))
              (pass-if "etc" (string=? "{3,-4}" (tref 0 8)))))
 
 (define (mtest:select-*-read)           ; 3
@@ -156,8 +162,12 @@
              (pass-if "size" (equal? '(1 9) (array-dimensions table)))
              (pass-if "25" (string=? "25" (tref 0 6)))
              (pass-if "read"
-                      (string=? "{{\",b\",\"\"},{\",\",\"c\"},{\"\",\"d,\"}}"
-                                (tref 0 4)))))
+               (let ((val (tref 0 4)))
+                 (or
+                  ;; before postgresql 7.2
+                  (string=? val "{{\",b\",\"\"},{\",\",\"c\"},{\"\",\"d,\"}}")
+                  ;; postgresql 7.2 and later
+                  (string=? val "{{\",b\",\"\"},{\",\",c},{\"\",\"d,\"}}"))))))
 
 (define (mtest:select-count)            ; 2
   (sel/check (select "count(*)")
@@ -172,7 +182,13 @@
 (define (mtest:select-files/etc)        ; 3
   (sel/check (select '(files etc) "where etc[2] < 0")
              (pass-if "size" (equal? '(1 2) (array-dimensions table)))
-             (pass-if "files" (string=? "{\"d\",\"e\",\"f\"}" (tref 0 0)))
+             (pass-if "files"
+               (let ((val (tref 0 0)))
+                 (or
+                  ;; before postgresql 7.2
+                  (string=? val "{\"d\",\"e\",\"f\"}")
+                  ;; postgresql 7.2 and later
+                  (string=? val "{d,e,f}"))))
              (pass-if "etc" (string=? "{3,-4}" (tref 0 1)))))
 
 (define (test:mtest-cleanup)
