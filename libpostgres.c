@@ -376,7 +376,7 @@ PG_DEFINE (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
       tem = gh_cons (KWD (dispsize), tem);
       PUSH ();
 
-      tem = MAYBEFALSE (dispchar, SCM_MAKE_CHAR (opt->dispchar[0]));
+      tem = MAYBEFALSE (dispchar, gh_char2scm (opt->dispchar[0]));
       tem = gh_cons (KWD (dispchar), tem);
       PUSH ();
 
