@@ -475,19 +475,18 @@
        (pg-send-query *C* "SELECT * FROM async WHERE sqrt(a) * sqrt(a) = a;")
        (begin
          (display "INFO: (async checks) ")
-         (flush-all-ports)
+         ;; Wait for quiescence.
          (let loop ((checks 0))
            (cond ((pg-is-busy? *C*)
                   (pg-consume-input *C*)
                   (sleep 1)
                   (display ".")
-                  (flush-all-ports)
                   (loop (1+ checks)))
                  (else
                   (display checks)
-                  (newline)
-                  (flush-all-ports)))))
-       (tuples-ok? (pg-get-result *C*))))))
+                  (newline))))
+         ;; Sync up.
+         (tuples-ok? (pg-get-result *C*)))))))
 
 (define (main)
   (set! verbose #t)
