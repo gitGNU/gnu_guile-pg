@@ -1,5 +1,10 @@
 2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* doc/guile-pg.texi (Types Conversion,
+	Single-Table Abstraction): New nodes/chapters.
+
+2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* scm/postgres-types.scm (dbcoltypes): New proc, exported.
 
 2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
