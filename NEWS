@@ -1,6 +1,24 @@
 NEWS for Guile-PG
 
 
+- version 0.10 released 2002-12-14
+
+  - Bugfix: pg-lo-tell
+
+	This procedure, which does the equivalent of "seek 0 SEEK_CUR",
+	was not taking into account guile's port buffering conventions,
+	resulting in an incorrect value being returned (the position
+	indicated by the end of the port's read-buffer instead of the
+	actual position).  For example:
+
+	  (pg-lo-tell port)	=> 0	; ok
+	  (pg-lo-read 4 2 port)         ; read two objects of four bytes
+          (pg-lo-tell port)     => 100	; wrong, should be 8
+
+	Test coverage for pg-lo-tell is still rather low.  Additional
+	interesting test cases are always welcome.
+
+
 - version 0.09 released 2002-12-12
 
 	Docs spiffing: Info page organization now flattened.
