@@ -25,18 +25,4 @@
  (current-module)
  (module-public-interface (resolve-module '(database postgres-sup))))
 
-;; Return a string containing the date and time at which @code{guile-pg}
-;; was configured (this is probably the build time).
-;;
-(define-public (pg-guile-pg-module-config-stamp)
-  "@GUILE_PG_STAMP@")
-
-;; Return a string giving the version of the scheme module @code{postgres.scm}.
-;; The string is always of the form "M.m" giving major and minor versions.
-;; Unless something is wrong with the installation, this should be the same as
-;; @code{pg-guile-pg-version}.
-;;
-(define-public (pg-guile-pg-module-version)
-  "@VERSION@")
-
 ;;; postgres.scm ends here
