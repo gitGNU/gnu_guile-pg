@@ -1,5 +1,10 @@
 2004-05-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* acinclude.m4 (AC_GUILE_PG_FCOMPAT): Use 3-arg `AC_DEFINE'
+	instantiation variant instead of 1-arg variant.
+
+2004-05-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* configure.in (c2x): Add check for which method to use.
 	* Makefile.am (.c.x): Use $(c2x).
 
