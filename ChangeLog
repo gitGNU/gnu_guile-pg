@@ -1,5 +1,14 @@
 2005-01-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-types.scm
+	(*db-col-types*): Each element now pair: symbol + vector.
+	(dbcoltype:stringifier): Update access method.
+	(dbcoltype:default): Likewise.
+	(dbcoltype:objectifier): Likewise.
+	(define-db-col-type): Update assignment method.
+
+2005-01-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-table.scm (sql-quote): Rewrite for speed.
 	(string-append/separator): Likewise.
 	(ssep, csep): Pass char instead of string to `char-sep'.
