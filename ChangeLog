@@ -1,5 +1,13 @@
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres_lo.c (lob_stream): Rename struct field `fd' to `alod'.
+	Update all usage sites.
+	(lob_mklobport): Use var name "alod" instead of "fd".
+	(lob_lo_creat): Likewise.
+	(lob_lo_open): Likewise.
+
+2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp: In program fragments,
 	use `format' instead of `write-line'.
 
