@@ -1342,20 +1342,18 @@ PG_DEFINE (pg_endcopy, "pg-endcopy", 1, 0, 0,
            (SCM conn),
            "Resynchronize with the backend process.  This procedure\n"
            "must be called after the last line of a table has been\n"
-           "transferred using @code{pg-getline} or ???.\n\n"
-           "Return an integer: zero if successful, non-zero otherwise.")
+           "transferred using @code{pg-getline}, @code{pg-getlineasync}\n"
+           "or @code{pg-putline}.  Return #t if successful.")
 {
 #define FUNC_NAME s_pg_endcopy
   int ret;
-  SCM scm_inum;
 
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_DEFER_INTS;
   ret = PQendcopy (XCONN (conn));
   SCM_ALLOW_INTS;
 
-  scm_inum = SCM_MAKINUM (ret);
-  return scm_inum;
+  return (0 == ret ? SCM_BOOL_T : SCM_BOOL_F);
 #undef FUNC_NAME
 }
 
