@@ -120,6 +120,15 @@
 (define (fs s . args)
   (apply simple-format #f s args))
 
+(define (maybe-dq sym)
+  (let ((s (symbol->string sym)))
+    ;; double quote unless table name is included;
+    ;; this is to protect against a column name
+    ;; that happens to be a keyword (e.g., `desc')
+    (if (string-index s #\.)
+        sym
+        (fs "~S" s))))
+
 (define (list-sep-proc sep)
   (lambda (proc ls . more-ls)
     (if (null? ls)
@@ -227,10 +236,10 @@
 (define (make-ORDER-BY-tree orderings)
   (list #:ORDER-BY
         (commasep (lambda (ord)
-                    (or (pair? ord)
+                    (or (and (pair? ord) (symbol? (cadr ord)))
                         (error "bad ordering:" ord))
                     (list
-                     (expr (fs "~S" (symbol->string (cadr ord))))
+                     (expr (maybe-dq (cadr ord)))
                      (case (car ord)
                        ((< #:ASC #:asc) #:ASC)
                        ((> #:DESC #:desc) #:DESC)
@@ -264,14 +273,7 @@
         x
         (expr x)))
   (commasep (lambda (x)
-              (cond ((symbol? x)
-                     (let ((s (symbol->string x)))
-                       ;; double quote unless table name is included;
-                       ;; this is to protect against a column name
-                       ;; that happens to be a keyword (e.g., `desc')
-                       (if (string-index s #\.)
-                           x
-                           (fs "~S" s))))
+              (cond ((symbol? x) (maybe-dq x))
                     ((string? x) x)     ; todo: zonk after 2005-12-31
                     ((and (pair? x) (string? (car x)))
                      (list (expr-nostring (cdr x)) #:AS (fs "~S" (car x))))
