@@ -4,6 +4,9 @@
 	modules (database postgres-types)
 	and (database postgres-col-defs).
 
+	* scm/postgres-meta.scm: No longer use
+	module (database postgres-col-defs).
+
 2005-02-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm (dt): For this comma-command, allow arg
