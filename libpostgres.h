@@ -61,4 +61,7 @@ extern void init_libpostgres_lo (void);
 #define EXACTLY_FALSEP(x)  (SCM_FALSEP (x))
 #define EXACTLY_TRUEP(x)   (gh_eq_p ((x), SCM_BOOL_T))
 
+#define ASSERT_CONNECTION(n,arg) \
+  SCM_ASSERT (xc_p (arg), arg, SCM_ARG ## n, FUNC_NAME)
+
 /* libpostgres.h ends here */
