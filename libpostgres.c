@@ -1314,20 +1314,22 @@ PG_DEFINE (pg_putline, "pg-putline", 2, 0, 0,
            "backslash, followed by a full-stop.  After this, the\n"
            "@code{pg-endcopy} procedure should be called for this\n"
            "connection before any further @code{pg-exec} call is made.\n"
-           "The return value is undefined.")
+           "Return #t if successful.")
 {
 #define FUNC_NAME s_pg_putline
+  int status;
+
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (str)&&SCM_ROSTRINGP (str), str, SCM_ARG2, FUNC_NAME);
   SCM_DEFER_INTS;
 #ifdef HAVE_PQPUTNBYTES
-  PQputnbytes (XCONN (conn), SCM_ROCHARS (str), SCM_ROLENGTH (str));
+  status = PQputnbytes (XCONN (conn), SCM_ROCHARS (str), SCM_ROLENGTH (str));
 #else
   ROZT_X (str);
-  PQputline (XCONN (conn), ROZT (str));
+  status = PQputline (XCONN (conn), ROZT (str));
 #endif
   SCM_ALLOW_INTS;
-  return SCM_UNSPECIFIED;
+  return (0 == status ? SCM_BOOL_T : SCM_BOOL_F);
 #undef FUNC_NAME
 }
 
