@@ -1,5 +1,9 @@
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm (make-SELECT/OUT-tree): Handle plain string.
+
+2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-gxrepl.scm: New file.
 	* scm/Makefile.am (guile_postgres_sources): Add postgres-gxrepl.scm.
 	* Makefile.am (DOTDOCFILES): Add scm/postgres-gxrepl.doc.
