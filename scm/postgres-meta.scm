@@ -46,6 +46,9 @@
             infer-defs
             describe-table!))
 
+(define (fs s . args)
+  (apply simple-format #f s args))
+
 ;; Run @var{psql} and return a @dfn{defs} form for db @var{db-name}, table
 ;; @var{table-name}.  @var{psql} can be a string specifying the filename of
 ;; the psql (or psql-workalike) program, a thunk that produces such a string,
@@ -64,12 +67,12 @@
 (define (defs-from-psql psql db-name table-name)
 
   (define (psql-command)
-    (format #f "~A -d ~A -F ' ' -P t -A -c '\\d ~A'"
-            (cond ((string? psql) psql)
-                  ((procedure? psql) (psql))
-                  ((eq? #t psql) "psql")
-                  (else (error "bad psql:" psql)))
-            db-name table-name))
+    (fs "~A -d ~A -F ' ' -P t -A -c '\\d ~A'"
+        (cond ((string? psql) psql)
+              ((procedure? psql) (psql))
+              ((eq? #t psql) "psql")
+              (else (error "bad psql:" psql)))
+        db-name table-name))
 
   (define (read-def p)                  ; NAME TYPE [OPTIONS...]
                                         ; => eof object, or def
@@ -149,7 +152,7 @@
                     (set! bad (cons type bad))))
               types)
     (or (null? bad)
-        (error (format #f "bad ~S types: ~S" table-name bad)))))
+        (error (fs "bad ~S types: ~S" table-name bad)))))
 
 (define *class-defs*
   ;; todo: Either mine from "psql \d pg_class", or verify at "make install"
