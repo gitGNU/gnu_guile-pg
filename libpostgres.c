@@ -125,18 +125,20 @@ sec_box(scm_extended_dbconn *sec)
 static int
 sec_display(SCM exp, SCM port, scm_print_state *pstate)
 {
-    char buf[256];
     scm_extended_dbconn *sec = sec_unbox(exp);
-    SCM_DEFER_INTS;;
-    sprintf(buf,
-            "#<PG-CONN:%d:%s:%s:%s:%s>",
-            sec->count,
-            PQdb(sec->dbconn),
-            PQhost(sec->dbconn),
-            PQport(sec->dbconn),
-            PQoptions(sec->dbconn));
-    SCM_ALLOW_INTS;
-    scm_puts(buf, port);
+    char *dbstr = PQdb(sec->dbconn);
+    char *hoststr = PQhost(sec->dbconn);
+    char *portstr = PQport(sec->dbconn);
+    char *optionsstr = PQoptions(sec->dbconn);
+
+    scm_puts ("#<PG-CONN:", port);
+    scm_intprint (sec->count, 10, port); scm_putc (':', port);
+    scm_puts (IFNULL(dbstr,"db?"), port); scm_putc (':', port);
+    scm_puts (IFNULL(hoststr,"localhost"), port); scm_putc (':', port);
+    scm_puts (IFNULL(portstr,"port?"), port); scm_putc (':', port);
+    scm_puts (IFNULL(optionsstr,"options?"), port);
+    scm_puts (">", port);
+
     return 1;
 }
 
@@ -200,11 +202,10 @@ ser_box(scm_extended_result *ser)
 static int
 ser_display(SCM exp, SCM port, scm_print_state *pstate)
 {
+    scm_extended_result *ser = ser_unbox(exp);
     ExecStatusType status;
     int ntuples = 0;
     int nfields = 0;
-    char buf[128];
-    scm_extended_result *ser = ser_unbox(exp);
     int ser_status_index;
 
     SCM_DEFER_INTS;
@@ -213,18 +214,19 @@ ser_display(SCM exp, SCM port, scm_print_state *pstate)
        ntuples = PQntuples(ser->result);
        nfields = PQnfields(ser->result);
     }
+    SCM_ALLOW_INTS;
+
     for (ser_status_index = 0; ser_status_index < MAX_SSI; ser_status_index++)
        if (status == ser_status[ser_status_index])
           break;
 
-    sprintf(buf,
-            "#<PG-RESULT:%d:%s:%d:%d>",
-            ser->count,
-            ser_status_str[ser_status_index],
-            ntuples,
-            nfields);
-    SCM_ALLOW_INTS;
-    scm_puts(buf, port);
+    scm_puts ("#<PG-RESULT:", port);
+    scm_intprint (ser->count, 10, port); scm_putc (':', port);
+    scm_puts (ser_status_str[ser_status_index], port); scm_putc (':', port);
+    scm_intprint (ntuples, 10, port); scm_putc (':', port);
+    scm_intprint (nfields, 10, port);
+    scm_putc ('>', port);
+
     return 1;
 }
 

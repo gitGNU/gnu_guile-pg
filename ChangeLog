@@ -1,4 +1,17 @@
 $Id$
+Fri Jun  2 10:30:43 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+
+        * NEW FILE: ANNOUNCE
+
+        * Bumped libtool interface number to 2 prior to release.
+
+        * Printing a large object port now gives information about the
+          libpq file descriptor, the OID and the database connection to
+          which the port applies.
+
+        * Fixed buffer overflow in print methods for connection and
+          results smobs.
+
 Tue May 30 08:20:09 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
 
         * Fixed large object ports so that they work with the further

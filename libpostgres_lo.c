@@ -619,6 +619,7 @@ lob_printpt (SCM exp, SCM port, scm_print_state *pstate)
    scm_puts ("#<PG-LO-PORT:", port);
    scm_print_port_mode (exp, port);
    scm_intprint (lobp->fd, 10, port); scm_puts (":", port);
+   scm_intprint (lobp->oid, 10, port); scm_puts (":", port);
    scm_puts ("#<PG-CONN:", port);
    scm_intprint (sec->count, 10, port); scm_putc (':', port);
    scm_puts (IFNULL(dbstr,"db?"), port); scm_putc (':', port);

@@ -1,0 +1,55 @@
+$Id$
+Announcing guile-pg-0.16
+========================
+
+Guile-pg is a Guile module giving access to PostgreSQL databases via the
+libpq frontend to PostgreSQL.
+
+This version of guile-pg has been tested against Guile version 1.3.4 and
+Guile version 1.4 with PostgreSQL Version 7.0 on Intel Linux and Sparc
+Solaris 7 (SunOS 5.7) machines.
+
+This is still alpha quality code.  It has undergone only minimal testing and
+the interfaces may change from release to release.
+
+Features:
+
+ * Connect to multiple databases simultaneously
+ * Query and Update databases
+ * Access SELECT results using SQL cursors
+ * Create/Update/Read Large Objects using Guile ports
+ * Automatic connection and result management
+ * Comprehensive reference manual with example code
+ * Published under the GPL
+
+Downloading:
+-----------
+The project home page is http://guile-pg.sourceforge.net/ and the source
+package is available via HTTP from
+
+        http://guile-pg.sourceforge.net/guile-pg-0.06.tar.gz
+
+and via FTP from
+
+        ftp://guile-pg.sourceforge.net/pub/guile-pg/guile-pg-0.06.tar.gz
+
+Documentation:
+-------------
+The reference manual is available online from
+
+        http://guile-pg.sourceforge.net/guile-pg_toc.html
+
+and in PostScript(tm) format from
+
+        http://guile-pg.sourceforge.net/guile-pg.ps
+
+Mailing List:
+------------
+The developers mailing list is guile-pg-devel@lists.sourceforge.net
+which you can subscribe to by filling in the form at
+
+       http://mail1.sourceforge.net/mailman/listinfo/guile-pg-devel
+
+Send bug reports and requests for help to this list.
+
+Ian Grant <iang@pobox.com>

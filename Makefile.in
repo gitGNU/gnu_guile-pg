@@ -95,7 +95,7 @@ INCLUDES = $(GUILE_CFLAGS) $(PQ_CFLAGS)
 lib_LTLIBRARIES = libpostgres.la
 libpostgres_la_SOURCES = libpostgres.c libpostgres_lo.c libpostgres.h                          libpostgres.x libpostgres_lo.x
 
-libpostgres_la_LDFLAGS = -export-dynamic -version-info 1:0:0                          @LDFLAGS@ @PQ_LDFLAGS@
+libpostgres_la_LDFLAGS = -export-dynamic -version-info 2:0:0                          @LDFLAGS@ @PQ_LDFLAGS@
 
 
 SUFFIXES = .x
