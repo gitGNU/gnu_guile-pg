@@ -1,5 +1,15 @@
 2004-07-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* acinclude.m4 (AC_GUILE_PG_FCOMPAT): Add check for
+	libguile.h provision of SCM_OUTPUT_PORT_P macro.
+
+	* fcruft.h: New file.
+
+	* configure.in (AH_BOTTOM): Include "fcruft.h".
+	Move scm_protect_object redefinition there.
+
+2004-07-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* acinclude.m4: Add autoconf mode header comment (for Emacs); nfc.
 
 2004-07-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
