@@ -11,7 +11,7 @@ fi
 all=`sed '/^PG_DEFINE/!d;s/[^"]*"//;s/".*//' $dir/libpostgres*.c`
 
 for p in $all ; do
-    if grep -q "$p" *.scm.in ; then
+    if grep -q "$p" guile-pg-*-tests.scm ; then
         echo -n 'yes'
     else
         echo -n ' no'
