@@ -1,5 +1,12 @@
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm (parse+make-SELECT-tree): New proc, exported.
+
+	* doc/guile-pg.twerp (Query Construction):
+	Add @twerpdoc for `parse+make-SELECT-tree'.
+
+2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm (parse+make-SELECT/tail-tree): Handle #:offset.
 
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
