@@ -222,6 +222,7 @@
         (expr x)))
   (commasep (lambda (x)
               (cond ((symbol? x) (fs "~S" (symbol->string x)))
+                    ((string? x) x)     ; todo: zonk after 2005-12-31
                     ((and (pair? x) (string? (car x)))
                      (list (expr-nostring (cdr x)) #:AS (fs "~S" (car x))))
                     ((pair? x) (expr-nostring x))
