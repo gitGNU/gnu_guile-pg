@@ -35,7 +35,6 @@
 (define-module (database postgres-meta)
   #:use-module (database postgres)
   #:use-module (database postgres-types)
-  #:use-module (database postgres-col-defs)
   #:use-module (database postgres-resx)
   #:use-module (database postgres-table)
   #:autoload (srfi srfi-13) (string-trim-both)
