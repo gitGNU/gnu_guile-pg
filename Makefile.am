@@ -29,10 +29,10 @@ BUILT_SOURCES = libpostgres.x libpostgres_lo.x
 INCLUDES = -I. -I$(srcdir) $(GUILE_CFLAGS) $(PQ_CFLAGS)
 
 ddir = $(GUILE_LIBSITE)/database
-d_LTLIBRARIES = postgres-sup.la
-postgres_sup_la_SOURCES = libpostgres.c libpostgres_lo.c libpostgres.h \
+d_LTLIBRARIES = postgres.la
+postgres_la_SOURCES = libpostgres.c libpostgres_lo.c libpostgres.h \
 				tmpfile.c
-postgres_sup_la_LDFLAGS = -export-dynamic -module -version-info 6:1:4 \
+postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0 \
 				$(LDFLAGS) $(PQ_LDFLAGS)
 
 noinst_DATA = pre-inst.merged-module-catalog
@@ -71,6 +71,7 @@ snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS)
 	guile-tools doc-snarf -D -o $@ $<
 
 install-data-hook:
+	rm -f $(ddir)/postgres-sup.*
 	if guile-tools | grep -q make-module-catalog ; then \
 	   guile-tools make-module-catalog $(GUILE_LIBSITE) ; fi
 
@@ -85,7 +86,6 @@ if MAINTAINER_MODE
 
 DOTDOCFILES = libpostgres.doc                   \
               libpostgres_lo.doc                \
-              scm/postgres.doc                  \
               scm/postgres-types.doc            \
               scm/postgres-col-defs.doc         \
               scm/postgres-resx.doc             \
