@@ -46,9 +46,6 @@ snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS)
 .scm.doc:
 	guile-tools doc-snarf -D -o $@ $<
 
-## Add -MG to make the .x magic work with auto-dep code.
-MKDEP = gcc -M -MG $(snarfcppopts) $(CFLAGS)
-
 DISTCLEANFILES = *.x *.doc
 
 CLEANFILES = *.x
