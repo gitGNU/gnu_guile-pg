@@ -1,5 +1,10 @@
 2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* test/guile-pg-lo-tests.scm.in: Delete files "lo-tests-data-1"
+	and "lo-tests-data-2" when done.
+
+2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* test/guile-pg-lo-tests.scm.in, test/guile-pg-basic-tests.scm.in:
 	Rework "if" constructs using "and".  Refill.
 
