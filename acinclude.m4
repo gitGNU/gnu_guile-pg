@@ -94,6 +94,14 @@ AC_DEFUN([PQ_FLAGS],[
 ])
 
 
+# AC_GUILE_PG_BCOMPAT --- figure out some "backward compatability" cruft
+#
+AC_DEFUN([AC_GUILE_PG_BCOMPAT],[
+GUILE_C2X_METHOD([c2x])
+GUILE_MODSUP_H
+])
+
+
 # AC_GUILE_PG_FCOMPAT --- figure out some "forward compatability" cruft
 #
 AC_DEFUN([AC_GUILE_PG_FCOMPAT],[
