@@ -955,7 +955,7 @@ PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
 
-  field = SCM_INUM (num);
+  field = gh_scm2int (num);
 
   SCM_DEFER_INTS;
   if (field < PQnfields (RESULT (result)) && field >= 0)
@@ -1012,7 +1012,7 @@ PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
 
-  field = SCM_INUM (num);
+  field = gh_scm2int (num);
 
   SCM_DEFER_INTS;
   if (field < PQnfields (RESULT (result)) && field >= 0)
@@ -1043,7 +1043,7 @@ PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
 
-  field = SCM_INUM (num);
+  field = gh_scm2int (num);
 
   SCM_DEFER_INTS;
   if (field < PQnfields (RESULT (result)) && field >= 0)
@@ -1081,8 +1081,8 @@ PG_DEFINE (pg_getvalue, "pg-getvalue", 3, 0, 0,
               FUNC_NAME);
   SCM_ASSERT (SCM_IMP (sfield) && SCM_INUMP (sfield), sfield, SCM_ARG3,
               FUNC_NAME);
-  tuple = SCM_INUM (stuple);
-  field = SCM_INUM (sfield);
+  tuple = gh_scm2int (stuple);
+  field = gh_scm2int (sfield);
 
   SCM_DEFER_INTS;
   maxtuple = PQntuples (RESULT (result));
@@ -1127,8 +1127,8 @@ PG_DEFINE (pg_getlength, "pg-getlength", 3, 0, 0,
               FUNC_NAME);
   SCM_ASSERT (SCM_IMP (sfield) && SCM_INUMP (sfield), sfield, SCM_ARG3,
               FUNC_NAME);
-  tuple = SCM_INUM (stuple);
-  field = SCM_INUM (sfield);
+  tuple = gh_scm2int (stuple);
+  field = gh_scm2int (sfield);
 
   SCM_DEFER_INTS;
   maxtuple = PQntuples (RESULT (result));
@@ -1163,8 +1163,8 @@ PG_DEFINE (pg_getisnull, "pg-getisnull", 3, 0, 0,
               FUNC_NAME);
   SCM_ASSERT (SCM_IMP (sfield) && SCM_INUMP (sfield), sfield, SCM_ARG3,
               FUNC_NAME);
-  tuple = SCM_INUM (stuple);
-  field = SCM_INUM (sfield);
+  tuple = gh_scm2int (stuple);
+  field = gh_scm2int (sfield);
 
   SCM_DEFER_INTS;
   maxtuple = PQntuples (RESULT (result));
@@ -1233,7 +1233,7 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
   SCM_ASSERT (xr_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_IMP (num) && SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
 
-  field = SCM_INUM (num);
+  field = gh_scm2int (num);
 
   SCM_DEFER_INTS;
   if (field < PQnfields (RESULT (result)) && field >= 0)
@@ -1674,7 +1674,7 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
   SCM_ASSERT (sepo_p (options), options, SCM_ARG2, FUNC_NAME);
 
   redir_p = (! SCM_OPFPORTP (scm_current_output_port ())
-             || (SCM_INUM (scm_fileno (scm_current_output_port ()))
+             || (gh_scm2int (scm_fileno (scm_current_output_port ()))
                  != fileno (stdout)));
   fout = (redir_p ? tmpfile () : stdout);
   if (fout == NULL)
