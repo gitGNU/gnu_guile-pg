@@ -525,7 +525,7 @@ NEWS for Guile-PG
 
 - 0.07 | 2000-07-08
 
-	Released Version 0.07.  The primnary reason for this release is
+	Released Version 0.07.  The primary reason for this release is
 	to fix a bug where 0.06 wouldn't build with the newly-released
 	guile-1.4 Also added pg-oid-value function.
 
