@@ -1,3 +1,9 @@
+2004-11-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:set-notice-out!-1):
+	Also handle output syntax of PostgreSQL 7.4.5.
+	Reported by Greg Troxel.
+
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm
