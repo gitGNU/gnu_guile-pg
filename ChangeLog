@@ -10,6 +10,7 @@
 	Remove hints available elsewhere.
 
 	* README: Update tested PostgreSQL version number.
+	Update bug report email address.
 
 2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
