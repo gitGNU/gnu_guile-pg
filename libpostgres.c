@@ -298,8 +298,10 @@ maybe_strcpy (SCM source, int *freshp)
 static char *
 strip_newlines (char *str)
 {
-  while (str[strlen (str) - 1] == '\n')
-    str[strlen (str) - 1] = '\0';
+  char *p = str + strlen (str);
+
+  while (str <= --p && *p == '\n')
+    *p = '\0';
 
   return str;
 }
