@@ -138,14 +138,14 @@ AC_CHECK_DECL([scm_gc_protect_object],[
    [Define if libguile provides the scm_gc_protect_object function.])
 ],,[#include "libguile.h"])
 
-AC_MSG_CHECKING([if libguile.h provides macro SCM_OUTPUT_PORT_P])
+AC_MSG_CHECKING([if libguile.h provides macro SCM_OUTPORTP])
 AC_COMPILE_IFELSE([
 #include <libguile.h>
-int main (void) { return SCM_FALSEP (SCM_OUTPUT_PORT_P (SCM_BOOL_F)); }
+int main (void) { return SCM_FALSEP (SCM_OUTPORTP (SCM_BOOL_F)); }
 ],[
   AC_MSG_RESULT(yes)
-  AC_DEFINE([HAVE_SCM_OUTPUT_PORT_P], [1],
-    [Define if libguile.h provides the SCM_OUTPUT_PORT_P macro.])
+  AC_DEFINE([HAVE_SCM_OUTPORTP], [1],
+    [Define if libguile.h provides the SCM_OUTPORTP macro.])
 ],[
   AC_MSG_RESULT(no)
 ])
