@@ -89,4 +89,15 @@ DOTDOCFILES = libpostgres.doc                   \
 
 endif # MAINTAINER_MODE
 
+## bonus target
+destroy-nonmodule-guile-pg-prior-install:
+	dirs="$(libdir)/guile-pg $(datadir)/guile/database" ;	\
+	for d in $$dirs ; do if test -d $$d ; then		\
+	  echo NOTE: deleting $$d ... ; rm -rf $$d ; fi ; done
+	dir="$(datadir)/guile" ; cat=".module-catalog" ;	\
+	if test -f $$dir/$$cat ; then cd $$dir ;		\
+	  echo NOTE: modifying $$dir/$$cat ... ;		\
+	  sed '/database postgres/d' $$cat > TMP ;		\
+	  mv TMP $$cat ; fi
+
 ## Makefile.am ends here
