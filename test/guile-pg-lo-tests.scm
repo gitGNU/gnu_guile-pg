@@ -57,25 +57,21 @@
     (lambda ()
       (cexec "CREATE TABLE test (col1 int4, col2 oid)"))))
 
-(define some-test-data '("
+(define some-test-data "
 ;; This is a data file for use by guile-pg-lo-tests.scm;
 ;;   it will be imported to a large object and then
 ;;   `read' directly from the large object.
 
    (testing testing one two three)
 
-;; End of test data"))
+;; End of test data")
 
 (define test:make-data
   (add-test #t
     (lambda ()
-      (let ((fport (open-file "lo-tests-data-1" "w")))
-        (and fport
-             (begin
-               (for-each (lambda (string)
-                           (display string fport))
-                         some-test-data)
-               (close-port fport)))))))
+      (let ((p (open-output-file "lo-tests-data-1")))
+        (display some-test-data p)
+        (close-port p)))))
 
 (define test:lo-import
   (add-test #t
@@ -91,7 +87,7 @@
       (transaction
        (and (pg-lo-export *C* *O* "lo-tests-data-2")
             ;; poor man's cmp(1)
-            (let* ((expected (apply string-append some-test-data))
+            (let* ((expected some-test-data)
                    (len (string-length expected))
                    (p (open-input-file "lo-tests-data-2"))
                    (next (lambda () (read-char p))))
