@@ -1,5 +1,12 @@
 2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-types.scm (dbcoltype-lookup): Return vector.
+	(dbcoltype:stringifier): Extract from vector directly.
+	(dbcoltype:default): Likewise.
+	(dbcoltype:objectifier): Likewise.
+
+2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-types.scm (dbcoltype:name): Delete proc.
 	* doc/guile-pg.twerp (Types Conversion):
 	Remove `dbcoltype:name' @twerpdoc.
