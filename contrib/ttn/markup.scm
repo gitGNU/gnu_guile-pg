@@ -1,13 +1,14 @@
-;;; Copyright (C) 2003 Thien-Thi Nguyen
+;;; Copyright (C) 2003-2004 Thien-Thi Nguyen
 ;;; This program is provided under the terms of the GNU GPL, version 2.
 ;;; See http://www.fsf.org/copyleft/gpl.html for details.
 
 (define-module (markup)
-  :use-module ((srfi srfi-13) :select (string-join))
-  :use-module (database postgres)
-  :use-module (database postgres-table)
-  :autoload (ice-9 pretty-print) (pretty-print)
-  :autoload (ice-9 common-list) (pick-mappings))
+  #:use-module ((srfi srfi-13) #:select (string-join))
+  #:use-module (database postgres)
+  #:use-module (database postgres-table)
+  #:use-module (ice-9 rdelim)
+  #:autoload (ice-9 pretty-print) (pretty-print)
+  #:autoload (ice-9 common-list) (pick-mappings))
 
 ;;; version: 5
 
