@@ -1,24 +1,54 @@
-$Id$
-Sat Jul  8 09:54:01 BST 2000
+NEWS for Guile-PG
 
-Released Version 0.07.  The primnary reason for this release is to fix a bug
-where 0.06 wouldn't build with the newly-released guile-1.4  Also added
-pg-oid-value function.
 
-Fri Jun  2 10:30:43 BST 2000
+- version 0.08 released 2002-12-11
 
-Released Version 0.06.  Builds with guile-1.3.4 and pre-release guile-1.4.
-Function names changed from pg:xxx to the more schemely pg-xxx.  Minor
-documentation and bug fixes.
+	Maintenance for guile-pg has passed from Ian Grant (original
+	author) to Thien-Thi Nguyen.  Thanks Ian!
 
-3  June 1999
+	This release differs from 0.07 in that `pg-result-status' values
+	are symbolic (rather than numerical), the guile-pg integrated
+	interpreter is no longer included (neither built nor installed),
+	the "rcsid"-related procs/vars are no longer included, and "make
+	check" now works pre-install.
 
-Second alpha release. Version 0.05
+	See http://www.glug.org/alt/ for latest anoncvs access info.
 
-24 January 1999
 
-First alpha release. Called guile-pg-0.04.
+- version 0.07 released 2000-07-08
 
-3 December 1998
+	Released Version 0.07.  The primnary reason for this release is
+	to fix a bug where 0.06 wouldn't build with the newly-released
+	guile-1.4 Also added pg-oid-value function.
 
-Initial build
+
+- version 0.06 released 2000-06-02
+
+	Released Version 0.06.  Builds with guile-1.3.4 and pre-release
+	guile-1.4.  Function names changed from pg:xxx to the more
+	schemely pg-xxx.  Minor documentation and bug fixes.
+
+
+- version 0.05 released 1999-06-03
+
+	Second alpha release. Version 0.05
+
+
+- version 0.04 released 1999-12-24
+
+	First alpha release.  Called guile-pg-0.04.
+
+
+- 1998-12-03
+
+	Initial build
+
+
+- etc
+
+	Local Variables:
+	mode: outline
+	outline-regexp: "\\([ ][ ]\\)*- "
+	fill-column: 72
+	fill-prefix: "\t"
+	End:
