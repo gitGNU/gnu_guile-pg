@@ -98,12 +98,14 @@ Testing
 
 	to get rid of it decisively.  To run the tests type:
 
-            make check
+            make check [DEBUG=1]
 
 	The basic tests should all pass.  The large-object tests might
 	fail because of bugs in PostgreSQL.  The abstraction tests are
-	not supposed to fail, but you never know.  See "Reporting Bugs"
-	below for more info.
+	not supposed to fail, but you never know.
+
+	The DEBUG=1 is optional.  If "make check" fails, please re-run
+	it with DEBUG=1 and see "Reporting Bugs" below.
 
 
 Removing Misguided Prior Installations
@@ -143,7 +145,10 @@ What Goes Where
 	The ${GUILE_SITE}, ${GUILE_LIBSITE} and ${infodir} values are
 	determined by the configure script.  Typically, these would
 	be /usr/local/share/guile/site, /usr/local/lib/guile/site and
-	/usr/local/info, respectively.
+	/usr/local/info, respectively.  Note that ${GUILE_SITE} and
+	${GUILE_LIBSITE} are based on the ${prefix} used for installing
+	Guile, and may or may not coincide with the one specified by
+	`configure --prefix'.
 
 	Additionally, if the system supports it, "make install" updates
 	each site dir's module catalog.
