@@ -729,21 +729,10 @@ lob_printpt (SCM exp, SCM port, scm_print_state *pstate)
   if (SCM_OPENP (exp))
     {
       lob_stream *lobp = (lob_stream *) SCM_STREAM (exp);
-      xc_t *sec = xc_unbox (lobp->conn);
-      char *dbstr = PQdb (sec->dbconn);
-      char *hoststr = PQhost (sec->dbconn);
-      char *portstr = PQport (sec->dbconn);
-      char *optionsstr = PQoptions (sec->dbconn);
 
       scm_intprint (lobp->alod, 10, port); scm_puts (":", port);
       scm_intprint (lobp->oid, 10, port); scm_puts (":", port);
-      scm_puts ("#<PG-CONN:", port);
-      scm_intprint (sec->count, 10, port); scm_putc (':', port);
-      scm_puts (IFNULL (dbstr,"db?"), port); scm_putc (':', port);
-      scm_puts (IFNULL (hoststr,"localhost"), port); scm_putc (':', port);
-      scm_puts (IFNULL (portstr,"port?"), port); scm_putc (':', port);
-      scm_puts (IFNULL (optionsstr,"options?"), port);
-      scm_putc ('>', port);
+      xc_display (lobp->conn, port, pstate);
     }
   scm_putc ('>', port);
   return 1;
