@@ -9,6 +9,8 @@ NEWS for Guile-PG
 	`dbcoltype-lookup', which takes the type name.  Thus, it is
 	redundant.  Removing it increases encapsulation.
 
+  - New module: (database postgres-qcons)
+
 
 - 0.25 | 2005-01-02
 
