@@ -191,7 +191,7 @@
 ;; objectifier procedures (in that order).  If unspecified, SIMPLE is looked up
 ;; and its stringifier and objectifier are used.  See `dbcoltype-lookup'.
 ;;
-;; The default value of all array types is "{}" and cannot be changed.
+;; The default value of all array types is "@{@}" and cannot be changed.
 ;;
 (define (define-db-col-type-array-variant composed simple . procs)
   (let* ((lookup (dbcoltype-lookup simple))
