@@ -1,2 +1,5 @@
 Makefile
 Makefile.in
+guile-pg-*-tests.scm
+*.log
+lo-tests-data-*
