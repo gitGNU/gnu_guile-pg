@@ -19,6 +19,12 @@
 
 (use-modules (database postgres))
 
+(define (result->output-string result)
+  (let ((po (pg-make-print-options '(no-header))))
+    (with-output-to-string
+      (lambda ()
+        (pg-print result po)))))
+
 (define (ok? expected-status)
   (lambda (result)
     (and result (eq? expected-status (pg-result-status result)))))
@@ -168,9 +174,18 @@
 ;; Test pg-getvalue
 ;; expect 100
 (define (test:count-records)
-  (let ((res (pg-exec conn "SELECT COUNT(*) FROM test WHERE col1 <= 100")))
+  (let* ((s (result->output-string
+             (pg-exec conn "SELECT * FROM test WHERE col1 <= 100")))
+         (line-count (let loop ((start 0) (count 0))
+                       (cond ((string-index s #\newline start)
+                              => (lambda (pos)
+                                   (loop (1+ pos) (1+ count))))
+                             (else count))))
+         (res (pg-exec conn "SELECT COUNT(*) FROM test WHERE col1 <= 100")))
     (and (tuples-ok? res)
-         (string->number (pg-getvalue res 0 0)))))
+         (let ((backend-sez (string->number (pg-getvalue res 0 0))))
+           (and (= line-count backend-sez))
+           backend-sez))))
 
 ;; Test pg-get-xxx
 ;; expect #t
