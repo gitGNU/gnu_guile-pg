@@ -25,9 +25,9 @@
 ;;   (make-GROUP-BY-tree expressions) => tree
 ;;   (make-HAVING-tree conditions) => tree
 ;;   (make-ORDER-BY-tree orderings) => tree
-;;   (make-SELECT/OUT-tree outs) => tree
+;;   (make-SELECT/COLS-tree cols) => tree
 ;;   (make-FROM-tree froms) => tree
-;;   (make-SELECT/FROM/OUT-tree froms outs) => tree
+;;   (make-SELECT/FROM/COLS-tree froms cols) => tree
 ;;   (sql<-trees . trees) => string
 ;;   (sql-command<-trees . trees) => string
 
@@ -44,9 +44,9 @@
             make-GROUP-BY-tree
             make-HAVING-tree
             make-ORDER-BY-tree
-            make-SELECT/OUT-tree
+            make-SELECT/COLS-tree
             make-FROM-tree
-            make-SELECT/FROM/OUT-tree
+            make-SELECT/FROM/COLS-tree
             parse+make-SELECT/tail-tree
             sql<-trees
             sql-command<-trees))
@@ -303,8 +303,8 @@
                        (else (list #:USING (car ord))))))
                   orderings)))
 
-;; Return a @dfn{select-outs clause} tree for @var{outs} (a list).
-;; Each element of @var{outs} can take one of several forms:
+;; Return a @dfn{select-cols clause} tree for @var{cols} (a list).
+;; Each element of @var{cols} can take one of several forms:
 ;;
 ;; @table @code
 ;; @item TITLE
@@ -324,7 +324,7 @@
 ;; string, in which case it is passed through opaquely w/o further processing.
 ;; This support WILL BE REMOVED after 2005-12-31; DO NOT rely on it.
 ;;
-(define (make-SELECT/OUT-tree outs)
+(define (make-SELECT/COLS-tree cols)
   (define (expr-nostring x)             ; todo: zonk after 2005-12-31
     (if (string? x)
         x
@@ -337,8 +337,8 @@
                      (list (expr-nostring (cdr x))
                            #:AS (sql-pre (fs "~S" (car x)))))
                     ((pair? x) (expr-nostring x))
-                    (else (error "bad out spec:" x))))
-            outs))
+                    (else (error "bad col spec:" x))))
+            cols))
 
 ;; Return a @dfn{from clause} tree for @var{froms} (a list).
 ;; Each element of @var{froms} is either TABLE-NAME, or a pair
@@ -356,15 +356,15 @@
                       froms))
       '()))
 
-;; Return a @dfn{select/from/out combination clause} tree for
-;; @var{froms} and @var{outs} (both lists).  In addition to the
-;; constituent processing done by @code{make-SELECT/OUT-tree}
-;; and @code{make-FROM-tree} on @var{outs} and @var{froms},
+;; Return a @dfn{select/from/col combination clause} tree for
+;; @var{froms} and @var{cols} (both lists).  In addition to the
+;; constituent processing done by @code{make-SELECT/COLS-tree}
+;; and @code{make-FROM-tree} on @var{cols} and @var{froms},
 ;; respectively, prefix a "SELECT" token.
 ;;
-(define (make-SELECT/FROM/OUT-tree froms outs)
+(define (make-SELECT/FROM/COLS-tree froms cols)
   (list #:SELECT
-        (make-SELECT/OUT-tree outs)
+        (make-SELECT/COLS-tree cols)
         (make-FROM-tree froms)))
 
 ;; Return a @dfn{select tail} tree for @var{plist}, a list of
