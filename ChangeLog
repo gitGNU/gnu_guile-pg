@@ -1,3 +1,61 @@
+2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (pg_conndefaults): Use `gh_char2scm'.
+
+2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (strip_newlines): Use `gh_str2scm'.
+	(pg_getvalue): Likewise.
+
+2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (pg_conndefaults): Use `gh_int2scm'.
+	(pg_backend_pid): Likewise.
+	(pg_result_status): Likewise.
+	(pg_ntuples): Likewise.
+	(pg_nfields): Likewise.
+	(pg_oid_value): Likewise.
+	(pg_fnumber): Likewise.
+	(pg_ftype): Likewise.
+	(pg_fsize): Likewise.
+	(pg_getlength): Likewise.
+	(pg_fmod): Likewise.
+	(pg_getlineasync): Likewise.
+	(pg_notifies): Likewise.
+
+	* libpostgres_lo.c (lob_lo_get_oid): Likewise.
+	(lob_lo_tell): Likewise.
+	(lob_lo_seek): Likewise.
+	(lob_fill_input): Likewise.
+	(lob_seek): Likewise.
+	(lob_lo_read): Likewise.
+	(lob_lo_import): Likewise.
+
+2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (pg_conndefaults): Use `gh_str02scm'.
+	(notice_processor): Likewise.
+	(pg_get_db): Likewise.
+	(pg_get_user): Likewise.
+	(pg_get_pass): Likewise.
+	(pg_get_port): Likewise.
+	(pg_get_tty): Likewise.
+	(pg_get_options): Likewise.
+	(pg_cmdtuples): Likewise.
+	(pg_fname): Likewise.
+	(pg_getvalue): Likewise.
+	(pg_getline): Likewise.
+	(pg_print): Likewise.
+	(pg_notifies): Likewise.
+	(pg_client_encoding): Likewise.
+
+2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (pg_conndefaults): Use `gh_cons'.
+	(pg_make_print_options): Likewise.
+	(pg_notifies): Likewise.
+	(init_module): Likewise.
+
 2004-10-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-meta.scm (check-type/elaborate): Doc fix.
