@@ -1,6 +1,8 @@
 2002-12-22  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* autogen.sh: Add recursive invocation of ".make-automake-frags".
+	Before running automake, check if doc/guile-pg.texi exists.
+	If not, fake one suitable for automake, w/ timestamp January 1.
 
 2002-12-22  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
