@@ -1,3 +1,15 @@
+2002-12-25  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* libpostgres.c (pg_result_p): New PG_DEFINE func.
+	* Makefile.am (libpostgres_la_LDFLAGS): Update vers to "3:0:1".
+
+	* scm/postgres.scm.in (pg-result?): Export.
+
+	* test/guile-pg-basic-tests.scm.in (run-cmd): Also use `pg-result?'.
+
+	* doc/guile-pg.twerp (Retrieving Data):
+	Add intro blurb and twerpdoc for `pg-result?'.
+
 2002-12-23  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* configure.in (VERSION): Bump to 0.13 for release.
