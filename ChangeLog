@@ -1,5 +1,19 @@
 2005-02-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm (make-ORDER-BY-tree):
+	Do not `maybe-dq' integer ordfunc.
+
+2005-02-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (*display-aliases*): New var.
+	(*postfix-operations*): Likewise.
+	(qcons-declare!): Handle #:infix instead of #:infix-op.
+	Also, add handling for #:postfix and #:display-alias.
+	(expr): Handle postfix operations.
+	(sql<-trees): For symbols, use display-alias if available.
+
+2005-02-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm (parse+make-SELECT/tail-tree):
 	Avoid #:q* application for #:group-by clauses.
 	(sql<-trees): Handle #:GROUP-BY.
