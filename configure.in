@@ -142,10 +142,11 @@ AC_CONFIG_FILES([
   doc/Makefile
   test/Makefile
   test/config.scm
-  test/drop.sh
-  test/create.sh
-  wily-guile
 ])
+
+AC_GUILE_PG_CONFIG_SCRIPT([wily-guile])
+AC_GUILE_PG_CONFIG_SCRIPT([test/drop.sh])
+AC_GUILE_PG_CONFIG_SCRIPT([test/create.sh])
 
 AC_CONFIG_COMMANDS([twerp-prep],[
   if echo "$ac_cs_version" | grep -q options.*--enable-maintainer-mode ; then
@@ -158,18 +159,7 @@ AC_CONFIG_COMMANDS([twerp-prep],[
   fi
 ])
 
-AC_CONFIG_COMMANDS([module-catalog-prep],[
-  test -d .deps || mkdir .deps
-  prereq=.deps/pre-inst.Pmerged-module-catalog
-  test -f $prereq || echo '# dummy' > $prereq
-  grep -q "include $prereq" Makefile || echo include $prereq >> Makefile
-])
-
-AC_CONFIG_COMMANDS([chmod-plus-x],[
-  chmod +x ./wily-guile
-  chmod +x test/drop.sh
-  chmod +x test/create.sh
-])
+GUILE_MODULE_CATALOG_PREP
 
 AC_OUTPUT
 
