@@ -6,6 +6,7 @@ recip='good-news-guile-pg@glug.org'
 
 go ()
 {
+    echo guile-pg: `sed '/^ *VERSION=/!d;s/.*=//' ../configure`
     echo uname: `uname -a`
     echo autoconf: `autoconf --version | head -1 | sed -e 's/[^0-9.]*//g'`
     echo automake: `automake --version | head -1 | sed -e 's/[^0-9.]*//g'`
@@ -20,7 +21,7 @@ go ()
 if [ x"$1" = x-m ] ; then
     tmp="show-platform.$$"
     go > $tmp
-    mail -s "show-platform.sh output" $recip < $tmp
+    mail -s "show-platform output" $recip < $tmp
     rv=$?
     cat $tmp
     rm $tmp
