@@ -1,0 +1,218 @@
+2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm:
+	(test:pg-error-message): New proc.
+	(main): Add test using new proc.
+
+2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm:
+	(test:pg-conndefaults): New proc.
+	(main): New proc. Call it from top-level.
+
+2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* coverage.sh: New file.
+	* Makefile.am: Update copyright.
+	(TESTS): Add coverage.sh.
+
+2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* show-platform (go): Omit `uname -p' and `uname -v' output.
+	(gosexp): New func. Use it for mailing intead of `go'.
+
+2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* show-platform (go): Invoke uname separately w/
+	opts -m, -s, -r, -p, -v; one per line.
+	Also, for libtool version, keep only the first line.
+
+2004-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-abstraction-scm-tests.scm: For `m2',
+	also test `tuples-result->object-alist'.
+
+2004-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* testing.scm: Update copyright.
+	(test-report): Return #f on count mismatch,
+	non-zero `xpass-count', or non-zero `fail-count'.
+
+	* guile-pg-lo-tests.scm: Update copyright.
+	Use `test-report' return value as exit value.
+	* guile-pg-basic-tests.scm: Likewise.
+	* guile-pg-abstraction-scm-tests.scm: Likewise.
+
+2004-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* show-platform (go): Also include guile-pg version.
+
+2004-01-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-lo-tests.scm: Update copyright.
+	(eval-port): Use `eval-in-module' instead of naked `eval'.
+
+2003-11-27  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* Makefile.am (TESTS_ENVIRONMENT): Also define var `GUILE'.
+
+2003-11-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (result->output-string): New proc.
+	(test:count-records): Also do a manual line count to check backend
+	count as well as exercise `pg-print' via `result->output-string'.
+
+2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* Makefile.am (EXTRA_DIST): Add show-platform.
+
+2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-abstraction-scm-tests.scm
+	(mtest:select-*-error_condition): Handle array output
+	representation for cases both prior to, as well as, starting from,
+	PostgreSQL 7.2.
+	(mtest:select-*-read, mtest:select-count): Likewise.
+
+2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm, guile-pg-lo-tests.scm:
+	Separate author and copyright comments; nfc.
+
+2003-01-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* abstraction-scm-tests.sh: Also
+	load $top_srcdir/scm/postgres-col-defs.scm
+	and $top_srcdir/scm/postgres-resx.scm.
+
+2003-01-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* guile-pg-basic-tests.scm (test:make-connection):
+	Also test using `pg-connection?'.
+
+2002-12-29  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* config.scm.in: New file.
+
+	* basic-tests.sh: Also load config.scm.
+	* lo-tests.sh: Likewise.
+	* abstraction-scm-tests: Likewise.
+
+	* guile-pg-abstraction-scm-tests.scm:
+	Look for testing.scm in `*srcdir*'.
+
+	* guile-pg-basic-tests.scm: New file converted from .in file.
+	* guile-pg-lo-tests.scm: Likewise.
+
+	* guile-pg-basic-tests.scm.in: Delete.
+	* guile-pg-lo-tests.scm.in: Likewise.
+
+	* Makefile.am (EXTRA_DIST): Add guile-pg-basic-tests.scm
+	and guile-pg-lo-tests.scm.
+
+	* cov: Update grep target.
+
+2002-12-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.am (TESTS_ENVIRONMENT): Add `top_srcdir' and `srcdir'.
+
+	* abstraction-scm-tests.sh:
+	Look for guile-pg-abstraction-scm-tests.scm under $srcdir.
+	Look for postgres-types.scm and postgres-table.scm under $top_srcdir.
+
+2002-12-25  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* guile-pg-basic-tests.scm.in (run-cmd): Also use `pg-result?'.
+
+2002-12-23  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* cov: Use "PG_DEFINE" instead of "SCM_PROC".
+
+2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* abstraction-scm-tests.sh: New file.
+	* guile-pg-abstraction-scm-tests.scm: New file.
+
+	* Makefile.am (TESTS): Add abstraction-scm-tests.sh.
+	(CLEANFILES): Add abstraction-scm-tests.log.
+	(EXTRA_DIST): Remove alive.sh, basic-tests.sh, lo-tests.sh,
+	guile-pg-basic-tests.scm.in, guile-pg-lo-tests.scm.in.
+	Add $(TESTS) and guile-pg-abstraction-scm-tests.scm.
+	(DISTCLEANFILES): Delete directive.
+
+2002-12-18  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* alive.sh: Use guile exit val for script exit val.
+	* basic-tests.sh: Likewise.
+	* lo-tests.sh: Likewise.
+
+2002-12-18  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* guile-pg-lo-tests.scm.in: Look for testing.scm in @srcdir@.
+	* guile-pg-basic-tests.scm.in: Likewise.
+
+2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.am (EXTRA_DIST): Add cov.
+
+2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.am (dist-hook): New directive.
+
+2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* guile-pg-lo-tests.scm.in (test:lo-tell): Also check
+	equivalency of "seek 0 SEEK_CUR".
+
+2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* guile-pg-lo-tests.scm.in (test:lo-tell): New proc, run by `test'.
+	(test:make-connection): Use `->bool' instead of `if'.
+	(test:lo-open-read): Also test `pg-lo-get-connection'.
+
+2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* cov: New maintenance script.
+
+2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* guile-pg-lo-tests.scm.in: Delete files "lo-tests-data-1"
+	and "lo-tests-data-2" when done.
+
+2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* guile-pg-lo-tests.scm.in, guile-pg-basic-tests.scm.in:
+	Rework "if" constructs using "and".  Refill.
+
+2002-12-11  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* basic-tests.sh, lo-tests.sh: Use dropdb if available,
+	otherwise destroydb.
+	No longer user guile-pg interpreter; instead use guile directly.
+
+	* guile-pg-basic-tests.scm.in, guile-pg-lo-tests.scm.in:
+	Update copyright.
+	Use module (database postgres).
+	Convert PGRES_foo references to symbols.
+
+	* Makefile.am: Update copyright.
+	(TESTS, EXTRA_DIST): Add alive.sh.
+	(TESTS_ENVIRONMENT): New directive.
+
+	* alive.sh: New file.
+
+2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.in: Delete.
+
+2000-06-15  Ian Grant  <Ian.Grant@cl.cam.ac.uk>
+
+	* guile-pg-basic-tests.scm.in: Added pg-oid-value function.
+
+1999-01-24  Ian Grant  <Ian.Grant@cl.cam.ac.uk>
+
+	* guile-pg-basic-tests.scm: New file. Uses testing.scm in the
+	  same directory.
+
+	* guile-pg-lo-tests.scm: New file. Uses testing.scm in the
+	  same directory.
