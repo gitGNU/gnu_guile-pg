@@ -215,9 +215,15 @@
                 (close-port lo-port)
                 (eq? 1 location-after-read))))))))
 
+(define test:lo-unlink
+  (add-test #t
+    (lambda ()
+      (transaction
+       (pg-lo-unlink *C* *N*)))))       ; todo: check access after unlink
+
 (define (main)
   (set! verbose #t)
-  (test-init "lo-tests" 13)
+  (test-init "lo-tests" 14)
   (test *VERSION* pg-guile-pg-version)
   (test! test:make-connection
          test:make-data
@@ -230,7 +236,8 @@
          test:read-line
          test:lo-seek
          test:lo-seek2
-         test:lo-tell)
+         test:lo-tell
+         test:lo-unlink)
   (for-each delete-file '("lo-tests-data-1" "lo-tests-data-2"))
   (set! *C* #f)
   (test-report))
