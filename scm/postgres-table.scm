@@ -65,7 +65,7 @@
   (let loop ((acc (list #\'))
              (tail (string->list s)))
     (if (not (pair? tail))
-        (list->string (reverse (cons #\' acc)))
+        (list->string (reverse! (cons #\' acc)))
         (loop (if (char=? #\' (car tail))
                   (append (list #\' #\\) acc)
                   (cons (car tail) acc))
