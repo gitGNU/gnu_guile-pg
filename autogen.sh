@@ -3,8 +3,8 @@
 #
 # Bootstrap the development environment.  Optional arg "--libtoolize" means
 # also run "libtoolize --force".  The distribution was made w/ these tools:
-# - libtool 1.4.3
-# - autoconf 2.57
+# - libtool 1.5 (1.1220 2003/04/05 19:32:58)
+# - autoconf 2.58
 # - automake 1.7.6
 
 #############################################################################
@@ -12,7 +12,8 @@
 
 test x"$1" = x--libtoolize && libtoolize --force
 test -f ltmain.sh || libtoolize --force
-aclocal -I $HOME/local/share/aclocal
+aclocal -I `guile-config info datadir`/aclocal
+( echo ; echo 'AC_DEFUN([_LT_AC_TAGCONFIG],[])' ) >> aclocal.m4
 autoheader
 autoconf
 # prep automake
@@ -28,5 +29,26 @@ automake --add-missing --force
 for script in `find . -name .make-automake-frags` ; do
     ( cd `dirname $script` ; ./.make-automake-frags )
 done
+
+######################################################################
+# Header: <guile/modsup.h>
+
+ln -sf `guile-config info includedir`/guile/modsup.h
+
+######################################################################
+# Self knowledge.
+
+if [ -d CVS ] ; then
+    # release tags all look like v-X-Y
+    cvs log -h autogen.sh \
+        | sed -n '/^[^a-zA-Z]v-/{s/^.//;s/:.*//;p;q;}' \
+        > .last-release
+fi
+
+######################################################################
+# Done.
+
+: Now run configure and make.
+: You must pass the "--enable-maintainer-mode" option to configure.
 
 # autogen.sh ends here
