@@ -1,5 +1,9 @@
 2002-12-22  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* scm/postgres-types.scm (oid-type-name-cache): New proc, exported.
+
+2002-12-22  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* libpostgres.c (pgrs): Move PGRES_TUPLES_OK first.
 
 2002-12-22  Thien-Thi Nguyen  <ttn@giblet.glug.org>
