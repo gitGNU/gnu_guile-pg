@@ -827,7 +827,7 @@ PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
     SCM_ALLOW_INTS;
   } else {
     SCM_ALLOW_INTS;
-    scm_misc_error (FUNC_NAME, "Invalid field number %s",
+    scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
                     scm_listify (num, SCM_UNDEFINED));
   }
   return scm_makfrom0str (fname);
@@ -882,7 +882,7 @@ PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
     ftype = PQftype (ser_unbox (result)->result, field);
   } else {
     SCM_ALLOW_INTS;
-    scm_misc_error (FUNC_NAME, "Invalid field number %s",
+    scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
                     scm_listify (num, SCM_UNDEFINED));
   }
   SCM_ALLOW_INTS;
@@ -912,7 +912,7 @@ PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
     fsize = PQfsize (ser_unbox (result)->result, field);
   } else {
     SCM_ALLOW_INTS;
-    scm_misc_error (FUNC_NAME, "Invalid field number %s",
+    scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
                     scm_listify (num, SCM_UNDEFINED));
   }
   SCM_ALLOW_INTS;
@@ -1091,7 +1091,7 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
     fmod = PQfmod (ser_unbox (result)->result, field);
   } else {
     SCM_ALLOW_INTS;
-    scm_misc_error (FUNC_NAME, "Invalid field number %s",
+    scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
                     scm_listify (num, SCM_UNDEFINED));
   }
   SCM_ALLOW_INTS;
