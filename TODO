@@ -5,26 +5,8 @@
 
     - PQprint
 
-      Prints out all the tuples and, optionally, the attribute names to the
-      specified output stream.
-
-        void PQprint(FILE* fout, PGresult* res, PQprintOpt* po);
-
-        struct _PQprintOpt {
-           pqbool  header;      /* print output field headings and row count */
-           pqbool  align;       /* fill align the fields */
-           pqbool  standard;    /* old brain dead format */
-           pqbool  html3;       /* output html tables */
-           pqbool  expanded;    /* expand tables */
-           pqbool  pager;       /* use pager for output if needed */
-           char    *fieldSep;   /* field separator */
-           char    *tableOpt;   /* insert to HTML <table ...> */
-           char    *caption;    /* HTML <caption> */
-           char    **fieldName; /* null terminated array of replacement field names */
-        };
-
-      This function is intended to replace PQprintTuples(), which is now
-      obsolete.  The psql program uses PQprint() to display query results.
+	This is mostly in place.  Remaining is to extract FILE* from
+	current-output-port instead hardcoding `stdout' (libpostres.c:1478).
 
 
 - Eventually
