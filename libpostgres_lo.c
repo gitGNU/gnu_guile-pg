@@ -1,6 +1,5 @@
-/* $Id$
-    Guile-pg - A Guile interface to PostgreSQL
-    Copyright (C) 1999 The Free Software Foundation
+/*  Guile-pg - A Guile interface to PostgreSQL
+    Copyright (C) 1999, 2002 Free Software Foundation, Inc.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,8 +17,6 @@
 
     Guile-pg was written by Ian Grant <Ian.Grant@cl.cam.ac.uk>
 */
-
-static char rcsid[] = "$Id$";
 
 #include <config.h>
 
@@ -67,17 +64,12 @@ typedef struct lob_stream_tag {
 #define SCM_OPINLOBPORTP(x) (((0xffff | SCM_OPN | SCM_RDNG) & (int)SCM_CAR(x))==(lob_ptype | SCM_OPN | SCM_RDNG))
 #define SCM_OPOUTLOBPORTP(x) (((0xffff | SCM_OPN | SCM_WRTNG) & (int)SCM_CAR(x))==(lob_ptype | SCM_OPN | SCM_WRTNG))
 
+/* ttn hack */
+#define TTN_COERCE_INT(x) ((int)(x))
+
 long lob_ptype;
 
 static SCM lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller);
-
-SCM_PROC(s_pg_guile_pg_lo_rcsid, "pg-guile-pg-lo-rcsid", 0, 0, 0, pg_guile_pg_lo_rcsid);
-
-static SCM
-pg_guile_pg_lo_rcsid(void)
-{
-    return scm_makfrom0str(rcsid);
-}
 
 SCM_PROC(s_lob_lo_creat, "pg-lo-creat", 2, 0, 0, lob_lo_creat);
 
@@ -89,7 +81,7 @@ lob_lo_creat(SCM conn, SCM modes)
    int fd = 0;
    Oid oid;
    int pg_modes = 0;
- 
+
    SCM_ASSERT(sec_p(conn), conn, SCM_ARG1, s_lob_lo_creat);
    SCM_ASSERT(SCM_NIMP(modes) && SCM_ROSTRINGP(modes),
                                             modes, SCM_ARG2, s_lob_lo_creat);
@@ -106,7 +98,7 @@ lob_lo_creat(SCM conn, SCM modes)
       pg_modes |= INV_WRITE;
 
    if (pg_modes == 0)
-      scm_misc_error (s_lob_lo_creat, "Invalid mode specification %s", 
+      scm_misc_error (s_lob_lo_creat, "Invalid mode specification %s",
                        scm_listify(modes, SCM_UNDEFINED));
    SCM_DEFER_INTS;
    if ((oid = lo_creat(dbconn, INV_READ | INV_WRITE)) != 0)
@@ -153,7 +145,7 @@ lob_lo_open(SCM conn, SCM oid, SCM modes)
       pg_modes |= INV_WRITE;
 
    if (pg_modes == 0)
-      scm_misc_error (s_lob_lo_open, "Invalid mode specification %s", 
+      scm_misc_error (s_lob_lo_open, "Invalid mode specification %s",
                        scm_listify(modes, SCM_UNDEFINED));
    pg_oid = SCM_INUM(oid);
    SCM_DEFER_INTS;
@@ -162,7 +154,7 @@ lob_lo_open(SCM conn, SCM oid, SCM modes)
 
    if (fd < 0)
       return SCM_BOOL_F;
- 
+
    if (strchr (SCM_ROCHARS(modes), 'a')) {
       SCM_DEFER_INTS;
       if (lo_lseek(dbconn, fd, 0, SEEK_END) < 0) {
@@ -175,7 +167,7 @@ lob_lo_open(SCM conn, SCM oid, SCM modes)
    return lob_mklobport (conn, pg_oid, fd, mode_bits, s_lob_lo_open);
 }
 
-static SCM 
+static SCM
 lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller)
 {
   SCM port;
@@ -197,7 +189,7 @@ lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller)
   SCM_SETSTREAM (port, (SCM) lobp);
 
   pt->rw_random = 1;
-  if (SCM_INPORTP (port)) {
+  if (SCM_INPUT_PORT_P (port)) {
       pt->read_buf = malloc (LOB_BUFLEN);
       if (pt->read_buf == NULL)
         scm_memory_error (s_lob_mklobport);
@@ -207,7 +199,7 @@ lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller)
       pt->read_buf = ((unsigned char *) pt->read_pos) = pt->read_end = &pt->shortbuf;
       pt->read_buf_size = 1;
   }
-  if (SCM_OUTPORTP (port)) {
+  if (SCM_OUTPUT_PORT_P (port)) {
       pt->write_buf = malloc (LOB_BUFLEN);
       if (pt->write_buf == NULL)
         scm_memory_error (s_lob_mklobport);
@@ -219,7 +211,7 @@ lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller)
   }
   pt->write_end = pt->write_buf + pt->write_buf_size;
 
-  SCM_SETCAR (port, SCM_CAR (port) & ~SCM_BUF0);
+  SCM_SETCAR (port, TTN_COERCE_INT (SCM_CAR (port)) & ~SCM_BUF0);
 
   SCM_ALLOW_INTS;
 
@@ -238,7 +230,7 @@ lob_lo_unlink(SCM conn, SCM oid)
    SCM_ASSERT(SCM_INUMP(oid), oid, SCM_ARG2, s_lob_lo_unlink);
 
    dbconn = sec_unbox(conn)->dbconn;
- 
+
    SCM_DEFER_INTS;
    ret = lo_unlink(dbconn, SCM_INUM(oid));
    SCM_ALLOW_INTS;
@@ -279,7 +271,7 @@ lob_lo_tell(SCM port)
    return scm_seek (port, SCM_INUM0, SCM_MAKINUM (SEEK_CUR));
 }
 
-extern int terminating; 
+static int terminating = 0;             /* wtf? -ttn */
 
 static void
 lob_flush(SCM port)
@@ -300,13 +292,13 @@ fprintf(stderr, "lob_flush(): lo_write(%.*s, %d) ... ", remaining, ptr, remainin
       count = lo_write(conn, lobp->fd, ptr, remaining);
       SCM_ALLOW_INTS;
 #ifdef DEBUG_TRACE_LO_WRITE
-fprintf(stderr, "returned %d\n", count); 
+fprintf(stderr, "returned %d\n", count);
 #endif
       if (count < remaining) {
           /* error.  assume nothing was written this call, but
              fix up the buffer for any previous successful writes.  */
           int done = init_size - remaining;
-              
+
           if (done > 0) {
               int i;
 
@@ -378,7 +370,7 @@ lob_lo_seek(SCM port, SCM where, SCM whence)
    SCM_DEFER_INTS;
    ret = lo_lseek(conn, lobp->fd, SCM_INUM(where), SCM_INUM(whence));
    SCM_ALLOW_INTS;
-   
+
    return SCM_MAKINUM(ret);
 }
 
@@ -445,7 +437,8 @@ lob_write (SCM port, const void *data, size_t size)
              lob_flush (port);
       }
       /* handle line buffering.  */
-      if ((SCM_CAR (port) & SCM_BUFLINE) && memchr (data, '\n', size))
+      if ((TTN_COERCE_INT (SCM_CAR (port)) & SCM_BUFLINE)
+          && memchr (data, '\n', size))
           lob_flush (port);
    }
 }
@@ -521,7 +514,7 @@ lob_close(SCM port)
 
    lob_flush(port);
    SCM_DEFER_INTS;
-   ret = lo_close(dbconn, lobp->fd); 
+   ret = lo_close(dbconn, lobp->fd);
    SCM_ALLOW_INTS;
 
    if (pt->read_buf != &pt->shortbuf)
@@ -612,7 +605,7 @@ lob_lo_export(SCM conn, SCM oid, SCM filename)
 
 static int lob_printpt (SCM exp, SCM port, scm_print_state *pstate);
 
-static int 
+static int
 lob_printpt (SCM exp, SCM port, scm_print_state *pstate)
 {
    scm_puts ("#<PG-LO-PORT:", port);
@@ -656,3 +649,5 @@ void init_libpostgres_lo(void)
 
    #include "libpostgres_lo.x"
 }
+
+/* libpostgres_lo.c ends here */
