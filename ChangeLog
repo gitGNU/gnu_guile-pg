@@ -209,6 +209,7 @@
 	  the RCS Id of the scheme module (postgres.scm).
 
 1999-06-27  Ian Grant  <Ian.Grant@cl.cam.ac.uk>
+
 	* Changes to configure.in to check for Postgres 6.4 features.
 
 	* Changes to libpostgres.c to conditionally compile procedures
@@ -222,6 +223,7 @@
 	  interface.
 
 1999-01-31  Ian Grant  <Ian.Grant@cl.cam.ac.uk>
+
 	* Changes to work with libpq from PostgreSQL 6.4.2 these were:
 
 	* libpostgres.c: Added new primitives pg:binary-tuples? and pg:fmod.
@@ -245,6 +247,7 @@
 	  right now though.
 
 1999-01-24  Ian Grant  <Ian.Grant@cl.cam.ac.uk>
+
 	* HACKING: New File.
 
 	* README: Added info on building guile-pg and intalling
@@ -259,6 +262,7 @@
 	* Makefile.am, configure.in: Added test subdirectory.
 
 1999-01-17  Ian Grant  <I.A.N.Grant@damtp.cam.ac.uk>
+
 	* acinclude.m4: Added new macro definition GUILE_MODULE
 	  which sets up the necessary install targets for a guile
 	  module. It gets these from guile-config.
@@ -274,6 +278,7 @@
 	* libpostgres.c: Added pg:reset and pg:trace and pg:untrace
 
 1999-01-12  Ian Grant  <I.A.N.Grant@damtp.cam.ac.uk>
+
 	* libpostgres.c: Completed large obect support
 
 	* libpostgres.c: Added support for PQputline/PQgetline/PQendcopy
@@ -281,11 +286,13 @@
 	* doc/guile-pg.texi: Function descriptions
 
 1998-12-05  Ian Grant  <I.A.N.Grant@damtp.cam.ac.uk>
+
 	* libtoolized
 
 	* acinclude.m4: new file defining PQ library autoconf macro
 
 1998-12-03  Ian Grant  <I.A.N.Grant@damtp.cam.ac.uk>
+
 	* AUTHORS: New file, in accordance with the GNU maintainers'
 	standards.
 
