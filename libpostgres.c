@@ -380,19 +380,19 @@ PG_DEFINE (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
       tem = gh_cons (KWD (dispchar), tem);
       PUSH ();
 
-      tem = MAYBEFALSE (label, scm_makfrom0str (opt->label));
+      tem = MAYBEFALSE (label, gh_str02scm (opt->label));
       tem = gh_cons (KWD (label), tem);
       PUSH ();
 
-      tem = MAYBEFALSE (val, scm_makfrom0str (opt->val));
+      tem = MAYBEFALSE (val, gh_str02scm (opt->val));
       tem = gh_cons (KWD (val), tem);
       PUSH ();
 
-      tem = MAYBEFALSE (compiled, scm_makfrom0str (opt->compiled));
+      tem = MAYBEFALSE (compiled, gh_str02scm (opt->compiled));
       tem = gh_cons (KWD (compiled), tem);
       PUSH ();
 
-      tem = MAYBEFALSE (envvar, scm_makfrom0str (opt->envvar));
+      tem = MAYBEFALSE (envvar, gh_str02scm (opt->envvar));
       tem = gh_cons (KWD (envvar), tem);
       PUSH ();
 
@@ -419,7 +419,7 @@ notice_processor (void *xc, const char *message)
   if (SCM_FALSEP (out))
     return;
 
-  msg = scm_makfrom0str (message);
+  msg = gh_str02scm (message);
 
   if (SCM_EQ_P (SCM_BOOL_T, out))
     out = scm_current_error_port ();
@@ -679,7 +679,7 @@ PG_DEFINE (pg_get_db, "pg-get-db", 1, 0, 0,
   rv = PQdb (XCONN (conn));
   SCM_ALLOW_INTS;
 
-  return scm_makfrom0str (rv);
+  return gh_str02scm (rv);
 #undef FUNC_NAME
 }
 
@@ -696,7 +696,7 @@ PG_DEFINE (pg_get_user, "pg-get-user", 1, 0, 0,
   rv = PQuser (XCONN (conn));
   SCM_ALLOW_INTS;
 
-  return scm_makfrom0str (rv);
+  return gh_str02scm (rv);
 #undef FUNC_NAME
 }
 
@@ -716,7 +716,7 @@ PG_DEFINE (pg_get_pass, "pg-get-pass", 1, 0, 0,
   rv = PQpass (XCONN (conn));
   SCM_ALLOW_INTS;
 
-  return scm_makfrom0str (rv);
+  return gh_str02scm (rv);
 #undef FUNC_NAME
 
 #else  /* !HAVE_PQPASS */
@@ -739,7 +739,7 @@ PG_DEFINE (pg_get_host, "pg-get-host", 1, 0, 0,
   rv = PQhost (XCONN (conn));
   SCM_ALLOW_INTS;
 
-  return scm_makfrom0str (rv);
+  return gh_str02scm (rv);
 #undef FUNC_NAME
 }
 
@@ -756,7 +756,7 @@ PG_DEFINE (pg_get_port,"pg-get-port", 1, 0, 0,
   rv = PQport (XCONN (conn));
   SCM_ALLOW_INTS;
 
-  return scm_makfrom0str (rv);
+  return gh_str02scm (rv);
 #undef FUNC_NAME
 }
 
@@ -773,7 +773,7 @@ PG_DEFINE (pg_get_tty, "pg-get-tty", 1, 0, 0,
   rv = PQtty (XCONN (conn));
   SCM_ALLOW_INTS;
 
-  return scm_makfrom0str (rv);
+  return gh_str02scm (rv);
 #undef FUNC_NAME
 }
 
@@ -789,7 +789,7 @@ PG_DEFINE (pg_get_options, "pg-get-options", 1, 0, 0,
   rv = PQoptions (XCONN (conn));
   SCM_ALLOW_INTS;
 
-  return scm_makfrom0str (rv);
+  return gh_str02scm (rv);
 #undef FUNC_NAME
 }
 
@@ -907,7 +907,7 @@ PG_DEFINE (pg_cmdtuples, "pg-cmdtuples", 1, 0, 0,
   cmdtuples = PQcmdTuples (RESULT (result));
   SCM_ALLOW_INTS;
 
-  return scm_makfrom0str (cmdtuples);
+  return gh_str02scm (cmdtuples);
 #undef FUNC_NAME
 }
 
@@ -969,7 +969,7 @@ PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
       scm_misc_error (FUNC_NAME, "Invalid field number: ~S",
                       scm_listify (num, SCM_UNDEFINED));
     }
-  return scm_makfrom0str (fname);
+  return gh_str02scm (fname);
 #undef FUNC_NAME
 }
 
@@ -1106,7 +1106,7 @@ PG_DEFINE (pg_getvalue, "pg-getvalue", 3, 0, 0,
     srv = scm_makfromstr (val, veclen, 0);
   else
 #endif
-    srv = scm_makfrom0str (val);
+    srv = gh_str02scm (val);
 
   return srv;
 #undef FUNC_NAME
@@ -1276,9 +1276,9 @@ PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
       ret = PQgetline (XCONN (conn), buf, BUF_LEN);
       SCM_ALLOW_INTS;
       if (str == SCM_UNDEFINED)
-        str = scm_makfrom0str (buf);
+        str = gh_str02scm (buf);
       else
-        str = scm_string_append (SCM_LIST2 (str, scm_makfrom0str (buf)));
+        str = scm_string_append (SCM_LIST2 (str, gh_str02scm (buf)));
     }
   return str;
 #undef FUNC_NAME
@@ -1692,11 +1692,11 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
       fseek (fout, 0, SEEK_SET);
 
       while (BUF_LEN - 1 == (howmuch = fread (buf, 1, BUF_LEN - 1, fout)))
-        scm_display (scm_makfrom0str (buf), outp);
+        scm_display (gh_str02scm (buf), outp);
       if (feof (fout))
         {
           buf[howmuch] = '\0';
-          scm_display (scm_makfrom0str (buf), outp);
+          scm_display (gh_str02scm (buf), outp);
         }
       fclose (fout);
     }
@@ -1764,7 +1764,7 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
   n = PQnotifies (XCONN (conn));
   if (n)
     {
-      rv = scm_makfrom0str (n->relname);
+      rv = gh_str02scm (n->relname);
       rv = gh_cons (rv, SCM_MAKINUM (n->be_pid));
       free (n);
     }
@@ -1788,9 +1788,9 @@ PG_DEFINE (pg_client_encoding, "pg-client-encoding", 1, 0, 0,
   SCM enc;
   SCM_ASSERT (xc_p (conn), conn, SCM_ARG1, FUNC_NAME);
 
-  enc = scm_makfrom0str (pg_encoding_to_char
-                         (PQclientEncoding
-                          (XCONN (conn))));
+  enc = gh_str02scm (pg_encoding_to_char
+                     (PQclientEncoding
+                      (XCONN (conn))));
   return enc;
 #undef FUNC_NAME
 }
