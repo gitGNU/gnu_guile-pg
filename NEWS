@@ -1,7 +1,7 @@
 NEWS for Guile-PG
 
 
-- 0.15 | NOT YET RELEASED
+- 0.15 | 2003-01-15
 
   - New (database postgres) proc: `pg-connection?'
 
