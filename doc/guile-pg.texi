@@ -98,7 +98,10 @@ the @code{libpq} library and other similar interfaces like Edmund Mergl's
 * Retrieving Data::             Making queries and accessing results.
 * Writing/Reading Data::        Bulk data movement and I/O.
 * Large Objects::               Large-Object support.
-* Miscellaneous::               Everything else.
+* Miscellaneous::               Everything else starting with "pg-".
+
+* Types Conversion::            Module: (database postgres-types).
+* Single-Table Abstraction::    Module: (database postgres-table).
 
 * Procedure Index::
 @end menu
@@ -871,6 +874,197 @@ opens the required file and starts/stops the trace.
 @deffn {Scheme Procedure} pg-untrace conn
 Stop tracing on a given connection.  The return value is unspecified.
 @end deffn
+
+@c ---------------------------------------------------------------------------
+@node    Types Conversion
+@chapter Types Conversion
+
+Normally, the result of a @code{pg-exec} query is a object from which Scheme
+strings can be extracted to represent the datum from a particular tuple/field
+pair, using @code{pg-getvalue}.  If this string is sufficient for your needs,
+you can skip this chapter, which describes how to use the PostgreSQL-to-Scheme
+(and back) type conversion support installed with Guile-PG, including how to
+register new types/converters.
+
+To get started, load the @code{postgres-types} module:
+@example
+(use-modules (database postgres-types))
+@end example
+
+Here is a snapshot of the commentary (in lieu of better documentation, while
+we get our doc-harvesting methodology up to speed):
+
+@example
+This module provides the procs:
+ (dbcoltypes) => list of names
+ (dbcoltype-lookup NAME) => tobj
+ (dbcoltype:name TOBJ) => symbol
+ (dbcoltype:stringifier TOBJ) => proc
+ (dbcoltype:objectifier TOBJ) => proc
+ (dbcoltype:default) => string
+ (define-db-col-type NAME DEFAULT STRINGIFY OBJECTIFY)
+ (define-db-col-type-array-variant COMPOSED SIMPLE [STRINGIFY [OBJECTIFY]])
+
+NAME, COMPOSED and SIMPLE are symbols naming a type.  COMPOSED is
+conventionally formed by appending square-bracket paris to SIMPLE.  For
+example, we can declare a two-dimensional array type of text elements:
+
+ (define-db-col-type-array-variant 'text[][] 'text ...)
+
+STRINGIFY is a procedure that takes a Scheme object and returns a string,
+suitable for sending to PostgreSQL.  OBJECTIFY does the opposite: it takes
+a string from PostgreSQL and returns a Scheme object.
+
+DEFAULT is a string.  TOBJ is a "type object" which should be considered
+opaque (use the dbcoltype:foo procs to access the components).
+@end example
+
+To see what types are already defined, use the @code{dbcoltypes} procedure.
+
+@c + @twerpdoc (dbcoltypes)
+
+Here is a simple example that uses @code{dbcoltype-lookup} and
+@code{dbcoltype:objectifier} to convert a @code{text[][]} value
+into a nested list:
+
+@lisp
+(let ((raw (pg-getvalue result 0 0))
+      (conv (dbcoltype:objectifier (dbcoltype-lookup 'text[][]))))
+  (write-line raw)
+  (write-line (conv raw)))
+@print{} @{@{a,b@},@{c,d@}@}
+@print{} (("a" "b") ("c" "d"))
+@end lisp
+
+Note that even though the type is an "array", as implied by the square
+brackets, the result is a list.  This is mostly due to a limitation in
+PostgreSQL: dimensionality is not stored for array types, so the conversion
+cannot be done in a random-access manner.  Perhaps this will change in the
+future.
+
+@section Defining New Types
+
+To define a new non-array type means associating with the type name a
+procedure for converting from a PostgreSQL string representation to a Scheme
+object (the @dfn{objectifier}), a procedure to do the conversion in the
+opposite direction (the @dfn{stringifier}), and a default string to use if
+none is specified (for example, during an @code{INSERT} operation).  For this,
+use the @code{define-db-col-type} procedure.
+
+@c + @twerpdoc (define-db-col-type)
+
+To express conversion of arrays (no matter the dimensionality) of non-array
+types, use the @code{define-db-col-type-array-variant} procedure.
+
+@c + @twerpdoc (define-db-col-type-array-variant)
+
+@c ---------------------------------------------------------------------------
+@node    Single-Table Abstraction
+@chapter Single-Table Abstraction
+
+For some database usages, it is convenient to focus on a single table, adding
+rows to it or drawing queries from it exclusively of any other tables in the
+database.  This chapter describes Guile-PG facilities for this kind of use.
+
+To get started, load the @code{postgres-table} module:
+@example
+(use-modules (database postgres-table))
+@end example
+
+Here is a snapshot of the commentary (in lieu of better documentation, while
+we get our doc-harvesting methodology up to speed):
+
+@example
+This module exports these procedures:
+ (sql-pre string)
+ (tuples-result->table res)
+ (where-clausifier string)
+ (pgtable-manager db-name table-name defs)
+ (def:col-name def)
+ (def:type-name def)
+ (def:type-options def)
+@end example
+
+Basically, the @code{pgtable-manager} procedure encapsulates specification,
+query and mutation (including create/delete) of a PostgreSQL table.  The
+@var{defs} are a list of the columns, each element having the form:
+
+@example
+        (NAME TYPE [OPTIONS...])
+@end example
+
+@var{name} and @var{type} are symbols specifying the name and type of the
+column, respectively (@pxref{Types Conversion}).  @var{options} are strings
+passed directly to PostgreSQL as part of a @code{CREATE TABLE} command.  For
+example, the status output of the rsync(1) program can be specified by the
+form:
+
+@example
+(define rsync-defs
+        '((time            timestamp)
+          (error_condition text)
+          (files           text[])
+          (wrote           int4)          ; bytes
+          (read            text[][])
+          (rate            float4)
+          (total           int4)          ; bytes
+          (speedup         float4)
+          (etc             int4[])))
+@end example
+
+Note that there are no options in this example.
+
+@c + @twerpdoc (pgtable-manager)
+
+The other procedures are useful for succintly codifying queries, and
+translating the result en mass to Scheme objects.
+
+@c + @twerpdoc (tuples-result->table)
+
+@c + @twerpdoc (sql-pre)
+
+@c + @twerpdoc (where-clausifier)
+
+@example
+(define m (pgtable-manager "ttn" "guile_pg_demo"
+                           '((i          serial)
+                             (date       timestamp)
+                             (amount     float4)
+                             (catcode    text)
+                             (details    text[]))))
+
+((m 'create))
+@result{} #<PG-RESULT:1:PGRES_COMMAND_OK:0:0>
+
+(define add (m 'insert-col-values))
+(define sel (m 'select))
+
+(add '(date amount) (current-time) 1.98)
+@result{} #<PG-RESULT:2:PGRES_COMMAND_OK:0:0>
+
+(add '(date amount) (current-time) 2.98)
+@result{} #<PG-RESULT:3:PGRES_COMMAND_OK:0:0>
+
+(define result (sel "count(*)" (where-clausifier "amount < 2.00")))
+
+result
+@result{} #<PG-RESULT:4:PGRES_TUPLES_OK:1:1>
+
+(tuples-result->table result)
+@result{} #2(("1"))
+
+((m 'drop))
+@result{} (#<PG-RESULT:5:PGRES_COMMAND_OK:0:0> #<PG-RESULT:6:PGRES_COMMAND_OK:0:0>)
+@end example
+
+Two things to note in this example: (1) Both @code{create} and @code{drop}
+invocations evaluate the operating thunk directly (double parentheses); and
+(2) The drop returns a list of result values to accomodate the possibility
+(shown here) of a @code{serial} column type, which requires an additional drop
+of the associated PostgreSQL @dfn{sequence} used to implement the expected
+serial behavior.  (As of PostgreSQL 7.x, the sequence name is constructed like
+so: TABLENAME_COLNAME_seq.  For more info, see the PostgreSQL User Guide,
+Chapter 3: Data Types.
 
 @c ---------------------------------------------------------------------------
 @c + @node       Concept Index
