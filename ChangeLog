@@ -1,5 +1,12 @@
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-gxrepl.scm: From module (database postgres-qcons),
+	no longer select `make-ORDER-BY-tree'
+	Instead, select `parse+make-SELECT/tail-tree'.
+	(dt): Use `parse+make-SELECT/tail-tree'.
+
+2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm (*conditional-operations*):
 	Remove `ALL', `ANY', `IN' and `LIKE'.
 
