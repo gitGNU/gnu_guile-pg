@@ -25,7 +25,7 @@
 ;; Execute a command on CONN, return #t if OK, #f otherwise
 (define (pg-exec-cmd conn sql)
   (let ((res (pg-exec conn sql)))
-    (and res (eq? (pg-result-status res) 'PGRES_COMMAND_OK))))
+    (and res (eq? 'PGRES_COMMAND_OK (pg-result-status res)))))
 
 ;; pg-transaction CONN PROC ARGS
 ;; Return the result of evaluating PROC with arguments (cons CONN ARGS)
@@ -34,16 +34,16 @@
   (and (pg-exec-cmd conn "BEGIN TRANSACTION")
        (let* ((res-apply (apply proc (cons conn args)))
               (res-end (pg-exec-cmd conn "END TRANSACTION")))
-             (and res-end res-apply))))
+         (and res-end res-apply))))
 
 ;; eval-port PORT
 ;; Like (eval-string) but reads from PORT
 (define (eval-port port)
   (define (iter result)
     (let ((form (read port)))
-       (if (eof-object? form)
-           result
-           (iter (eval form)))))
+      (if (eof-object? form)
+          result
+          (iter (eval form)))))
   (iter #f))
 
 ;; We want to keep one connection hanging around for the duration of all the
@@ -79,7 +79,7 @@
 ;; expect #t
 (define (test:make-data)
   (let ((fport (open-file "lo-tests-data-1" "w")))
-       (and fport
+    (and fport
          (begin
            (for-each (lambda (string) (write-line string fport)) test:data)
            (close-port fport)))))
@@ -90,7 +90,7 @@
   (and (pg-transaction conn
          (lambda (conn)
            (set! oid (pg-lo-import conn "lo-tests-data-1"))))
-       (not (eq? oid #f))))
+       (->bool oid)))
 
 ;; Test pg-lo-export
 ;; expect #t
@@ -109,9 +109,9 @@
   (pg-transaction conn
     (lambda (conn)
       (let ((lo-port (pg-lo-open conn oid "r")))
-           (and lo-port
-                (equal? (eval-port lo-port) '(testing testing one two three))
-                (close-port lo-port))))))
+        (and lo-port
+             (equal? (eval-port lo-port) '(testing testing one two three))
+             (close-port lo-port))))))
 
 ;; Test pg-lo-creat
 ;; expect #t
@@ -120,81 +120,78 @@
 (define new-oid #f)
 
 (define (write-chars n c lop)
-  (define (iter n)
-    (write-char c lop)
-    (if (eq? n 1)
-        #t
-        (iter (- n 1))))
-  (iter n))
+  (do ((i 0 (1+ i)))
+      ((= i n) #t)
+    (write-char c lop)))
 
 (define (test:lo-creat)
   (pg-transaction conn
     (lambda (conn)
       (let ((lo-port (pg-lo-creat conn "w")))
-           (and lo-port
-                (write-chars nchars #\a lo-port)
-                (set! new-oid (pg-lo-get-oid lo-port))
-                (close-port lo-port))))))
+        (and lo-port
+             (write-chars nchars #\a lo-port)
+             (set! new-oid (pg-lo-get-oid lo-port))
+             (close-port lo-port))))))
 
 ;; Test pg-lo-read
 ;; expect #t
 
 (define (test:lo-read)
   (pg-transaction conn
-     (lambda (conn)
-       (let ((lo-port (pg-lo-open conn new-oid "r"))
-             (data #f))
-            (and lo-port
-                 (set! data (pg-lo-read 1 nchars lo-port))
-                 (close-port lo-port)
-                 (equal? data (make-string nchars #\a)))))))
+    (lambda (conn)
+      (let ((lo-port (pg-lo-open conn new-oid "r"))
+            (data #f))
+        (and lo-port
+             (set! data (pg-lo-read 1 nchars lo-port))
+             (close-port lo-port)
+             (equal? data (make-string nchars #\a)))))))
 
 ;; Test read-line
 ;; expect #t
 
 (define (test:read-line)
   (pg-transaction conn
-     (lambda (conn)
-       (let ((lo-port (pg-lo-open conn new-oid "r"))
-             (data #f))
-            (and lo-port
-                 (set! data (read-line lo-port))
-                 (close-port lo-port)
-                 (equal? data (make-string nchars #\a)))))))
+    (lambda (conn)
+      (let ((lo-port (pg-lo-open conn new-oid "r"))
+            (data #f))
+        (and lo-port
+             (set! data (read-line lo-port))
+             (close-port lo-port)
+             (equal? data (make-string nchars #\a)))))))
 
 ;; Test pg-lo-seek
 ;; expect #t
 
 (define (test:lo-seek)
   (pg-transaction conn
-     (lambda (conn)
-       (let* ((trace-port (open-file "test-lo-seek.log" "w"))
-              (lo-port (pg-lo-open conn new-oid "w")))
-            (and (pg-trace conn trace-port)
-                 lo-port
-                 (eq? (pg-lo-seek lo-port 1 SEEK_SET) 1)
-                 (write-char #\b lo-port)
-                 (force-output lo-port)
-                 (eq? (pg-lo-seek lo-port 3 SEEK_SET) 3)
-                 (write-char #\b lo-port)
-                 (force-output lo-port)
-                 (eq? (pg-lo-seek lo-port 0 SEEK_SET) 0)
-                 (close-port lo-port)
-                 (pg-untrace conn)
-                 (close-port trace-port))))))
+    (lambda (conn)
+      (let* ((trace-port (open-file "test-lo-seek.log" "w"))
+             (lo-port (pg-lo-open conn new-oid "w")))
+        (and (pg-trace conn trace-port)
+             lo-port
+             (eq? (pg-lo-seek lo-port 1 SEEK_SET) 1)
+             (write-char #\b lo-port)
+             (force-output lo-port)
+             (eq? (pg-lo-seek lo-port 3 SEEK_SET) 3)
+             (write-char #\b lo-port)
+             (force-output lo-port)
+             (eq? (pg-lo-seek lo-port 0 SEEK_SET) 0)
+             (close-port lo-port)
+             (pg-untrace conn)
+             (close-port trace-port))))))
 
 ;; Test pg-lo-seek pg-lo-read
 ;; expect "ababaa"
 
 (define (test:lo-seek2)
   (pg-transaction conn
-     (lambda (conn)
-       (let ((lo-port (pg-lo-open conn new-oid "r"))
-             (data #f))
-            (and lo-port
-                 (set! data (pg-lo-read 1 6 lo-port))
-                 (close-port lo-port)
-                 data)))))
+    (lambda (conn)
+      (let ((lo-port (pg-lo-open conn new-oid "r"))
+            (data #f))
+        (and lo-port
+             (set! data (pg-lo-read 1 6 lo-port))
+             (close-port lo-port)
+             data)))))
 
 (load-from-path "testing.scm")
 (set! verbose #t)
@@ -213,5 +210,9 @@
 (test "ababaa" test:lo-seek2)
 (set! conn #f)
 (test-report)
+
+;; Local Variables:
+;; eval: (put 'pg-transaction 'scheme-indent-function 1)
+;; End:
 
 ;;; guile-pg-lo-tests.scm ends here
