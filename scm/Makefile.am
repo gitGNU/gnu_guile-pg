@@ -22,7 +22,6 @@
 
 AUTOMAKE_OPTIONS = foreign
 
-# These files should be installed and distributed.
 guile_postgres_sources = 			\
   postgres-types.scm 				\
   postgres-col-defs.scm				\
@@ -30,15 +29,23 @@ guile_postgres_sources = 			\
   postgres-table.scm				\
   postgres-meta.scm
 
-ddir = $(GUILE_SITE)/database
+ddir = $(GUILE_LIBSITE)/database
 d_DATA = $(guile_postgres_sources)
 
 ETAGS_ARGS = $(subpkgdata_DATA)
 
 EXTRA_DIST = $(guile_postgres_sources)
 
+retired = $(GUILE_SITE)/database
+
 install-data-hook:
-	rm -f $(ddir)/postgres.scm
+	if [ -f $(retired)/postgres.scm ] ; then \
+	  rm -f $(retired)/postgres.scm ; fi
+	for f in $(guile_postgres_sources) ; do	\
+	  if [ -f $(retired)/$$f ] ; then	\
+	    rm -f $(retired)/$$f ; fi ; done
+	if [ -d $(retired) -a "`ls $(retired)`" = "" ] ; then \
+	  rmdir $(retired) ; fi
 	if guile-tools | grep -q make-module-catalog ; then \
 	   guile-tools make-module-catalog $(GUILE_SITE) ; fi
 
