@@ -1,3 +1,10 @@
+2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-meta.scm (*class-defs*): New var.
+	(*table-info-selection*): New var.
+	(make-M:pg-class): Use `*class-defs*'.
+	(table-info): Use `*table-info-selection*'.
+
 2004-02-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.c (pg_getline): Doc munging; nfc.
