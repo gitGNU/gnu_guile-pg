@@ -1,3 +1,16 @@
+2004-11-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:set-nonblocking!): New test proc.
+	(test:is-nonblocking?): Likewise.
+	(test:asynchronous-retrieval): Likewise.
+	(main): Use new test procs; update expected-pass number.
+
+2004-11-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (cexec): Append semicolon to command.
+	(test:set-notice-out!-1): Omit semicolon from arg to `cexec'.
+	(test:set-notice-out!-2): Likewise.
+
 2004-11-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* drop.sh.in: Sleep for one second before exit.
