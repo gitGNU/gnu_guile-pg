@@ -1,5 +1,9 @@
 2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* configure.in (VERSION): Bump to 0.11 for release.
+
+2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* configure.in (HAVE_SCM_TERMINATING): Arrange to define this
 	config.h macro if libguile.h declares `scm_terminating'.
 
