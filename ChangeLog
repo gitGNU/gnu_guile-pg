@@ -1,5 +1,9 @@
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/guile-pg.twerp: Spacing fixups. Use "PostgreSQL".
+
+2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* acinclude.m4 (AC_GUILE_PG_FCOMPAT): Update SCM_OUTPORTP message.
 
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
