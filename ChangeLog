@@ -15,6 +15,10 @@
 	* scm/Makefile.am (guile_postgres_sources): Add
 	postgres-col-defs.scm and postgres-resx.scm.
 
+	* test/abstraction-scm-tests.sh: Also
+	load $top_srcdir/scm/postgres-col-defs.scm
+	and $top_srcdir/scm/postgres-resx.scm.
+
 	* Makefile.am (DOTDOCFILES): Add scm/postgres-col-defs.doc
 	and scm/postgres-resx.doc.
 
