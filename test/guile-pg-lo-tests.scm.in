@@ -1,6 +1,5 @@
-;; $Id$
 ;;    Guile-pg - A Guile interface to PostgreSQL
-;;    Copyright (C) 1999-2000 The Free Software Foundation
+;;    Copyright (C) 1999-2000, 2002 Free Software Foundation, Inc.
 ;;
 ;;    This program is free software; you can redistribute it and/or modify
 ;;    it under the terms of the GNU General Public License as published by
@@ -18,20 +17,19 @@
 ;;
 ;;    Guile-pg was written by Ian Grant <Ian.Grant@cl.cam.ac.uk>
 
-; uncomment the following line if testing under plain guile
-;; (use-modules (database postgres))
+(use-modules (database postgres))
 
-;;Define some basic procedures
+;; Define some basic procedures
 
 ;; pg-exec-cmd CONN
 ;; Execute a command on CONN, return #t if OK, #f otherwise
 (define (pg-exec-cmd conn sql)
   (let ((res (pg-exec conn sql)))
-    (and res (eq? (pg-result-status res) PGRES_COMMAND_OK))))
+    (and res (eq? (pg-result-status res) 'PGRES_COMMAND_OK))))
 
 ;; pg-transaction CONN PROC ARGS
 ;; Return the result of evaluating PROC with arguments (cons CONN ARGS)
-;;   within a postgres transaction, or #f in the event of an error 
+;;   within a postgres transaction, or #f in the event of an error
 (define (pg-transaction conn proc . args)
   (and (pg-exec-cmd conn "BEGIN TRANSACTION")
        (let* ((res-apply (apply proc (cons conn args)))
@@ -90,7 +88,7 @@
 ;; expect #t
 (define (test:lo-import)
   (and (pg-transaction conn
-         (lambda (conn) 
+         (lambda (conn)
            (set! oid (pg-lo-import conn "lo-tests-data-1"))))
        (not (eq? oid #f))))
 
@@ -101,9 +99,9 @@
   (pg-transaction conn
     (lambda (conn)
       (and (pg-lo-export conn oid "lo-tests-data-2")
-           (eq? 0 (system 
-                    "@DIFF_PATH@ lo-tests-data-1 \\
-                                         lo-tests-data-2 >/dev/null 2>&1"))))))
+           (eq? 0 (system (format #f "@DIFF_PATH@ ~A ~A >/dev/null 2>&1"
+                                  "lo-tests-data-1"
+                                  "lo-tests-data-2")))))))
 
 ;; Test pg-lo-open-read
 ;; expect #t
@@ -216,3 +214,4 @@
 (set! conn #f)
 (test-report)
 
+;;; guile-pg-lo-tests.scm ends here
