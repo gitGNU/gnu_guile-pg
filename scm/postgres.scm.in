@@ -42,18 +42,4 @@
 (define-public (pg-guile-pg-module-version)
   "@VERSION@")
 
-;; backward compatibility (not documented to encourage
-;;                         usage of symbols in new code)
-;;
-;; WARNING: these will go away!
-
-(define-public PGRES_EMPTY_QUERY    'PGRES_EMPTY_QUERY)
-(define-public PGRES_COMMAND_OK     'PGRES_COMMAND_OK)
-(define-public PGRES_TUPLES_OK      'PGRES_TUPLES_OK)
-(define-public PGRES_COPY_OUT       'PGRES_COPY_OUT)
-(define-public PGRES_COPY_IN        'PGRES_COPY_IN)
-(define-public PGRES_BAD_RESPONSE   'PGRES_BAD_RESPONSE)
-(define-public PGRES_NONFATAL_ERROR 'PGRES_NONFATAL_ERROR)
-(define-public PGRES_FATAL_ERROR    'PGRES_FATAL_ERROR)
-
 ;;; postgres.scm ends here
