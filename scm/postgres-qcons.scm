@@ -350,30 +350,30 @@
 
 ;; Return a @dfn{from clause} tree for @var{froms} (a list).
 ;; Each element of @var{froms} is either TABLE-NAME, or a pair
-;; @code{(ALIAS . TABLE-NAME)} (both symbols).  IF @var{froms}
-;; is #f, return a null tree (the empty list).
+;; @code{(ALIAS . TABLE-NAME)} (both symbols).
 ;;
 (define (make-FROM-tree froms)
-  (if froms
-      (list #:FROM
-            (commasep (lambda (x)
-                        (cond ((symbol? x) (maybe-dq x))
-                              ((and (pair? x) (not (pair? (cdr x))))
-                               (list (maybe-dq (cdr x)) (maybe-dq (car x))))
-                              (else (error "bad from spec:" x))))
-                      froms))
-      '()))
+  (list #:FROM
+        (commasep (lambda (x)
+                    (cond ((symbol? x) (maybe-dq x))
+                          ((and (pair? x) (not (pair? (cdr x))))
+                           (as (maybe-dq (cdr x)) (maybe-dq (car x))))
+                          (else (error "bad from spec:" x))))
+                  froms)))
 
 ;; Return a @dfn{select/from/col combination clause} tree for
 ;; @var{froms} and @var{cols} (both lists).  In addition to the
 ;; constituent processing done by @code{make-SELECT/COLS-tree}
 ;; and @code{make-FROM-tree} on @var{cols} and @var{froms},
-;; respectively, prefix a "SELECT" token.
+;; respectively, prefix a "SELECT" token.  If @var{froms} is
+;; #f, it is omitted.
 ;;
 (define (make-SELECT/FROM/COLS-tree froms cols)
   (list #:SELECT
         (make-SELECT/COLS-tree cols)
-        (make-FROM-tree froms)))
+        (if froms
+            (make-FROM-tree froms)
+            '())))
 
 ;; Return a @dfn{select tail} tree for @var{plist}, a list of
 ;; alternating keywords and sexps.  These subsequences are recognized:
@@ -409,9 +409,10 @@
                        ((#:order-by) make-ORDER-BY-tree)
                        ((#:limit)    (lambda (n) (list #:LIMIT n)))
                        (else         (error "bad keyword:" kw)))))
-            (set-cdr! tp (list (mk (if (null? (cdr ls))
-                                       (error "lonely keyword:" kw)
-                                       (cadr ls)))))
+            (set-cdr! tp (list (cond ((null? (cdr ls))
+                                      (error "lonely keyword:" kw))
+                                     ((cadr ls) => mk)
+                                     (else '()))))
             (loop (cddr ls) (cdr tp)))))))
 
 ;; Return a string made from flattening @var{trees} (a list).
