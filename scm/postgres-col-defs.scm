@@ -33,7 +33,10 @@
 ;;; Code:
 
 (define-module (database postgres-col-defs)
-  :use-module ((database postgres-types) :select (dbcoltype-lookup))
+  :use-module ((database postgres-types)
+               :select (dbcoltype-lookup
+                        dbcoltype:objectifier
+                        dbcoltype:stringifier))
   :export (column-name
            type-name
            type-options
