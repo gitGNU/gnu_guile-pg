@@ -928,9 +928,10 @@ have the same signature but return the data differently.
 @node    Single-Table Abstraction
 @chapter Single-Table Abstraction
 
-For some database usages, it is convenient to focus on a single table, adding
-rows to it or drawing queries from it exclusively of any other tables in the
-database.  This chapter describes Guile-PG facilities for this kind of use.
+Sometimes it is convenient to focus on a single table, adding rows to it or
+drawing queries from it exclusively of any other tables in the database.
+Likewise with a view, except that only queries are possible.  This chapter
+describes Guile-PG facilities for this kind of use.
 
 To get started, load the @code{postgres-table} module:
 
@@ -939,11 +940,14 @@ To get started, load the @code{postgres-table} module:
 @end lisp
 
 Basically, the @code{pgtable-manager} procedure encapsulates specification,
-query and mutation (including create/delete) of a PostgreSQL table.
+query and mutation (including create/delete) of a PostgreSQL table; and the
+@code{pgtable-worker} procedure encapsulates @code{pgtable-manager}.
 
 @twerpdoc (pgtable-manager)
 
 @twerpdoc (compile-outspec)
+
+@twerpdoc (pgtable-worker)
 
 The other procedures are useful for succintly codifying queries, and
 translating the result en mass to Scheme objects.  [NOTE: These will
