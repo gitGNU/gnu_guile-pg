@@ -1,3 +1,7 @@
+2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* gpl-text.scm, gpl-text.c: Update copyright. Remove author blurb.
+
 2003-01-30  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* libpostgres.c (sepo_type_tag, default_print_options,
