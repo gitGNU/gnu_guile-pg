@@ -1,5 +1,12 @@
 2002-12-12  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* scm/postgres.scm.in (PGRES_EMPTY_QUERY, PGRES_COMMAND_OK,
+	PGRES_TUPLES_OK, PGRES_COPY_OUT, PGRES_COPY_IN,
+	PGRES_BAD_RESPONSE, PGRES_NONFATAL_ERROR, PGRES_FATAL_ERROR):
+	New vars, exported.
+
+2002-12-12  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* doc/guile-pg.texi (Concept Index): Comment out node.
 	(Programming Interface): Delete node; move children up.
 
