@@ -1,5 +1,9 @@
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm (pgtable-manager): Handle `#:k'.
+
+2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-resdisp.scm (display-result):
 	Handle flags to inhibit L/R decorations.
 
