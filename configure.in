@@ -46,7 +46,7 @@ saved_LDFLAGS="$LDFLAGS"
 CFLAGS="$CFLAGS $PQ_CFLAGS"
 LDFLAGS="$LDFLAGS $PQ_LDFLAGS"
 
-AC_CHECK_LIB(pq, PQconnectdb, , AC_MSG_ERROR(Cannot find libpq (CFLAGS= $CFLAGS 
+AC_CHECK_LIB(pq, PQconnectdb, , AC_MSG_ERROR(Cannot find libpq (CFLAGS= $CFLAGS
 LDLFAGS= $LDFLAGS) on the system))
 AC_CHECK_FUNCS(PQfmod PQbinaryTuples PQbackendPID PQresultErrorMessage PQpass PQputnbytes PQoidValue)
 CFLAGS="$saved_CFLAGS"
@@ -79,4 +79,19 @@ case "$GCC" in
     CFLAGS="$CFLAGS -Wall -Wmissing-prototypes" ;;
 esac
 
-AC_OUTPUT(Makefile scm/Makefile doc/Makefile scm/postgres.scm test/Makefile test/guile-pg-basic-tests.scm test/guile-pg-lo-tests.scm)
+top_builddir_absolute=`pwd`
+AC_SUBST(top_builddir_absolute)
+
+AC_CONFIG_FILES([
+  Makefile
+  scm/Makefile
+  doc/Makefile
+  scm/postgres.scm
+  test/Makefile
+  test/guile-pg-basic-tests.scm
+  test/guile-pg-lo-tests.scm
+])
+
+AC_OUTPUT
+
+dnl configure.in ends here
