@@ -1,5 +1,9 @@
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c (pg_putline): Collect status from PQ op; return bool.
+
+2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Writing/Reading Data):
 	Add example proc `copy-to-port-async'.
 
