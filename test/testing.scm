@@ -168,4 +168,14 @@
            (set! *log-file* #f)))
     (and rv (= 0 xpass-count fail-count))))
 
+
+;;; Accountants eventually rule the world,
+;;; so we mimic their good habits.  --ttn
+
+(define *all-tests* #f)
+(define (reset-all-tests!) (set! *all-tests* '()))
+(define (add-test exp p) (set! *all-tests* (acons p exp *all-tests*)) p)
+(define (test-one! p) (test (assq-ref *all-tests* p) p))
+(define (test! . ls) (for-each test-one! ls))
+
 ;;; testing.scm ends here
