@@ -1,5 +1,13 @@
 2002-12-12  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* doc/guile-pg.texi: Rewrite "function" as "procedure".
+	Replace @defun with "@deffn {Scheme Procedure}".
+	Convert	"returns" -> "return" and so on.
+	Move "Miscellaneous" after the other peer sections.
+	Refill @lisp examples.
+
+2002-12-12  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* doc/guile-pg.texi: Update copyright.
 	Refill; nfc.
 
