@@ -1,6 +1,30 @@
 NEWS for Guile-PG
 
 
+- 0.20 | 2004-06-14
+
+  - Bugfix: configure script uses Guile's prefix
+
+	Previously, the vars $(GUILE_SITE) and $(GUILE_LIBSITE) were
+	given values based on prefix specfied by "configure --prefix".
+	Now, configure uses "guile-config info" and only falls back
+	to the prefix specified if the first method fails.  See README.
+
+  - Bugfix: proc `defs-from-psql' now parses comma-delimited options
+
+	For example, if the column is specified as:
+
+		amount numeric(9,2) not null
+
+	then `defs-from-psql' would return (among other col defs):
+
+		(amount numeric (9 2) "not null")
+
+	Previously, `defs-from-psql' was not able to handle the comma.
+
+  - "make check" supports DEBUG=1 (see README)
+
+
 - 0.19 | 2004-05-10
 
   - configure script checks c2x method
