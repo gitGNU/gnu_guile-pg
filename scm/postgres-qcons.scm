@@ -177,13 +177,15 @@
   (apply simple-format #f s args))
 
 (define (maybe-dq sym)
-  (let ((s (symbol->string sym)))
-    ;; double quote unless table name is included;
-    ;; this is to protect against a column name
-    ;; that happens to be a keyword (e.g., `desc')
-    (if (string-index s #\.)
-        sym
-        (sql-pre (fs "~S" s)))))
+  (if (eq? '* sym)
+      sym
+      (let ((s (symbol->string sym)))
+        ;; double quote unless table name is included;
+        ;; this is to protect against a column name
+        ;; that happens to be a keyword (e.g., `desc')
+        (if (string-index s #\.)
+            sym
+            (sql-pre (fs "~S" s))))))
 
 (define (list-sep-proc sep)
   (lambda (proc ls . more-ls)
@@ -260,6 +262,7 @@
   (cond ((eq? #t tree) (sql-pre "'t'"))
         ((eq? #f tree) (sql-pre "'f'"))
         ((string? tree) (if (--preformatted tree) tree (sql-quote tree)))
+        ((symbol? tree) (maybe-dq tree))
         ((pair? tree) (add-noise! (car tree) (cdr tree)))
         (else tree)))
 
@@ -327,7 +330,8 @@
         x
         (expr x)))
   (commasep (lambda (x)
-              (cond ((symbol? x) (maybe-dq x))
+              (cond ((number? x) x)
+                    ((symbol? x) (maybe-dq x))
                     ((string? x) (sql-pre x)) ; todo: zonk after 2005-12-31
                     ((and (pair? x) (string? (car x)))
                      (list (expr-nostring (cdr x))
