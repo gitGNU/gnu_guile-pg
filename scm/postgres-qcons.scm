@@ -204,6 +204,9 @@
 (define orsep    (list-sep-proc #:OR))
 (define commasep (list-sep-proc ","))
 
+(define (as one two)
+  (list one #:AS two))
+
 ;; Return a tree made by mapping @var{proc} over list @var{ls},
 ;; w/ elements separated by commas.  Optional third arg @var{parens?}
 ;; non-#f includes surrounding parentheses.  The rest of the args
@@ -254,7 +257,7 @@
                     (#f ,(caddr rest))))
              #:END))
       ((::)
-       (list #:CAST (paren (expr (cadr rest)) #:AS (car rest))))
+       (list #:CAST (paren (as (expr (cadr rest)) (car rest)))))
       (else
        (cond ((memq op *infix-operations*)
               (paren ((list-sep-proc op) expr rest)))
@@ -339,8 +342,8 @@
                     ((symbol? x) (maybe-dq x))
                     ((string? x) (sql-pre x)) ; todo: zonk after 2005-12-31
                     ((and (pair? x) (string? (car x)))
-                     (list (expr-nostring (cdr x))
-                           #:AS (sql-pre (fs "~S" (car x)))))
+                     (as (expr-nostring (cdr x))
+                         (sql-pre (fs "~S" (car x)))))
                     ((pair? x) (expr-nostring x))
                     (else (error "bad col spec:" x))))
             cols))
