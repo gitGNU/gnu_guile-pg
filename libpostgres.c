@@ -367,39 +367,39 @@ PG_DEFINE (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
 
 #define MAYBEFALSE(field,exp)                                   \
   ((!opt->field || '\0' == opt->field[0]) ? SCM_BOOL_F : (exp))
-#define PUSH() pdl = scm_cons (tem, pdl)
+#define PUSH() pdl = gh_cons (tem, pdl)
   for (head = opt = PQconndefaults (); opt && opt->keyword; opt++)
     {
       pdl = SCM_EOL;
 
       tem = SCM_MAKINUM (opt->dispsize);
-      tem = scm_cons (KWD (dispsize), tem);
+      tem = gh_cons (KWD (dispsize), tem);
       PUSH ();
 
       tem = MAYBEFALSE (dispchar, SCM_MAKE_CHAR (opt->dispchar[0]));
-      tem = scm_cons (KWD (dispchar), tem);
+      tem = gh_cons (KWD (dispchar), tem);
       PUSH ();
 
       tem = MAYBEFALSE (label, scm_makfrom0str (opt->label));
-      tem = scm_cons (KWD (label), tem);
+      tem = gh_cons (KWD (label), tem);
       PUSH ();
 
       tem = MAYBEFALSE (val, scm_makfrom0str (opt->val));
-      tem = scm_cons (KWD (val), tem);
+      tem = gh_cons (KWD (val), tem);
       PUSH ();
 
       tem = MAYBEFALSE (compiled, scm_makfrom0str (opt->compiled));
-      tem = scm_cons (KWD (compiled), tem);
+      tem = gh_cons (KWD (compiled), tem);
       PUSH ();
 
       tem = MAYBEFALSE (envvar, scm_makfrom0str (opt->envvar));
-      tem = scm_cons (KWD (envvar), tem);
+      tem = gh_cons (KWD (envvar), tem);
       PUSH ();
 
       tem = scm_c_make_keyword (opt->keyword);
       PUSH ();
 
-      rv = scm_cons (pdl, rv);
+      rv = gh_cons (pdl, rv);
     }
 #undef PUSH
 #undef MAYBEFALSE
@@ -1578,7 +1578,7 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
         {
           SCM_ASSERT (SCM_NFALSEP (scm_memq (head, valid_print_option_flags)),
                       head, SCM_ARG1, FUNC_NAME);
-          flags = scm_cons (head, flags);
+          flags = gh_cons (head, flags);
         }
       else if (SCM_CONSP (head))
         {
@@ -1601,7 +1601,7 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
           else
             {
               SCM_ASSERT (SCM_STRINGP (val), val, SCM_ARG1, FUNC_NAME);
-              keys = scm_cons (head, keys);
+              keys = gh_cons (head, keys);
             }
         }
       check = SCM_CDR (check);
@@ -1765,7 +1765,7 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
   if (n)
     {
       rv = scm_makfrom0str (n->relname);
-      rv = scm_cons (rv, SCM_MAKINUM (n->be_pid));
+      rv = gh_cons (rv, SCM_MAKINUM (n->be_pid));
       free (n);
     }
   return rv;
@@ -2023,7 +2023,7 @@ init_module (void)
 
   goodies = SCM_EOL;
 
-#define PUSH(x)  goodies = scm_cons (SYM (x), goodies)
+#define PUSH(x)  goodies = gh_cons (SYM (x), goodies)
 
 #ifdef HAVE_PQPASS
   PUSH (PQPASS);
