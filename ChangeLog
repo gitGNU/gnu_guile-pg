@@ -1,5 +1,22 @@
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm: From module (database postgres-qcons),
+	select also `make-WHERE-tree' and `parse+make-SELECT/tail-tree'.
+	(delete-rows-proc): Use `make-WHERE-tree' if condition not a string.
+	(update-col-proc): Likewise.
+	(select-proc): Use `parse+make-SELECT/tail-tree'
+	if rest clauses do not start w/ a string.
+
+2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (make-ORDER-BY-tree): Double-quote column.
+	(parse+make-SELECT/tail-tree): New proc, exported.
+
+	* doc/guile-pg.twerp (Query Construction):
+	Add @twerpdoc for `parse+make-SELECT/tail-tree'.
+
+2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-table.scm (preformatted): New object property.
 	(sql-pre, ->db-insert-string): Use `preformatted'.
 
