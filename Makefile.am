@@ -41,7 +41,7 @@ noinst_DATA = pre-inst.merged-module-catalog
 pre-inst.merged-module-catalog:
 	if guile-tools | grep -q mkpimmc ; then			\
 	  guile-tools mkpimmc -d $(DEPDIR) $@ "$(srcdir)"	\
-	    -- -d in,lo,o -X '~$$' -X CVS ;			\
+	    -- -d in,lo,o -X '~$$' -X CVS -X doc -X contrib ;	\
 	else echo '()' > $@ ; fi
 
 SUFFIXES = .x .doc
