@@ -28,7 +28,7 @@ qcons-tables.texi: $(top_srcdir)/scm/postgres-qcons.scm
 
 CLEANFILES = guile-pg.info guile-pg.dvi guile-pg_toc.html guile-pg.html
 
-EXTRA_DIST = cov guile-pg.twerp twerp.mk-am-frag
+EXTRA_DIST = cov guile-pg.twerp twerp.mk-am-frag mkinc
 
 dist-hook:
 	if [ -x $(srcdir)/cov ] ; then \
