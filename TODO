@@ -1,6 +1,8 @@
 
 - 0.18
 
+  + Add proc `pgtable-worker' to (database postgres-table)
+
   + Remove variables
       PGRES_EMPTY_QUERY
       PGRES_COMMAND_OK
