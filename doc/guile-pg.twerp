@@ -217,7 +217,12 @@ bindings so the connection will usually be closed soon after the body of the
 @node    Database Connections
 @chapter Procedures for managing connections
 
+All sessions with a PostgreSQL database require a connection to be opened with
+@code{pg-connectdb}.
+
+@twerpdoc (pg-connection?)
 @twerpdoc (pg-connectdb)
+
 @heading Example
 @lisp
 (define (user-count host tcp-port)
