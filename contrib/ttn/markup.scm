@@ -2,22 +2,15 @@
 ;;; This program is provided under the terms of the GNU GPL, version 2.
 ;;; See http://www.fsf.org/copyleft/gpl.html for details.
 
-;;; version: 3
-
 (define-module (markup)
+  :use-module ((srfi srfi-13) :select (string-join))
+  :use-module (database postgres)
   :use-module (database postgres-table)
-  :use-module (ttn display-table)
-  :use-module (ice-9 pretty-print))
+  :autoload (ttn display-table) (display-table)
+  :autoload (ice-9 pretty-print) (pretty-print)
+  :autoload (ice-9 common-list) (pick-mappings))
 
-;; database
-
-(define *db* (getenv "USER"))
-
-;; table defs
-
-(define *client-defs*
-  '((project     text)
-    (description int4)))                ; item count
+;;; version: 4
 
 ;; display utilities
 
@@ -28,61 +21,65 @@
 
 (define (>>table heading manager)
   (write-line heading)
-  (display-table (tuples-result->table ((manager 'select) "*"))))
-
-;; stylized selection and result transform
-
-(define (get-rows manager order as . args)
-  ((manager 'tuples-result->object-alist)
-   ((manager 'select) "*"
-    (where-clausifier (apply format #f as args))
-    (if order (format #f "ORDER BY ~A" order) ""))))
-
-(define (get-one-row manager as . args)
-  (map (lambda (col)
-         (cons (car col) (cadr col)))
-       (apply get-rows manager #f as args)))
+  (display-table (tuples-result->table ((manager 'select) "*"))
+                 'fat-h-only))
 
 ;; markup table interface: extend pgtable-manager
 
-(define (markup-table-manager db name)
-  (let ((m (pgtable-manager
-            db name
-            '((raw   text)
-              (mtype text)
-              (mdata text)
-              (back  text)              ; client back pointer
-              (seq   int4)))))          ; client sequence number
+(define (markup-table-manager db name key-types)
+  (let* ((key-names (map (lambda (n)
+                           (string->symbol (format #f "k~A" n)))
+                         (iota (length key-types))))
+         (key-match (string-join
+                     (map (lambda (name)
+                            (format #f "~A = '~A'" name "~A"))
+                          key-names)
+                     " AND "))
+         (m (pgtable-manager
+             db name
+             ;;
+             ;; table defs
+             ;;
+             `((raw   text)
+               (mtype text)
+               (mdata text)
+               (seq   int4)             ; client sequence number
+               ;; keys
+               ,@(map list key-names key-types)))))
 
-    (define (add ls back . canonicalize)
+    (define (add ls keys . canonicalize)
       (let loop ((ls ls) (count 0))
-        (if (null? ls)
-            count                       ; retval
+        (or (null? ls)
             (let ((item (car ls)))
-              (apply (m 'insert-col-values) '(back seq raw mtype mdata)
-                     back count
-                     (cond ((string? item) (list item #f #f))
-                           ((null? canonicalize) item)
-                           (else ((car canonicalize) item))))
+              (apply (m 'insert-col-values)
+                     `(seq ,@key-names raw mtype mdata)
+                     count
+                     (append keys
+                             (cond ((string? item) (list item #f #f))
+                                   ((null? canonicalize) item)
+                                   (else ((car canonicalize) item)))))
               (loop (cdr ls) (1+ count))))))
 
-    (define (del back)
-      ((m 'delete-rows) (format #f "back = '~A'" back)))
+    (define (del keys)
+      ((m 'delete-rows) (apply format #f key-match keys)))
 
-    (define (upd ls back . canonicalize)
-      (del back)                        ; ugh
-      (add ls back canonicalize))
+    (define (upd ls keys . canonicalize)
+      (del keys)                        ; ugh
+      (add ls keys canonicalize))
 
-    (define (->tree back max-seq render)
-      (let ((alist (get-rows m "seq" "back = '~A' AND seq < ~A"
-                             back max-seq)))
-        (map (lambda (raw mtype mdata)
-               (if (string=? "" mtype)
-                   raw
-                   (render raw (string->symbol mtype) mdata)))
-             (assq-ref alist 'raw)
-             (assq-ref alist 'mtype)
-             (assq-ref alist 'mdata))))
+    (define (->tree keys render)
+      (let ((res ((m 'select) "*"
+                  (where-clausifier (apply format #f key-match keys))
+                  "ORDER BY seq")))
+        (and (not (= 0 (pg-ntuples res)))
+             (let ((alist ((m 'tuples-result->object-alist) res)))
+               (map (lambda (raw mtype mdata)
+                      (if (string=? "" mtype)
+                          raw
+                          (render raw (string->symbol mtype) mdata)))
+                    (assq-ref alist 'raw)
+                    (assq-ref alist 'mtype)
+                    (assq-ref alist 'mdata))))))
 
     (lambda (choice)                    ; retval
       (case choice
@@ -94,8 +91,29 @@
 
 ;; play!
 
-(let ((m (markup-table-manager *db* "markup_play"))
-      (c (pgtable-manager *db* "client_play" *client-defs*)))
+(define *db* (getenv "USER"))
+
+(define *direct-fields* '((name    text)
+                          (gnu     bool  "DEFAULT 'f'")
+                          (license text)))
+
+(define *markup-fields* '(description
+                          location
+                          maintainer
+                          status
+                          mailinglist
+                          authors
+                          requires))
+
+(let ((m (markup-table-manager *db* "markup_play" '(text text)))
+      (c (pgtable-manager *db* "client_play"
+                          ;;
+                          ;; table defs
+                          ;;
+                          `(,@ *direct-fields*
+                            ,@ (map (lambda (field)
+                                      (list field 'bool))
+                                    *markup-fields*)))))
 
   (define (canonicalize-markup form)
     ;; Take one of:
@@ -115,31 +133,54 @@
                ((email) caddr))
              form))))
 
-  (define (DESC: x) (format #f "description:~A" x))
-
   (define (add-project ext)             ; external representation
-    (let ((project (car (assq-ref ext 'name))))
-      ((c 'insert-values)
-       project
-       ((m 'add) (assq-ref ext 'description)
-        (DESC: project) canonicalize-markup))))
+    (let ((name (car (assq-ref ext 'name)))
+          (license (cond ((assq-ref ext 'license) => car) (else #f))))
+      (apply (c 'insert-col-values)
+             `(name license ,@*markup-fields*)
+             name license
+             (map (lambda (field)
+                    (cond ((assq-ref ext field)
+                           => (lambda (data)
+                                ((m 'add) data
+                                 (list (symbol->string field) name)
+                                 canonicalize-markup)))
+                          (else #f)))
+                  *markup-fields*))))
 
-  (define (render-markup raw mtype mdata)
+  (define (find-proj name)
+    (let ((alist (car ((c 'tuples-result->alists)
+                       ((c 'select) "*" (where-clausifier
+                                         (format #f "name = '~A'" name)))))))
+      (lambda (key) (assq-ref alist key))))
+
+  (define (htmlize-markup raw mtype mdata)
     (case mtype
       ((url) (list "<A HREF=\"" mdata "\">" raw "</A>"))
       ((email) (list "<A HREF=\"mailto:" mdata "\">" raw "</A>"))
       (else (error (format #f "bad markup type: ~A" mtype)))))
 
-  (define (>>project project)
-    (let* ((alist (get-one-row c "project = '~A'" project))
-           (description (assq-ref alist 'description)))
-      (format #t "project:     ~A\ndescription: " project)
-      (display-tree ((m '->tree) (DESC: project) description render-markup)))
+  (define (>>html name)
+    (format #t "spew: (~A) -- " name)
+    (let ((get (find-proj name)))
+      (display-tree
+       (let* ((-tr (lambda x (list "<TR>" x "</TR>")))
+              (-td (lambda x (list "<TD>" x "</TD>")))
+              (-pair (lambda (x y) (-tr (-td x) (-td y)))))
+         (list (-tr name)
+               (pick-mappings (lambda (field)
+                                (and (get field)
+                                     (let ((sf (symbol->string field)))
+                                       (-pair sf ((m '->tree) (list sf name)
+                                                  htmlize-markup)))))
+                              *markup-fields*)))))
     (newline))
 
-  (define (delete-project project)
-    ((m 'del) (DESC: project))
-    ((c 'delete-rows) (format #f "project = '~A'" project)))
+  (define (delete-project name)
+    (for-each (lambda (field)
+                ((m 'del) (list (symbol->string field) name)))
+              *markup-fields*)
+    ((c 'delete-rows) (format #f "name = '~A'" name)))
 
   (define (externalize-markup raw mtype mdata)
     (case mtype
@@ -149,14 +190,18 @@
       ((email) (list mtype raw mdata))
       (else (error (format #f "unexpected mtype: ~A" mtype)))))
 
-  (define (dump-project project)
-    (let* ((alist (get-one-row c "project = '~A'" project))
-           (description ((m '->tree) (DESC: project)
-                         (assq-ref alist 'description)
-                         externalize-markup))
-           (form (list (list 'name project)
-                       (cons 'description description))))
-      (pretty-print form)))
+  (define (dump-project name)
+    (let* ((get (find-proj name))
+           (name (get 'name)))
+      (pretty-print
+       `((name ,name)
+         ,@(pick-mappings (lambda (field)
+                            (and (get field)
+                                 (cons field
+                                       ((m '->tree)
+                                        (list (symbol->string field) name)
+                                        externalize-markup))))
+                          *markup-fields*)))))
 
   (define *samples*
     (list
@@ -172,7 +217,8 @@
        (description
         "An interface to PostgreSQL from guile."))
      '((name "snd")
-       (description
+       (description "Snd is a sound editor.")
+       (location
         (url "http://www-ccrma.stanford.edu/software/snd/")
         " is where you can find Snd."))
      '((name "hobbit")
@@ -182,7 +228,7 @@
 
   (define (*names* ls) (map (lambda (x) (car (assq-ref x 'name))) ls))
 
-  ;;((m 'drop)) ((c 'drop))
+  ((m 'drop)) ((c 'drop))
 
   (write-line ((m 'create)))
   (write-line ((c 'create)))
@@ -192,7 +238,7 @@
   (>>table "markup" m)
   (>>table "client" c)
 
-  (for-each >>project (*names* *samples*))
+  (for-each >>html (*names* *samples*))
 
   (write-line (delete-project (list-ref (*names* *samples*) 0)))
   (write-line (delete-project (list-ref (*names* *samples*) 1)))
