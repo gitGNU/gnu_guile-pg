@@ -6,6 +6,7 @@
 # - libtool 1.5.6 (1.1220.2.94 2004/04/10 16:27:27)
 # - autoconf 2.59
 # - automake 1.7.6
+# - guile 1.4.1.98
 
 #############################################################################
 # Autotools
@@ -33,7 +34,9 @@ done
 ######################################################################
 # Header: <guile/modsup.h>
 
-ln -sf `guile-config info includedir`/guile/modsup.h
+fresh_modsup_h="`guile-config info includedir`/guile/modsup.h`"
+test -f $fresh_modsup_h || fresh_modsup_h="modsup.h.snap"
+ln -sf $fresh_modsup_h modsup.h
 
 ######################################################################
 # Self knowledge.
