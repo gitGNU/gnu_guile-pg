@@ -212,7 +212,7 @@
                (close-port lo-port)
                (eq? 1 location-after-read)))))))
 
-(load-from-path "testing.scm")
+(load-from-path "@srcdir@/testing.scm")
 (set! verbose #t)
 (test-init "lo-tests" 13)
 (test "@VERSION@" pg-guile-pg-version)

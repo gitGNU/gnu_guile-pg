@@ -326,7 +326,7 @@
                        (string=? (pg-getvalue res 0 0) "2")
                        (string=? (pg-getvalue res 0 1) "Column 2"))))))))
 
-(load-from-path "testing.scm")
+(load-from-path "@srcdir@/testing.scm")
 (set! verbose #t)
 (test-init "basic-tests" 32)
 (test "@VERSION@" pg-guile-pg-version)
