@@ -4,6 +4,8 @@
 	in the port's read-buffer between the read_pos and read_end.
 
 	* guile-pg-lo-tests.scm.in (test:lo-tell): New proc, run by `test'.
+	(test:make-connection): Use `->bool' instead of `if'.
+	(test:lo-open-read): Also test `pg-lo-get-connection'.
 
 2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
