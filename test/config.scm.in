@@ -24,7 +24,6 @@
 
 ;;; Code:
 
-(define *VERSION* "@VERSION@")
 (define *srcdir* "@srcdir@")
 
 ;;; config.scm ends here
