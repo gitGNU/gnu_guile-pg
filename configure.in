@@ -23,6 +23,8 @@ AC_INIT(libpostgres.c)
 AM_INIT_AUTOMAKE(guile-pg, 0.12)
 AM_CONFIG_HEADER(config.h)
 
+AM_MAINTAINER_MODE
+
 AM_PROG_LIBTOOL
 
 AC_PROG_CC
@@ -144,6 +146,10 @@ AC_CONFIG_FILES([
   test/Makefile
   test/guile-pg-basic-tests.scm
   test/guile-pg-lo-tests.scm
+])
+
+AC_CONFIG_COMMANDS([twerp-prep],[
+  guile-tools twerp2texi --prep doc/Makefile guile-pg
 ])
 
 AC_OUTPUT
