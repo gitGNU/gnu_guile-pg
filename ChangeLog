@@ -1,5 +1,9 @@
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres_lo.c: Use ~S in `scm_misc_error' format string.
+
+2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres_lo.c (lob_lo_unlink):
 	Fix bug: Return #f only on error.
 
