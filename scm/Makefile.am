@@ -24,7 +24,7 @@
 AUTOMAKE_OPTIONS = foreign
 
 # These should be installed and distributed.
-guile_postgres_sources =
+guile_postgres_sources = postgres-types.scm
 
 # These should be installed, but not distributed.
 guile_postgres_generated = postgres.scm
