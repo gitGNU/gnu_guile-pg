@@ -1,5 +1,15 @@
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm: From module (database postgres-qcons),
+	select also `make-SELECT/FROM/OUT-tree' and `sql-command<-trees'.
+	(compile-outspec): No longer use `symbol->qstring'.
+	Also, no longer do "AS" or comma-separation formatting.
+	(select-proc): No longer do "SELECT...FROM" formatting.
+	Instead, use `make-SELECT/FROM/OUT-tree' and `sql-command<-trees'.
+	(pgtable-manager): Document expiration date of `select' string support.
+
+2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm (make-SELECT/OUT-tree):
 	Handle string expressions.
 
