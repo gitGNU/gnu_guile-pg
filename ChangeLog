@@ -1,5 +1,9 @@
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/guile-pg.twerp (Legalities): Update.
+
+2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c (goodies): New file-static var.
 	(pg_guile_pg_loaded): Return `goodies'.
 	(pg_get_pass) [HAVE_PQPASS]: Convert from conditional definition
