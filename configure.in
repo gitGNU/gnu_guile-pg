@@ -138,6 +138,11 @@ fi
 CFLAGS="$saved_CFLAGS"
 LDFLAGS="$saved_LDFLAGS"
 
+AC_CHECK_PROGS([DROPDB], [dropdb destroydb], [no],)
+if test "$DROPDB" = no ; then
+   AC_MSG_WARN([found neither dropdb nor destroydb; "make check" will fail])
+fi
+
 ##----------------------------------------------------------------------------
 ## Etc
 
@@ -164,6 +169,7 @@ AC_CONFIG_FILES([
   scm/postgres.scm
   test/Makefile
   test/config.scm
+  test/drop.sh
   wily-guile
 ])
 
@@ -187,6 +193,7 @@ AC_CONFIG_COMMANDS([module-catalog-prep],[
 
 AC_CONFIG_COMMANDS([chmod-plus-x],[
   chmod +x ./wily-guile
+  chmod +x test/drop.sh
 ])
 
 AC_OUTPUT
