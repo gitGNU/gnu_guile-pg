@@ -350,7 +350,7 @@
                            #t
                            #f)))))))
 
-(load "testing.scm")
+(load-from-path "testing.scm")
 (set! verbose #t)
 (test-init "basic-tests" 30)
 (test "@VERSION@" pg-guile-pg-version)

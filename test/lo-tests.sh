@@ -6,4 +6,4 @@ createdb guile_pg_test || {
    exit 1
 }
 export PGDATABASE=guile_pg_test
-../guile-pg -s $srcdir/guile-pg-lo-tests.scm
+GUILE_LOAD_PATH=$srcdir ../guile-pg -s guile-pg-lo-tests.scm

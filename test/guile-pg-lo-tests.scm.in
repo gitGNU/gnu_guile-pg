@@ -184,7 +184,7 @@
                  (close-port lo-port)
                  data)))))
 
-(load "testing.scm")
+(load-from-path "testing.scm")
 (set! verbose #t)
 (test-init "lo-tests" 11)
 (test "@VERSION@" pg-guile-pg-version)
