@@ -156,11 +156,6 @@
     that's what we should do. Jim Blandy says we should also look in 'obvious
     places' for the headers and libraries.
 
-  - Packaging
-
-    - guile-pg.spec for Red Hat RPM
-
-    - debian/ et al for Debian
 
 
 	Local Variables:
