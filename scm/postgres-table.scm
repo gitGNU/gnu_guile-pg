@@ -25,7 +25,7 @@
 ;;   (sql-pre string)
 ;;   (tuples-result->table res)
 ;;   (where-clausifier string)
-;;   (pgtable-manager db-name table-name defs)
+;;   (pgtable-manager db-spec table-name defs)
 ;;   (def:col-name def)
 ;;   (def:type-name def)
 ;;   (def:type-options def)
@@ -104,7 +104,13 @@
 ;;; connection
 
 (define (pgdb-connection db)
-  (pg-connectdb (fmt "dbname=~A" db)))
+  (cond ((pg-connection? db) db)
+        ((string? db) (pg-connectdb
+                       (fmt (if (or (string=? "" db) (string-index db #\=))
+                                "~A"
+                                "dbname=~A")
+                            db)))
+        (else (error (fmt "bad db-spec: ~A" db)))))
 
 ;; column definition
 ;; old / deprecated: (COL-NAME . TYPE-NAME)
@@ -319,8 +325,10 @@
 ;; Extract data from the tuples result RES, and return an annotated array.
 ;; The array's values correspond to the data from RES, and has dimensions
 ;; `pg-ntuples' by `pg-nfields'.  Annotations are object properties:
-;;         names   -- vector of field names
-;;         widths  -- vector of maximum field widths
+;; @example
+;;     names   -- vector of field names
+;;     widths  -- vector of maximum field widths
+;; @end example
 ;; When either number of tuples or number of fields is zero, they are taken
 ;; as one, instead, which ensures that the returned array has consistent
 ;; rank.  (This might not be such a hot idea, long-run; still evaluating.)
@@ -408,11 +416,17 @@
 
 ;;; dispatch
 
-;; Return a closure that manages a table specified by DB-NAME TABLE-NAME DEFS.
-;; DB-NAME and TABLE-NAME are strings.  DEFS is an alist of column definitions
-;; of the form (NAME TYPE [OPTION ...]), with NAME and TYPE symbols and each
-;; OPTION a string.  The old format w/o options: `(NAME . TYPE)' is recognized
-;; also, but deprecated; support for it will go away in a future release.
+;; Return a closure that manages a table specified by DB-SPEC TABLE-NAME DEFS.
+;;
+;; DB-SPEC can either be a string simply naming the database to use, a string
+;; comprised of space-separated @code{var=val} pairs, an empty string, or an
+;; already existing connection.  @ref{Database Connections}.  TABLE-NAME is a
+;; string naming the table to be managed.
+;;
+;; DEFS is an alist of column definitions of the form (NAME TYPE [OPTION
+;; ...]), with NAME and TYPE symbols and each OPTION a string.  The old format
+;; w/o options: `(NAME . TYPE)' is recognized also, but deprecated; support
+;; for it will go away in a future release.
 ;;
 ;; The closure accepts a single arg CHOICE (a symbol) and returns either the
 ;; variable or procedure associated with CHOICE.  When CHOICE is `help' or
@@ -459,9 +473,9 @@
 ;; The starred (*) procedures return whatever `pg-exec' returns for that type
 ;; of procedure.  See guile-pg info page for details.
 ;;
-(define (pgtable-manager db-name table-name defs)
+(define (pgtable-manager db-spec table-name defs)
   (validate-defs defs)
-  (let* ((pgdb (pgdb-connection db-name))
+  (let* ((pgdb (pgdb-connection db-spec))
          (drop (drop-proc pgdb table-name defs))
          (create (create-proc pgdb table-name defs))
          (insert-values (insert-values-proc pgdb table-name defs))
