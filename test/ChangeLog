@@ -1,5 +1,10 @@
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* guile-pg-lo-tests.scm: Use `define-macro'.
+	* guile-pg-abstraction-scm-tests.scm: Likewise.
+
+2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* guile-pg-abstraction-scm-tests.scm:
 	No longer use strings for first arg to `select'.
 
