@@ -1,5 +1,7 @@
 2004-06-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c (pg_guile_pg_version): Delete PG_DEFINE func.
+
 	* scm/postgres.scm.in (pg-guile-pg-module-version): Delete proc.
 	(pg-guile-pg-module-config-stamp): Likewise.
 
