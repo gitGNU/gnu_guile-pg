@@ -32,7 +32,7 @@ pkglibversdir = $(pkglibdir)/$(VERSION)
 pkglibvers_LTLIBRARIES = libpostgres.la
 libpostgres_la_SOURCES = libpostgres.c libpostgres_lo.c libpostgres.h \
                          libpostgres.x libpostgres_lo.x
-libpostgres_la_LDFLAGS = -export-dynamic -version-info 2:0:0 \
+libpostgres_la_LDFLAGS = -export-dynamic -version-info 3:0:1 \
                          @LDFLAGS@ @PQ_LDFLAGS@
 
 SUFFIXES = .x .doc
