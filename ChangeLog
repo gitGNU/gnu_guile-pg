@@ -1,5 +1,27 @@
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-gxrepl.scm: From module (database
+	postgres-qcons), no longer select `make-WHERE-tree'.
+	(fix, fsel): Rewrite these comma-commands.
+
+2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (maybe-dq): Never double-quote `*'.
+	(expr): Pass symbols through `maybe-dq'.
+	(make-SELECT/OUT-tree): Accept numbers.
+
+2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* Makefile.am (pre-inst.merged-module-catalog):
+	Ignore "doc" and "contrib".
+
+2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm: No longer call `qcons-declare!' at load-time.
+	(*infix-operations*): Add symbols formerly added at load-time.
+
+2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/mkinc: New file.
 
 	* doc/Makefile.am (guile_pg_TEXINFOS): Add qcons-tables.texi.
