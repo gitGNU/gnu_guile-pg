@@ -140,10 +140,9 @@
                ((email) caddr))
              form))))
 
-  (define (add-project ext)             ; external representation
-    (let* ((:: (alref-proc ext))
-           (name (car (:: 'name)))
-           (license (cond ((:: 'license) => car) (else #f))))
+  (define (add-project ::)
+    (let ((name (car (:: 'name)))
+          (license (cond ((:: 'license) => car) (else #f))))
       (apply (c #:insert-col-values)
              `(name license ,@*markup-fields*)
              name license
@@ -242,7 +241,7 @@
   (wln ((m #:create)))
   (wln ((c #:create)))
 
-  (for-each wln (map add-project *samples*))
+  (for-each wln (map add-project (map alref-proc *samples*)))
 
   (>>table "markup" m)
   (>>table "client" c)
