@@ -1,5 +1,16 @@
 2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/guile-pg.twerp: Use "Guile-PG" everywhere, sans @code{}.
+	(er): Add this @defcodeindex.
+	(Top): Add to menu "Error Index".
+	(Database Connections): Add @erindex entries and blurbs.
+	(Writing/Reading Data): Likewise.
+	(Large Objects): Likewise.
+	(Miscellaneous): Likewise.
+	(Error Index): New node.
+
+2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c (pg_encoding_to_char): Add extern func decl.
 
 2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
