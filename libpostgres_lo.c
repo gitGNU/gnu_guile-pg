@@ -48,7 +48,7 @@
 typedef struct lob_stream_tag {
    SCM conn; /* The connection on which the LOB fd is open */
    Oid oid;  /* The Oid of the LOB */
-   int fd;   /* The file-descriptor for an open large object */
+   int alod; /* A Large-Object Descriptor */
 } lob_stream;
 
 
@@ -77,7 +77,7 @@ typedef struct lob_stream_tag {
 
 long lob_ptype;
 
-static SCM lob_mklobport (SCM conn, Oid oid, int fd,
+static SCM lob_mklobport (SCM conn, Oid oid, int alod,
                           long modes, const char *caller);
 
 PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
@@ -97,7 +97,7 @@ PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
 #define FUNC_NAME s_lob_lo_creat
   long mode_bits;
   PGconn *dbconn;
-  int fd = 0;
+  int alod = 0;
   Oid oid;
   int pg_modes = 0;
 
@@ -119,20 +119,20 @@ PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
                     scm_listify (modes, SCM_UNDEFINED));
   SCM_DEFER_INTS;
   if ((oid = lo_creat (dbconn, INV_READ | INV_WRITE)) != 0)
-    fd = lo_open (dbconn, oid, pg_modes);
+    alod = lo_open (dbconn, oid, pg_modes);
   SCM_ALLOW_INTS;
 
   if (oid <= 0)
     return SCM_BOOL_F;
 
-  if (fd < 0)
+  if (alod < 0)
     {
       SCM_DEFER_INTS;
       (void) lo_unlink (dbconn, oid);
       SCM_ALLOW_INTS;
       return SCM_BOOL_F;
     }
-  return lob_mklobport (conn, oid, fd, mode_bits, FUNC_NAME);
+  return lob_mklobport (conn, oid, alod, mode_bits, FUNC_NAME);
 #undef FUNC_NAME
 }
 
@@ -156,7 +156,7 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
 #define FUNC_NAME s_lob_lo_open
   long mode_bits;
   PGconn *dbconn;
-  int fd;
+  int alod;
   Oid pg_oid;
   int pg_modes = 0;
 
@@ -179,29 +179,29 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
                     scm_listify (modes, SCM_UNDEFINED));
   pg_oid = SCM_INUM (oid);
   SCM_DEFER_INTS;
-  fd = lo_open (dbconn, pg_oid, pg_modes);
+  alod = lo_open (dbconn, pg_oid, pg_modes);
   SCM_ALLOW_INTS;
 
-  if (fd < 0)
+  if (alod < 0)
     return SCM_BOOL_F;
 
   if (strchr (ROZT (modes), 'a'))
     {
       SCM_DEFER_INTS;
-      if (lo_lseek (dbconn, fd, 0, SEEK_END) < 0)
+      if (lo_lseek (dbconn, alod, 0, SEEK_END) < 0)
         {
-          (void) lo_close (dbconn, fd);
+          (void) lo_close (dbconn, alod);
           SCM_ALLOW_INTS;
           return SCM_BOOL_F;
         }
       SCM_ALLOW_INTS;
     }
-  return lob_mklobport (conn, pg_oid, fd, mode_bits, FUNC_NAME);
+  return lob_mklobport (conn, pg_oid, alod, mode_bits, FUNC_NAME);
 #undef FUNC_NAME
 }
 
 static SCM
-lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller)
+lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *caller)
 {
   SCM port;
   lob_stream *lobp;
@@ -215,7 +215,7 @@ lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller)
   SCM_DEFER_INTS;
   lobp->conn = conn;
   lobp->oid = oid;
-  lobp->fd = fd;
+  lobp->alod = alod;
   pt = scm_add_to_port_table (port);
   SCM_SETPTAB_ENTRY (port, pt);
   SCM_SETCAR (port, lob_ptype | modes);
@@ -359,7 +359,7 @@ lob_flush (SCM port)
                remaining, ptr, remaining);
 #endif
       SCM_DEFER_INTS;
-      count = lo_write (conn, lobp->fd, ptr, remaining);
+      count = lo_write (conn, lobp->alod, ptr, remaining);
       SCM_ALLOW_INTS;
 #ifdef DEBUG_TRACE_LO_WRITE
       fprintf (stderr, "returned %d\n", count);
@@ -391,7 +391,7 @@ lob_flush (SCM port)
               char buf[11];
 
               write (2, msg, strlen (msg));
-              sprintf (buf, "%d\n", lobp->fd);
+              sprintf (buf, "%d\n", lobp->alod);
               write (2, buf, strlen (buf));
 
               count = remaining;
@@ -417,7 +417,7 @@ lob_end_input (SCM port, int offset)
     {
       pt->read_pos = pt->read_end;
       SCM_DEFER_INTS;
-      ret = lo_lseek (conn, lobp->fd, -offset, SEEK_CUR);
+      ret = lo_lseek (conn, lobp->alod, -offset, SEEK_CUR);
       SCM_ALLOW_INTS;
       if (ret == -1)
         scm_misc_error ("lob_end_input", "Error seeking on lo port ~S",
@@ -475,7 +475,7 @@ lob_fill_input (SCM port)
     lob_flush (port);
 
   SCM_DEFER_INTS;
-  ret = lo_read (conn, lobp->fd, pt->read_buf, pt->read_buf_size);
+  ret = lo_read (conn, lobp->alod, pt->read_buf, pt->read_buf_size);
   SCM_ALLOW_INTS;
 #ifdef DEBUG_LO_READ
   fprintf (stderr, "lob_fill_input: lo_read (%d) returned %d.\n",
@@ -542,7 +542,7 @@ lob_seek (SCM port, off_t offset, int whence)
   off_t ret;
 
   SCM_DEFER_INTS;
-  ret = lo_lseek (conn, lobp->fd, offset, whence);
+  ret = lo_lseek (conn, lobp->alod, offset, whence);
   SCM_ALLOW_INTS;
   if (ret == -1)
     scm_misc_error ("lob_seek", "Error (~S) seeking on lo port ~S",
@@ -621,7 +621,7 @@ lob_close (SCM port)
 
   lob_flush (port);
   SCM_DEFER_INTS;
-  ret = lo_close (dbconn, lobp->fd);
+  ret = lo_close (dbconn, lobp->alod);
   SCM_ALLOW_INTS;
 
   if (pt->read_buf != &pt->shortbuf)
@@ -741,7 +741,7 @@ lob_printpt (SCM exp, SCM port, scm_print_state *pstate)
       char *portstr = PQport (sec->dbconn);
       char *optionsstr = PQoptions (sec->dbconn);
 
-      scm_intprint (lobp->fd, 10, port); scm_puts (":", port);
+      scm_intprint (lobp->alod, 10, port); scm_puts (":", port);
       scm_intprint (lobp->oid, 10, port); scm_puts (":", port);
       scm_puts ("#<PG-CONN:", port);
       scm_intprint (sec->count, 10, port); scm_putc (':', port);
