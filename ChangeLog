@@ -1,5 +1,14 @@
 2004-07-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* aclocal-suffix: New file.
+
+	* autogen.sh: Bum commands to produce aclocal.m4.
+
+	* configure.in (AC_LIBTOOL_TAGS): New macro call.
+	(AC_PROG_LIBTOOL): Use instead of AM_PROG_LIBTOOL.
+
+2004-07-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* acinclude.m4 (AC_GUILE_PG_CONFIG_SCRIPT): New AC_DEFUN.
 
 	* configure.in (test/drop.sh): Use AC_GUILE_PG_CONFIG_SCRIPT.
