@@ -1405,6 +1405,38 @@ humble plans for this module...
 
 @twerpdoc (gxrepl)
 
+Most comma commands are relatively self-explantory, with guidance from
+@code{,help}.  The rest of this chapter delves into some of the more
+arcane commands.
+
+Primarily, the @dfn{fixed-part select} is an exploratory type of interaction
+where you can @dfn{fix} certain parts of a normal @code{select} query so that
+you can concentrate on varying the rest.
+
+For example:
+
+@example
+,fix froms icbmcoords
+Use the table `icbmcoords' (with columns `one', `two' and `importance').
+
+,fsel one two #:where (< 9 importance)
+Select some tuples.
+
+,fix outs ("latitude" . one) ("longitude" . two)
+Easy to read format.
+
+,fix where (< 9 importance) (> 3 importance)
+We are scatterbrained, which helps ameliorate the evilness.
+@end example
+
+For comparison, here is the last example again, recast into SQL:
+
+@example
+SELECT one AS "latitude", two AS "longitude"
+  FROM icbmcoords
+ WHERE ((9 < importance) AND (3 > importance));
+@end example
+
 @c ---------------------------------------------------------------------------
 @c ---------------------------------------------------------------------------
 @c + @node       Concept Index
