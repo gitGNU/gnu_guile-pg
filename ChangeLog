@@ -1,5 +1,13 @@
 2004-07-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/.make-automake-frags (prep_dummy_texi): New function.
+	(main): Likewise. Call it at top-level.
+
+	* autogen.sh: Move "@setfilename" automake prep into
+	doc/.make-automake-frags; move automake invocation afterwards.
+
+2004-07-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* acinclude.m4 (PQ_FLAGS): Use AC_HELP_STRING.
 
 2004-07-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
