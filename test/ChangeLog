@@ -1,5 +1,9 @@
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* Makefile.am (TESTS_ENVIRONMENT): Add PGDATABASE var. Append $(SHELL).
+
+2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* create.sh.in: New file.
 
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
