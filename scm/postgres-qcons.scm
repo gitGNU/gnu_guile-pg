@@ -349,18 +349,63 @@
                     (else (error "bad col spec:" x))))
             cols))
 
-;; Return a @dfn{from clause} tree for @var{froms} (a list).
-;; Each element of @var{froms} is either TABLE-NAME, or a pair
-;; @code{(ALIAS . TABLE-NAME)} (both symbols).
+;; Return a @dfn{from clause} tree for @var{items} (a list).
+;; Each element of @var{items} is either TABLE-NAME, or a pair
+;; @code{(ALIAS . TABLE-NAME)} (both symbols), or a @dfn{join clause}
+;; having the form @code{(JTYPE JCONDITION LEFT-FROM RIGHT-FROM)}.
 ;;
-(define (make-FROM-tree froms)
-  (list #:FROM
-        (commasep (lambda (x)
-                    (cond ((symbol? x) (maybe-dq x))
-                          ((and (pair? x) (not (pair? (cdr x))))
-                           (as (maybe-dq (cdr x)) (maybe-dq (car x))))
-                          (else (error "bad from spec:" x))))
-                  froms)))
+;; JTYPE is a keyword, one of #:join, #:left-join, #:right-join, #:full-join.
+;;
+;; If JTYPE is #:join, JCONDITION must be omitted.  Otherwise, it is one of:
+;;
+;; @table @code
+;; @item #:natural
+;; @item (#:using COL1 COL2...)
+;; @item (#:on PEXP)
+;; @end table
+;;
+;; LEFT-FROM and RIGHT-FROM are each a single from-item to be
+;; handled recursively.
+;;
+(define (make-FROM-tree items)
+  (define (one x)
+    (cond ((symbol? x) (maybe-dq x))
+          ((and (pair? x) (keyword? (car x))) (hairy x))
+          ((and (pair? x) (symbol? (cdr x)))
+           (as (maybe-dq (cdr x)) (maybe-dq (car x))))
+          (else (error "bad from spec:" x))))
+  (define (hairy x)
+    (let ((rest (cdr x)))
+      (define (parse+make-join-tree type)
+        (define (bad!)
+          (error "bad join spec:" rest))
+        (or (pair? rest) (bad!))
+        (let ((nat #f)
+              (jcond (car rest)))
+          (cond ((not jcond))
+                ((and (keyword? jcond) (eq? #:natural jcond))
+                 (set! nat #:NATURAL)
+                 (set! jcond #f))
+                ((pair? jcond)
+                 (or (pair? (cdr jcond)) (bad!))
+                 (set! jcond
+                       (case (car jcond)
+                         ((#:using)
+                          (cons #:USING (paren (commasep one (cdr jcond)))))
+                         ((#:on)
+                          (list #:ON (expr (cadr jcond))))
+                         (else (bad!)))))
+                (else (bad!)))
+          (set! rest (cdr rest))
+          (paren (one (car rest)) (or nat '()) type #:JOIN
+                 (one (cadr rest)) (or jcond '()))))
+      (case (car x)
+        ((#:join) (set! rest (cons #f rest)) (parse+make-join-tree '()))
+        ((#:left-join)  (parse+make-join-tree #:LEFT))
+        ((#:right-join) (parse+make-join-tree #:RIGHT))
+        ((#:full-join)  (parse+make-join-tree #:FULL))
+        (else (error "unrecognized:" (car x))))))
+  (list #:FROM (commasep one items)))
 
 ;; Return a @dfn{select/from/col combination clause} tree for
 ;; @var{froms} and @var{cols} (both lists).  In addition to the
