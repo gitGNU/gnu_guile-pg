@@ -1,7 +1,7 @@
 NEWS for Guile-PG
 
 
-- 0.26 | NOT YET RELEASED
+- 0.26 | 2005-02-24
 
   - Expiration date set for opaque string support
 
