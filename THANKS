@@ -16,3 +16,7 @@ Thanks go to these people for their help in improving guile-pg.
 
 - Russ McManus
   - wrote `sybase_glue' which was used as a framework for guile-pg
+
+- Greg Troxel
+  - portability bug reports
+  - abstraction (interface) design hints
