@@ -1,5 +1,12 @@
 2003-01-15  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* doc/guile-pg.twerp (Column Definitions): New node/chapter.
+	(Result Transforms): New node/chapter.
+	(Single-Table Abstraction): Move some things to new nodes.
+	(Introspection): Add `@twerpdoc (infer-defs)'.
+
+2003-01-15  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* scm/postgres-meta.scm: Use module (database postgres-resx).
 	(table-fields-info): First arg now a conn object.
 	(OLD-fields-as-scheme-defs, col-alist->alist-tuples): Delete.
