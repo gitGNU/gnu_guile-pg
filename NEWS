@@ -1,7 +1,7 @@
 NEWS for Guile-PG
 
 
-- version 0.12 [[ NOT YET RELEASED ]]
+- version 0.12 released 2002-12-21
 
   - PATH/configure where PATH != "./" supported
 
@@ -12,7 +12,8 @@ NEWS for Guile-PG
   - New module: (database postgres-types)
   - New module: (database postgres-table)
 
-	These scheme modules are documented in their respective chapters.
+	These scheme modules are documented in their respective chapters
+	(for now, see code for detailed documentation on each proc).
 
 
 - version 0.11 released 2002-12-17
