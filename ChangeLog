@@ -1,6 +1,12 @@
 2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* test/guile-pg-basic-tests.scm:
+	(test:pg-error-message): New proc.
+	(main): Add test using new proc.
+
+2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* test/guile-pg-basic-tests.scm:
 	(test:pg-conndefaults): New proc.
 	(main): New proc. Call it from top-level.
 
