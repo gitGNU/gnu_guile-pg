@@ -1,5 +1,9 @@
 2002-12-22  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* libpostgres.c (pgrs): Move PGRES_TUPLES_OK first.
+
+2002-12-22  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* doc/guile-pg.texi (Miscellaneous): Add intro blurb.
 
 2002-12-21  Thien-Thi Nguyen  <ttn@giblet.glug.org>
