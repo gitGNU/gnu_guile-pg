@@ -8,13 +8,16 @@
                                               pg-ntuples))
   #:use-module ((database postgres-table) #:select (pgtable-manager
                                                     where-clausifier))
-  #:use-module ((ice-9 rdelim) #:select (write-line))
   #:use-module ((ice-9 pretty-print) #:select (pretty-print))
   #:use-module ((ice-9 common-list) #:select (pick-mappings)))
 
 ;;; version: 5
 
 ;; display utilities
+
+(define (wln x)
+  (display x)
+  (newline))
 
 (define (display-tree tree)
   (if (list? tree)
@@ -233,25 +236,25 @@
 
   ((m #:drop)) ((c #:drop))
 
-  (write-line ((m #:create)))
-  (write-line ((c #:create)))
+  (wln ((m #:create)))
+  (wln ((c #:create)))
 
-  (for-each write-line (map add-project *samples*))
+  (for-each wln (map add-project *samples*))
 
   (>>table "markup" m)
   (>>table "client" c)
 
   (for-each >>html (*names* *samples*))
 
-  (write-line (delete-project (list-ref (*names* *samples*) 0)))
-  (write-line (delete-project (list-ref (*names* *samples*) 1)))
+  (wln (delete-project (list-ref (*names* *samples*) 0)))
+  (wln (delete-project (list-ref (*names* *samples*) 1)))
 
   (>>table "markup" m)
   (>>table "client" c)
 
   (for-each dump-project (*names* (cddr *samples*)))
 
-  (write-line ((c #:drop)))
-  (write-line ((m #:drop))))
+  (wln ((c #:drop)))
+  (wln ((m #:drop))))
 
 ;;; markup.scm ends here
