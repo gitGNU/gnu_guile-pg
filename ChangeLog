@@ -1,5 +1,12 @@
 2004-07-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* acinclude.m4 (AC_GUILE_PG_FCOMPAT): Check for
+	SCM_OUTPORTP instead of for SCM_OUTPUT_PORT_P.
+
+	* fcruft.h (SCM_OUTPORTP): Update pre-processor conditional clause.
+
+2004-07-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* configure.in: For Guile checks using the C compiler,
 	save/restore env var `CPPFLAGS' instead of `CFLAGS'.
 
