@@ -1,5 +1,15 @@
 2004-01-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* acinclude.m4: Update copyright.
+	(AC_GUILE_PG_FCOMPAT): New AC_DEFUN.
+
+	* configure.in: Update copyright.
+	(AC_GUILE_PG_FCOMPAT): New macro call.
+	(AH_BOTTOM): Add `scm_protect_object' redefinition
+	conditional on HAVE_SCM_GC_PROTECT_OBJECT.
+
+2004-01-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c (pg_notifies): New PG_DEFINE func.
 
 	* doc/guile-pg.twerp (Database Connections): Add @section headers.
