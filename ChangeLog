@@ -1,5 +1,9 @@
 2004-07-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* HACKING: Spell "PostgreSQL" in full. Add portability notes.
+
+2004-07-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* acinclude.m4 (AC_GUILE_PG_BCOMPAT): New AC_DEFUN.
 
 	* bcruft.h: New file.
