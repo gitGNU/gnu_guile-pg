@@ -23,6 +23,9 @@
 	(make-comma-separated-tree): New proc, exported.
 	(sql<-trees): Recurse immediately; do not use `for-each'.
 
+	* doc/guile-pg.twerp (Query Construction):
+	Add @twerpdoc for `make-comma-separated-tree'.
+
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm (string*): Delete proc.
