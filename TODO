@@ -28,25 +28,6 @@
 
     We need to make sure they aren't substrings.
 
-
-
-- Eventually
-
-  - Regularize error handling.
-
-  - Remove compiled proc `pg-oid-status'.
-
-  - Remove compiled/uncompiled synchronization procs.
-
-    These are non-critical cruft from when sanity checking was necessary:
-
-	pg-guile-pg-version
-	pg-guile-pg-module-version
-	pg-guile-pg-module-config-stamp
-
-    Users who want to track changes should check features directly instead
-    of version numbers.
-
   - Implement these calls:
 
     - PQconndefaults
@@ -75,6 +56,26 @@
       that the default values ("val" fields) will depend on environment
       variables and other context. Callers must treat the connection options
       data as read-only.
+
+
+- Eventually
+
+  - Regularize error handling.
+
+  - Remove compiled proc `pg-oid-status'.
+
+  - Remove compiled/uncompiled synchronization procs.
+
+    These are non-critical cruft from when sanity checking was necessary:
+
+	pg-guile-pg-version
+	pg-guile-pg-module-version
+	pg-guile-pg-module-config-stamp
+
+    Users who want to track changes should check features directly instead
+    of version numbers.
+
+  - Implement these calls:
 
     - Asynchronous version of PQgetline
 
