@@ -1,3 +1,10 @@
+2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* alive.sh: If env var DEBUG is set, call guile with "--debug".
+	* basic-tests.sh: Likewise.
+	* lo-tests.sh: Likewise.
+	* abstraction-scm-tests.sh: Likewise.
+
 2004-03-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* basic-tests.sh: Use $srcdir.
