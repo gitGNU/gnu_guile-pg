@@ -139,6 +139,25 @@
              (begin (set! *C* new)
                     #t))))))
 
+(define test:various-connection-info
+  (add-test #t
+    (lambda ()
+      (let ((host (pg-get-host *C*))
+            (pid (pg-backend-pid *C*))
+            (enc (pg-client-encoding *C*)))
+        (and (or (not host)
+                 (and (string? host)
+                      (not (string-null? host))))
+             (integer? pid)
+             (string? enc)
+             (not (string-null? enc))
+             (let ((new-enc "SQL_ASCII"))
+               (and (pg-set-client-encoding! *C* new-enc)
+                    (let ((check (pg-client-encoding *C*)))
+                      (pg-set-client-encoding! *C* enc)
+                      (and (string=? check new-enc)
+                           (string=? enc (pg-client-encoding *C*)))))))))))
+
 (define test:reset
   (add-test #t
     (lambda ()
@@ -375,11 +394,12 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 34)
+  (test-init "basic-tests" 35)
   (test *VERSION* pg-guile-pg-version)
   (test #t pg-guile-pg-loaded)
   (test! test:pg-conndefaults
          test:make-connection
+         test:various-connection-info
          test:set-client-data
          test:make-table
          test:pg-error-message
