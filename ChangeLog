@@ -1,3 +1,12 @@
+2004-02-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (pg_getline): Doc munging; nfc.
+	(pg_getlineasync): New PG_DEFINE func.
+
+	* doc/guile-pg.twerp (Retrieving Data): Also mention `pg-getlineasync'.
+	(Writing/Reading Data): Add intro blurb re need to
+	call `pg-endcopy'.  Add @twerpdoc for `pg-getlineasync'.
+
 2004-02-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* ltconfig: Delete.
