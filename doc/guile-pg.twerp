@@ -970,6 +970,7 @@ the Guile-PG maintainer so that we can refine them nicely for the 1.0 release.
 @twerpdoc (make-FROM-tree)
 @twerpdoc (make-SELECT/FROM/COLS-tree)
 @twerpdoc (parse+make-SELECT/tail-tree)
+@twerpdoc (parse+make-SELECT-tree)
 
 @section Output
 
