@@ -1,5 +1,11 @@
 2005-01-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c (pg_untrace): Fix bug: If the connection
+	is not currently being traced, simply do nothing and return.
+	Reported by Greg Troxel.
+
+2005-01-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-types.scm (inet): New built-in type converter.
 	Suggested by Greg Troxel.
 
