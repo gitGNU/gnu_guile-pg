@@ -1,5 +1,13 @@
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-meta.scm:
+	From module (database postgres-qcons), no longer select
+	`make-SELECT/FROM/COLS-tree' or `parse+make-SELECT/tail-tree'.
+	Instead, select `parse+make-SELECT-tree'.
+	(table-fields-info): Use `parse+make-SELECT-tree'.
+
+2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-gxrepl.scm From module (database postgres-qcons), no
 	longer select `make-SELECT/COLS-tree' or `parse+make-SELECT/tail-tree'.
 	Instead, select `parse+make-SELECT-tree'.
