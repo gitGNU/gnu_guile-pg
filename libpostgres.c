@@ -65,34 +65,22 @@ typedef struct _smob_tag {
 
 static smob_tag pg_conn_tag, pg_result_tag;
 
-#define MAX_SSI 8
+typedef struct _pgrs { ExecStatusType n; char *s; SCM sym; } pgrs_t;
 
-static char *ser_status_str[] = {
-   "PGRES_EMPTY_QUERY",
-   "PGRES_COMMAND_OK",
-   "PGRES_TUPLES_OK",
-   "PGRES_COPY_OUT",
-   "PGRES_COPY_IN",
-   "PGRES_BAD_RESPONSE",
-   "PGRES_NONFATAL_ERROR",
-   "PGRES_FATAL_ERROR",
-   "UNKNOWN RESULT STATUS"              /* see "- 1" immed below */
+#define _PGRES(s) { s, #s, SCM_BOOL_F } /* `sym' field set below */
+static pgrs_t pgrs[] = {
+  _PGRES (PGRES_EMPTY_QUERY),
+  _PGRES (PGRES_COMMAND_OK),
+  _PGRES (PGRES_TUPLES_OK),
+  _PGRES (PGRES_COPY_OUT),
+  _PGRES (PGRES_COPY_IN),
+  _PGRES (PGRES_BAD_RESPONSE),
+  _PGRES (PGRES_NONFATAL_ERROR),
+  _PGRES (PGRES_FATAL_ERROR)
 };
+#undef _PGRES
 
-static int ser_status_str_count = ((sizeof (ser_status_str) /
-                                    sizeof (char *))
-                                   - 1);
-
-static int ser_status[] = {
-   PGRES_EMPTY_QUERY,
-   PGRES_COMMAND_OK,
-   PGRES_TUPLES_OK,
-   PGRES_COPY_OUT,
-   PGRES_COPY_IN,
-   PGRES_BAD_RESPONSE,
-   PGRES_NONFATAL_ERROR,
-   PGRES_FATAL_ERROR
-};
+static int pgrs_count = sizeof (pgrs) / sizeof (pgrs_t);
 
 /*
  * boxing, unboxing, gc functions
@@ -207,7 +195,7 @@ ser_display (SCM exp, SCM port, scm_print_state *pstate)
   ExecStatusType status;
   int ntuples = 0;
   int nfields = 0;
-  int ser_status_index;
+  int pgrs_index;
 
   SCM_DEFER_INTS;
   status = PQresultStatus (ser->result);
@@ -217,13 +205,13 @@ ser_display (SCM exp, SCM port, scm_print_state *pstate)
   }
   SCM_ALLOW_INTS;
 
-  for (ser_status_index = 0; ser_status_index < MAX_SSI; ser_status_index++)
-    if (status == ser_status[ser_status_index])
+  for (pgrs_index = 0; pgrs_index < pgrs_count; pgrs_index++)
+    if (status == pgrs[pgrs_index].n)
       break;
 
   scm_puts ("#<PG-RESULT:", port);
   scm_intprint (ser->count, 10, port); scm_putc (':', port);
-  scm_puts (ser_status_str[ser_status_index], port); scm_putc (':', port);
+  scm_puts (pgrs[pgrs_index].s, port); scm_putc (':', port);
   scm_intprint (ntuples, 10, port); scm_putc (':', port);
   scm_intprint (nfields, 10, port);
   scm_putc ('>', port);
@@ -564,15 +552,11 @@ pg_backend_pid (SCM obj)
 
 SCM_PROC (s_pg_result_status, "pg-result-status",1,0,0, pg_result_status);
 
-/* fixme: move to init */
-#undef str2symbol
-#define str2symbol(s) (SCM_CAR (scm_intern (s, strlen (s))))
-
 static SCM
 pg_result_status (SCM obj)
 {
   int result_status;
-  char **names = ser_status_str;
+  int pgrs_index;
 
   SCM_ASSERT (ser_p (obj), obj, SCM_ARG1, s_pg_result_status);
 
@@ -580,9 +564,13 @@ pg_result_status (SCM obj)
   result_status = PQresultStatus (ser_unbox (obj)->result);
   SCM_ALLOW_INTS;
 
-  return ((0 <= result_status && result_status < ser_status_str_count)
-          ? str2symbol (names[result_status])
-          : SCM_MAKINUM (result_status));
+  for (pgrs_index = 0; pgrs_index < pgrs_count; pgrs_index++)
+    if (result_status == pgrs[pgrs_index].n)
+      return pgrs[pgrs_index].sym;
+
+  /* FIXME: Although we should never get here, be slackful for now.  */
+  /* abort(); */
+  return SCM_MAKINUM (result_status);
 }
 
 SCM_PROC (s_pg_ntuples, "pg-ntuples",1,0,0, pg_ntuples);
@@ -1091,14 +1079,11 @@ init_postgres (void)
 
 #include <libpostgres.x>
 
-  scm_sysintern ("PGRES_TUPLES_OK",      SCM_MAKINUM (PGRES_TUPLES_OK));
-  scm_sysintern ("PGRES_COMMAND_OK",     SCM_MAKINUM (PGRES_COMMAND_OK));
-  scm_sysintern ("PGRES_EMPTY_QUERY",    SCM_MAKINUM (PGRES_EMPTY_QUERY));
-  scm_sysintern ("PGRES_COPY_OUT",       SCM_MAKINUM (PGRES_COPY_OUT));
-  scm_sysintern ("PGRES_COPY_IN",        SCM_MAKINUM (PGRES_COPY_IN));
-  scm_sysintern ("PGRES_BAD_RESPONSE",   SCM_MAKINUM (PGRES_BAD_RESPONSE));
-  scm_sysintern ("PGRES_NONFATAL_ERROR", SCM_MAKINUM (PGRES_NONFATAL_ERROR));
-  scm_sysintern ("PGRES_FATAL_ERROR",    SCM_MAKINUM (PGRES_FATAL_ERROR));
+  {
+    int i;
+    for (i = 0; i < pgrs_count; i++)
+      pgrs[i].sym = scm_protect_object (SCM_CAR (scm_sysintern0 (pgrs[i].s)));
+  }
 
   init_libpostgres_lo ();
 
