@@ -48,6 +48,7 @@
             make-FROM-tree
             make-SELECT/FROM/COLS-tree
             parse+make-SELECT/tail-tree
+            parse+make-SELECT-tree
             sql<-trees
             sql-command<-trees))
 
@@ -466,6 +467,33 @@
                                      ((cadr ls) => mk)
                                      (else '()))))
             (loop (cddr ls) (cdr tp)))))))
+
+;; Return a @dfn{select} tree of @var{composition} for @var{cols/subs}
+;; and @var{tail}.
+;;
+;; If @var{composition} is #t, @var{cols/subs} is passed directly to
+;; @code{make-SELECT/COLS-tree}.  Otherwise, @var{composition} is a keyword,
+;; one of #:union, #:intersection or #:except, and @var{cols/subs} is a list
+;; of sublists taken as arguments to @code{parse+make-SELECT-tree} (called
+;; recursively), and finally combined by @var{composition}.
+;;
+;; @var{tail} is passed directly to @code{parse+make-SELECT/tail-tree}.
+;;
+(define (parse+make-SELECT-tree composition cols/subs . tail)
+  (define (compose type)
+    ((if (null? tail)
+         identity
+         paren)
+     ((list-sep-proc type)
+      (lambda (x) (paren (apply parse+make-SELECT-tree x)))
+      cols/subs)))
+  (list (case composition
+          ((#t) (list #:SELECT (make-SELECT/COLS-tree cols/subs)))
+          ((#:union)        (compose #:UNION))
+          ((#:intersection) (compose #:INTERSECTION))
+          ((#:except)       (compose #:EXCEPT))
+          (else (error "bad composition:" composition)))
+        (parse+make-SELECT/tail-tree tail)))
 
 ;; Return a string made from flattening @var{trees} (a list).
 ;; Each element of @var{trees} is either a string, symbol, number,
