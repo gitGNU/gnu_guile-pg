@@ -36,6 +36,22 @@ NEWS for Guile-PG
 
 	These are documented in the manual under "Database Connections".
 
+  - New (database postgres-table) proc: `compile-outspec'
+
+	This is documented in the manual under "Single-Table Abstraction".
+
+  - "make check" fails on test failure
+
+	A bug was fixed in the "make check" flow whereby test failures
+	were reported but in fact did not cause "make check" to fail.
+	See README for info on how to clean up the test db should this
+	situation arise.
+
+  - Info page title now "The (database postgres*) Modules"
+
+	This reflects the evolution of Guile-PG beyond its single
+	low-level module origins into a collection of modules.
+
 
 - 0.16 | 2003-08-13
 
