@@ -1,6 +1,8 @@
 
 - Eventually
 
+  - Review error handling; regularize; document.
+
   - Fix places where SCM_ROSTRINGs are treated as null-terminated strings.
     We need to make sure they aren't substrings.
 
