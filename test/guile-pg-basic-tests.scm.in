@@ -1,6 +1,6 @@
 ;; $Id$
 ;;    Guile-pg - A Guile interface to PostgreSQL
-;;    Copyright (C) 1999 The Free Software Foundation
+;;    Copyright (C) 1999-2000 The Free Software Foundation
 ;;
 ;;    This program is free software; you can redistribute it and/or modify
 ;;    it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 ;;    along with this program; if not, write to the Free Software
 ;;    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ;;
-;;    Guile-pg was written by Ian Grant <I.A.N.Grant@damtp.cam.ac.uk>
+;;    Guile-pg was written by Ian Grant <Ian.Grant@cl.cam.ac.uk>
 
 ; uncomment the following line if testing under plain guile
-;; (use-modules (database interface postgres))
+;; (use-modules (database postgres))
 
 (define (pg-fnames result)
   (let ((nfields (pg-nfields result)))
