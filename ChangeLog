@@ -1,3 +1,8 @@
+2004-01-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (pg_connectdb): Doc fix; nfc.
+	(pg_cmdtuples): Doc munging; nfc.
+
 2004-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* test/show-platform (go): Also include guile-pg version.
