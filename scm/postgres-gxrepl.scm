@@ -41,7 +41,7 @@
                           pg-connectdb
                           pg-print))
   #:use-module ((database postgres-qcons)
-                #:select (make-SELECT/FROM/OUT-tree
+                #:select (make-SELECT/FROM/COLS-tree
                           parse+make-SELECT/tail-tree
                           sql-command<-trees))
   #:autoload (ice-9 pretty-print) (pretty-print)
@@ -109,7 +109,7 @@ is normal."
                                           (cdddr all)))))))))
         (else
          (sql-command<-trees
-          (make-SELECT/FROM/OUT-tree
+          (make-SELECT/FROM/COLS-tree
            #f `((,(if (null? something)
                       "obvious"
                       (fs "~A" (car something)))
@@ -121,7 +121,7 @@ Output includes the name, type, length, mod (?), and other information
 extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
   (if (null? which)
       (sql-command<-trees
-       (make-SELECT/FROM/OUT-tree
+       (make-SELECT/FROM/COLS-tree
         #f '(("schema" . n.nspname)
              ("name"   . c.relname)
              ("type"   . (case c.relkind
@@ -146,7 +146,7 @@ extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
           ((< 1) (< 2)))))
       (let ((table-name (symbol->string (car which))))
         (sql-command<-trees
-         (make-SELECT/FROM/OUT-tree
+         (make-SELECT/FROM/COLS-tree
           '((c . pg_class) (a . pg_attribute) (t . pg_type))
           '(("name"   . a.attname)
             ("type"   . t.typname)
@@ -320,7 +320,7 @@ series of keywords and EXPR.  EXPR indicates a prefix-style SQL expression."
              (for-display "No columns selected"))
             (else
              (sql-command<-trees
-              (make-SELECT/FROM/OUT-tree (o/f #:from) cols)
+              (make-SELECT/FROM/COLS-tree (o/f #:from) cols)
               (parse+make-SELECT/tail-tree
                (append (decide #:where
                                (lambda (v)

@@ -55,7 +55,7 @@
                           sql-quote
                           (make-comma-separated-tree . cseptree)
                           make-WHERE-tree
-                          make-SELECT/FROM/OUT-tree
+                          make-SELECT/FROM/COLS-tree
                           parse+make-SELECT/tail-tree
                           sql<-trees
                           sql-command<-trees))
@@ -322,7 +322,7 @@
           (set! hints (car pair))
           (cdr pair))
         (let* ((cmd (sql-command<-trees
-                     (make-SELECT/FROM/OUT-tree
+                     (make-SELECT/FROM/COLS-tree
                       froms
                       (cond ((compiled-outspec?-extract outspec)
                              => set-hints!+sel)
