@@ -879,7 +879,7 @@ Stop tracing on a given connection.  The return value is unspecified.
 @node    Types Conversion
 @chapter Types Conversion
 
-Normally, the result of a @code{pg-exec} query is a object from which Scheme
+Normally, the result of a @code{pg-exec} query is an object from which Scheme
 strings can be extracted to represent the datum from a particular tuple/field
 pair, using @code{pg-getvalue}.  If this string is sufficient for your needs,
 you can skip this chapter, which describes how to use the PostgreSQL-to-Scheme
