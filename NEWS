@@ -1,7 +1,7 @@
 NEWS for Guile-PG
 
 
-- 0.18 | NOT YET RELEASED
+- 0.18 | 2004-03-22
 
   - Variables removed from module (database postgres)
 
@@ -80,6 +80,10 @@ NEWS for Guile-PG
 
 	Alternatively, you can use the procs without such a pre-check,
 	and instead check the return value.
+
+  - New (database postgres-meta) proc: defs-from-psql
+  - New (database postgres-meta) proc: check-type/elaborate
+  - New (database postgres-meta) proc: strictly-check-types/elaborate!
 
   - New (database postgres-table) proc: pgtable-worker
 
