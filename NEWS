@@ -6,9 +6,35 @@ NEWS for Guile-PG
   - Limitation lifted: `pg-exec' query string size
 
 	The query string sent to `pg-exec' used to be limited to 7999
-	bytes (plus one for the terminating null).  This is now handled
-	dynamically and in a more efficient manner in the case where
-	the query is not a shared substring.
+	bytes; larger queries were silently truncated.  Furthermore,
+	each `pg-exec' call used to perform a string copy whether it
+	was needed or not.  Similarly, a 255-byte limit was silently
+	enforced for `pg-connectdb', `pg-error-message', `pg-fnumber',
+	`pg-putline', and `pg-set-client-encoding!'.
+
+	These procedures have been changed to use arbitrary-length input
+	strings in situ if possible, and only do a copy if necessary.
+
+  - New (database postgres) procs
+
+	See manual for details.
+
+    - support for non-blocking queries
+
+	(pg-send-query CONN QUERY) => bool
+	(pg-consume-input CONN) => bool
+	(pg-is-busy? CONN) => bool
+	(pg-request-cancel CONN) => bool
+	(pg-get-result CONN) => result
+
+    - asynchronous version of `pg-getline'
+
+	(pg-getlineasync CONN BUF [TICKLE]) => byte-count
+
+    - miscellaneous
+
+	(pg-conndefaults) => alist of alists
+
 
 
 - 0.17 | 2004-02-02
