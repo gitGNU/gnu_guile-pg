@@ -3,7 +3,6 @@
 ;;; See http://www.fsf.org/copyleft/gpl.html for details.
 
 (define-module (markup)
-  #:use-module ((srfi srfi-13) #:select (string-join))
   #:use-module ((database postgres) #:select (pg-print
                                               pg-ntuples))
   #:use-module ((database postgres-table) #:select (pgtable-manager))
