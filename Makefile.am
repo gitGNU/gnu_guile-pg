@@ -39,25 +39,9 @@ postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0 \
 noinst_DATA = pre-inst.merged-module-catalog
 
 pre-inst.merged-module-catalog:
-	if guile-tools | grep -q mkpimmc ; then				\
-	  guile-tools mkpimmc -d $(DEPDIR) $@ "$(srcdir)"		\
-	    -- -d in,lo,o -X '~$$' -X CVS ;				\
-	elif guile-tools | grep -q make-module-catalog ; then		\
-	  guile-tools make-module-catalog -d in,lo,o -X '~$$' -X CVS	\
-	    `pwd`							\
-	    `test "$(srcdir)" = "." || { cd $(srcdir) ; pwd ; }` ;	\
-	  if [ x"$(srcdir)" = x"." ] ; then				\
-	    mv .module-catalog $@ ;					\
-	  else								\
-	    guile-tools merge-module-catalogs -o $@			\
-	                .module-catalog					\
-	      $(srcdir)/.module-catalog ;				\
-	  fi ;								\
-	  rm -f .module-catalog $(srcdir)/.module-catalog ;		\
-	  ( echo $@ : \\ ;						\
-	    sed '\,((.*).*"/.*"),!d;s/"[^"]*$$/ \\/;s/^.*"/ /' $@ ;	\
-	    echo ' # elephant' )					\
-	  > .deps/pre-inst.Pmerged-module-catalog ;			\
+	if guile-tools | grep -q mkpimmc ; then			\
+	  guile-tools mkpimmc -d $(DEPDIR) $@ "$(srcdir)"	\
+	    -- -d in,lo,o -X '~$$' -X CVS ;			\
 	else echo '()' > $@ ; fi
 
 SUFFIXES = .x .doc
