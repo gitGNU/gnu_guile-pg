@@ -579,9 +579,10 @@
 ;; Take @var{db-spec}, @var{table-name} and @var{defs} (exactly the same as
 ;; for @code{pgtable-manager}) and return a procedure @var{worker} similar to
 ;; that returned by @code{pgtable-manager} except that the @dfn{data} choices
-;; @code{table-name}, @code{defs} and @code{pgdb} result in error (only
-;; actions remain), and more importantly, @var{worker} actually @emph{does}
-;; the actions (applying its chosen procedure to its args).  For example:
+;; @code{help}, @code{menu}, @code{table-name}, @code{defs} and @code{pgdb}
+;; result in error (only those choices which return a procedure remain),
+;; and more importantly, @var{worker} actually @emph{does} the actions
+;; (applying the chosen procedure to its args).  For example:
 ;;
 ;; @example
 ;; (define M (pgtable-manager spec name defs))
