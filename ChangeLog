@@ -1,5 +1,10 @@
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm (string*): Delete proc.
+	(select-proc): Use `sql-command<-trees' to flatten rest clauses.
+
+2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-table.scm (pgtable-manager): Handle `#:k'.
 
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
