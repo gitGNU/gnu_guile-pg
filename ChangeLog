@@ -1,5 +1,10 @@
 2005-02-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm (qcons-declare!):
+	Take symbol as well as string.
+
+2005-02-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm (*conditional-operations*): New var.
 	(*binary-infix-operations*, *sql-functions*): Likewise.
 	(qcons-declare!): New proc, exported, used in load-time actions.
