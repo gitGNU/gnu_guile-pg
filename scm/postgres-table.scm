@@ -122,15 +122,6 @@
 
 ;;; connection
 
-(define (pgdb-connection db)
-  (cond ((pg-connection? db) db)
-        ((string? db) (pg-connectdb
-                       (fmt (if (or (string=? "" db) (string-index db #\=))
-                                "~A"
-                                "dbname=~A")
-                            db)))
-        (else (error "bad db-spec:" db))))
-
 (define (col-defs defs cols)
   (map (lambda (col)
          (or (find-if (lambda (def)
@@ -536,7 +527,16 @@
   (for-each (lambda (def)
               (def:validate-def def dbcoltype-lookup))
             defs)
-  (let* ((conn (pgdb-connection db-spec))
+  (let* ((conn (cond ((pg-connection? db-spec)
+                      db-spec)
+                     ((string? db-spec)
+                      (pg-connectdb
+                       (fmt (if (or (string=? "" db-spec)
+                                    (string-index db-spec #\=))
+                                "~A"
+                                "dbname=~A")
+                            db-spec)))
+                     (else (error "bad db-spec:" db-spec))))
          (objectifiers (def:objectifiers defs))
          (pp (lambda (proc-proc)
                (proc-proc (lambda (s)   ; beex (back-end exec)
