@@ -1,5 +1,9 @@
 2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm (compile-outspec): Export.
+
+2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* README: Rewrite.
 
 2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
