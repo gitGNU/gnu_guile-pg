@@ -1,5 +1,5 @@
-guile-pg 0.08
-=============
+guile-pg
+========
 
 This is a set of bindings providing a Guile interface to the PostgreSQL
 front-end library libpq.
