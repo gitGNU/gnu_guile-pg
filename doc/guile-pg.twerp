@@ -122,9 +122,9 @@ contributing fixes and other improvements to guile-pg.
 
 To access a PostgreSQL database from Guile, first load the @code{postgres}
 database module. This is done using the @code{use-modules} syntax:
-@example
-     (use-modules (database postgres))
-@end example
+@lisp
+(use-modules (database postgres))
+@end lisp
 
 The next step is to make a connection to the database using the
 @code{pg-connectdb} procedure. Then, having created a valid connection to a
@@ -377,7 +377,7 @@ The procedure could be called as follows
 
 @twerpdoc (pg-oid-status)
 
-@emph{NOTE:} @code{pg-oid-status} is deprecated.  Use @code{pg-oid-value} instead.
+@b{NOTE}: @code{pg-oid-status} is deprecated.  Use @code{pg-oid-value} instead.
 
 @twerpdoc (pg-oid-value)
 
@@ -563,13 +563,30 @@ which case subsequent reads of the port will return an EOF object.
 This chapter describes procedures whose name begins with "pg-" that do not
 necessarily belong in the other chapters.
 
-@twerpdoc (pg-guile-pg-loaded)
+@c the first two "leave in for now" is due to "guile-tools c2doc" mishandling
+@c an ARGLIST of '(void)', creating something like: (pg-guile-pg-loaded())
+@c in the .doc file.  the latter two are because scm/postgres.scm.in is not
+@c scanned at this time.
 
-@heading Note
-This procedure is guaranteed to be present in all future versions of
-@code{guile-pg}.
+@c leave in for now --ttn
+@c + @twerpdoc (pg-guile-pg-loaded)
+@deffn {Scheme Procedure} pg-guile-pg-loaded
+Return @code{#t} indicating that the binary part of
+@code{guile-pg} is loaded.  Thus, to test if @code{guile-pg}
+is loaded, use:
+@lisp
+(defined? 'pg-guile-pg-loaded)
+@end lisp
+NOTE: This procedure is guaranteed to be present in all future versions of
+Guile-pg.
+@end deffn
 
-@twerpdoc (pg-guile-pg-version)
+@c leave in for now --ttn
+@c + @twerpdoc (pg-guile-pg-version)
+@deffn pg-guile-pg-version
+Return a string giving the version of @code{guile-pg}.
+The form is "M.m" giving major and minor versions.
+@end deffn
 
 @c leave in for now --ttn
 @c + @twerpdoc (pg-guile-pg-module-version)
@@ -615,47 +632,45 @@ opens the required file and starts/stops the trace.
 
 Normally, the result of a @code{pg-exec} query is an object from which Scheme
 strings can be extracted to represent the datum from a particular tuple/field
-pair, using @code{pg-getvalue}.  If this string is sufficient for your needs,
-you can skip this chapter, which describes how to use the PostgreSQL-to-Scheme
-(and back) type conversion support installed with Guile-PG, including how to
-register new types/converters.
+coordinate, using @code{pg-getvalue} (@pxref{Retrieving Data}).  If this
+string is sufficient for your needs, you can skip this chapter, which
+describes how to use the PostgreSQL-to-Scheme (and back) type conversion
+support installed with Guile-PG, including how to register new converters.
 
 To get started, load the @code{postgres-types} module:
-@example
+@lisp
 (use-modules (database postgres-types))
-@end example
+@end lisp
 
-Here is a snapshot of the commentary (in lieu of better documentation, while
-we get our doc-harvesting methodology up to speed):
+But before we get to conversions, recall that the @code{pg-ftype} example
+defines a procedure that returns the name of a PostgreSQL type by doing a
+query on the @code{pg_type} (internal) table.  Here is a more efficient
+implementation:
 
-@example
-This module provides the procs:
- (dbcoltypes) => list of names
- (dbcoltype-lookup NAME) => tobj
- (dbcoltype:name TOBJ) => symbol
- (dbcoltype:stringifier TOBJ) => proc
- (dbcoltype:objectifier TOBJ) => proc
- (dbcoltype:default) => string
- (define-db-col-type NAME DEFAULT STRINGIFY OBJECTIFY)
- (define-db-col-type-array-variant COMPOSED SIMPLE [STRINGIFY [OBJECTIFY]])
+@lisp
+(define (pg-ftype-name result fnum)
+  (assq-ref (oid-type-name-cache (pg-get-connection result))
+            (pg-ftype result fnum)))
+@end lisp
 
-NAME, COMPOSED and SIMPLE are symbols naming a type.  COMPOSED is
-conventionally formed by appending square-bracket paris to SIMPLE.  For
-example, we can declare a two-dimensional array type of text elements:
+It uses a bonus procedure in this module:
 
- (define-db-col-type-array-variant 'text[][] 'text ...)
+@twerpdoc (oid-type-name-cache)
 
-STRINGIFY is a procedure that takes a Scheme object and returns a string,
-suitable for sending to PostgreSQL.  OBJECTIFY does the opposite: it takes
-a string from PostgreSQL and returns a Scheme object.
+@section Consulting Existing Type Converters
 
-DEFAULT is a string.  TOBJ is a "type object" which should be considered
-opaque (use the dbcoltype:foo procs to access the components).
-@end example
-
-To see what types are already defined, use the @code{dbcoltypes} procedure.
+To see what type converters are already defined, use the @code{dbcoltypes}
+procedure.  To get a @dfn{type-converter object} that encapsulates the name,
+the @dfn{stringifier}, the @dfn{objectifier} and the @dfn{default}, use
+@code{dbcoltype-lookup}.  The components of the returned object can be read
+using the @code{dbcoltype:FOO} procedures.
 
 @twerpdoc (dbcoltypes)
+@twerpdoc (dbcoltype-lookup)
+@twerpdoc (dbcoltype:name)
+@twerpdoc (dbcoltype:stringifier)
+@twerpdoc (dbcoltype:objectifier)
+@twerpdoc (dbcoltype:default)
 
 Here is a simple example that uses @code{dbcoltype-lookup} and
 @code{dbcoltype:objectifier} to convert a @code{text[][]} value
@@ -666,6 +681,7 @@ into a nested list:
       (conv (dbcoltype:objectifier (dbcoltype-lookup 'text[][]))))
   (write-line raw)
   (write-line (conv raw)))
+
 @print{} @{@{a,b@},@{c,d@}@}
 @print{} (("a" "b") ("c" "d"))
 @end lisp
@@ -676,7 +692,7 @@ PostgreSQL: dimensionality is not stored for array types, so the conversion
 cannot be done in a random-access manner.  Perhaps this will change in the
 future.
 
-@section Defining New Types
+@section Defining New Type Converters
 
 To define a new non-array type means associating with the type name a
 procedure for converting from a PostgreSQL string representation to a Scheme
@@ -701,31 +717,17 @@ rows to it or drawing queries from it exclusively of any other tables in the
 database.  This chapter describes Guile-PG facilities for this kind of use.
 
 To get started, load the @code{postgres-table} module:
-@example
+@lisp
 (use-modules (database postgres-table))
-@end example
-
-Here is a snapshot of the commentary (in lieu of better documentation, while
-we get our doc-harvesting methodology up to speed):
-
-@example
-This module exports these procedures:
- (sql-pre string)
- (tuples-result->table res)
- (where-clausifier string)
- (pgtable-manager db-name table-name defs)
- (def:col-name def)
- (def:type-name def)
- (def:type-options def)
-@end example
+@end lisp
 
 Basically, the @code{pgtable-manager} procedure encapsulates specification,
 query and mutation (including create/delete) of a PostgreSQL table.  The
 @var{defs} are a list of the columns, each element having the form:
 
-@example
-        (NAME TYPE [OPTIONS...])
-@end example
+@lisp
+(NAME TYPE [OPTIONS...])
+@end lisp
 
 @var{name} and @var{type} are symbols specifying the name and type of the
 column, respectively (@pxref{Types Conversion}).  @var{options} are strings
@@ -733,7 +735,7 @@ passed directly to PostgreSQL as part of a @code{CREATE TABLE} command.  For
 example, the status output of the rsync(1) program can be specified by the
 form:
 
-@example
+@lisp
 (define rsync-defs
         '((time            timestamp)
           (error_condition text)
@@ -744,14 +746,20 @@ form:
           (total           int4)          ; bytes
           (speedup         float4)
           (etc             int4[])))
-@end example
+@end lisp
 
-Note that there are no options in this example.
+Note that there are no options in this example.  The components of a def can
+be read using the @code{def:FOO} procedures.
+
+@twerpdoc (def:col-name)
+@twerpdoc (def:type-name)
+@twerpdoc (def:type-options)
 
 @twerpdoc (pgtable-manager)
 
 The other procedures are useful for succintly codifying queries, and
-translating the result en mass to Scheme objects.
+translating the result en mass to Scheme objects.  [NOTE: These will
+definitely migrate to other modules at some point before 1.0 release.]
 
 @twerpdoc (tuples-result->table)
 
@@ -759,7 +767,10 @@ translating the result en mass to Scheme objects.
 
 @twerpdoc (where-clausifier)
 
-@example
+The rest of this chapter is an extended example showing some of the uses of
+@code{pgtable-manager}.
+
+@lisp
 (define m (pgtable-manager "ttn" "guile_pg_demo"
                            '((i          serial)
                              (date       timestamp)
@@ -789,7 +800,7 @@ result
 
 ((m 'drop))
 @result{} (#<PG-RESULT:5:PGRES_COMMAND_OK:0:0> #<PG-RESULT:6:PGRES_COMMAND_OK:0:0>)
-@end example
+@end lisp
 
 Two things to note in this example: (1) Both @code{create} and @code{drop}
 invocations evaluate the operating thunk directly (double parentheses); and
