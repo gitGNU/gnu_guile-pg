@@ -4,6 +4,11 @@
 
 2002-12-23  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* doc/cov: Use "PG_DEFINE" instead of "SCM_PROC".
+	* test/cov: Likewise.
+
+2002-12-23  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* HACKING: Mention twerp2texi requirement for docs maintenance.
 
 2002-12-22  Thien-Thi Nguyen  <ttn@giblet.glug.org>
