@@ -617,7 +617,7 @@ that connection.
 
 @heading Example
 This example defines a procedure @code{copy-from-port} which can be used
-to supply data to a @code{COPY <table> TO STDIN} command.
+to supply data to a @code{COPY <table> FROM STDIN} command.
 
 @lisp
 (use-modules (ice-9 rdelim))
