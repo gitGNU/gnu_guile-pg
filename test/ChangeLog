@@ -1,5 +1,10 @@
 2004-03-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* guile-pg-abstraction-scm-tests.scm (main):
+	New proc. Call it from top-level.
+
+2004-03-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* guile-pg-basic-tests.scm:
 	Use new procs in testing.scm.
 	Rename procs to avoid "pg-" prefix.
