@@ -1123,9 +1123,32 @@ To get started, load the @code{postgres-qcons} module:
 (use-modules (database postgres-qcons))
 @end lisp
 
-At the moment this provides only one low-level procedure: @code{sql-quote}.
+This provides procedures to @dfn{render} sexps to SQL syntax, essentially by
+constructing stylized trees (nested lists) and then flattening them to a
+string on output.
+
+@section Lookup Tables Extension
+
+During tree construction, internal lookup tables control the rendering
+transformations.  You can add to them using proc @code{qcons-declare!}.
+
+@twerpdoc (qcons-declare!)
+
+@section Tree Construction
 
 @twerpdoc (sql-quote)
+@twerpdoc (make-WHERE-tree)
+@twerpdoc (make-GROUP-BY-tree)
+@twerpdoc (make-HAVING-tree)
+@twerpdoc (make-ORDER-BY-tree)
+@twerpdoc (make-SELECT/OUT-tree)
+@twerpdoc (make-FROM-tree)
+@twerpdoc (make-SELECT/FROM/OUT-tree)
+
+@section Output
+
+@twerpdoc (sql<-trees)
+@twerpdoc (sql-command<-trees)
 
 @c ---------------------------------------------------------------------------
 @node    Result Transforms
