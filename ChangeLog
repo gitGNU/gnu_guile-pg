@@ -1,5 +1,9 @@
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* acinclude.m4 (PQ_FLAGS): Fix shell-quoting omission bug.
+
+2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c (pg_endcopy): Return bool.
 
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
