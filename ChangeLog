@@ -1,5 +1,11 @@
 2004-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* test/testing.scm: Update copyright.
+	(test-report): Return #f on count mismatch,
+	non-zero `xpass-count', or non-zero `fail-count'.
+
+2004-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-meta.scm (put, get): New aliases.
 	* scm/postgres-table.scm: Likewise.
 	* scm/postgres-types.scm: Likewise.
