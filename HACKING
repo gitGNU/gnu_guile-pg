@@ -14,12 +14,16 @@ Quick start:
  $ cd guile-pg
  $ sh -x autogen.sh
 
-See autogen.sh comments for which versions of the auto* tools to install on
-your system (minimally -- probably later versions work, too).
+See autogen.sh comments for which tool versions are recommended to install on
+your system (minimally -- probably later versions work, too).  The autogen.sh
+script also creates file .last-release in the current directory, which you
+can use with "cvs diff" like so:
+
+ cvs diff -u -b -B -w -r`cat .last-release`
 
 To be able to extract (and build) documentation automatically from the source
-you need a Guile that installs "guile-tools twerp2texi", such as the 1.4.1.93
-(http://www.glug.org/alt/).
+you need a Guile that installs "guile-tools twerp2texi", such as those in the
+1.4.1.x series (http://www.glug.org/alt/).
 
 Please add test cases to the tests in the test/ directory, and run 'make check'
 to test them.  Use script "cov" to see what new tests need to be written.
