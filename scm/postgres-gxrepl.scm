@@ -41,7 +41,7 @@
                           pg-connectdb
                           pg-print))
   #:use-module ((database postgres-qcons)
-                #:select (make-SELECT/FROM/COLS-tree
+                #:select (make-SELECT/COLS-tree
                           parse+make-SELECT/tail-tree
                           sql-command<-trees))
   #:autoload (ice-9 pretty-print) (pretty-print)
@@ -91,6 +91,11 @@
          (else
           "no such command"))))
 
+(define (sqlsel cols . rest)
+  (sql-command<-trees
+   #:SELECT (make-SELECT/COLS-tree cols)
+   (parse+make-SELECT/tail-tree rest)))
+
 (defcc (obvious . something)
   "Life, the universe, and everything!
 Optional arg CC names a comma-command to make obvious (pretty-print its
@@ -108,12 +113,10 @@ is normal."
                                           ;; skip docstring
                                           (cdddr all)))))))))
         (else
-         (sql-command<-trees
-          (make-SELECT/FROM/COLS-tree
-           #f `((,(if (null? something)
-                      "obvious"
-                      (fs "~A" (car something)))
-                 . (+ 6 (* 6 6)))))))))
+         (sqlsel `((,(if (null? something)
+                         "obvious"
+                         (fs "~A" (car something)))
+                    . (+ 6 (* 6 6))))))))
 
 (defcc (dt . which)
   "Describe columns in table TABLE-NAME.
@@ -121,17 +124,17 @@ Output includes the name, type, length, mod (?), and other information
 extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
   (if (null? which)
       (sql-command<-trees
-       (make-SELECT/FROM/COLS-tree
-        #f '(("schema" . n.nspname)
-             ("name"   . c.relname)
-             ("type"   . (case c.relkind
-                           ("r" "table")
-                           ("v" "view")
-                           ("i" "index")
-                           ("S" "sequence")
-                           ("s" "special")
-                           (else "huh?")))
-             ("owner"  . u.usename)))
+       #:SELECT (make-SELECT/COLS-tree
+                 '(("schema" . n.nspname)
+                   ("name"   . c.relname)
+                   ("type"   . (case c.relkind
+                                 ("r" "table")
+                                 ("v" "view")
+                                 ("i" "index")
+                                 ("S" "sequence")
+                                 ("s" "special")
+                                 (else "huh?")))
+                   ("owner"  . u.usename)))
        ;; todo: arrive at this via tree build call, not manually
        '(#:FROM               pg_catalog.pg_class c
                 #:LEFT #:JOIN pg_catalog.pg_user u
@@ -145,30 +148,28 @@ extracted from system tables `pg_class', `pg_attribute' and `pg_type'."
           #:order-by
           ((< 1) (< 2)))))
       (let ((table-name (symbol->string (car which))))
-        (sql-command<-trees
-         (make-SELECT/FROM/COLS-tree
-          '((c . pg_class) (a . pg_attribute) (t . pg_type))
-          '(("name"   . a.attname)
-            ("type"   . t.typname)
-            (" bytes" . (if (< 0 a.attlen)
-                            (to_char a.attlen "99999")
-                            "varies"))
-            ("mod"    . (to_char a.atttypmod "999"))
-            ("etc"    . (|| (if a.attnotnull
-                                "NOT NULL"
-                                "NULL ok")
-                            ", "
-                            (if a.atthasdef
-                                "has defs"
-                                "no defs")))))
-         (parse+make-SELECT/tail-tree
-          `(#:where
-            (and (= c.relname ,table-name)
-                 (> a.attnum 0)
-                 (= a.attrelid c.oid)
-                 (= a.atttypid t.oid))
-            #:order-by
-            ((< a.attnum))))))))
+        (sqlsel '(("name"   . a.attname)
+                  ("type"   . t.typname)
+                  (" bytes" . (if (< 0 a.attlen)
+                                  (to_char a.attlen "99999")
+                                  "varies"))
+                  ("mod"    . (to_char a.atttypmod "999"))
+                  ("etc"    . (|| (if a.attnotnull
+                                      "NOT NULL"
+                                      "NULL ok")
+                                  ", "
+                                  (if a.atthasdef
+                                      "has defs"
+                                      "no defs"))))
+                #:from
+                '((c . pg_class) (a . pg_attribute) (t . pg_type))
+                #:where
+                `(and (= c.relname ,table-name)
+                      (> a.attnum 0)
+                      (= a.attrelid c.oid)
+                      (= a.atttypid t.oid))
+                #:order-by
+                '((< a.attnum))))))
 
 (defcc (gxrepl conn)
   "Run a recursive repl, talking to database CONN.
@@ -344,18 +345,18 @@ specified by \",fix\".  Keywords without related expressions are ignored."
                                       (if (null? massage)
                                           identity
                                           (car massage)))))
-                  (sql-command<-trees
-                   (make-SELECT/FROM/COLS-tree (o/f #:from) cols)
-                   (parse+make-SELECT/tail-tree
-                    (append (decide #:where
-                                    (lambda (v)
-                                      (cons (or (conn-get #:where/combiner)
-                                                'and)
-                                            v)))
-                            (decide #:group-by)
-                            (decide #:having)
-                            (decide #:order-by)
-                            (decide #:limit))))))
+                  (apply
+                   sqlsel cols
+                   `(,@(decide #:from)
+                     ,@(decide #:where
+                               (lambda (v)
+                                 (cons (or (conn-get #:where/combiner)
+                                           'and)
+                                       v)))
+                     ,@(decide #:group-by)
+                     ,@(decide #:having)
+                     ,@(decide #:order-by)
+                     ,@(decide #:limit)))))
             (else
              (for-display "No columns selected")))))
 
