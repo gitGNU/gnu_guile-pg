@@ -1288,11 +1288,12 @@ queries.
 @result{} (("now" "the present") ("yesterday" "the past"))
 @end lisp
 
-The @code{result->object-alist} and @code{result->object-alists} procedures
-have the same signature but return the data differently.
+The @code{result->object-FOO} procedures
+have the same signature but return the data in different ways.
 
 @twerpdoc (result->object-alist)
 @twerpdoc (result->object-alists)
+@twerpdoc (result->object-rows)
 
 @heading Example
 @lisp
