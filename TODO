@@ -2,7 +2,7 @@
 - 0.17
 
   - Use tmpfile(3), if available, as fallback for dup(3).
-    - pg_print [ttn]
+    + pg_print [ttn]
     - pg_trace
 
   - Review error handling; regularize; document.
