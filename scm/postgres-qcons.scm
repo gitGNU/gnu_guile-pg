@@ -85,9 +85,9 @@
      (error "bad category:" category))))
 
 
-;; Return a new string made by preceding each single quote in string @var{s}
-;; with a backslash, and prefixing and suffixing with single quote.
-;; For example:
+;; Return a new string made by preceding each single quote in @var{s}
+;; (string or symbol) with a backslash, and prefixing and suffixing
+;; with single quote.  For example:
 ;;
 ;; @lisp
 ;; (define bef "ab'cd")
@@ -100,6 +100,7 @@
 ;; the backslash appears twice (this is normal).
 ;;
 (define (sql-quote s)
+  (and (symbol? s) (set! s (symbol->string s)))
   (let* ((olen (string-length s))
          (len (+ 2 olen))
          (cuts (let loop ((stop olen) (acc (list olen)))
