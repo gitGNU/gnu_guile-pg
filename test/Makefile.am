@@ -20,7 +20,7 @@
 ##   330, Boston, MA 02111-1307 USA
 
 EXTRA_DIST = guile-pg-basic-tests.scm.in guile-pg-lo-tests.scm.in \
-             basic-tests.sh lo-tests.sh testing.scm
+             alive.sh basic-tests.sh lo-tests.sh testing.scm
 
 TESTS = alive.sh basic-tests.sh lo-tests.sh
 TESTS_ENVIRONMENT = top_builddir=$(top_builddir_absolute)
