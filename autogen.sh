@@ -7,11 +7,21 @@
 # - autoconf 2.53
 # - automake 1.6.3
 
+#############################################################################
+# Autotools
+
 test x"$1" = x--libtoolize && libtoolize --force
 test -f ltmain.sh || libtoolize --force
 aclocal
 autoheader
 autoconf
 automake --add-missing --force
+
+#############################################################################
+# Make local automake frags.
+
+for script in `find . -name .make-automake-frags` ; do
+    ( cd `dirname $script` ; ./.make-automake-frags )
+done
 
 # autogen.sh ends here
