@@ -27,7 +27,7 @@
 (define *C* #f)
 
 (define (cexec s)
-  (pg-exec *C* s))
+  (pg-exec *C* (string-append s ";")))
 
 (define (result->output-string result)
   (let ((po (pg-make-print-options '(no-header))))
@@ -166,7 +166,7 @@
       (let ((n (call-with-output-string
                 (lambda (port)
                   (pg-set-notice-out! *C* port)
-                  (cexec "CREATE TABLE unused (ser serial, a int);")))))
+                  (cexec "CREATE TABLE unused (ser serial, a int)")))))
         (and (string? n)
              (member n (map (lambda (output-format)
                               (string-append
@@ -192,7 +192,7 @@
     (lambda ()
       (let ((n (call-with-output-string
                 (lambda (port)
-                  (cexec "CREATE TABLE unused2 (ser serial, a int);")))))
+                  (cexec "CREATE TABLE unused2 (ser serial, a int)")))))
         (and (string? n) (string-null? n))))))
 
 (define test:set-client-data
