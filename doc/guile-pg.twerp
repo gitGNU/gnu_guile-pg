@@ -650,46 +650,18 @@ which case subsequent reads of the port will return an EOF object.
 This chapter describes procedures whose name begins with "pg-" that do not
 necessarily belong in the other chapters.
 
-@c the first two "leave in for now" is due to "guile-tools c2doc" mishandling
-@c an ARGLIST of '(void)', creating something like: (pg-guile-pg-loaded())
-@c in the .doc file.  the latter two are because scm/postgres.scm.in is not
-@c scanned at this time.
+@twerpdoc (pg-guile-pg-loaded)
 
-@c leave in for now --ttn
-@c + @twerpdoc (pg-guile-pg-loaded)
-@deffn {Scheme Procedure} pg-guile-pg-loaded
-Return @code{#t} indicating that the binary part of
-@code{guile-pg} is loaded.  Thus, to test if @code{guile-pg}
-is loaded, use:
-@lisp
-(defined? 'pg-guile-pg-loaded)
-@end lisp
-NOTE: This procedure is guaranteed to be present in all future versions of
-Guile-PG.
-@end deffn
+NOTE: @code{pg-guile-pg-loaded} is guaranteed to be present in all
+future versions of Guile-PG.  The next three, however, are not.
+(They are included to help iron out packaging/installation bugs and
+will be deleted before 1.0 release.)
 
-@c leave in for now --ttn
-@c + @twerpdoc (pg-guile-pg-version)
-@deffn {Scheme Procedure} pg-guile-pg-version
-Return a string giving the version of @code{guile-pg}.
-The form is "M.m" giving major and minor versions.
-@end deffn
+@twerpdoc (pg-guile-pg-version)
 
-@c leave in for now --ttn
-@c + @twerpdoc (pg-guile-pg-module-version)
-@deffn {Scheme Procedure} pg-guile-pg-module-version
-Return a string giving the version of the scheme module @code{postgres.scm}.
-The string is always of the form "M.m" giving major and minor versions.
-Unless something is wrong with the installation, this should be the same as
-@code{pg-guile-pg-version}.
-@end deffn
+@twerpdoc (pg-guile-pg-module-version)
 
-@c leave in for now --ttn
-@c + @twerpdoc (pg-guile-pg-module-config-stamp)
-@deffn {Scheme Procedure} pg-guile-pg-module-config-stamp
-Return a string containing the date and time at which @code{guile-pg}
-was configured (this is probably the build time).
-@end deffn
+@twerpdoc (pg-guile-pg-module-config-stamp)
 
 @erindex due to @code{dup(3)} failure
 @erindex due to @code{fopen(3)} failure
