@@ -1,6 +1,12 @@
 
 - 0.17
 
+  - Use module abstraction for shared object libraries.
+
+  - Install compiled modules under ${GUILE_LIB_SITE}.
+
+  - Add convenience Makefile target: clean-libdir-guile-pg.
+
   + Fix incorrect objectifiers selection bug in pgtable-manager.
 
     For `tuples-result->object-alist' and `tuples-result->alists'
