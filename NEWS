@@ -15,6 +15,13 @@ NEWS for Guile-PG
 	methodology provided by GNU autotools (if / when discovered),
 	prior to the 1.0 release.
 
+  - Backward-compatability installation bugfix: libFOO.la symlinks
+
+	To support the venerable "scm_init_FOO_BAR_module" method for
+	loading binary modules in versions of Guile that look for a
+	FOO/libBAR.la, and not simply FOO/BAR.la, appropriately named
+	symlinks are now created for each installed .la file.
+
 
 - 0.21 | 2004-07-03
 
