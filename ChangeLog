@@ -1,5 +1,13 @@
 2003-09-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* configure.in: Add "AC_CHECK_FUNCS(tmpfile)".
+
+	* libpostgres.c (pg_print): When cpp macro HAVE_TMPFILE is defined,
+	pass a temporary `FILE *' to `PQprint', read it out again and
+	send a freshly constructed scheme string to the current output port.
+
+2003-09-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* Makefile.am (.doc-index): Use "make-twerp2texi-index"
 	instead of "twerp2texi --make-index".
 	(.c.x): Use "guile-tools c2x" instead of "guile-snarf".
