@@ -38,8 +38,7 @@
                           pg-print))
   #:use-module ((database postgres-qcons)
                 #:select (sql-command<-trees
-                          make-SELECT/FROM/COLS-tree
-                          parse+make-SELECT/tail-tree))
+                          parse+make-SELECT-tree))
   #:use-module ((database postgres-types)
                 #:select (dbcoltype-lookup
                           define-db-col-type-array-variant))
@@ -214,18 +213,18 @@
 
 (define (table-fields-info conn table-name)
   (pg-exec conn (sql-command<-trees
-                 (make-SELECT/FROM/COLS-tree
+                 (parse+make-SELECT-tree
+                  #t '(a.attname t.typname a.attlen a.atttypmod
+                                 a.attnotnull a.atthasdef a.attnum)
+                  #:from
                   '((c . pg_class) (a . pg_attribute) (t . pg_type))
-                  '(a.attname t.typname a.attlen a.atttypmod
-                              a.attnotnull a.atthasdef a.attnum))
-                 (parse+make-SELECT/tail-tree
-                  `(#:where
-                    (and (= c.relname ,table-name)
-                         (> a.attnum 0)
-                         (= a.attrelid c.oid)
-                         (= a.atttypid t.oid))
-                    #:order-by
-                    ((< a.attnum)))))))
+                  #:where
+                  `(and (= c.relname ,table-name)
+                        (> a.attnum 0)
+                        (= a.attrelid c.oid)
+                        (= a.atttypid t.oid))
+                  #:order-by
+                  '((< a.attnum))))))
 
 ;; Return a @dfn{defs} form suitable for use with @code{pgtable-manager} for
 ;; connection @var{conn} and @var{table-name}.  The column names are exact.
