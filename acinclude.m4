@@ -98,7 +98,8 @@ AC_DEFUN([PQ_FLAGS],[
 AC_DEFUN([AC_GUILE_PG_FCOMPAT],[
 
 AC_CHECK_DECL([scm_gc_protect_object],[
- AC_DEFINE([HAVE_SCM_GC_PROTECT_OBJECT])
+ AC_DEFINE([HAVE_SCM_GC_PROTECT_OBJECT], [1],
+   [Define if libguile provides the scm_gc_protect_object function.])
 ],,[#include "libguile.h"])
 
 ])
