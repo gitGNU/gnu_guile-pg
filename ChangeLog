@@ -1,5 +1,8 @@
 2004-06-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres.scm.in (pg-guile-pg-module-version): Delete proc.
+	(pg-guile-pg-module-config-stamp): Likewise.
+
 	* doc/guile-pg.twerp (Miscellaneous): Remove @twerpdoc for
 	`pg-guile-pg-version', `pg-guile-pg-module-version' and
 	`pg-guile-pg-module-config-stamp', as well as intro blurb.
