@@ -1,3 +1,15 @@
+2003-01-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* libpostgres.c (pg_connection_p): New PG_DEFINE function.
+	* Makefile.am (libpostgres_la_LDFLAGS): Update vers to "4:0:2".
+	* scm/postgres.scm.in (pg-connection?): Export.
+
+	* test/guile-pg-basic-tests.scm (test:make-connection):
+	Also test using `pg-connection?'.
+
+	* doc/guile-pg.twerp (Database Connections): Add intro blurb.
+	Also, add directive for `pg-connection?'.
+
 2002-12-29  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* test/config.scm.in: New file.
