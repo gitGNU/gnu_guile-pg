@@ -1,6 +1,5 @@
-;; $Id$
 ;;    Guile-pg - A Guile interface to PostgreSQL
-;;    Copyright (C) 1999,2000 The Free Software Foundation
+;;    Copyright (C) 1999,2000,2002 Free Software Foundation, Inc.
 ;;
 ;;    This program is free software; you can redistribute it and/or modify
 ;;    it under the terms of the GNU General Public License as published by
@@ -22,16 +21,34 @@
 
 (define-module (database postgres))
 
-(if (not (defined? 'pg-guile-pg-loaded)) ;; Unless already loaded (static) ...
-  (dynamic-call "init_postgres" (dynamic-link "libpostgres.so")))
+(cond
+ ;; maybe this is already done
+ ((and (defined? 'pg-guile-pg-loaded) pg-guile-pg-loaded))
+ ;; use app-module loader if there
+ ((defined? 'make-app-module-loader)
+  ((make-app-module-loader
+    (lambda (name)
+      (car (list
+            '("@top_builddir_absolute@") ; DELETE ME ON INSTALL
+            `("~A/@PACKAGE@/@VERSION@" ,(assq-ref %guile-build-info 'libdir)))))
+    (lambda (name)
+      `("lib~A" ,name))
+    (lambda (name)
+      `("init_~A" ,name)))
+   "postgres"))
+ ;; primitive way
+ (else (dynamic-call
+        "init_postgres"
+        (dynamic-link
+         (car (list
+               "@top_builddir_absolute@/libpostgres" ; DELETE ME ON INSTALL
+               (format #f "~A/@PACKAGE@/@VERSION@/libpostgres.so"
+                       (assq-ref %guile-build-info 'libdir))))))))
 
-(define-public (pg-guile-pg-module-config-stamp) "@GUILE_PG_STAMP@")
-(define-public (pg-guile-pg-module-version) "@VERSION@")
-(define-public (pg-guile-pg-module-rcsid)
-               "$Id$")
-(export pg-guile-pg-loaded)
-(export pg-guile-pg-rcsid)
+(export pg-guile-pg-loaded)             ; ugh
+
 (export pg-connectdb)
+(export pg-setdb)
 (export pg-reset)
 (export pg-get-client-data)
 (export pg-set-client-data!)
@@ -78,3 +95,8 @@
 (export pg-lo-read)
 (export pg-lo-import)
 (export pg-lo-export)
+
+(define-public (pg-guile-pg-module-config-stamp) "@GUILE_PG_STAMP@")
+(define-public (pg-guile-pg-module-version) "@VERSION@")
+
+;;; postgres.scm ends here
