@@ -59,21 +59,50 @@
 (define *infix-operations*              ; entry: NAME
   (map identity *conditional-operations*))
 
+(define *display-aliases*               ; entry: (NAME . ALIAS)
+  '((null?        . "IS NULL")
+    (not-null?    . "IS NOT NULL")
+    (true?        . "IS TRUE")
+    (not-true?    . "IS NOT TRUE")
+    (false?       . "IS FALSE")
+    (not-false?   . "IS NOT FALSE")
+    (unknown?     . "IS UNKNOWN")
+    (not-unknown? . "IS NOT UNKNOWN")))
+
+(define *postfix-operations*            ; entry: NAME
+  (map car *display-aliases*))
+
 ;; Declare as part of @var{category} (a keyword) the symbol @var{x}.
 ;; @var{extra} information may be required for the particular category.
 ;; Currently, these categories are recognized:
 ;;
 ;; @table @code
-;; @item #:infix-op
+;; @item #:infix
 ;; Render @code{(x A B ...)} as @code{( A x B x ...)}.
+;;
+;; @table @code
+;; @item #:postfix
+;; Render @code{(x A)} as @code{( A x )}.
+;;
+;; @item #:display-alias
+;; Render @code{x} as something else.  @var{extra} is a string
+;; that specifies what to display instead of @var{x}.  For example,
+;; @code{null?} and @code{not-null?} are pre-declared to render as
+;; @code{IS NULL} and @code{IS NOT NULL}, respectively.
 ;; @end table
 ;;
 (define (qcons-declare! category x . extra)
   (or (symbol? x) (error "not a symbol:" x))
   (case category
-    ((#:infix-op)
+    ((#:infix)
      (set! *infix-operations*
            (cons x (delq! x *infix-operations*))))
+    ((#:postfix)
+     (set! *postfix-operations*
+           (cons x (delq! x *postfix-operations*))))
+    ((#:display-alias)
+     (set! *display-aliases*
+           (assq-set! *display-aliases* x (car extra))))
     (else
      (error "bad category:" category))))
 
@@ -202,9 +231,12 @@
                     (#f ,(caddr rest))))
              #:END))
       (else
-       (if (memq op *infix-operations*)
-           (list "(" ((list-sep-proc op) expr rest) ")")
-           (list op "(" (commasep expr rest) ")")))))
+       (cond ((memq op *infix-operations*)
+              (list "(" ((list-sep-proc op) expr rest) ")"))
+             ((memq op *postfix-operations*)
+              (list "(" (expr (car rest)) op ")"))
+             (else
+              (list op "(" (commasep expr rest) ")"))))))
 
   ;; do it!
   (cond ((eq? #t tree) "'t'")
@@ -368,7 +400,9 @@
               ((#:GROUP-BY) "\nGROUP BY")
               ((#:FROM #:WHERE) (fs "\n~A" (keyword->symbol x)))
               (else (keyword->symbol x)))))
-          ((or (string? x) (symbol? x) (number? x))
+          ((symbol? x)
+           (display (or (assq-ref *display-aliases* x) x)))
+          ((or (string? x) (number? x))
            (display x))
           ((pair? x)
            (out (car x))
@@ -393,7 +427,7 @@
 ;;; load-time actions
 
 (for-each (lambda (x)
-            (qcons-declare! #:infix-op x))
+            (qcons-declare! #:infix x))
           '(+ - ~ * ||
               ;; todo: add here.
               ))
