@@ -102,6 +102,17 @@
 
   - Regularize error handling.
 
+  - Remove compiled/uncompiled synchronization procs.
+
+    These are non-critical cruft from when sanity checking was necessary:
+
+	pg-guile-pg-version
+	pg-guile-pg-module-version
+	pg-guile-pg-module-config-stamp
+
+    Users who want to track changes should check features directly instead
+    of version numbers.
+
   - Fix places where SCM_ROSTRINGs are treated as null-terminated strings.
     We need to make sure they aren't substrings.
 
