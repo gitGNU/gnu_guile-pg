@@ -41,8 +41,7 @@
                           pg-connectdb
                           pg-print))
   #:use-module ((database postgres-qcons)
-                #:select (make-SELECT/COLS-tree
-                          parse+make-SELECT/tail-tree
+                #:select (parse+make-SELECT-tree
                           sql-command<-trees))
   #:autoload (ice-9 pretty-print) (pretty-print)
   #:export (gxrepl))
@@ -92,9 +91,7 @@
           "no such command"))))
 
 (define (sqlsel cols . rest)
-  (sql-command<-trees
-   #:SELECT (make-SELECT/COLS-tree cols)
-   (parse+make-SELECT/tail-tree rest)))
+  (sql-command<-trees (apply parse+make-SELECT-tree #t cols rest)))
 
 (defcc (obvious . something)
   "Life, the universe, and everything!
