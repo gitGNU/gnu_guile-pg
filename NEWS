@@ -1,6 +1,21 @@
 NEWS for Guile-PG
 
 
+- 0.25 | NOT YET RELEASED
+
+  - New (database postgres) proc: pg-result-error-message
+
+	The argument to this is a result object, which hangs onto its
+	error message (if there is one) for its lifetime.
+
+	The related proc `pg-error-message' still takes a result object
+	for backward compatibility (in which case the call is delegated
+	to the new proc), but that capability will probably be dropped
+	by 1.0 release.  To ensure your programs are upward compatible,
+	pass only result objects to `pg-result-error-message' and only
+	connection objects to `pg-error-message'.
+
+
 - 0.24 | 2004-11-24
 
   - New (database postgres) proc: pg-set-nonblocking!
