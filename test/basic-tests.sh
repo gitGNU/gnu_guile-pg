@@ -10,7 +10,7 @@ $create || exit 1
 
 ${GUILE-guile} -l $top_builddir/scm/postgres.scm \
                -l config.scm \
-               -s guile-pg-basic-tests.scm
+               -s $srcdir/guile-pg-basic-tests.scm
 rv=$?
 
 $drop
