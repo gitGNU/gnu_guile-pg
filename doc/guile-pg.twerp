@@ -262,6 +262,8 @@ default, they are sent to the current output port.
 
 @twerpdoc (pg-backend-pid)
 
+@section Client Data
+
 The libpq interface upon which Guile-PG is built supports assocation of
 arbitrary data with a connection.  You can use these @dfn{client data}
 procedures or the more general @dfn{object property} procedures in Guile.
@@ -310,6 +312,14 @@ as the key.
 (define (conn-log conn)
   (get conn 'log))
 @end lisp
+
+@section Asynchronous Notifications
+
+The PostgreSQL backend supports @dfn{asynchronous notifications}
+with the commands @code{LISTEN} and @code{NOTIFY}.  You can use
+@code{pg-notifies} to query the pending notifications queue.
+
+@twerpdoc (pg-notifies)
 
 @c ---------------------------------------------------------------------------
 @node    Retrieving Data
