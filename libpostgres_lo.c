@@ -69,9 +69,6 @@ typedef struct lob_stream_tag {
   (((0xffff | SCM_OPN | SCM_RDNG) & (int) gh_car (x)) \
    == (lob_ptype | SCM_OPN | SCM_RDNG))
 
-/* ttn hack */
-#define TTN_COERCE_INT(x) ((int)(x))
-
 long lob_ptype;
 
 static SCM lob_mklobport (SCM conn, Oid oid, int alod,
@@ -250,7 +247,7 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *caller)
     }
   pt->write_end = pt->write_buf + pt->write_buf_size;
 
-  SCM_SETCAR (port, TTN_COERCE_INT (gh_car (port)) & ~SCM_BUF0);
+  SCM_SETCAR (port, gh_car (port) & ~SCM_BUF0);
 
   SCM_ALLOW_INTS;
 
@@ -525,7 +522,7 @@ lob_write (SCM port, const void *data, size_t size)
             lob_flush (port);
         }
       /* handle line buffering.  */
-      if ((TTN_COERCE_INT (gh_car (port)) & SCM_BUFLINE)
+      if ((gh_car (port) & SCM_BUFLINE)
           && memchr (data, '\n', size))
         lob_flush (port);
     }
