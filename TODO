@@ -1,17 +1,4 @@
 
-- 0.16
-
-  - Implement these calls:
-
-    - PQprint
-
-	This is mostly in place.  Remaining is to extract FILE* from
-	current-output-port instead hardcoding `stdout' (libpostres.c:1478).
-	Also, the options arg to pg-print should be made optional (!) and
-	if a list, should be passed through pg-make-print-options as a
-	convenience to the user.
-
-
 - Eventually
 
   - Review error handling; regularize; document.
