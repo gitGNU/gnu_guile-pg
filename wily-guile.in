@@ -1,0 +1,15 @@
+#!/bin/sh
+# wily-guile --- drop in replacement for "@GUILE@" that knows a few tricks
+
+top_builddir=@top_builddir_absolute@
+export top_builddir
+
+top_srcdir=@top_srcdir@
+export top_srcdir
+
+GUILE_MERGED_MODULE_CATALOG=$top_builddir/pre-inst.merged-module-catalog
+export GUILE_MERGED_MODULE_CATALOG
+
+exec @GUILE@ "$@"
+
+# wily-guile ends here
