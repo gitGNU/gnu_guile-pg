@@ -31,7 +31,7 @@ ddir = $(GUILE_LIBSITE)/database
 d_LTLIBRARIES = postgres-sup.la
 postgres_sup_la_SOURCES = libpostgres.c libpostgres_lo.c libpostgres.h \
 				tmpfile.c
-postgres_sup_la_LDFLAGS = -export-dynamic -module -version-info 4:0:2 \
+postgres_sup_la_LDFLAGS = -export-dynamic -module -version-info 5:0:3 \
 				$(LDFLAGS) $(PQ_LDFLAGS)
 
 noinst_DATA = pre-inst.merged-module-catalog
