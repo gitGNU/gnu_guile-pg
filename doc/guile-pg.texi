@@ -301,7 +301,7 @@ otherwise it must not be specified.
                     "SELECT COUNT(*) FROM pg_user")))
         (if (and result 
                  (eq? (pg-result-status result) 
-                      PGRES_TUPLES_OK)) 
+                      'PGRES_TUPLES_OK)) 
             (string->number (pg-getvalue result 0 0))
             #f)))
 @end lisp
@@ -479,8 +479,8 @@ or an empty string if the previous @code{pg-exec} succeeded.
 @end defun
 
 @defun pg-result-status result
-Returns the integer status of a @code{PG_RESULT} object returned by
-@code{pg-exec}. One of:
+Returns the symbolic status of a @code{PG_RESULT} object returned by
+@code{pg-exec}.  One of:
 
 @table @code
 @item PGRES_TUPLES_OK
@@ -525,7 +525,7 @@ error occurred.
                                  record))))
        (if (and result 
                 (eq? (pg-result-status result)
-                     PGRES_COMMAND_OK))
+                     'PGRES_COMMAND_OK))
            (string->number (pg-cmdtuples result))
            #f)))
 @end lisp
@@ -679,7 +679,7 @@ then be associated with each connection using @code{pg-set-client-data!}.
                        (pg-ftype result fnum))))))
        (if (and
              result
-             (eq? (pg-result-status result) PGRES_TUPLES_OK)
+             (eq? (pg-result-status result) 'PGRES_TUPLES_OK)
              (> (pg-ntuples result) 0))
            (pg-getvalue result 0 0)
            "")))
