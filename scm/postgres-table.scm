@@ -42,6 +42,7 @@
   #:export (sql-pre
             tuples-result->table
             pgtable-manager
+            compile-outspec
             where-clausifier
             ;; these will go away
             def:col-name
