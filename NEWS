@@ -77,7 +77,7 @@ NEWS for Guile-PG
 	(CSHOW '((#f "label" "upper(b)") (int4 "bella" "11 * a")))
 	=> ((label "NOTHING IS REAL" "DEADLY") (bella 462 209))
 
-	(CSHOW '((int4 "label" "upper(b)") ((#t . b) "bella" "11 * a"))
+	(CSHOW '((int4 "label" "upper(b)") ((#t . b) "bella" "11 * a")))
 	=> ((label #f #f) (bella "462" "209"))
 
 	(CSHOW #t)
