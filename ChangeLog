@@ -1,5 +1,9 @@
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-gxrepl.scm (dt): Use `sqlsel'.
+
+2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm (commasep): Use keyword instead of ",".
 	(paren): Likewise.
 	(sql<-trees): Handle keywords for L/R paren, comma and semicolon.
