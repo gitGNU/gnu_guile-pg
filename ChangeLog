@@ -1,5 +1,10 @@
 2002-12-12  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* doc/guile-pg.texi (Concept Index): Comment out node.
+	(Programming Interface): Delete node; move children up.
+
+2002-12-12  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* doc/guile-pg.texi: Rewrite "function" as "procedure".
 	Replace @defun with "@deffn {Scheme Procedure}".
 	Convert	"returns" -> "return" and so on.
