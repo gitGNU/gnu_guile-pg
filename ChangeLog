@@ -1,5 +1,12 @@
 2004-11-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/guile-pg.twerp (Database Connections):
+	Document connection object print representation.
+	(Processing Results): Likewise for result objects.
+	(Large Objects): Likewise for large-object port objects.
+
+2004-11-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.h (xc_display): New func decl.
 	* libpostgres.c (xc_display): Func no longer static.
 	* libpostgres_lo.c (lob_printp): Use `xc_display'.
