@@ -28,6 +28,8 @@
 
     We need to make sure they aren't substrings.
 
+  - Write tests for non-blocking query support
+
   - Implement these calls:
 
     + PQconndefaults
