@@ -6,6 +6,7 @@
   #:use-module ((database postgres) #:select (pg-print
                                               pg-ntuples))
   #:use-module ((database postgres-table) #:select (pgtable-manager))
+  #:use-module ((database postgres-gxrepl) #:select (gxrepl))
   #:use-module ((ice-9 pretty-print) #:select (pretty-print)))
 
 ;;; version: 5
@@ -255,6 +256,8 @@
   (>>table "client" c)
 
   (for-each dump-project (*names* (cddr *samples*)))
+
+  (and (getenv "INTERACTIVE") (gxrepl ((m #:k) #:connection)))
 
   (wln ((c #:drop)))
   (wln ((m #:drop))))
