@@ -1,5 +1,22 @@
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm: From module (ice-9 common-list),
+	no longer select `every' or `pick-mappings.
+	From module (database postgres-col-defs), select also `validate-def'.
+	(validate-def): Delete proc.
+	(validate-defs): Likewise.
+	(pgtable-manager): Incorporate `validate-defs'.
+
+2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-col-defs.scm
+	(validate-def): New proc, exported.
+
+	* doc/guile-pg.twerp (Column Definitions):
+	Add @twerpoc for `validate-def'.
+
+2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-table.scm (drop-table-cmd): Delete proc.
 	(drop-sequence-cmd): Likewise.
 	(drop-proc): Incorporate `drop-table-cmd' and `drop-sequence-cmd'.
