@@ -22,19 +22,96 @@
 ;;; Commentary:
 
 ;; This module exports the procs:
+;;   (defs-from-psql DB-NAME TABLE-NAME) => defs
+;;   (check-def/elaborate DEF) => #f, or OLD-TOBJ, or NEW-TYPE
+;;   (strictly-check-defs/elaborate! TABLE-NAME DEFS) => #t, or ERROR
 ;;   (infer-defs CONN TABLE-NAME) => defs
 ;;   (describe-table! DB-NAME TABLE-NAME)
+;;
+;; DB-NAME and TABLE-NAME are strings.  DEF is a single column def.  DEFS
+;; is a list of column defs.  NEW-TYPE is a symbol.  OLD-TOBJ is the type
+;; object already registered.  CONN is a the result of `pg-connectdb'.
+;; ERROR means an error is thrown.
 
 ;;; Code:
 
 (define-module (database postgres-meta)
   #:use-module (database postgres)
   #:use-module (database postgres-types)
+  #:use-module (database postgres-col-defs)
   #:use-module (database postgres-resx)
   #:use-module (database postgres-table)
-  #:use-module (srfi srfi-13)
-  #:export (infer-defs
+  #:autoload (srfi srfi-13) (string-trim-both)
+  #:autoload (ice-9 popen) (open-input-pipe)
+  #:export (defs-from-psql
+            check-def/elaborate
+            strictly-check-defs/elaborate!
+            infer-defs
             describe-table!))
+
+(define (defs-from-psql db-name table-name)
+  (define (read-def p)                  ; FIELD TYPE [OPTIONS...]
+    (let ((name (read p)))
+      (if (eof-object? name)
+          name
+          (cons*
+           name
+           (let ((type (read p)))
+             (if (string? type)         ; handle "TYPE" as well as TYPE
+                 (string->symbol type)
+                 type))
+           (let ((opts (let drain ((c (read-char p)) (acc '()))
+                         (if (char=? #\newline c)
+                             (string-trim-both (list->string (reverse acc)))
+                             (drain (read-char p) (cons c acc)))))
+                 (eol-if-null-string (lambda (s)
+                                       (and (string-null? s) '()))))
+             (cond ((eol-if-null-string opts))
+                   ((and (char=? #\( (string-ref opts 0))
+                         (string-index opts #\)))
+                    => (lambda (cut)
+                         (let ((rest (string-trim-both
+                                      (substring opts (1+ cut)))))
+                           (cons (with-input-from-string opts read)
+                                 (or (eol-if-null-string rest)
+                                     (list rest))))))
+                   (else
+                    (list opts))))))))
+  (let* ((psql-spew (open-input-pipe
+                     (format #f "psql -d ~A -F ' ' -P t -A -c '\\d ~A'"
+                             db-name table-name)))
+         (next (lambda () (read-def psql-spew))))
+    (let loop ((def (next)) (acc '()))
+      (if (eof-object? def)
+          (begin
+            (close-pipe psql-spew)
+            (reverse acc))              ; rv
+          (loop (next) (cons def acc))))))
+
+(define (check-def/elaborate def)
+  (let* ((s (symbol->string (type-name def)))
+         (n (string-index s #\[))
+         (base (string->symbol (if n (substring s 0 n) s))))
+    (and (dbcoltype-lookup base)
+         (or (not n)
+             (let ((array-variant (type-name def)))
+               (or (dbcoltype-lookup array-variant)
+                   (begin
+                     (define-db-col-type-array-variant array-variant base)
+                     array-variant)))))))
+
+(define (strictly-check-defs/elaborate! table-name defs)
+  (let ((bad '()))
+    (for-each (lambda (def)
+                (or (check-def/elaborate def)
+                    (set! bad (cons def bad))))
+              defs)
+    (or (null? bad)
+        (error (apply string-append
+                      "bad \"" table-name "\" defs:"
+                      (map (lambda (def)
+                             (format #f "\n ~S" def))
+                           bad))))))
 
 (define *class-defs*
   ;; todo: Either mine from "psql \d pg_class", or verify at "make install"
