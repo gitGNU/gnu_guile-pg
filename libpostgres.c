@@ -1476,7 +1476,7 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
            "otherwise seen by Guile.  This means @code{pg-print}:\n\n"
            "@itemize\n\n"
            "@item may not mix well with code using\n"
-           "@code{with-output-to-string} or other constructs"
+           "@code{with-output-to-string} or other constructs\n"
            "that modify the current output port\n\n"
            "@item may require a port flush between its use and the\n"
            "use of normal scheme output operations\n\n"
