@@ -87,7 +87,7 @@
       (define (line-remainder)
         (let drain ((c (read-char p)) (acc '()))
           (if (char=? #\newline c)
-              (stb (list->string (reverse acc)))
+              (stb (list->string (reverse! acc)))
               (drain (read-char p)
                      (cons (if (char=? #\, c) #\space c) acc)))))
 
@@ -116,7 +116,7 @@
       (if (eof-object? def)
           (begin
             (close-pipe psql-spew)
-            (reverse acc))              ; rv
+            (reverse! acc))             ; rv
           (loop (next) (cons def acc))))))
 
 ;; Check @var{type}, a symbol.  If it not an array variant, return non-#f only
