@@ -1,5 +1,12 @@
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* configure.in (CREATEDB): New AC_CHECK_PROGS var.
+	Warn if createdb not found.
+	(AC_CONFIG_FILES): Add test/drop.sh and test/create.sh.
+	(chmod-plus-x): Also chmod test/drop.sh and test/create.sh.
+
+2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* configure.in (DROPDB): New AC_CHECK_PROGS var.
 	Warn if neither dropdb nor destroydb is found.
 
