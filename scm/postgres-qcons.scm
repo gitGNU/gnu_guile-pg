@@ -253,6 +253,8 @@
                   `((#t ,(cadr  rest))
                     (#f ,(caddr rest))))
              #:END))
+      ((::)
+       (list #:CAST (paren (expr (cadr rest)) #:AS (car rest))))
       (else
        (cond ((memq op *infix-operations*)
               (paren ((list-sep-proc op) expr rest)))
