@@ -38,6 +38,9 @@
 
 #include "libpostgres.h"
 
+#define sec_p guile_pg_sec_p
+#define sec_unbox guile_pg_sec_unbox
+
 #define LOB_READING 1
 #define LOB_WRITING 2
 
