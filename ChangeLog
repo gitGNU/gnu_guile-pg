@@ -1,5 +1,11 @@
 2005-02-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-resdisp.scm: New file.
+	* scm/Makefile.am (guile_postgres_sources): Add postgres-resdisp.scm.
+	* Makefile.am (DOTDOCFILES): Add scm/postgres-resdisp.doc.
+
+2005-02-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-qcons.scm (*infix-operations*):
 	Rename from `*binary-infix-operations*'.
 	Add `+' and `-' in load-time actions.
