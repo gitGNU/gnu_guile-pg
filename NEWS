@@ -1,6 +1,38 @@
 NEWS for Guile-PG
 
 
+- 0.27 | 2005-03-02
+
+  - Result objects print without redundant "PGRES_" prefix
+
+	For example, before: #<PG-RESULT:4:PGRES_TUPLES_OK:23:8>
+	                now: #<PG-RESULT:4:TUPLES_OK:23:8>
+
+  - New command for (database postgres-table) proc `pgtable-manager'
+
+	#:trace-exec OPORT -- OPORT specifies an output port to write
+	the `pg-exec' command to immediately prior to executing it, or
+	#f to disable tracing.
+
+  - New (database postgres-resx) proc: result->object-rows
+
+  - Changes to module (database postgres-qcons)
+
+    - Proc `make-FROM-tree' now handles left/right/full/outer JOIN
+
+    - Proc `parse+make-SELECT/tail-tree' now handles #:from and #:offset
+
+    - Built-in symbol category tables expanded (and now documented)
+
+    - New proc: parse+make-SELECT-tree
+
+    - New support for CAST using op `::'
+
+    - Whitespace addition during flattening less haphazard
+
+    - Chapter "Query Construction" in manual expanded
+
+
 - 0.26 | 2005-02-24
 
   - Expiration date set for opaque string support
