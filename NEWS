@@ -423,7 +423,7 @@ NEWS for Guile-PG
 
 	The heuristic fallback when lacking `scm_terminating' has been
 	replaced w/ a configure.in check for `terminating' in libguile.
-	If neither is available, on lob flush error, guile-pg writes to
+	If neither is available, on lob flush error, Guile-PG writes to
 	stderr unconditionally.  This is safer than unconditionally
 	calling scm_syserror (the previous approach), which may crash
 	guile in some circumstances.
@@ -469,7 +469,7 @@ NEWS for Guile-PG
 
   - New file: THANKS
 
-	A good place to find fellow guile-pg users!
+	A good place to find fellow Guile-PG users!
 
 
 - 0.10 | 2002-12-14
@@ -511,11 +511,11 @@ NEWS for Guile-PG
 
 - 0.08 | 2002-12-11
 
-	Maintenance for guile-pg has passed from Ian Grant (original
+	Maintenance for Guile-PG has passed from Ian Grant (original
 	author) to Thien-Thi Nguyen.  Thanks Ian!
 
 	This release differs from 0.07 in that `pg-result-status' values
-	are symbolic (rather than numerical), the guile-pg integrated
+	are symbolic (rather than numerical), the Guile-PG integrated
 	interpreter is no longer included (neither built nor installed),
 	the "rcsid"-related procs/vars are no longer included, and "make
 	check" now works pre-install.
@@ -544,7 +544,7 @@ NEWS for Guile-PG
 
 - 0.04 | 1999-12-24
 
-	First alpha release.  Called guile-pg-0.04.
+	First alpha release.  Called Guile-PG 0.04.
 
 
 - 1998-12-03
