@@ -6,10 +6,10 @@ Thien-Thi Nguyen <ttn@gnu.org> wrote:
   ./
       tmpfile.h    tmpfile.c    bcruft.h    fcruft.h
   scm/
-      postgres-col-defs.scm             postgres-meta.scm
-      postgres-ql.scm                   postgres-resx.scm
-      postgres-stored-procedures.scm    postgres-table.scm
-      postgres-types.scm
+      postgres-col-defs.scm   postgres-resdisp.scm
+      postgres-gxrepl.scm     postgres-resx.scm
+      postgres-meta.scm       postgres-table.scm
+      postgres-qcons.scm      postgres-types.scm
   doc/
       guile-pg.twerp
   test/
