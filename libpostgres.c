@@ -1273,14 +1273,6 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
 #endif /* !HAVE_PQFMOD */
 }
 
-PG_DEFINE (pg_guile_pg_version, "pg-guile-pg-version", 0, 0, 0,
-           (void),
-           "Return a string giving the version of @code{guile-pg}.\n"
-           "The form is \"M.m\" giving major and minor versions.")
-{
-  return scm_makfrom0str (VERSION);
-}
-
 PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
            (SCM conn),
            "Read a line from @var{conn} on which a @code{COPY <table> TO\n"
