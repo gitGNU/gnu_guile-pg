@@ -1,3 +1,8 @@
 #! /bin/sh
 # $Id$
-aclocal && automake && autoconf
+aclocal -I.
+libtoolize --copy --automake
+autoheader
+autoconf
+automake --add-missing
+

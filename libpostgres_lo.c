@@ -400,6 +400,9 @@ lob_fill_input (SCM port)
    SCM_DEFER_INTS;
    ret = lo_read(conn, lobp->fd, pt->read_buf, pt->read_buf_size);
    SCM_ALLOW_INTS;
+#ifdef DEBUG_LO_READ
+fprintf(stderr, "lob_fill_input: lo_read(%d) returned %d.\n", pt->read_buf_size, ret);
+#endif
    if (ret != pt->read_buf_size) {
       if (ret == 0)
          return EOF;
@@ -407,8 +410,11 @@ lob_fill_input (SCM port)
          scm_misc_error ("lob_fill_buffer","Error (%s) reading from lo port %s",
                            scm_listify(SCM_MAKINUM(ret), port, SCM_UNDEFINED));
    }
-   pt->read_pos = pt->read_buf + 1;
+   pt->read_pos = pt->read_buf;
    pt->read_end = pt->read_buf + ret;
+#ifdef DEBUG_LO_READ
+fprintf(stderr, "lob_fill_input: returning %c.\n", *(pt->read_buf));
+#endif
    return *(pt->read_buf);
 }
 
@@ -609,24 +615,27 @@ static int lob_printpt (SCM exp, SCM port, scm_print_state *pstate);
 static int 
 lob_printpt (SCM exp, SCM port, scm_print_state *pstate)
 {
-   lob_stream *lobp = (lob_stream *) SCM_STREAM(exp);
-   scm_extended_dbconn *sec = sec_unbox(lobp->conn);
-   char *dbstr = PQdb(sec->dbconn);
-   char *hoststr = PQhost(sec->dbconn);
-   char *portstr = PQport(sec->dbconn);
-   char *optionsstr = PQoptions(sec->dbconn);
-
    scm_puts ("#<PG-LO-PORT:", port);
    scm_print_port_mode (exp, port);
-   scm_intprint (lobp->fd, 10, port); scm_puts (":", port);
-   scm_intprint (lobp->oid, 10, port); scm_puts (":", port);
-   scm_puts ("#<PG-CONN:", port);
-   scm_intprint (sec->count, 10, port); scm_putc (':', port);
-   scm_puts (IFNULL(dbstr,"db?"), port); scm_putc (':', port);
-   scm_puts (IFNULL(hoststr,"localhost"), port); scm_putc (':', port);
-   scm_puts (IFNULL(portstr,"port?"), port); scm_putc (':', port);
-   scm_puts (IFNULL(optionsstr,"options?"), port);
-   scm_puts (">>", port);
+   if (SCM_OPENP(exp)) {
+      lob_stream *lobp = (lob_stream *) SCM_STREAM(exp);
+      scm_extended_dbconn *sec = sec_unbox(lobp->conn);
+      char *dbstr = PQdb(sec->dbconn);
+      char *hoststr = PQhost(sec->dbconn);
+      char *portstr = PQport(sec->dbconn);
+      char *optionsstr = PQoptions(sec->dbconn);
+
+      scm_intprint (lobp->fd, 10, port); scm_puts (":", port);
+      scm_intprint (lobp->oid, 10, port); scm_puts (":", port);
+      scm_puts ("#<PG-CONN:", port);
+      scm_intprint (sec->count, 10, port); scm_putc (':', port);
+      scm_puts (IFNULL(dbstr,"db?"), port); scm_putc (':', port);
+      scm_puts (IFNULL(hoststr,"localhost"), port); scm_putc (':', port);
+      scm_puts (IFNULL(portstr,"port?"), port); scm_putc (':', port);
+      scm_puts (IFNULL(optionsstr,"options?"), port);
+      scm_putc ('>', port);
+   }
+   scm_putc ('>', port);
    return 1;
 }
 
