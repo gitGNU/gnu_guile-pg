@@ -36,6 +36,10 @@
 #include <libpq-fe.h>
 #include <libpq/libpq-fs.h>
 
+#ifdef INVALIDOID_HEADER                /* PostgreSQL folks <- slack */
+#include INVALIDOID_HEADER
+#endif
+
 #include "libpostgres.h"
 
 #define BUF_LEN 256
