@@ -91,11 +91,11 @@ the @code{libpq} library and other similar interfaces like Edmund Mergl's
 
 @menu
 
-* Examples::         Overview and brief examples.
-* Procedures::       Each procedure described.
+* Examples::                    Overview and brief examples.
+* Programming Interface::       Each procedure described.
 
-* Concept Index::
-* Function Index::
+ Concept Index::
+* Procedure Index::
 @end menu
 
 @node    Examples
@@ -193,15 +193,16 @@ Typically though the result and connection variables will be @code{let}
 bindings so the connection will usually be closed soon after the body of the
 @code{let} returns.
 
-@node    Procedures
-@chapter Procedures
+@node    Programming Interface
+@chapter Programming Interface
+
 This section specifies the procedures that @code{guile-pg} provides to
 access databases.  To access the module, Guile programs must either be run
 under the @code{guile-pg} executable, which is a Guile interpreter statically
 linked with the @code{guile-pg} interface and the @code{libpq} library, or
 they must be run under the ordinary Guile interpreter @code{guile} and
 dynamically load the shared library @code{libpostgres.so} which implements
-the module.  To do this, use the @code{(use-modules ...)} procedure as follows:
+the module.  To do this, use the @code{(use-modules ...)} form as follows:
 
 @lisp
 (use-modules (database postgres))
@@ -214,8 +215,6 @@ After which the @code{pg-} procedures will be accessable.
 * Database Connections:: Procedures for creating database connections and
                          determining their status.
 
-* Miscellaneous::        Miscellaneous procedures.
-
 * Retrieving Data::      Procedures to send queries to the database and access
                          the results.
 
@@ -225,14 +224,15 @@ After which the @code{pg-} procedures will be accessable.
 * Large Objects::        Procedures to create, access, update and delete
                          large objects.
 
+* Miscellaneous::        Miscellaneous procedures.
+
 @end menu
 
 @node    Database Connections
-@section Functions for managing connections
+@section Procedures for managing connections
 
-@defun pg-connectdb connect-string
-Open a connection to a database.
-@var{connect-string} should be
+@deffn {Scheme Procedure} pg-connectdb connect-string
+Open a connection to a database.  @var{connect-string} should be
 a string consisting of zero or more space-separated @code{name=value} pairs.
 If the value contains spaces it must be enclosed in single quotes and any
 single quotes appearing in the value must be escaped using backslashes.
@@ -242,21 +242,25 @@ will themselves require to be escaped a second time.
 The @code{name} strings can be any of:
 
 @table @code
+
 @item host
 The host-name or dotted-decimal IP address of the host on which the postmaster
 is running.  If no @code{host=} sub-string is given then the host is assumed
 to be the value of the environment variable @code{PGHOST} or the local
 host if @code{PGHOST} is not defined.
+
 @item port
 The TCP or Unix socket on which the backend is listening.  If this is not
 specified then the value of the @code{PGHOST} environment variable is used.
 If that too is not defined then the default port 5432 is assumed.
+
 @item options
 A string containing the options to the backend server.  The options given
 here are in addition to the options given by the environment variable
 @code{PGOPTIONS}.  The options string should be a set of command line
-switches as would be passed to the backend.  See the @code{postgres (1)}
+switches as would be passed to the backend.  See the @code{postgres(1)}
 man page for more details.
+
 @item tty
 A string defining the file or device on which error messages from the backend
 are to be displayed.  If this is empty (@code{""}) then the environment variable
@@ -264,6 +268,7 @@ are to be displayed.  If this is empty (@code{""}) then the environment variable
 will be readable only by the user the postmaster runs as (usually
 @code{postgres}).  Similarly, if the specified @code{tty} is a device then it
 must have permissions allowing the postmaster user to write to it.
+
 @item dbname
 The name of the database.  If no @code{dbname=} sub-string is given then the
 database name is assumed to be that given by the value of the @code{PGDATABASE}
@@ -271,80 +276,86 @@ environment variable, or the @code{USER} environment variable if the
 @code{PGDATABASE} environment variable is not defined.  If the @code{USER}
 environment variable is not specified either then the value of the
 @code{user} option is taken as the database name.
+
 @item user
 The login name of the user to authenticate.  If none is given then the
 @code{PGUSER} environment variable is checked.  If that is not given then the
 login of the user owning the process is used.
+
 @item password
 The password.  Whether or not this is used depends upon the contents of the
-@code{pg_hba.conf} file.  See the @code{pg_hba.conf (5)} man page for details.
+@code{pg_hba.conf} file.  See the @code{pg_hba.conf(5)} man page for details.
+
 @item authtype
 This must be set to @code{password} if password authentication is in use,
 otherwise it must not be specified.
+
 @end table
 
 @heading Example
 @lisp
 (define (user-count host)
   (let* ((conn (pg-connectdb
-                  (string-append
-                     "host=" host
-                     " port=5432 dbname=template1")))
-         (result (pg-exec conn
-                    "SELECT COUNT(*) FROM pg_user")))
-        (if (and result
-                 (eq? (pg-result-status result)
-                      'PGRES_TUPLES_OK))
-            (string->number (pg-getvalue result 0 0))
-            #f)))
+                (string-append
+                 "host=" host
+                 " port=5432 dbname=template1")))
+         (result (pg-exec conn "SELECT COUNT(*) FROM pg_user")))
+    (and result
+         (eq? 'PGRES_TUPLES_OK (pg-result-status result))
+         (string->number (pg-getvalue result 0 0)))))
 @end lisp
-@end defun
+@end deffn
 
-@defun pg-reset conn
-Resets the connection with the backend.  Equivalent to closing the connection
+@deffn {Scheme Procedure} pg-reset conn
+Reset the connection with the backend.  Equivalent to closing the connection
 and re-opening it again with the same connect options as given to
-@code{pg-connectdb}.
-@var{conn} must be a valid @code{PG_CONN} object returned by @code{pg-connectdb}.
-@end defun
+@code{pg-connectdb}.  @var{conn} must be a valid @code{PG_CONN} object
+returned by @code{pg-connectdb}.
+@end deffn
 
-@defun pg-get-db conn
-Returns a string containing the name of the database to which @var{conn} represents a connection.
-@end defun
+@deffn {Scheme Procedure} pg-get-db conn
+Return a string containing the name of the database to which @var{conn}
+represents a connection.
+@end deffn
 
-@defun pg-get-user conn
-Returns a string containing the user name used to authenticate the connection @var{conn}.
-@end defun
+@deffn {Scheme Procedure} pg-get-user conn
+Return a string containing the user name used to authenticate
+the connection @var{conn}.
+@end deffn
 
-@defun pg-get-pass conn
-Returns a string containing the password used to authenticate the connection @var{conn}.
-@end defun
+@deffn {Scheme Procedure} pg-get-pass conn
+Return a string containing the password used to authenticate the
+connection @var{conn}.
+@end deffn
 
-@defun pg-get-host conn
-Returns a string containing the name of the host to which @var{conn} represents a connection.
-@end defun
+@deffn {Scheme Procedure} pg-get-host conn
+Return a string containing the name of the host to which
+@var{conn} represents a connection.
+@end deffn
 
-@defun pg-get-port conn
-Returns a string containing the port number to which @var{conn} represents a connection.
-@end defun
+@deffn {Scheme Procedure} pg-get-port conn
+Return a string containing the port number to which @var{conn}
+represents a connection.
+@end deffn
 
-@defun pg-get-tty conn
-Returns a string containing the the name of the diagnostic tty for @var{conn}.
-@end defun
+@deffn {Scheme Procedure} pg-get-tty conn
+Return a string containing the the name of the diagnostic tty for @var{conn}.
+@end deffn
 
-@defun pg-get-options conn
-Returns a string containing the the options string for @var{conn}.
-@end defun
+@deffn {Scheme Procedure} pg-get-options conn
+Return a string containing the the options string for @var{conn}.
+@end deffn
 
-@defun pg-backend-pid conn
-Returns an integer which is the the PID of the backend process for @var{conn}.
-@end defun
+@deffn {Scheme Procedure} pg-backend-pid conn
+Return an integer which is the the PID of the backend process for @var{conn}.
+@end deffn
 
-@defun pg-get-client-data conn
-Returns the the client data associated with @var{conn}.
-@end defun
+@deffn {Scheme Procedure} pg-get-client-data conn
+Return the the client data associated with @var{conn}.
+@end deffn
 
-@defun pg-set-client-data! conn data
-Associates @var{data} with @var{conn}.
+@deffn {Scheme Procedure} pg-set-client-data! conn data
+Associate @var{data} with @var{conn}.
 
 @heading Example
 The following is a set of three procedures which implement a database
@@ -353,90 +364,26 @@ connection object that logs all the SQL statements it executes.
 @lisp
 (define (pg-connectdb-logged options)
   (let ((conn (pg-connectdb options)))
-       (if conn (begin (pg-set-client-data! conn '())
-                       conn)
-                #f)))
+    (if conn
+        (begin (pg-set-client-data! conn '())
+               conn)
+        #f)))
 
 (define (pg-exec-logged conn sql)
-  (pg-set-client-data! conn
-                       (append
-                         (pg-get-client-data conn)
-                         (list sql)))
+  (pg-set-client-data! conn (append (pg-get-client-data conn)
+                                    (list sql)))
   (pg-exec conn sql))
 
 (define (pg-conn-log conn)
   (pg-get-client-data conn))
 @end lisp
-@end defun
-
-@node    Miscellaneous
-@section Miscellaneous Functions
-
-@defun pg-guile-pg-loaded
-Returns @code{#t} indicating that the binary part of @code{guile-pg} is loaded.
-Thus to test if @code{guile-pg} is loaded, use
-@lisp
-(defined? 'pg-guile-pg-loaded)
-@end lisp
-
-@heading Note
-This function is guaranteed to be present in all future versions of
-@code{guile-pg}.
-@end defun
-
-@defun pg-guile-pg-version
-Returns a string giving the version of @code{guile-pg}.  The string is
-always of the form "M.m" giving major and minor versions.
-@end defun
-
-@defun pg-guile-pg-module-version
-Returns a string giving the version of the scheme module @code{postgres.scm}.
-The string is always of the form "M.m" giving major and minor versions.
-Unless something is wrong with the installation, this should be the same as
-@code{pg-guile-pg-version}.
-@end defun
-
-@defun pg-guile-pg-module-config-stamp
-Returns a string containing the date and time at which @code{guile-pg}
-was configured (this is probably the build time.)
-@end defun
-
-@defun pg-trace conn port
-Starts outputting low-level trace information on the connection @var{conn} to
-@var{port}, which must have been opened for writing.  This trace
-is more useful for debugging Postgres than it is for debugging applications.
-The return value is unspecified.
-
-@heading Example
-This example defines a pair of procedures @code{pg-trace-on} and
-@code{pg-trace-off} which implement a higher-level trace function which
-opens the required file and starts/stops the trace.
-
-@lisp
-(define (pg-trace-on conn filename)
-  (let ((port (open-file filename "w")))
-       (pg-set-client-data! conn port)
-       (pg-trace conn port)))
-
-(define (pg-trace-off conn)
-  (let ((port (pg-get-client-data conn)))
-    (if port
-        (begin
-           (close-port port)
-           (pg-untrace conn))
-        #f)))
-@end lisp
-@end defun
-
-@defun pg-untrace conn
-Stops tracing on a given connection.  The return value is unspecified.
-@end defun
+@end deffn
 
 @node    Retrieving Data
-@section Functions for Retrieving Data
+@section Procedures for Retrieving Data
 
-@defun pg-exec conn statement
-Executes the SQL string @var{statement} on a given connection (@var{conn},)
+@deffn {Scheme Procedure} pg-exec conn statement
+Execute the SQL string @var{statement} on a given connection @var{conn}
 returning either a @code{PG_RESULT} object containing a @code{pg-result-status}
 or @code{#f} if an error occurred, in which case the error message can be
 obtained using @code{pg-error-message}, passing it the @code{PG_CONN} object on
@@ -444,15 +391,15 @@ which the statement was attempted.  Note that the error message is available
 only until the next call to @code{pg-exec} on this connection.
 
 @heading Example
-This example defines a function @code{pg-execute} which wraps @code{pg-exec}
+This example defines a procedure @code{pg-execute} which wraps @code{pg-exec}
 so that a @code{misc-error} is thrown instead of returning false.  There are
 numerous other examples of @code{pg-exec} calls throughout this chapter.
 
 @lisp
 (define (pg-execute conn sql)
   (let ((result (pg-exec conn sql)))
-       (if result result
-         (error (pg-error-message conn)))))
+    (or result
+        (error (pg-error-message conn)))))
 @end lisp
 
 @heading Notes
@@ -462,46 +409,55 @@ a problem because it requires a large amount of memory.  In these cases it is
 better to @code{DECLARE} a cursor over the @code{SELECT} and retrive small
 numbers of rows at a time using @code{FETCH}.  These commands can only be
 issued between @code{BEGIN TRANSACTION/END TRANSACTION} pairs.  See the
-PostgreSQL @code{declare (l)} and @code{fetch (l)} man pages for more details.
+PostgreSQL @code{declare(l)} and @code{fetch(l)} man pages for more details.
 
-@end defun
+@end deffn
 
-@defun pg-error-message conn
-Returns the most-recent error message that occurred on this connection,
+@deffn {Scheme Procedure} pg-error-message conn
+Return the most-recent error message that occurred on this connection,
 or an empty string if the previous @code{pg-exec} succeeded.
-@end defun
+@end deffn
 
-@defun pg-result-status result
-Returns the symbolic status of a @code{PG_RESULT} object returned by
+@deffn {Scheme Procedure} pg-result-status result
+Return the symbolic status of a @code{PG_RESULT} object returned by
 @code{pg-exec}.  One of:
 
 @table @code
+
 @item PGRES_TUPLES_OK
 The statement returned zero or more tuples.  The number of fields and tuples
 returned can be determined from calls to @code{pg-nfields} and
 @code{pg-ntuples} respectively.  The value of a given attribute (field)
 of a given tuple can be determined by calling @code{pg-getvalue}.
+
 @item PGRES_COMMAND_OK
 The statement was a command (@code{INSERT}, @code{UPDATE}, @code{DELETE}
 @code{CREATE TABLE}, @code{DROP TABLE} etc.),
 which was executed without error.  The number of tuples affected by the
 command can be determined by a call to @code{pg-cmdtuples}.
+
 @item PGRES_EMPTY_QUERY
 It is not known under which circumstances this result-status is returned.
+
 @item PGRES_COPY_OUT
 The statement was a @code{COPY <table> TO stdout}.  The data can be read using
 @code{pg-getline}.
+
 @item PGRES_COPY_IN
 The statement was a @code{COPY <table> FROM stdin}.  The rows should be written
 using @code{pg-putline}.
+
 @item PGRES_BAD_RESPONSE
 This occurs when the @code{libpq} interface receives an unexpected response
 from the backend.  It indicates a problem with Postgres.
+
 @item PGRES_NONFATAL_ERROR
 It is not known under which circumstances this result-status is returned.
+
 @item PGRES_FATAL_ERROR
 The command was not executable for some reason.  This is the returned status
 when a syntax error is detected in the command, for example.
+
 @end table
 
 @heading Example
@@ -512,15 +468,11 @@ error occurred.
 @lisp
 (define (pg-insert conn table record)
   (let ((result (pg-exec conn
-                  (string-append "INSERT INTO "
-                                 table
-                                 " VALUES "
-                                 record))))
-       (if (and result
-                (eq? (pg-result-status result)
-                     'PGRES_COMMAND_OK))
-           (string->number (pg-cmdtuples result))
-           #f)))
+                         (format #f "INSERT INTO ~A VALUES ~A"
+                                 table record))))
+    (and result
+         (eq? 'PGRES_COMMAND_OK (pg-result-status result))
+         (string->number (pg-cmdtuples result)))))
 @end lisp
 
 The procedure could be called as follows
@@ -528,63 +480,63 @@ The procedure could be called as follows
 @lisp
 (pg-insert conn "people" "('Warbucks', 'Oliver')")
 @end lisp
-@end defun
+@end deffn
 
-@defun pg-get-connection result
-Returns the @code{PG_CONN} object representing the connection from which a
+@deffn {Scheme Procedure} pg-get-connection result
+Return the @code{PG_CONN} object representing the connection from which a
 @var{result} was returned.
-@end defun
+@end deffn
 
-@defun pg-binary-tuples? result
-Returns @code{#t} if @var{result} contains binary tuple data, @code{#f}
+@deffn {Scheme Procedure} pg-binary-tuples? result
+Return @code{#t} if @var{result} contains binary tuple data, @code{#f}
 otherwise.
-@end defun
+@end deffn
 
-@defun pg-fmod result field-number
-Returns the integer type-specific modification data for the given field
+@deffn {Scheme Procedure} pg-fmod result field-number
+Return the integer type-specific modification data for the given field
 (@var{field-number}) of @var{result}.
-@end defun
+@end deffn
 
-@defun pg-ntuples result
-Returns the number of tuples in @var{result}.
-@end defun
+@deffn {Scheme Procedure} pg-ntuples result
+Return the number of tuples in @var{result}.
+@end deffn
 
-@defun pg-nfields result
-Returns the number of fields in @var{result}.
-@end defun
+@deffn {Scheme Procedure} pg-nfields result
+Return the number of fields in @var{result}.
+@end deffn
 
-@defun pg-cmdtuples result
-Returns the number of tuples affected by a command.  This is a string
+@deffn {Scheme Procedure} pg-cmdtuples result
+Return the number of tuples affected by a command.  This is a string
 which is empty in the case of commands like @code{CREATE TABLE}, @code{GRANT},
 @code{REVOKE} etc. which don't affect tuples.
-@end defun
+@end deffn
 
-@defun pg-oid-status result
-Returns a string which contains the integer OID (greater than or equal to 0)
+@deffn {Scheme Procedure} pg-oid-status result
+Return a string which contains the integer OID (greater than or equal to 0)
 of the tuple inserted, or is empty if the command to which @var{result}
 pertains was not @code{INSERT}.
 
-@emph{NOTE:} This function is deprecated.  Use @code{pg-oid-value} instead.
-@end defun
+@emph{NOTE:} This procedure is deprecated.  Use @code{pg-oid-value} instead.
+@end deffn
 
-@defun pg-oid-value result
-If the @var{result} is that of an SQL @code{INSERT} command, this function
-returns the integer OID of the inserted tuple, otherwise it returns @code{#f}.
-@end defun
+@deffn {Scheme Procedure} pg-oid-value result
+If the @var{result} is that of an SQL @code{INSERT} command, return the
+integer OID of the inserted tuple, otherwise return @code{#f}.
+@end deffn
 
-@defun pg-fname result field-number
-Returns a string containing the canonical lower-case name of the field
+@deffn {Scheme Procedure} pg-fname result field-number
+Return a string containing the canonical lower-case name of the field
 @var{field-number} in @var{result}.  SQL variables and field names are not
 case-sensitive.
-@end defun
+@end deffn
 
-@defun pg-fnumber result field-name
-Returns the integer field-number corresponding to @var{field-name} if this
+@deffn {Scheme Procedure} pg-fnumber result field-name
+Return the integer field-number corresponding to @var{field-name} if this
 exists in @var{result}, or @code{-1} otherwise.
-@end defun
+@end deffn
 
-@defun pg-getvalue result tuple field-number
-Returns a string containing the value of the attribute @var{field-number},
+@deffn {Scheme Procedure} pg-getvalue result tuple field-number
+Return a string containing the value of the attribute @var{field-number},
 tuple @var{tuple} of @var{result}.  It is up to the caller to
 convert this to the required type.
 
@@ -641,14 +593,14 @@ This implementation of @code{pg-for-each} inherits inefficiency from the
 The @code{pg-getvalue} procedure throws
 @code{out-of-range} errors if either the @code{tuple} or @code{field-number}
 arguments are out of range.
-@end defun
+@end deffn
 
-@defun pg-getisnull result tuple field-number
-Returns @code{#t} if the attribute is @code{NULL}, @code{#f} otherwise.
-@end defun
+@deffn {Scheme Procedure} pg-getisnull result tuple field-number
+Return @code{#t} if the attribute is @code{NULL}, @code{#f} otherwise.
+@end deffn
 
-@defun pg-ftype result field-number
-Returns the PostgreSQL internal integer representation of the type of
+@deffn {Scheme Procedure} pg-ftype result field-number
+Return the PostgreSQL internal integer representation of the type of
 the given attribute.  The integer is actually an OID (object ID) which
 can be used as the primary key to reference a tuple from the system table
 @code{pg_type}.  A @code{misc-error} is thrown if the @code{field-number}
@@ -665,36 +617,33 @@ then be associated with each connection using @code{pg-set-client-data!}.
 @lisp
 (define (pg-ftype-name result fnum)
   (let ((result (pg-exec
-                  (pg-get-connection result)
-                  (string-append
-                    "SELECT typname FROM pg_type WHERE oid = "
-                    (number->string
-                       (pg-ftype result fnum))))))
-       (if (and
-             result
-             (eq? (pg-result-status result) 'PGRES_TUPLES_OK)
-             (> (pg-ntuples result) 0))
-           (pg-getvalue result 0 0)
-           "")))
+                 (pg-get-connection result)
+                 (format #f "SELECT typname FROM pg_type WHERE oid = ~A"
+                         (pg-ftype result fnum)))))
+    (or (and result
+             (eq? 'PGRES_TUPLES_OK (pg-result-status result))
+             (> (pg-ntuples result) 0)
+             (pg-getvalue result 0 0))
+        "")))
 @end lisp
-@end defun
+@end deffn
 
-@defun pg-fsize result field-number
-Returns the size of a given attribute in bytes, or -1 if the field is
+@deffn {Scheme Procedure} pg-fsize result field-number
+Return the size of a given attribute in bytes, or -1 if the field is
 variable-length.
-@end defun
+@end deffn
 
-@defun pg-getlength result tuple field-number
+@deffn {Scheme Procedure} pg-getlength result tuple field-number
 The size of the datum in bytes.
-@end defun
+@end deffn
 
 @node    Writing/Reading Data
-@section Functions for Copying Data
+@section Procedures for Copying Data
 
-@defun pg-getline conn
-Reads a line from a connection on which a @code{COPY <table> TO STDOUT} has
+@deffn {Scheme Procedure} pg-getline conn
+Read a line from a connection on which a @code{COPY <table> TO STDOUT} has
 been issued.
-Returns a string from the connection.  If the returned string consists of only
+Return a string from the connection.  If the returned string consists of only
 a backslash followed by a full stop, then the results
 from the @code{COPY} command have all been read and @code{pg-endcopy} should
 be called to resynchronise the connection before any further calls to
@@ -707,10 +656,10 @@ to retrieve the results of a @code{COPY <table> TO STDOUT} command.
 (define (pg-copy-to-port conn port)
   (define (iter)
     (let ((line (pg-getline conn)))
-         (if (string=? line "\\.")
-             (pg-endcopy conn)
-             (begin (write-line line port)
-                    (iter)))))
+      (if (string=? line "\\.")
+          (pg-endcopy conn)
+          (begin (write-line line port)
+                 (iter)))))
   (iter))
 @end lisp
 @heading Notes
@@ -719,10 +668,10 @@ executing a @code{COPY <table> TO STDOUT} command on that connection.
 It is also an error to call @code{pg-getline} after a terminating line has
 been received, without an intervening @code{COPY} command being issued on
 that connection.
-@end defun
+@end deffn
 
-@defun pg-putline conn string
-Writes a line to the connection on which a @code{COPY <table> FROM STDIN} has
+@deffn {Scheme Procedure} pg-putline conn string
+Write a line to the connection on which a @code{COPY <table> FROM STDIN} has
 been issued.  The lines written should include the final newline characters.
 
 The last line should be a backslash, followed by a full-stop.  After this,
@@ -738,26 +687,26 @@ to supply data to a @code{COPY <table> TO STDIN} command.
 (define (pg-copy-from-port conn port)
   (define (iter)
     (let ((line (read-line port)))
-         (if (eof-object? line)
-             (begin (pg-putline conn "\\.\n")
-                    (pg-endcopy conn))
-             (begin (pg-putline conn line)
-                    (pg-putline conn "\n")
-                    (if (string=? line "\\.")
-                        (pg-endcopy conn)
-                        (iter))))))
+      (if (eof-object? line)
+          (begin (pg-putline conn "\\.\n")
+                 (pg-endcopy conn))
+          (begin (pg-putline conn line)
+                 (pg-putline conn "\n")
+                 (if (string=? line "\\.")
+                     (pg-endcopy conn)
+                     (iter))))))
   (iter))
 @end lisp
-@end defun
+@end deffn
 
-@defun pg-endcopy conn
-Resynchronises with the backend process.  This procedure must be called after
+@deffn {Scheme Procedure} pg-endcopy conn
+Resynchronize with the backend process.  This procedure must be called after
 the last line of a table has been transferred using @code{pg-getline} or
 Returns an integer: zero if successful, non-zero otherwise.
-@end defun
+@end deffn
 
 @node    Large Objects
-@section Functions for Managing Large Objects
+@section Procedures for Managing Large Objects
 
 @heading Note
 All of the operations on large objects must be carried out inside a
@@ -766,22 +715,22 @@ will result in a loss of synchronisation between the backend and the
 @code{libpq} library, resulting in an unusable connection to the
 database, and possible corruption of data.
 
-@defun pg-lo-creat conn modes
-Creates a new large object and opens a port over it for reading and/or writing.
+@deffn {Scheme Procedure} pg-lo-creat conn modes
+Create a new large object and open a port over it for reading and/or writing.
 @var{modes} is a string describing the mode in which the port is to be opened.
-The mode string must include one of ``r'' for reading, ``w'' for writing or
-``a'' for append (but since the object is empty to start with this is the same
-as ``w''.) The return value is a large object port which can be used to read or
+The mode string must include one of @code{r} for reading, @code{w} for writing or
+@code{a{ for append (but since the object is empty to start with this is the same
+as @code{w}.)  The return value is a large object port which can be used to read or
 write data to/from the object, or @code{#f} on failure in which case
 @code{pg-error-message} from the connection should give some idea of what
 happened.
 
 In addition to returning @code{#f} on failure this procedure throws a
 @code{misc-error} if the @code{modes} string is invalid.
-@end defun
+@end deffn
 
-@defun pg-lo-open conn oid modes
-Opens a port over an existing large object.  The port can be used to read or
+@deffn {Scheme Procedure} pg-lo-open conn oid modes
+Open a port over an existing large object.  The port can be used to read or
 write data from/to the object.
 @var{oid} should be an integer identifier representing the large object.
 @var{modes} must be a string describing the mode in which the port is to be
@@ -796,83 +745,155 @@ from the connection should give some idea of what happened.
 @heading Notes
 This procedure throws a @code{misc-error} exception if the @code{modes}
 string is invalid.
-@end defun
+@end deffn
 
-@defun pg-lo-unlink conn oid
-Deletes the large object identified by @var{oid}.
-Returns @code{#t} if the object was successfully deleted, @code{#f} otherwise,
+@deffn {Scheme Procedure} pg-lo-unlink conn oid
+Delete the large object identified by @var{oid}.
+Return @code{#t} if the object was successfully deleted, @code{#f} otherwise,
 in which case @code{pg-error-message} applied to @code{conn} should give an
 idea of what went wrong.
-@end defun
+@end deffn
 
-@defun pg-lo-get-connection port
-Returns the connection associated with a given large object port.
-@var{Port} must be a large object port returned from @code{pg-lo-creat} or @code{pg-lo-open}.
-@end defun
+@deffn {Scheme Procedure} pg-lo-get-connection port
+Return the connection associated with a given large object port.
+@var{Port} must be a large object port returned from @code{pg-lo-creat}
+or @code{pg-lo-open}.
+@end deffn
 
-@defun pg-lo-get-oid port
-Returns the integer identifier of the object to which a given port applies.
-@var{Port} must be a large object port returned from @code{pg-lo-creat} or @code{pg-lo-open}.
-@end defun
+@deffn {Scheme Procedure} pg-lo-get-oid port
+Return the integer identifier of the object to which a given port applies.
+@var{Port} must be a large object port returned from @code{pg-lo-creat}
+or @code{pg-lo-open}.
+@end deffn
 
-@defun pg-lo-tell port
-Returns the position of the file pointer for the given large object port.
-@var{Port} must be a large object port returned from @code{pg-lo-creat} or @code{pg-lo-open}.
-The return value is either an integer greater than or equal to zero or @code{#f} if an error
-occurred.  In the latter case @code{pg-error-message} applied to @code{conn}
+@deffn {Scheme Procedure} pg-lo-tell port
+Return the position of the file pointer for the given large object port.
+@var{Port} must be a large object port returned from @code{pg-lo-creat}
+or @code{pg-lo-open}.
+The return value is either an integer greater than or equal to zero
+or @code{#f} if an error occurred.  In the latter case
+@code{pg-error-message} applied to @code{conn}
 should explain what went wrong.
-@end defun
+@end deffn
 
-@defun pg-lo-seek port where whence
-Sets the position of the next read or write to/from the given large object
+@deffn {Scheme Procedure} pg-lo-seek port where whence
+Set the position of the next read or write to/from the given large object
 port.
 @var{Port} must be a large object port returned from @code{pg-lo-creat} or @code{pg-lo-open}.
 @var{Where} is the position to set the pointer.  @var{Whence} must be one of
+
 @table @code
+
 @item SEEK_SET
 Relative to the beginning of the file.
+
 @item SEEK_CUR
 Relative to the current position.
+
 @item SEEK_END
 Relative to the end of the file.
+
 @end table
 The return value is an integer which is the new position relative to the
 beginning of the object, or a number less than zero if an error occurred.
 @heading Notes
 It is possible to seek beyond the end of file opened only for reading.  In
 which case subsequent reads of the port will return an EOF object.
-@end defun
 
-@defun pg-lo-read size number port
-Reads @var{number} objects each of length @var{size} from @var{port}.
-Returns a string containing the data read from the port or @code{#f} if an error
+@end deffn
+
+@deffn {Scheme Procedure} pg-lo-read size number port
+Read @var{number} objects each of length @var{size} from @var{port}.
+Return a string containing the data read from the port or @code{#f} if an error
 occurred.
-@end defun
+@end deffn
 
-@defun pg-lo-import conn filename
-Creates a new large object and loads it with the contents of the specified
+@deffn {Scheme Procedure} pg-lo-import conn filename
+Create a new large object and loads it with the contents of the specified
 file.
 @var{Filename} must be a string containing the name of the file to be loaded into the new object.
-The function returns the integer identifier (OID) of the newly created large object, or @code{#f}
+Return the integer identifier (OID) of the newly created large object, or @code{#f}
 if an error occurred, in which case @code{pg-error-message} should be
 consulted to determine the failure.
-@end defun
+@end deffn
 
-@defun pg-lo-export conn oid filename
+@deffn {Scheme Procedure} pg-lo-export conn oid filename
 Write the contents of a given large object to a file.
 @var{Oid} is the integer identifying the large object to be exported and
 @var{filename} the name of the file to contain the object data.
-The function returns @code{#t} on success, @code{#f} otherwise, in which case
+Return @code{#t} on success, @code{#f} otherwise, in which case
 @code{pg-error-message} may offer an explanation of the failure.
-@end defun
+@end deffn
+
+@node    Miscellaneous
+@section Miscellaneous Procedures
+
+@deffn {Scheme Procedure} pg-guile-pg-loaded
+Return @code{#t} indicating that the binary part of @code{guile-pg} is loaded.
+Thus to test if @code{guile-pg} is loaded, use
+@lisp
+(defined? 'pg-guile-pg-loaded)
+@end lisp
+
+@heading Note
+This procedure is guaranteed to be present in all future versions of
+@code{guile-pg}.
+@end deffn
+
+@deffn {Scheme Procedure} pg-guile-pg-version
+Return a string giving the version of @code{guile-pg}.  The string is
+always of the form "M.m" giving major and minor versions.
+@end deffn
+
+@deffn {Scheme Procedure} pg-guile-pg-module-version
+Return a string giving the version of the scheme module @code{postgres.scm}.
+The string is always of the form "M.m" giving major and minor versions.
+Unless something is wrong with the installation, this should be the same as
+@code{pg-guile-pg-version}.
+@end deffn
+
+@deffn {Scheme Procedure} pg-guile-pg-module-config-stamp
+Return a string containing the date and time at which @code{guile-pg}
+was configured (this is probably the build time.)
+@end deffn
+
+@deffn {Scheme Procedure} pg-trace conn port
+Start outputting low-level trace information on the connection @var{conn} to
+@var{port}, which must have been opened for writing.  This trace
+is more useful for debugging Postgres than it is for debugging applications.
+The return value is unspecified.
+
+@heading Example
+This example defines a pair of procedures @code{pg-trace-on} and
+@code{pg-trace-off} which implement a higher-level trace procedure which
+opens the required file and starts/stops the trace.
+
+@lisp
+(define (pg-trace-on conn filename)
+  (let ((port (open-file filename "w")))
+    (pg-set-client-data! conn port)
+    (pg-trace conn port)))
+
+(define (pg-trace-off conn)
+  (let ((port (pg-get-client-data conn)))
+    (and port
+         (begin
+           (close-port port)
+           (pg-untrace conn)))))
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} pg-untrace conn
+Stop tracing on a given connection.  The return value is unspecified.
+@end deffn
 
 @node       Concept Index
 @unnumbered Concept Index
 
 @printindex cp
 
-@node       Function Index
-@unnumbered Function Index
+@node       Procedure Index
+@unnumbered Procedure Index
 
 @printindex fn
 
