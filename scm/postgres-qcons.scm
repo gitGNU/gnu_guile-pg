@@ -429,29 +429,33 @@
             '())))
 
 ;; Return a @dfn{select tail} tree for @var{plist}, a list of
-;; alternating keywords and sexps.  These subsequences are recognized:
+;; alternating keywords and related expressions.  These subsequences
+;; are recognized:
 ;;
 ;; @table @code
-;; @item #:from sexp
-;; Pass @var{sexp} to @code{make-FROM-tree}.
+;; @item #:from x
+;; Pass @var{x} to @code{make-FROM-tree}.
 ;;
-;; @item #:where sexp
-;; Pass @var{sexp} to @code{make-WHERE-tree}.
+;; @item #:where x
+;; Pass @var{x} to @code{make-WHERE-tree}.
 ;;
-;; @item #:group-by sexp
-;; Pass @var{sexp} to @code{make-GROUP-BY-tree}.
+;; @item #:group-by x
+;; Pass @var{x} to @code{make-GROUP-BY-tree}.
 ;;
-;; @item #:having sexp
-;; Pass @var{sexp} to @code{make-HAVING-tree}.
+;; @item #:having x
+;; Pass @var{x} to @code{make-HAVING-tree}.
 ;;
-;; @item #:order-by sexp
-;; Pass @var{sexp} to @code{make-ORDER-BY-tree}.
+;; @item #:order-by x
+;; Pass @var{x} to @code{make-ORDER-BY-tree}.
 ;;
 ;; @item #:limit n
 ;; @itemx #:offset n
 ;; Arrange for the tree to include @code{LIMIT n}
-;; or @code{OFFSET n}.  @var{n} is an integer.
+;; and/or @code{OFFSET n}.  @var{n} is an integer.
 ;; @end table
+;;
+;; If an expression (@var{x} or @var{n}) is #f, omit the associated
+;; clause completely from the returned tree.
 ;;
 (define (parse+make-SELECT/tail-tree plist)
   (let ((acc (list '())))
@@ -468,11 +472,14 @@
                        ((#:limit)    (lambda (n) (list #:LIMIT n)))
                        ((#:offset)   (lambda (n) (list #:OFFSET n)))
                        (else         (error "bad keyword:" kw)))))
-            (set-cdr! tp (list (cond ((null? (cdr ls))
-                                      (error "lonely keyword:" kw))
-                                     ((cadr ls) => mk)
-                                     (else '()))))
-            (loop (cddr ls) (cdr tp)))))))
+            (and (null? (cdr ls))
+                 (error "lonely keyword:" kw))
+            (loop (cddr ls)
+                  (cond ((cadr ls)
+                         => (lambda (x)
+                              (set-cdr! tp (list (mk x)))
+                              (cdr tp)))
+                        (else tp))))))))
 
 ;; Return a @dfn{select} tree of @var{composition} for @var{cols/subs}
 ;; and @var{tail}.
