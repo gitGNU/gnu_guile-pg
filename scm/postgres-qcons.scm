@@ -200,7 +200,7 @@
 ;; @table @code
 ;; @item TITLE
 ;; TITLE is a symbol, a column name possibly qualified with the table name.
-;; For example: foo.bar means table @code{foo}, column @code{bar}.
+;; For example, @code{foo.bar} means table @code{foo}, column @code{bar}.
 ;;
 ;; @item (TITLE . EXPR)
 ;; TITLE is a string to be used to name the output for the column
@@ -211,12 +211,20 @@
 ;; described by EXPR is usually EXPR's outermost function or operator.
 ;; @end table
 ;;
+;; For the present (to ease migration in client modules), EXPR may also be a
+;; string, in which case it is passed through opaquely w/o further processing.
+;; This support WILL BE REMOVED after 2005-12-31; DO NOT rely on it.
+;;
 (define (make-SELECT/OUT-tree outs)
+  (define (expr-nostring x)             ; todo: zonk after 2005-12-31
+    (if (string? x)
+        x
+        (expr x)))
   (commasep (lambda (x)
               (cond ((symbol? x) (fs "~S" (symbol->string x)))
                     ((and (pair? x) (string? (car x)))
-                     (list (expr (cdr x)) #:AS (fs "~S" (car x))))
-                    ((pair? x) (expr x))
+                     (list (expr-nostring (cdr x)) #:AS (fs "~S" (car x))))
+                    ((pair? x) (expr-nostring x))
                     (else (error "bad out spec:" x))))
             outs))
 
