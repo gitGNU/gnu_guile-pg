@@ -9,6 +9,11 @@ NEWS for Guile-PG
 	Previously, "make check" failed for such situations due to not
 	being able to find test/testing.scm.
 
+  - New module: (database postgres-types)
+  - New module: (database postgres-table)
+
+	These scheme modules are documented in their respective chapters.
+
 
 - version 0.11 released 2002-12-17
 
