@@ -1,6 +1,23 @@
 NEWS for Guile-PG
 
 
+- 0.23 | NOT YET RELEASED
+
+  - Print representations of smobs now documented
+
+	Specifically, #<PG-CONN...>, #<PG-RESULT...> and
+	#<PG-LO-PORT...> fields are now described.
+
+  - Change to database connection print representation
+
+	Previously, for connections without host/port info (for example,
+	unix-domain connections), Guile-PG would display "localhost" and
+	the default port, anyway.  Now, those fields are empty.
+
+	Before: #<PG-CONN:1:ttn:localhost:5432:>
+        Now:    #<PG-CONN:1:ttn:::>
+
+
 - 0.22 | 2004-08-07
 
   - Experimental configure script option: --enable-pq-rpath
