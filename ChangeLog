@@ -1,5 +1,13 @@
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* test/guile-pg-abstraction-scm-tests.scm
+	(mtest:select-*-error_condition): Handle array output
+	representation for cases both prior to, as well as, starting from,
+	PostgreSQL 7.2.
+	(mtest:select-*-read, mtest:select-count): Likewise.
+
+2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* THANKS: Add Russ McManus (moved from AUTHORS).
 	* AUTHORS: Rewrite.
 
