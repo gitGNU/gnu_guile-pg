@@ -1,5 +1,19 @@
 2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-qcons.scm: New file.
+
+	* scm/makefile.am (guile_postgres_sources): Add postgres-qcons.scm.
+
+	* scm/postgres-table.scm: Use module (database postgres-qcons).
+	(sql-quote): Delete proc.
+
+	* doc/guile-pg.twerp (Top): Add "Query Construction" to menu.
+	(Query Construction): New node/chapter.
+
+	* Makefile.am (DOTDOCFILES): Add scm/postgres-table.doc.
+
+2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Database Connections): Use keywords in example.
 	(Single-Table Abstraction): Likewise.
 
