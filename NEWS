@@ -3,6 +3,17 @@ NEWS for Guile-PG
 
 - 0.17 | NOT YET RELEASED
 
+  - Installation change: modules installed under site dirs
+
+	The compiled module (database postgres-sup) is now installed in
+	${GUILE_LIBSITE}/database, while the other non-compiled modules
+	are installed in ${GUILE_SITE}/database.  Both site dirs are
+	determined by the configure script, usually something like
+	${libdir}/guile/site and ${datadir}/guile/site.
+
+	Additionally, if the system supports it, "make install" updates
+	each site dir's module catalog.
+
   - Error output bugfix for pg-fname, pg-ftype, pg-fsize, pg-fmod
 
 	For an invalid field number argument, these procs used to
@@ -17,8 +28,11 @@ NEWS for Guile-PG
 	using `with-output-to-port' (or `call-with-output-string',
 	`call-with-output-file', `set-current-output-port', etc).
 
-  - New (database postgres) proc: `pg-set-notice-out!'
-  - New (database postgres) proc: `pg-notifies'
+  - New (database postgres) procs
+    - pg-set-notice-out!
+    - pg-notifies
+    - pg-client-encoding
+    - pg-set-client-encoding!
 
 	These are documented in the manual under "Database Connections".
 
