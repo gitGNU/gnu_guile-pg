@@ -1,5 +1,12 @@
 2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-table.scm (def:col-name): Delete unused alias.
+	Also, no longer re-export proc.
+	(def:type-name): No longer re-export proc.
+	(def:type-options): Likewise.
+
+2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* configure.in (MD5SUM_PATH): Delete unused AC_PATH_PROG.
 
 2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
