@@ -1,5 +1,14 @@
 2005-02-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-gxrepl.scm (obvious): Skip proc docstring.
+	(dt): Tighten output formatting.  Use `#:q*'.
+	(fix, fsel): New comma-commands.
+
+	* doc/guile-pg.twerp (Easy Interaction):
+	Give examples on `fix' and `fsel'.
+
+2005-02-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-gxrepl.scm (dt): Convert `table-name' to string.
 	(gxrepl): New comma-command.
 	(q): Delete comma-command.
