@@ -19,3 +19,4 @@ config.cache
 *.doc
 wily-guile
 pre-inst.merged-module-catalog
+.last-release
