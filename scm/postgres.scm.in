@@ -55,6 +55,7 @@
 (export pg-get-client-data)
 (export pg-set-client-data!)
 (export pg-exec)
+(export pg-result?)
 (export pg-error-message)
 (export pg-get-db)
 (export pg-get-user)
