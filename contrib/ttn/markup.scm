@@ -130,7 +130,7 @@
               ((url) ((if (= 3 (length form)) caddr cadr) form))
               ((email) (cadr form))
               (else (error "bad form:" form)))
-            (symbol->string (car form))
+            (symbol->string type)
             ((case type
                ((url) cadr)
                ((email) caddr))
