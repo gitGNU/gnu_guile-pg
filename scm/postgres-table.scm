@@ -127,7 +127,7 @@
                                 "~A"
                                 "dbname=~A")
                             db)))
-        (else (error (fmt "bad db-spec: ~A" db)))))
+        (else (error "bad db-spec:" db))))
 
 (define (validate-def def)
   (or (get def 'validated)
