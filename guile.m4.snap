@@ -1,4 +1,4 @@
-## Autoconf macros for working with Guile.
+## Some -*-autoconf-*- macros for working with Guile.
 ##
 ##   Copyright (C) 1998,2001,02,03,2004 Free Software Foundation, Inc.
 ##
@@ -60,6 +60,7 @@
 ## GUILE_CHECK_ICE9_OPTARGS -- use (ice-9 optargs) for (ice-9 optargs-kw)?
 ## GUILE_MODULE_CATALOG_PREP -- machinery for pre-inst.merged-module-catalog
 ## GUILE_C2X_METHOD -- choose "guile-tools c2x" or "guile-snarf"
+## GUILE_MODSUP_H -- define HAVE_GUILE_MODSUP_H if it is indeed available
 
 ## Code
 ## ----
@@ -390,6 +391,17 @@ AC_DEFUN([GUILE_C2X_METHOD],[
   fi
   AC_MSG_RESULT([$$1])
   AC_SUBST($1)
+])
+
+# GUILE_MODSUP_H -- define HAVE_GUILE_MODSUP_H if it is indeed available
+#
+# Usage: GUILE_MODSUP_H
+#
+# Check for header <guile/modsup.h> using AC_CHECK_HEADERS.
+# If found, define the cpp symbol HAVE_GUILE_MODSUP_H in config.h.
+#
+AC_DEFUN([GUILE_MODSUP_H],[
+  AC_CHECK_HEADERS([guile/modsup.h])
 ])
 
 ## guile.m4 ends here
