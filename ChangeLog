@@ -1,3 +1,13 @@
+2003-01-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* scm/postgres-col-defs.scm: New file.
+	* scm/postgres-resx.scm: New file.
+	* scm/Makefile.am (guile_postgres_sources): Add
+	postgres-col-defs.scm and postgres-resx.scm.
+
+	* Makefile.am (DOTDOCFILES): Add scm/postgres-col-defs.doc
+	and scm/postgres-resx.doc.
+
 2003-01-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* scm/postgres-table.scm (pgtable-manager): First arg can now
