@@ -8,7 +8,10 @@ create=$top_builddir/test/create.sh
 $drop
 $create || exit 1
 
-${GUILE-guile} -l $top_builddir/scm/postgres.scm \
+if [ x"$DEBUG" = x ] ; then debug= ; else debug='--debug' ; fi
+
+${GUILE-guile} $debug \
+               -l $top_builddir/scm/postgres.scm \
                -l config.scm \
                -s $srcdir/guile-pg-lo-tests.scm
 rv=$?
