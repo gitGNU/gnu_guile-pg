@@ -1,3 +1,7 @@
+2004-10-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-meta.scm (check-type/elaborate): Doc fix.
+
 2004-10-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* autogen.sh: Rewrite guile.m4 snapshot handling.
