@@ -1,5 +1,10 @@
 2004-01-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-meta.scm (describe-table!):
+	Use `display' and `newline' instead of `write-line'.
+
+2004-01-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-col-defs.scm: Update copyright.
 	Use "#:" in `define-module' form.
 	* scm/postgres-meta.scm: Likewise.
