@@ -30,9 +30,6 @@
 
 (define-module (database postgres-resx)
   #:use-module (database postgres)
-  #:use-module (database postgres-types)
-  #:use-module ((database postgres-col-defs)
-                #:renamer (symbol-prefix-proc 'def:))
   #:export (for-each-tuple
             result-field->object-list
             result->object-alist
