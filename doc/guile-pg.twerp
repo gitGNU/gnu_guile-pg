@@ -102,6 +102,7 @@ the @code{libpq} library and other similar interfaces like Edmund Mergl's
 
 * Types Conversion::            Module: (database postgres-types).
 * Single-Table Abstraction::    Module: (database postgres-table).
+* Introspection::               Module: (database postgres-meta).
 
 * Procedure Index::
 @end menu
@@ -658,6 +659,7 @@ describes how to use the PostgreSQL-to-Scheme (and back) type conversion
 support installed with Guile-PG, including how to register new converters.
 
 To get started, load the @code{postgres-types} module:
+
 @lisp
 (use-modules (database postgres-types))
 @end lisp
@@ -737,6 +739,7 @@ rows to it or drawing queries from it exclusively of any other tables in the
 database.  This chapter describes Guile-PG facilities for this kind of use.
 
 To get started, load the @code{postgres-table} module:
+
 @lisp
 (use-modules (database postgres-table))
 @end lisp
@@ -831,6 +834,23 @@ serial behavior.  (As of PostgreSQL 7.x, the sequence name is constructed like
 so: TABLENAME_COLNAME_seq.  For more info, see the PostgreSQL User Guide,
 Chapter 3: Data Types.
 
+@c ---------------------------------------------------------------------------
+@node    Introspection
+@chapter Introspection
+
+This chapter explains the introspection facilities, which admittedly are not
+(yet) very well developed in Guile-PG.  [During the alpha releases, these will
+surely change quite a bit; your feedback is welcome.]
+
+To get started, load the @code{postgres-meta} module:
+
+@lisp
+(use-modules (database postgres-meta))
+@end lisp
+
+@twerpdoc (describe-table!)
+
+@c ---------------------------------------------------------------------------
 @c ---------------------------------------------------------------------------
 @c + @node       Concept Index
 @c + @unnumbered Concept Index
