@@ -1164,6 +1164,7 @@ transformations.  You can add to them using proc @code{qcons-declare!}.
 @twerpdoc (make-SELECT/OUT-tree)
 @twerpdoc (make-FROM-tree)
 @twerpdoc (make-SELECT/FROM/OUT-tree)
+@twerpdoc (parse+make-SELECT/tail-tree)
 
 @section Output
 
