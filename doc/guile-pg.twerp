@@ -215,11 +215,14 @@ bindings so the connection will usually be closed soon after the body of the
 @chapter Procedures for managing connections
 
 All sessions with a PostgreSQL database require a connection to be opened with
-@code{pg-connectdb}.
+@code{pg-connectdb}.  When the default values of the options are sufficient,
+you don't need to specify them.  Default values are also useful in creating a
+connection dialog (user-interface element).
 
 @twerpdoc (pg-connection?)
 @erindex due to bad connection
 @twerpdoc (pg-connectdb)
+@twerpdoc (pg-conndefaults)
 
 @heading Example
 @lisp
