@@ -22,10 +22,13 @@ NEWS for Guile-PG
 	FOO/libBAR.la, and not simply FOO/BAR.la, appropriately named
 	symlinks are now created for each installed .la file.
 
-  - Return value for `pg-putline'
+  - Return-value changes for (database postgres) procs
 
-	The return value for this (database postgres) proc used to be
-	unspecified.  Now it is #t if the operation was successful.
+	The return value for `pg-putline' used to be unspecified.  Now
+	it is #t if the operation was successful.
+
+	The return value for `pg-endcopy' used to be an integer (zero if
+	successful).  Now it is #t if successful.
 
 
 - 0.21 | 2004-07-03
