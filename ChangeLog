@@ -1,3 +1,9 @@
+2005-02-17  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-gxrepl.scm: From module (database postgres),
+	select also `pg-result-error-message'.
+	(gxrepl): Do not display result status if `PGRES_TUPLES_OK'.
+
 2005-02-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm (obvious): Skip proc docstring.
