@@ -67,9 +67,10 @@ versions, except that this permission notice may be stated in a
 translation approved by the Free Software Foundation.
 
 @end titlepage
-@node    Top
-@top Guile-pg
-@chapter Introduction
+
+@c ---------------------------------------------------------------------------
+@node Top
+@top  Guile-pg
 
 @code{Guile-pg} is a Guile module providing a set of procedures to allow
 access to the PostgreSQL RDBMS from Scheme programs.
@@ -90,16 +91,31 @@ the @code{libpq} library and other similar interfaces like Edmund Mergl's
 @code{Guile-pg} is based on Russ McManus's ``Sybase glue'' code.
 
 @menu
+* Legalities::                  Your rights and freedoms.
+* Quick Start::                 Overview and brief examples.
 
-* Examples::                    Overview and brief examples.
-* Programming Interface::       Each procedure described.
+* Database Connections::        Groundwork for database interaction.
+* Retrieving Data::             Making queries and accessing results.
+* Writing/Reading Data::        Bulk data movement and I/O.
+* Large Objects::               Large-Object support.
+* Miscellaneous::               Everything else.
 
-* Concept Index::
 * Procedure Index::
 @end menu
 
-@node    Examples
-@chapter Examples
+@c ---------------------------------------------------------------------------
+@node    Legalities
+@chapter Legalities
+
+Guile-PG is released under the GNU General Public License; a copy of this
+document is included in the distribution as file @file{COPYING}.
+
+Please support free software by visiting @url{http://www.gnu.org} and
+contributing fixes and other improvements to guile-pg.
+
+@c ---------------------------------------------------------------------------
+@node    Quick Start
+@chapter Quick Start
 
 To access a PostgreSQL database from Guile, first load the @code{postgres}
 database module. This is done using the @code{use-modules} syntax:
@@ -193,43 +209,9 @@ Typically though the result and connection variables will be @code{let}
 bindings so the connection will usually be closed soon after the body of the
 @code{let} returns.
 
-@node    Programming Interface
-@chapter Programming Interface
-
-This section specifies the procedures that @code{guile-pg} provides to
-access databases.  To access the module, Guile programs must either be run
-under the @code{guile-pg} executable, which is a Guile interpreter statically
-linked with the @code{guile-pg} interface and the @code{libpq} library, or
-they must be run under the ordinary Guile interpreter @code{guile} and
-dynamically load the shared library @code{libpostgres.so} which implements
-the module.  To do this, use the @code{(use-modules ...)} form as follows:
-
-@lisp
-(use-modules (database postgres))
-@end lisp
-
-@noindent
-After which the @code{pg-} procedures will be accessable.
-
-@menu
-* Database Connections:: Procedures for creating database connections and
-                         determining their status.
-
-* Retrieving Data::      Procedures to send queries to the database and access
-                         the results.
-
-* Writing/Reading Data:: Procedures to read and write data directly from/to
-                         tuples.
-
-* Large Objects::        Procedures to create, access, update and delete
-                         large objects.
-
-* Miscellaneous::        Miscellaneous procedures.
-
-@end menu
-
+@c ---------------------------------------------------------------------------
 @node    Database Connections
-@section Procedures for managing connections
+@chapter Procedures for managing connections
 
 @deffn {Scheme Procedure} pg-connectdb connect-string
 Open a connection to a database.  @var{connect-string} should be
@@ -379,8 +361,9 @@ connection object that logs all the SQL statements it executes.
 @end lisp
 @end deffn
 
+@c ---------------------------------------------------------------------------
 @node    Retrieving Data
-@section Procedures for Retrieving Data
+@chapter Procedures for Retrieving Data
 
 @deffn {Scheme Procedure} pg-exec conn statement
 Execute the SQL string @var{statement} on a given connection @var{conn}
@@ -637,8 +620,9 @@ variable-length.
 The size of the datum in bytes.
 @end deffn
 
+@c ---------------------------------------------------------------------------
 @node    Writing/Reading Data
-@section Procedures for Copying Data
+@chapter Procedures for Copying Data
 
 @deffn {Scheme Procedure} pg-getline conn
 Read a line from a connection on which a @code{COPY <table> TO STDOUT} has
@@ -705,8 +689,9 @@ the last line of a table has been transferred using @code{pg-getline} or
 Returns an integer: zero if successful, non-zero otherwise.
 @end deffn
 
+@c ---------------------------------------------------------------------------
 @node    Large Objects
-@section Procedures for Managing Large Objects
+@chapter Procedures for Managing Large Objects
 
 @heading Note
 All of the operations on large objects must be carried out inside a
@@ -718,12 +703,12 @@ database, and possible corruption of data.
 @deffn {Scheme Procedure} pg-lo-creat conn modes
 Create a new large object and open a port over it for reading and/or writing.
 @var{modes} is a string describing the mode in which the port is to be opened.
-The mode string must include one of @code{r} for reading, @code{w} for writing or
-@code{a} for append (but since the object is empty to start with this is the same
-as @code{w}.)  The return value is a large object port which can be used to read or
-write data to/from the object, or @code{#f} on failure in which case
-@code{pg-error-message} from the connection should give some idea of what
-happened.
+The mode string must include one of @code{r} for reading, @code{w} for writing
+or @code{a} for append (but since the object is empty to start with this is
+the same as @code{w}.)  The return value is a large object port which can be
+used to read or write data to/from the object, or @code{#f} on failure in
+which case @code{pg-error-message} from the connection should give some idea
+of what happened.
 
 In addition to returning @code{#f} on failure this procedure throws a
 @code{misc-error} if the @code{modes} string is invalid.
@@ -778,9 +763,9 @@ should explain what went wrong.
 
 @deffn {Scheme Procedure} pg-lo-seek port where whence
 Set the position of the next read or write to/from the given large object
-port.
-@var{Port} must be a large object port returned from @code{pg-lo-creat} or @code{pg-lo-open}.
-@var{Where} is the position to set the pointer.  @var{Whence} must be one of
+port.  @var{Port} must be a large object port returned from @code{pg-lo-creat}
+or @code{pg-lo-open}.  @var{Where} is the position to set the pointer.
+@var{Whence} must be one of
 
 @table @code
 
@@ -810,11 +795,10 @@ occurred.
 
 @deffn {Scheme Procedure} pg-lo-import conn filename
 Create a new large object and loads it with the contents of the specified
-file.
-@var{Filename} must be a string containing the name of the file to be loaded into the new object.
-Return the integer identifier (OID) of the newly created large object, or @code{#f}
-if an error occurred, in which case @code{pg-error-message} should be
-consulted to determine the failure.
+file.  @var{Filename} must be a string containing the name of the file to be
+loaded into the new object.  Return the integer identifier (OID) of the newly
+created large object, or @code{#f} if an error occurred, in which case
+@code{pg-error-message} should be consulted to determine the failure.
 @end deffn
 
 @deffn {Scheme Procedure} pg-lo-export conn oid filename
@@ -825,8 +809,9 @@ Return @code{#t} on success, @code{#f} otherwise, in which case
 @code{pg-error-message} may offer an explanation of the failure.
 @end deffn
 
+@c ---------------------------------------------------------------------------
 @node    Miscellaneous
-@section Miscellaneous Procedures
+@chapter Miscellaneous Procedures
 
 @deffn {Scheme Procedure} pg-guile-pg-loaded
 Return @code{#t} indicating that the binary part of @code{guile-pg} is loaded.
@@ -887,11 +872,13 @@ opens the required file and starts/stops the trace.
 Stop tracing on a given connection.  The return value is unspecified.
 @end deffn
 
-@node       Concept Index
-@unnumbered Concept Index
+@c ---------------------------------------------------------------------------
+@c + @node       Concept Index
+@c + @unnumbered Concept Index
+@c +
+@c + @printindex cp
 
-@printindex cp
-
+@c ---------------------------------------------------------------------------
 @node       Procedure Index
 @unnumbered Procedure Index
 
