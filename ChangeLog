@@ -1,5 +1,17 @@
 2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* test/abstraction-scm-tests.sh: New file.
+	* test/guile-pg-abstraction-scm-tests.scm: New file.
+
+	* test/Makefile.am (TESTS): Add abstraction-scm-tests.sh.
+	(CLEANFILES): Add abstraction-scm-tests.log.
+	(EXTRA_DIST): Remove alive.sh, basic-tests.sh, lo-tests.sh,
+	guile-pg-basic-tests.scm.in, guile-pg-lo-tests.scm.in.
+	Add $(TESTS).
+	(DISTCLEANFILES): Delete directive.
+
+2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* scm/postgres-table.scm: New file.
 	* scm/Makefile.am (guile_postgres_sources): Add postgres-table.scm.
 
