@@ -41,10 +41,12 @@
                           pg-print))
   #:use-module ((database postgres-qcons)
                 #:select (sql-quote
+                          make-SELECT/OUT-tree
                           make-SELECT/FROM/OUT-tree
                           make-WHERE-tree
                           make-ORDER-BY-tree
                           sql-command<-trees))
+  #:autoload (ice-9 pretty-print) (pretty-print)
   #:export (gxrepl))
 
 (define *comma-commands* '())
@@ -86,6 +88,26 @@
                (get-doc proc identity)))
          (else
           "no such command"))))
+
+(defcc (obvious . something)
+  "Life, the universe, and everything!
+Optional arg CC names a comma-command to make obvious (pretty-print its
+source).  Note that display of `(A . (B C))' shows up as `(A B C)'; that
+is normal."
+  (cond ((and (not (null? something))
+              (assq-ref *comma-commands* (car something)))
+         => (lambda (proc)
+              (for-display
+               (with-output-to-string
+                 (lambda ()
+                   (pretty-print (procedure-source proc)))))))
+        (else
+         (sql-command<-trees
+          #:SELECT (make-SELECT/OUT-tree
+                    `((,(if (null? something)
+                            "obvious"
+                            (fs "~A" (car something)))
+                       . (+ 6 (* 6 6)))))))))
 
 (defcc (dt table-name)
   "Describe columns in table TABLE-NAME.
