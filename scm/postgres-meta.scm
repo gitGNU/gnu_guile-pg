@@ -115,9 +115,10 @@
 ;; and info about each field in the table (typname, attlen, atttypmod,
 ;; attnotnull, atthasdef, attnum).
 ;;
-;; Note that the scheme-defs output is incorrect for array types.  PostgreSQL
-;; describes those types as @code{_FOO}; there is currently no way to infer
-;; whether this means @code{FOO[]} or @code{FOO[][]}, etc.
+;; Note that the scheme-defs output is incorrect for array types, which are
+;; described as @code{_FOO}; there is currently no way to infer whether this
+;; means @code{FOO[]} or @code{FOO[][]}, etc, without looking at the table's
+;; data.
 ;;
 (define (describe-table! db-name table-name)
   (let ((M:pg-class (make-M:pg-class db-name)))
