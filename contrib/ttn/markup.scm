@@ -1,4 +1,4 @@
-;;; Copyright (C) 2003-2004 Thien-Thi Nguyen
+;;; Copyright (C) 2003-2005 Thien-Thi Nguyen
 ;;; This program is provided under the terms of the GNU GPL, version 2.
 ;;; See http://www.fsf.org/copyleft/gpl.html for details.
 
