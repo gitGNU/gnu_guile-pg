@@ -7,7 +7,9 @@
     and use C auto vars for intermediate values, even if it is ugly.
 
 
-- Eventually
+- 1.x
+
+  - Regularize error handling.
 
   - Use gh_/GH_ abstractions.
 
@@ -17,12 +19,6 @@
   - Write tests for non-blocking query support.
 
   - Scan libpq-fe.h for coverage.
-
-  - Regularize error handling.
-
-  - Enable post-install maintenance of (database postgres-meta).
-    - Write/document proc that updates *class-defs*.
-    - Also use it at "make" time.
 
   - Remove compiled proc `pg-oid-status'.
 
@@ -37,6 +33,13 @@
     Nowadays we just assume everyone is insane and go w/ that.  Users who want
     to track changes should check features directly instead of version numbers
     and time stamps, anyway.
+
+
+- Eventually
+
+  - Enable post-install maintenance of (database postgres-meta).
+    - Write/document proc that updates *class-defs*.
+    - Also use it at "make" time.
 
   - Add to the manual a section giving an overview of using large-objects.
 
@@ -64,18 +67,7 @@
     string-literals. These include, but may not be limited to: backslash,
     single quote, carriage return, linefeed, tab.
 
-  - Use a better method to check that libpq-fe.h and libpq/libpq-fs.h are
-    on the -I path.
-
-    The current scheme uses ./configure options --with-libpq and
-    --with-libpq-includes and --with-libpq-lib, but they're awful and the GNU
-    coding standards say --with options should only be used to include
-    optional components in the build. It's difficult to argue that libpq is
-    optional because the interface can't be built without it.
-
-    But apparently this is an acceptable way to use the --with flags, so
-    that's what we should do. Jim Blandy says we should also look in 'obvious
-    places' for the headers and libraries.
+  - Keep an eye out for methodology to replace --with-libpq*
 
 
 
