@@ -15,3 +15,5 @@ config.h
 libtool
 stamp-h1
 config.cache
+.doc-index
+*.doc
