@@ -170,8 +170,6 @@
     take a directory with lots of binary files in it and store each file in a
     large object in a table listing the names of the files.
 
-  - Write a test suite for the large-object functions.
-
   - Test the module on OSes other than Linux.
 
     I have used a copy of libtool from the CVS because 1.3 is expected to
@@ -181,7 +179,7 @@
     UPDATE: 31/1/99 The CVS libtool doesn't work. It is still planned, but it
     may never work for ILD.
 
-  - Incorporate (ttn *) higher-level interface in scheme.
+  - Incorporate higher-level interface in scheme.
 
     This should provide query-level functions like (pg:for-each) which
     iterates over a set of tuples returned from a query. Also provide a
@@ -210,7 +208,7 @@
     that's what we should do. Jim Blandy says we should also look in 'obvious
     places' for the headers and libraries.
 
-  - Add --with-guile-config=PATH to GUILE_MODULE allow the user to specify the
+  - Add --with-guile-config=PATH to configure.in allow the user to specify the
     particular version of guile with which to link.
 
   - Packaging
