@@ -43,13 +43,7 @@
             tuples-result->table
             pgtable-manager
             compile-outspec
-            where-clausifier
-            ;; these will go away
-            def:col-name
-            def:type-name
-            def:type-options))
-
-(define def:col-name def:column-name)
+            where-clausifier))
 
 ;;; support
 
