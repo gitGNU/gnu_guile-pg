@@ -49,10 +49,10 @@
           (table (tuples-result->table tupres))
           (tref (lambda (tn fn) (array-ref table tn fn))))
      (pass-if "result status"
-              (eq? 'PGRES_TUPLES_OK (pg-result-status tupres)))
+       (eq? 'PGRES_TUPLES_OK (pg-result-status tupres)))
      (pass-if "table well-formed"
-              (and (array? table)
-                   (= 2 (length (array-dimensions table)))))
+       (and (array? table)
+            (= 2 (length (array-dimensions table)))))
      ,@body))
 
 ;;; Tests
@@ -118,30 +118,30 @@
 ;;
 (define (test:m-insert-1)
   (command-ok? (insert (current-time) "ugh" '("a" "b" "c") 5
-                        '((",b" "") ("," "c") ("" "d,"))
-                        15.20 25 30.35 '(-1 2))))
+                       '((",b" "") ("," "c") ("" "d,"))
+                       15.20 25 30.35 '(-1 2))))
 
 ;; Test pgtable-manager insert 2
 ;; expect #t
 ;;
 (define (test:m-insert-2)
   (command-ok? (insert (current-time) "foo" '("d" "e" "f") 105
-                        '((",x" "") ("y" ",") ("" "z,"))
-                        115.120 125 130.135
-                        '(3 -4))))
+                       '((",x" "") ("y" ",") ("" "z,"))
+                       115.120 125 130.135
+                       '(3 -4))))
 
 ;; Test pgtable-manager insert 3
 ;; expect #t
 ;;
 (define (test:m-insert-3)
   (command-ok? (insert (current-time) "" '() 0
-                        '()
-                        2 3 4 '())))
+                       '()
+                       2 3 4 '())))
 
 ;;; multiple tests rolled into each
 
 (define (mtest:select-*)                ; 5
-  (sel/check (select "*")
+  (sel/check (select #t)
              (pass-if "dim" (equal? '(3 9) (array-dimensions table)))
              (pass-if "ugh" (string=? "ugh" (tref 0 1)))
              (pass-if "5" (string=? "5" (tref 0 3)))
@@ -149,7 +149,7 @@
              (pass-if "{}" (string=? "{}" (tref 2 2)))))
 
 (define (mtest:select-*-error_condition) ; 3
-  (sel/check (select "*" "where error_condition = 'foo'")
+  (sel/check (select #t "where error_condition = 'foo'")
              (pass-if "size" (equal? '(1 9) (array-dimensions table)))
              (pass-if "files"
                (let ((val (tref 0 2)))
@@ -161,7 +161,7 @@
              (pass-if "etc" (string=? "{3,-4}" (tref 0 8)))))
 
 (define (mtest:select-*-read)           ; 3
-  (sel/check (select "*" "where read[2][1] = ','")
+  (sel/check (select #t "where read[2][1] = ','")
              (pass-if "size" (equal? '(1 9) (array-dimensions table)))
              (pass-if "25" (string=? "25" (tref 0 6)))
              (pass-if "read"
@@ -173,12 +173,12 @@
                   (string=? val "{{\",b\",\"\"},{\",\",c},{\"\",\"d,\"}}"))))))
 
 (define (mtest:select-count)            ; 2
-  (sel/check (select "count(*)")
+  (sel/check (select '((int4 #f (count *))))
              (pass-if "size" (equal? '(1 1) (array-dimensions table)))
              (pass-if "3" (string=? "3" (tref 0 0)))))
 
 (define (mtest:select-*-read<>)         ; 2
-  (sel/check (select "*" "where read[2][1] <> ','")
+  (sel/check (select #t "where read[2][1] <> ','")
              (pass-if "size" (equal? '(1 9) (array-dimensions table)))
              (pass-if "115.12" (string=? "115.12" (tref 0 5)))))
 
@@ -239,16 +239,16 @@
 
     (pass-if "m2 insert 1"
       (command-ok? ((m2 'insert-values)
-                     42 "the answer to the big question")))
+                    42 "the answer to the big question")))
 
     (pass-if "m2 insert 2"
       (command-ok? ((m2 'insert-values)
-                     13 "average age of kid first trying pot")))
+                    13 "average age of kid first trying pot")))
 
     ;; at this point there are two rows of two elements, so the following
     ;; should accumulate four calls to "pass-if".
 
-    (let ((res ((m2 'select) "*")))
+    (let ((res ((m2 'select) #t)))
       ((m2 't-obj-walk) (tuples-result->table res)
        (lambda (table tn fn str obj)
          (pass-if (format #f "m2 t-obj-walk tn=~A fn=~A" tn fn)
@@ -261,11 +261,11 @@
 
     (pass-if "m2 insert-col-values 2"
       (not (command-ok? ((m2 'insert-col-values)
-                          '(desc) "lost in space")))) ; no p key
+                         '(desc) "lost in space")))) ; no p key
 
     (pass-if "m2 insert-col-values 3"
       (command-ok? ((m2 'insert-col-values)
-                     '(n desc) 343 "a nice prime")))
+                    '(n desc) 343 "a nice prime")))
 
     (pass-if "m2 delete-rows"
       (command-ok? ((m2 'delete-rows) "n = 13")))
