@@ -1,3 +1,8 @@
+2003-10-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* doc/Makefile.am (.twerp.texi):
+	Use "guile-tools" instead of "$(GUILE_TOOLS)".
+
 2003-10-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.c (pg_fname, pg_ftype, pg_fsize, pg_fmod):
