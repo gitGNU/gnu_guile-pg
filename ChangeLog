@@ -1,5 +1,15 @@
 2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-types.scm (n+m-stringifier): New proc.
+	(n+m-objectifier): Likewise.
+	(host-stringifier): Likewise.
+	(host-objectifier): Likewise.
+	(inet): For this built-in type converter,
+	rewrite to use `n+m-stringifier' and `n+m-objectifier'.
+	(cidr, inet-host): New built-in type converters.
+
+2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-types.scm (bigint): New built-in type converter.
 	(int2, int8, double, float8, bigserial, serial4, serial8): Likewise.
 	(serial, inet): Remove `lambda' wrapping.
