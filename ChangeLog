@@ -1,3 +1,8 @@
+2002-12-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* configure.in (AC_CONFIG_COMMANDS):
+	Conditionalize twerp2texi invocation.
+
 2002-12-26  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* libpostgres.c (sec_box, ser_p, ser_unbox, ser_box): Make static.
