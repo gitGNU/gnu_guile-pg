@@ -466,6 +466,16 @@ PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
 }
 #undef FUNC_NAME
 
+PG_DEFINE (pg_result_p, "pg-result?", 1, 0, 0,
+           (SCM obj),
+           "Return #t iff @var{obj} is a result object\n"
+           "returned by @code{pg-exec}.")
+#define FUNC_NAME s_pg_result_p
+{
+  return ser_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
+}
+#undef FUNC_NAME
+
 PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
            (SCM obj),
            "Return the most-recent error message that occurred on this\n"
