@@ -8,6 +8,7 @@
 # - automake 1.6.3
 
 test x"$1" = x--libtoolize && libtoolize --force
+test -f ltmain.sh || libtoolize --force
 aclocal
 autoheader
 autoconf
