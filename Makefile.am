@@ -21,7 +21,7 @@
 
 SUBDIRS = scm doc test
 
-EXTRA_DIST = contrib acinclude.m4 TODO HACKING autogen.sh
+EXTRA_DIST = THANKS contrib acinclude.m4 TODO HACKING autogen.sh
 
 BUILT_SOURCES = libpostgres.x libpostgres_lo.x
 
