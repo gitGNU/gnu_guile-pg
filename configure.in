@@ -32,11 +32,13 @@ AC_STDC_HEADERS
 
 AC_HAVE_HEADERS(string.h stdio.h stdlib.h malloc.h unistd.h)
 
+GUILE_PROGS
+GUILE_FLAGS
+
 dnl This little hack allows the tests for libpq etc. to be overridden by
 dnl setting the environment variables PQ_CFLAGS and PQ_LDFLAGS.  This is
 dnl useful e.g. when running 'Make distcheck', which runs ./configure.
 
-GUILE_MODULE
 if test "x$PQ_LDFLAGS" = "x" -a "x$PQ_CFLAGS" = "x" ; then
 PQ_FLAGS
 fi
