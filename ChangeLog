@@ -1,5 +1,10 @@
 2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/guile-pg.twerp (Database Connections): Use keywords in example.
+	(Single-Table Abstraction): Likewise.
+
+2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Types Conversion): Add @pxref.
 	Add section "Selected Notes About Some Types".
 	Push sections down one level of hierarchy; add menu.
