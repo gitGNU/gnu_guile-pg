@@ -1,137 +1,169 @@
-guile-pg
+Welcome!
 ========
 
-This is a set of bindings providing a Guile interface to the PostgreSQL
-front-end library libpq.
+	Guile-PG is a collection of modules for Guile allowing access to
+	the PostgreSQL RDBMS from Scheme programs.
 
-This is alpha code (pre 1.0 release).  It has bugs, and the interfaces may
-change from version to version.
+	The low-level module `(database postgres)' provides an almost
+	one-to-one correspondence with the PostgreSQL "libpq" C library
+	interface.  Other higher-level modules, typically named
+	`(database postgres-FOO)', provide abstractions and convenience
+	procedures.
 
-To build guile-pg you need to have installed both Guile >= 1.3.4 and the
-PostgreSQL frontend library libpq.  This version of guile-pg has been tested
-with PostgreSQL version 7.3.3, but you may find it works with other versions.
-If so, please let us know the good news.  (You can do this by changing to
-the test/ subdirectory and typing "./show-platform && ./show-platform -m".
-The "-m" means "mail results to good-news-guile-pg at glug dot org".)
+	This is alpha code (pre 1.0 release).  It has bugs, and the
+	interfaces may change from version to version.
+
+	To build Guile-PG you need to have installed both Guile >= 1.3.4
+	and the PostgreSQL frontend library libpq.  This version of
+	Guile-PG has been tested with PostgreSQL version 7.3.3, but you
+	may find it works with other versions.  If so, please let us
+	know the good news.  (You can do this by changing to the test/
+	subdirectory and typing "./show-platform && ./show-platform -m".
+	The "-m" means "mail results to good-news-guile-pg at glug dot
+	org".)
 
 
-Building and Installing Guile-pg
---------------------------------
+Building and Installing Guile-PG
+================================
 
-Generic install instructions are provided in the file INSTALL.  If
-you're in a hurry:
+	Generic install instructions are provided in the file INSTALL.
+	If you're in a hurry:
 
-Get the latest source distribution from
+	  ./configure [options]
+	  make
+	  make check
+	  make destroy-nonmodule-guile-pg-prior-install
+	  make install
 
-            http://www.glug.org/people/ttn/software/guile-pg/
+	Each of the above steps is explained in detail below.
 
-Unpack it. If you're using GNU tar you can do this by typing
 
-            tar xzf guile-pg-x.xx.tar.gz
+Configuration
+-------------
 
-If you're not using GNU tar then you need to explicitly unzip it
-first. Type:
-
-            gzip -d -c guile-pg-x.xx.tar.gz | tar xf -
-
-Then change to the top-level directory guile-pg-x.xx and run the
-configure script, followed by make:
-
-            cd guile-pg-x.xx
-            ./configure
-            make
-
-If the ./configure script failed because it couldn't find libpq or the libpq
-headers then you can use the --with-libpq option to direct configure to the
-appropriate directory.  E.g. if you installed Postgres with the prefix
-~/local/ix86, so that the libpq headers are in ~/local/ix86/include and the
-library in ~/local/ix86/lib then you would configure guile-pg using a line
-like:
+	If the ./configure script failed because it couldn't find
+	libpq or the libpq headers then you can use the --with-libpq
+	option to direct configure to the appropriate directory.  E.g.,
+	if you installed PostgreSQL with the prefix ~/local/ix86, so that
+	the libpq headers are in ~/local/ix86/include and the library in
+	~/local/ix86/lib then you would configure Guile-PG using a line
+	like:
 
            ./configure --with-libpq=~/local/ix86
 
-If your libpq include directory is somewhere other than where the lib
-dorectory is then you can use the more specific switches --with-libpq-includes
-and --with-libpq-libs.  See the output of "./configure --help" for details.
+	If your libpq include directory is somewhere other than where
+	the lib dorectory is then you can use the more specific switches
+	--with-libpq-includes and --with-libpq-lib.  See the output of
+	"./configure --help" for details.
 
-If the configure script failed because it couldn't find guile-config, then
-make sure that script is on your path.
+	If the configure script failed because it couldn't find
+	guile-config, then make sure that script is on your path.
 
-If libguile is installed in a "non-standard" place, you may need to set the
-LDFLAGS environment variable to get configure to find it.  For example, if you
-use GCC with GNU ld and guile is installed under /opt/guile, then this can be
-achieved as follows:
+	If libguile is installed in a "non-standard" place, you may need
+	to set the LDFLAGS environment variable to get configure to find
+	it.  For example, if you use GCC with GNU ld and guile is
+	installed under /opt/guile, then this can be achieved with the
+	value: '-Wl,-rpath -Wl/opt/guile/lib' (quotes to protect spaces
+	from the shell).
 
-    LDFLAGS='-Wl,-rpath -Wl/opt/guile/lib' ./configure
+	After configuration, type:
 
-If you use a C shell then you can use the env program:
+	    make
 
-   env LDFLAGS='-Wl,-rpath -Wl/opt/guile/lib' ./configure
+	to build the libraries.
 
-After configuration, do "make" to build the libraries.  You can now run the
-tests.  These need to be run as a user with permissions to create databases.
-They also need permissions to write to the guile-pg build directory.  You
-could do this by unpacking and building guile-pg as the Postgres superuser, or
-by making yourself a user with permissions to create databases.  To do the
-latter use the PostgreSQL `createuser' command.
 
-The tests assume that the postmaster is either running on the local host or on
-the host pointed to by the PGHOST environment variable.  If PostgreSQL is
-running on a different host then type
+Testing
+-------
 
-            export PGHOST=postgres.somewhere.org
-or
-            setenv PGHOST postgres.somewhere.org
+	If configuration and "make" are successful, you can now run the
+	tests.  These need to be run as a user with permissions to
+	create databases.  They also need permissions to write to the
+	Guile-PG build directory.  You could do this by unpacking and
+	building Guile-PG as the Postgres superuser, or by making
+	yourself a user with permissions to create databases.  To do the
+	latter use the PostgreSQL `createuser' command.
 
-if you use the other sort of shell.
+	The tests assume that the postmaster is either running on the
+	local host or on the host pointed to by the PGHOST environment
+	variable.
 
-The tests will destroy any existing database called 'guile_pg_test',
-then create it anew. Once the tests have completed you can destroy the
-guile_pg_test database by typing
+	The tests will destroy any existing database named
+	"guile_pg_test", create it anew, and upon completion of the
+	tests, destroy it again.  If you should find the database
+	hanging around afterwards for some, reason you can use the
+	command:
 
-            dropdb guile_pg_test	# or "destroydb" for old PostgreSQL
+	    dropdb guile_pg_test   # or "destroydb" for old PostgreSQL
 
-To run the tests type
+	to get rid of it decisively.  To run the tests type:
 
             make check
 
-The basic tests should all pass. The large-object tests might fail because of
-bugs in PostgreSQL.  If the basic tests passed then you may want to install
-guile-pg. To do this type "make install".
+	The basic tests should all pass.  The large-object tests might
+	fail because of bugs in PostgreSQL.  The abstraction tests are
+	not supposed to fail, but you never know.  See "Reporting Bugs"
+	below for more info.
 
-If you didn't use the --prefix options to configure then the shared library
-code will have been installed wherever Guile's shared libraries are installed,
-and the scheme code for the postgres interface will have been installed where
-Guile's scheme files were.
 
-If you want to see what files would be installed where before you run make
-install, use the -n option of make to get a report of what would be done,
-without actually doing it.  That is, type:
+Removing Misguided Prior Installations
+--------------------------------------
 
-            make -n install
+	(If this is the first time you're installing Guile-PG, you can
+	skip this section.)
 
-There is a reference manual in the source distribution.  To see it type:
+	Prior to 0.17, "make install" put these files in these dirs:
 
-            cd doc
-            info --file ./guile-pg.info
+	   uncompiled modules -- ${datadir}/guile/database
+	   compiled modules   -- ${libdir}/guile-pg/${VERSION}
 
-If you want to print out the documentation type
+	(See "What Goes Where" below for current installation practice.)
 
-            cd doc
-            make dvi
-            dvips -o guile-pg.ps guile-pg.dvi
+	There are three ways to delete these old files and directories:
+	- Manually.
+	- Using "make uninstall" in the old guile-pg build tree.
+	- Using "make destroy-nonmodule-guile-pg-prior-install".
 
-then print the guile-pg.ps file.
+	The last method is recommended because everything is automatic
+	as well as convenient.  In addition to doing the deletions, if
+	a module catalog is found in ${datadir}/guile, the relevant
+	entries are also removed.
 
-If you want to make an HTML version of the manual then type
 
-            texi2html guile-pg.texi
+What Goes Where
+---------------
+
+	If the basic tests passed then you may want to install Guile-PG.
+	To do this type "make install", which puts files in these dirs:
+
+	    uncompiled modules -- ${GUILE_SITE}/database
+	    compiled modules   -- ${GUILE_LIBSITE}/database
+	    guile-pg.info      -- ${infodir}
+
+	The ${GUILE_SITE}, ${GUILE_LIBSITE} and ${infodir} values are
+	determined by the configure script.  Typically, these would
+	be /usr/local/share/guile/site, /usr/local/lib/guile/site and
+	/usr/local/info, respectively.
+
+	Additionally, if the system supports it, "make install" updates
+	each site dir's module catalog.
 
 
 Reporting Bugs
---------------
+==============
 
-Please report bugs to bug-guile-pg@glug.org
+	Please report bugs to bug-guile-pg@glug.org.  Include Guile-PG
+	version, the output of the show-platform script, and the log
+	file of the test that failed (all in subdir "test").
+
+	There is one known bug we can't do anything about (we tried but
+	failed): The sourceforge folks don't want to update their site
+	to point to the new Guile-PG homepage:
+
+	    http://www.glug.org/people/ttn/software/guile-pg/
+
+	But if there are enough links to the new page, perhaps the
+	relevancy of sourceforge's obstinance will decline over time.
 
 
 Thanks,
