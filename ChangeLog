@@ -1,5 +1,9 @@
 2003-01-15  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* configure.in (VERSION): Bump to 0.15 for release.
+
+2003-01-15  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* doc/guile-pg.twerp (Column Definitions): New node/chapter.
 	(Result Transforms): New node/chapter.
 	(Single-Table Abstraction): Move some things to new nodes.
