@@ -3,6 +3,12 @@ NEWS for Guile-PG
 
 - 0.17 | NOT YET RELEASED
 
+  - error output bugfix for pg-fname, pg-ftype, pg-fsize, pg-fmod
+
+	For an invalid field number argument, these procs used to
+	display "Invalid field number %s".  They now display the
+	field number instead of the literal string "%s".
+
   - `pg-print' no longer limited to stdout
 
 	It used to be that `pg-print' output could only be sent to
