@@ -140,7 +140,11 @@ LDFLAGS="$saved_LDFLAGS"
 
 AC_CHECK_PROGS([DROPDB], [dropdb destroydb], [no],)
 if test "$DROPDB" = no ; then
-   AC_MSG_WARN([found neither dropdb nor destroydb; "make check" will fail])
+   AC_MSG_WARN([could not find dropdb or destroydb; "make check" will fail])
+fi
+AC_CHECK_PROGS([CREATEDB], [createdb], [no])
+if test "$CREATEDB" = no ; then
+   AC_MSG_WARN([could not find createdb; "make check" will fail])
 fi
 
 ##----------------------------------------------------------------------------
@@ -170,6 +174,7 @@ AC_CONFIG_FILES([
   test/Makefile
   test/config.scm
   test/drop.sh
+  test/create.sh
   wily-guile
 ])
 
@@ -194,6 +199,7 @@ AC_CONFIG_COMMANDS([module-catalog-prep],[
 AC_CONFIG_COMMANDS([chmod-plus-x],[
   chmod +x ./wily-guile
   chmod +x test/drop.sh
+  chmod +x test/create.sh
 ])
 
 AC_OUTPUT
