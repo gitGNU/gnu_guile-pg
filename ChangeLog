@@ -1,5 +1,10 @@
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* doc/guile-pg.twerp: In program fragments,
+	use `format' instead of `write-line'.
+
+2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* autogen.sh: Update libtool version; nfc.
 
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
