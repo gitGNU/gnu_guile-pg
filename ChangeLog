@@ -1,5 +1,10 @@
 2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* .cvsignore, doc/.cvsignore, scm/.cvsignore, test/.cvsignore:
+	New files.
+
+2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* guile-pg.h, guile-pg.c: Delete.
 
 	* Makefile.am: Update copyright.
