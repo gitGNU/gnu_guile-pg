@@ -1,5 +1,62 @@
 2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres_lo.c (LOBPORTP): Rename from `SCM_LOBPORTP'.
+	(OPLOBPORTP): Rename from `SCM_OPLOBPORTP'.
+	(OPINLOBPORTP): Rename from `SCM_OPINLOBPORTP'.
+	(lob_lo_get_connection): Use new names.
+	(lob_lo_get_oid): Likewise.
+	(lob_lo_tell): Likewise.
+	(lob_lo_seek): Likewise.
+	(lob_lo_read): Likewise.
+
+2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres_lo.c (SCM_OPOUTLOBPORTP): Delete unused macro.
+
+2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (xc_p): Use `gh_car' and `gh_cdr'.
+	(xc_unbox): Likewise.
+	(xr_p): Likewise.
+	(xr_unbox): Likewise.
+	(sepo_p): Likewise.
+	(sepo_unbox): Likewise.
+	(pg_make_print_options): Likewise.
+	(init_module): Likewise.
+
+	* libpostgres_lo.c (SCM_OPLOBPORTP): Use `gh_car' and `gh_cdr'.
+	(SCM_OPINLOBPORTP): Likewise.
+	(SCM_OPOUTLOBPORTP): Likewise.
+	(lob_mklobport): Likewise.
+	(lob_write): Likewise.
+
+2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (pg_nfields): Locals name munging; nfc.
+	(pg_ftype): Likewise.
+	(pg_fsize): Likewise.
+	(pg_fmod): Likewise.
+	(pg_getisnull): Likewise.
+
+2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (pg_fname): Use `gh_scm2int'.
+	(pg_ftype): Likewise.
+	(pg_fsize): Likewise.
+	(pg_getvalue): Likewise.
+	(pg_getlength): Likewise.
+	(pg_getisnull): Likewise.
+	(pg_fmod): Likewise.
+	(pg_print): Likewise.
+
+	* libpostgres_lo.c (lob_lo_open): Likewise.
+	(lob_lo_unlink): Likewise.
+	(lob_lo_seek): Likewise.
+	(lob_lo_read): Likewise.
+	(lob_lo_export): Likewise.
+
+2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.h (NOT_FALSEP): New macro.
 	(EXACTLY_FALSEP): Likewise.
 	(EXACTLY_TRUEP): Likewise.
