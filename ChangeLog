@@ -1,5 +1,14 @@
 2004-12-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c (ASSERT_RESULT): Delete macro.
+	(VALIDATE_RESULT_UNBOX2): New macro. Use throughout.
+	(VALIDATE_FIELD_NUMBER_COPY): New macro.
+	(pg_fname): Use `VALIDATE_FIELD_NUMBER_COPY'.
+	Also, remove refs to `SCM_DEFER_INTS' and `SCM_ALLOW_INTS'.
+	(pg_ftype, pg_fsize, pg_fmod): Likewise.
+
+2004-12-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c: Use `SCM_VALIDATE_INUM_MIN_COPY'.
 
 	* libpostgres_lo.c: Use `SCM_VALIDATE_INUM_MIN_COPY',
