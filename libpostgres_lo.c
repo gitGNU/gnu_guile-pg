@@ -107,11 +107,9 @@ PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (modes) && SCM_ROSTRINGP (modes),
               modes, SCM_ARG2, FUNC_NAME);
+  ROZT_X (modes);
 
-  if (SCM_SUBSTRP (modes)) /* Why do we do this? I don't know. */
-    modes = scm_makfromstr (SCM_ROCHARS (modes), SCM_ROLENGTH (modes), 0);
-
-  mode_bits = scm_mode_bits (SCM_ROCHARS (modes));
+  mode_bits = scm_mode_bits (ROZT (modes));
   dbconn = XCONN (conn);
 
   if (mode_bits & SCM_RDNG)
@@ -169,11 +167,9 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
   SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (modes) && SCM_ROSTRINGP (modes),
               modes, SCM_ARG3, FUNC_NAME);
+  ROZT_X (modes);
 
-  if (SCM_SUBSTRP (modes))
-    modes = scm_makfromstr (SCM_ROCHARS (modes), SCM_ROLENGTH (modes), 0);
-
-  mode_bits = scm_mode_bits (SCM_ROCHARS (modes));
+  mode_bits = scm_mode_bits (ROZT (modes));
   dbconn = XCONN (conn);
 
   if (mode_bits & SCM_RDNG)
@@ -192,7 +188,7 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
   if (fd < 0)
     return SCM_BOOL_F;
 
-  if (strchr (SCM_ROCHARS (modes), 'a'))
+  if (strchr (ROZT (modes), 'a'))
     {
       SCM_DEFER_INTS;
       if (lo_lseek (dbconn, fd, 0, SEEK_END) < 0)
@@ -685,11 +681,12 @@ PG_DEFINE (lob_lo_import, "pg-lo-import", 2, 0, 0,
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename),
               filename, SCM_ARG2, FUNC_NAME);
+  ROZT_X (filename);
 
   dbconn = XCONN (conn);
 
   SCM_DEFER_INTS;
-  ret = lo_import (dbconn, SCM_ROCHARS (filename));
+  ret = lo_import (dbconn, ROZT (filename));
   SCM_ALLOW_INTS;
 
   if (ret <= 0)
@@ -717,11 +714,12 @@ PG_DEFINE (lob_lo_export, "pg-lo-export", 3, 0, 0,
   SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename), filename,
               SCM_ARG3, FUNC_NAME);
+  ROZT_X (filename);
   dbconn = XCONN (conn);
   pg_oid = SCM_INUM (oid);
 
   SCM_DEFER_INTS;
-  ret = lo_export (dbconn, pg_oid, SCM_ROCHARS (filename));
+  ret = lo_export (dbconn, pg_oid, ROZT (filename));
   SCM_ALLOW_INTS;
 
   if (ret != 1)
