@@ -1,5 +1,5 @@
 ;;    Guile-pg - A Guile interface to PostgreSQL
-;;    Copyright (C) 1999-2000, 2002, 2003 Free Software Foundation, Inc.
+;;    Copyright (C) 1999-2000, 2002, 2003, 2004 Free Software Foundation, Inc.
 ;;
 ;;    This program is free software; you can redistribute it and/or modify
 ;;    it under the terms of the GNU General Public License as published by
@@ -380,6 +380,6 @@
 (test #t test:get-proc pg-get-port)
 (test #t test:get-proc pg-get-options)
 (set! conn #f)
-(test-report)
+(exit (test-report))
 
 ;;; guile-pg-basic-tests.scm ends here
