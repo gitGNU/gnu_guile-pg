@@ -4,3 +4,13 @@ aclocal.m4
 config.h.in
 configure
 autom4te.cache
+config.log
+config.status
+config.h
+.libs
+.deps
+*.x
+*.lo
+*.la
+libtool
+stamp-h1
