@@ -1,19 +1,22 @@
 \input texinfo  @c -*-texinfo-*-
 @c %**start of header
 @setfilename guile-pg.info
-@settitle @code{Guile-pg} Command Reference
+@settitle Guile-PG Command Reference
 @paragraphindent 0
 @c %**end of header
 @code{}
 @setchapternewpage odd
 
+@c Error index.
+@defcodeindex er
+
 @dircategory Guile modules
 @direntry
-* Guile-pg: (guile-pg).           Access to PostgreSQL databases from Guile.
+* Guile-PG: (guile-pg).           Access to PostgreSQL databases from Guile.
 @end direntry
 
 @ifinfo
-This file is the Guile-pg Command Reference
+This file is the Guile-PG Command Reference
 
 Copyright @copyright{} 1998, 2002, 2003, 2004 Free Software Foundation, Inc.
 
@@ -44,7 +47,7 @@ approved by the Free Software Foundation.
 @titlepage
 @sp 10
 @comment The title is printed in a large font.
-@center @titlefont{@code{Guile-pg} Command Reference}
+@center @titlefont{Guile-PG Command Reference}
 
 @c The following two commands start the copyright page.
 @page
@@ -71,25 +74,25 @@ translation approved by the Free Software Foundation.
 
 @c ---------------------------------------------------------------------------
 @node Top
-@top  Guile-pg
+@top  Guile-PG Command Reference
 
-@code{Guile-pg} is a Guile module providing a set of procedures to allow
+Guile-PG is a Guile module providing a set of procedures to allow
 access to the PostgreSQL RDBMS from Scheme programs.
 
 Guile is an interpreter for the Scheme programming language: a dialect of
 Lisp.  PostgreSQL is a free SQL database management system.
-@code{Guile-pg} is intended as but one of the low-level drivers for the
+Guile-PG is intended as but one of the low-level drivers for the
 forthcoming Guile database module which will provide a portable interface
 to many different SQL database servers.  In the mean-time
 it will still be a useful module for those who want just a low-level
 interface to PostgreSQL.
 
-The @code{Guile-pg} procedures have an almost one-one correspondence
+The Guile-PG procedures have an almost one-one correspondence
 with the PostgreSQL @code{libpq} C library interface so those familiar with
 the @code{libpq} library and other similar interfaces like Edmund Mergl's
 @code{Pg} Perl module will find it familiar.
 
-@code{Guile-pg} is based on Russ McManus's ``Sybase glue'' code.
+Guile-PG is based on Russ McManus's ``Sybase glue'' code.
 
 @menu
 * Legalities::                  Your rights and freedoms.
@@ -108,6 +111,7 @@ the @code{libpq} library and other similar interfaces like Edmund Mergl's
 * Introspection::               Module: (database postgres-meta).
 
 * Procedure Index::
+* Error Index::
 @end menu
 
 @c ---------------------------------------------------------------------------
@@ -199,7 +203,7 @@ guile> (pg-getvalue result 1 1)
 @end example
 @end cartouche
 
-@code{Guile-pg} connections are closed when Guile's garbage collector
+Guile-PG connections are closed when Guile's garbage collector
 collects the discarded object.  This only happens when the connection itself
 and all of the results of @code{pg-exec} are unreachable.  So to close the
 connection we just rebind the results from that connection and the connection
@@ -224,6 +228,7 @@ All sessions with a PostgreSQL database require a connection to be opened with
 @code{pg-connectdb}.
 
 @twerpdoc (pg-connection?)
+@erindex due to bad connection
 @twerpdoc (pg-connectdb)
 
 @heading Example
@@ -422,6 +427,10 @@ The procedure could be called as follows
 
 @twerpdoc (pg-binary-tuples?)
 
+@erindex Invalid field number
+The procedures @code{pg-fmod}, @code{pg-ftype}, @code{pg-fname}
+and @code{pg-fsize} can all throw an @dfn{Invalid field number} error.
+
 @twerpdoc (pg-fmod)
 
 @twerpdoc (pg-ntuples)
@@ -572,6 +581,7 @@ the @code{PQprint} functionality provided by libpq.
 
 @twerpdoc (pg-make-print-options)
 
+@erindex due to @code{tmpfile(3)} failure
 @twerpdoc (pg-print)
 
 @c ---------------------------------------------------------------------------
@@ -584,6 +594,22 @@ All of the operations on large objects must be carried out inside a
 will result in a loss of synchronisation between the backend and the
 @code{libpq} library, resulting in an unusable connection to the
 database, and possible corruption of data.
+
+@erindex lob flush
+@erindex Error seeking on lo port
+@erindex Error reading from lo port
+@erindex fport_write
+To keep things running smoothly, certain read and write operations flush their
+internal buffers every once in a while.  If there are problems, they throw a
+@dfn{lob flush} error.  In the case where an error occurs during the process
+(Guile) wind-down, the error message is displayed to stderr instead.  There
+are also @dfn{Error seeking on lo port}, @dfn{Error reading from lo port}
+and @dfn{fport_write}; these are normal (scheme world) errors.
+
+@erindex Invalid mode specification
+@erindex memory error
+Additionally, both @code{pg-lo-creat} and @code{pg-lo-open} can throw
+@dfn{Invalid mode specification} and @dfn{memory} errors.
 
 @twerpdoc (pg-lo-creat)
 
@@ -631,7 +657,7 @@ is loaded, use:
 (defined? 'pg-guile-pg-loaded)
 @end lisp
 NOTE: This procedure is guaranteed to be present in all future versions of
-Guile-pg.
+Guile-PG.
 @end deffn
 
 @c leave in for now --ttn
@@ -657,8 +683,11 @@ Return a string containing the date and time at which @code{guile-pg}
 was configured (this is probably the build time).
 @end deffn
 
+@erindex due to @code{dup(3)} failure
+@erindex due to @code{fopen(3)} failure
 @twerpdoc (pg-trace)
 
+@erindex due to @code{fclose(3)} failure
 @twerpdoc (pg-untrace)
 
 @heading Example
@@ -1019,10 +1048,19 @@ displaying details on field/column innards.
 @c + @printindex cp
 
 @c ---------------------------------------------------------------------------
+@c ---------------------------------------------------------------------------
 @node       Procedure Index
 @unnumbered Procedure Index
 
 @printindex fn
+
+@node       Error Index
+@unnumbered Error Index
+
+@xref{Retrieving Data}, for info on @code{pg-error-message}.
+These errors, on the other hand, are not handled by that mechanism.
+
+@printindex er
 
 @contents
 
