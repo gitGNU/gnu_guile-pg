@@ -118,7 +118,7 @@ xc_box (xc_t *xc)
 
   SCM_ENTER_A_SECTION;
   SCM_NEWCELL (z);
-  SCM_SETCDR (z, (SCM)xc);
+  SCM_SETCDR (z, (SCM) xc);
   SCM_SETCAR (z, pg_conn_tag.type_tag);
   SCM_EXIT_A_SECTION;
 
@@ -204,7 +204,7 @@ xr_box (xr_t *xr)
 
   SCM_ENTER_A_SECTION;
   SCM_NEWCELL (z);
-  SCM_SETCDR (z, (SCM)xr);
+  SCM_SETCDR (z, (SCM) xr);
   SCM_SETCAR (z, pg_result_tag.type_tag);
   SCM_EXIT_A_SECTION;
 
@@ -327,33 +327,38 @@ PG_DEFINE (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
 }
 #undef FUNC_NAME
 
-SCM_SYMBOL (pg_sym_envvar, "envvar");
-SCM_SYMBOL (pg_sym_compiled, "compiled");
-SCM_SYMBOL (pg_sym_val, "val");
-SCM_SYMBOL (pg_sym_label, "label");
-SCM_SYMBOL (pg_sym_dispchar, "dispchar");
-SCM_SYMBOL (pg_sym_dispsize, "dispsize");
+#define SIMPLE_KEYWORD(name) \
+  SCM_KEYWORD (kwd_ ## name, # name)
+
+SIMPLE_KEYWORD (envvar);
+SIMPLE_KEYWORD (compiled);
+SIMPLE_KEYWORD (val);
+SIMPLE_KEYWORD (label);
+SIMPLE_KEYWORD (dispchar);
+SIMPLE_KEYWORD (dispsize);
+
+#define KWD(name)  (kwd_ ## name)
 
 PG_DEFINE (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
            (void),
            "Return an alist associating options with their connection\n"
-           "defaults.  The option name is a string.\n"
+           "defaults.  The option name is a keyword.\n"
            "Each associated value is in turn a sub-alist, with\n"
-           "the following symbolic keys:\n\n"
+           "the following keys:\n\n"
            "@itemize\n"
-           "@item envvar\n\n"
-           "@item compiled\n"
-           "@item val\n"
-           "@item label\n"
-           "@item dispchar (character: @code{#\\*} or @code{#\\D}; or #f)\n"
-           "@item dispsize (integer)\n"
+           "@item #:envvar\n\n"
+           "@item #:compiled\n"
+           "@item #:val\n"
+           "@item #:label\n"
+           "@item #:dispchar (character: @code{#\\*} or @code{#\\D}; or #f)\n"
+           "@item #:dispsize (integer)\n"
            "@end itemize\n\n"
            "Values are strings or #f, unless noted otherwise.\n"
            "A @code{dispchar} of @code{#\\*} means the option should\n"
-           "be treated like a password: connection dialogs should hide\n"
+           "be treated like a password: user dialogs should hide\n"
            "the value; while @code{#\\D} means the option is for\n"
            "debugging purposes: probably a good idea to entirely avoid\n"
-           "presenting it in the first place.")
+           "presenting this option in the first place.")
 #define FUNC_NAME s_pg_conndefaults
 {
   PQconninfoOption *opt, *head;
@@ -367,30 +372,30 @@ PG_DEFINE (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
       pdl = SCM_EOL;
 
       tem = SCM_MAKINUM (opt->dispsize);
-      tem = scm_cons (pg_sym_dispsize, tem);
+      tem = scm_cons (KWD (dispsize), tem);
       PUSH ();
 
       tem = MAYBEFALSE (dispchar, SCM_MAKE_CHAR (opt->dispchar[0]));
-      tem = scm_cons (pg_sym_dispchar, tem);
+      tem = scm_cons (KWD (dispchar), tem);
       PUSH ();
 
       tem = MAYBEFALSE (label, scm_makfrom0str (opt->label));
-      tem = scm_cons (pg_sym_label, tem);
+      tem = scm_cons (KWD (label), tem);
       PUSH ();
 
       tem = MAYBEFALSE (val, scm_makfrom0str (opt->val));
-      tem = scm_cons (pg_sym_val, tem);
+      tem = scm_cons (KWD (val), tem);
       PUSH ();
 
       tem = MAYBEFALSE (compiled, scm_makfrom0str (opt->compiled));
-      tem = scm_cons (pg_sym_compiled, tem);
+      tem = scm_cons (KWD (compiled), tem);
       PUSH ();
 
       tem = MAYBEFALSE (envvar, scm_makfrom0str (opt->envvar));
-      tem = scm_cons (pg_sym_envvar, tem);
+      tem = scm_cons (KWD (envvar), tem);
       PUSH ();
 
-      tem = scm_makfrom0str (opt->keyword);
+      tem = scm_c_make_keyword (opt->keyword);
       PUSH ();
 
       rv = scm_cons (pdl, rv);
