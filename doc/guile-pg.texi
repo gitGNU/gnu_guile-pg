@@ -94,7 +94,7 @@ the @code{libpq} library and other similar interfaces like Edmund Mergl's
 * Examples::                    Overview and brief examples.
 * Programming Interface::       Each procedure described.
 
- Concept Index::
+* Concept Index::
 * Procedure Index::
 @end menu
 
@@ -719,7 +719,7 @@ database, and possible corruption of data.
 Create a new large object and open a port over it for reading and/or writing.
 @var{modes} is a string describing the mode in which the port is to be opened.
 The mode string must include one of @code{r} for reading, @code{w} for writing or
-@code{a{ for append (but since the object is empty to start with this is the same
+@code{a} for append (but since the object is empty to start with this is the same
 as @code{w}.)  The return value is a large object port which can be used to read or
 write data to/from the object, or @code{#f} on failure in which case
 @code{pg-error-message} from the connection should give some idea of what
