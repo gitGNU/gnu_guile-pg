@@ -66,8 +66,7 @@
  * support
  */
 
-static char *maybe_strcpy (SCM source, int *freshp);
-static char *strip_newlines (char *str);
+static SCM strip_newlines (char *str);
 void scm_init_database_postgres_sup_module (void);
 
 typedef struct _smob_tag {
@@ -294,30 +293,7 @@ make_ser (PGresult *result, SCM conn)
  * string munging
  */
 
-static char *
-maybe_strcpy (SCM source, int *freshp)
-{
-  int len = SCM_ROLENGTH (source);
-  char *src = SCM_ROCHARS (source);
-  char *rv;
-
-  if (src[len] != '\0')
-    {
-      rv = (char *) malloc (1 + len);
-      memcpy (rv, src, len);
-      rv[len] = '\0';
-      *freshp = 1;
-    }
-  else
-    {
-      rv = src;
-      *freshp = 0;
-    }
-
-  return rv;
-}
-
-static char *
+static SCM
 strip_newlines (char *str)
 {
   char *p = str + strlen (str);
@@ -325,7 +301,7 @@ strip_newlines (char *str)
   while (str <= --p && *p == '\n')
     *p = '\0';
 
-  return str;
+  return scm_makfrom0str (str);
 }
 
 
@@ -524,17 +500,14 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
   SCM z;
   PGconn *dbconn;
   ConnStatusType connstat;
-  char *pgconstr; int pgconstr_freshp;
   char *pgerrormsg;
 
   SCM_ASSERT (SCM_NIMP (constr) && SCM_ROSTRINGP (constr), constr,
               SCM_ARG1, FUNC_NAME);
-  pgconstr = maybe_strcpy (constr, &pgconstr_freshp);
+  ROZT_X (constr);
 
   SCM_DEFER_INTS;
-  dbconn = PQconnectdb (pgconstr);
-  if (pgconstr_freshp)
-    free (pgconstr);
+  dbconn = PQconnectdb (ROZT (constr));
   pgerrormsg = strdup (PQerrorMessage (dbconn));
   if ((connstat = PQstatus (dbconn)) == CONNECTION_BAD)
     PQfinish (dbconn);
@@ -542,7 +515,7 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
 
   if (connstat == CONNECTION_BAD)
     {
-      SCM msg = scm_makfrom0str (strip_newlines (pgerrormsg));
+      SCM msg = strip_newlines (pgerrormsg);
       free (pgerrormsg);
       scm_misc_error (FUNC_NAME, "~A", SCM_LIST1 (msg));
     }
@@ -629,19 +602,15 @@ PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
   SCM z;
   PGconn *dbconn;
   PGresult *result;
-  char *pgquery; int pgquery_freshp;
 
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (statement) && SCM_ROSTRINGP (statement),
               statement, SCM_ARG2, FUNC_NAME);
+  ROZT_X (statement);
 
   SCM_DEFER_INTS;
-
-  pgquery = maybe_strcpy (statement, &pgquery_freshp);
   dbconn = XCONN (conn);
-  result = PQexec (dbconn, pgquery);
-  if (pgquery_freshp)
-    free (pgquery);
+  result = PQexec (dbconn, ROZT (statement));
 
   z = (result
        ? make_ser (result, conn)
@@ -685,7 +654,7 @@ PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
   else
     pgerrormsg = strdup (PQresultErrorMessage (RESULT (obj)));
 #endif
-  rv = scm_makfrom0str (strip_newlines (pgerrormsg));
+  rv = strip_newlines (pgerrormsg);
   free (pgerrormsg);
   SCM_ALLOW_INTS;
 
@@ -1005,19 +974,15 @@ PG_DEFINE (pg_fnumber, "pg-fnumber", 2, 0, 0,
 #define FUNC_NAME s_pg_fnumber
 {
   int fnum;
-  char *name; int name_freshp;
 
   SCM_ASSERT (ser_p (result), result, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_NIMP (fname) && SCM_ROSTRINGP (fname), fname,
               SCM_ARG2, FUNC_NAME);
-
-  name = maybe_strcpy (fname, &name_freshp);
+  ROZT_X (fname);
 
   SCM_DEFER_INTS;
-  fnum = PQfnumber (RESULT (result), name);
+  fnum = PQfnumber (RESULT (result), ROZT (fname));
   SCM_ALLOW_INTS;
-  if (name_freshp)
-    free (name);
 
   return SCM_MAKINUM (fnum);
 }
@@ -1326,7 +1291,7 @@ PG_DEFINE (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
     PQconsumeInput (XCONN (conn));
 
   return SCM_MAKINUM (PQgetlineAsync (XCONN (conn),
-                                      SCM_CHARS (buf),
+                                      SCM_ROCHARS (buf),
                                       SCM_ROLENGTH (buf)));
 }
 #undef FUNC_NAME
@@ -1346,16 +1311,10 @@ PG_DEFINE (pg_putline, "pg-putline", 2, 0, 0,
   SCM_ASSERT (SCM_NIMP (str)&&SCM_ROSTRINGP (str), str, SCM_ARG2, FUNC_NAME);
   SCM_DEFER_INTS;
 #ifdef HAVE_PQPUTNBYTES
-  PQputnbytes (XCONN (conn), SCM_CHARS (str), SCM_ROLENGTH (str));
+  PQputnbytes (XCONN (conn), SCM_ROCHARS (str), SCM_ROLENGTH (str));
 #else
-  {
-    char *s; int s_freshp;
-
-    s = maybe_strcpy (str, &s_freshp);
-    PQputline (XCONN (conn), s);
-    if (s_freshp)
-      free (s);
-  }
+  ROZT_X (str);
+  PQputline (XCONN (conn), ROZT (str));
 #endif
   SCM_ALLOW_INTS;
   return SCM_UNSPECIFIED;
@@ -1824,19 +1783,13 @@ PG_DEFINE (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
            "Return #t if successful, #f otherwise.")
 #define FUNC_NAME s_pg_set_client_encoding_x
 {
-  SCM rv;
-  char *enc; int enc_freshp;
-
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_STRINGP (encoding), encoding, SCM_ARG2, FUNC_NAME);
+  ROZT_X (encoding);
 
-  enc = maybe_strcpy (encoding, &enc_freshp);
-  rv = (0 == (PQsetClientEncoding (XCONN (conn), enc))
-        ? SCM_BOOL_T
-        : SCM_BOOL_F);
-  if (enc_freshp)
-    free (enc);
-  return rv;
+  return (0 == (PQsetClientEncoding (XCONN (conn), SCM_ROCHARS (encoding)))
+          ? SCM_BOOL_T
+          : SCM_BOOL_F);
 }
 #undef FUNC_NAME
 
@@ -1852,19 +1805,13 @@ PG_DEFINE (pg_send_query, "pg-send-query", 2, 0, 0,
            "message is retrievable with @code{pg-error-message}.")
 #define FUNC_NAME s_pg_send_query
 {
-  char *q; int q_freshp;
-  SCM rv;
-
   SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (SCM_STRINGP (query), query, SCM_ARG2, FUNC_NAME);
+  ROZT_X (query);
 
-  q = maybe_strcpy (query, &q_freshp);
-  rv = (PQsendQuery (XCONN (conn), q)
-        ? SCM_BOOL_T
-        : SCM_BOOL_F);
-  if (q_freshp)
-    free (q);
-  return rv;
+  return (PQsendQuery (XCONN (conn), SCM_ROCHARS (query))
+          ? SCM_BOOL_T
+          : SCM_BOOL_F);
 }
 #undef FUNC_NAME
 
