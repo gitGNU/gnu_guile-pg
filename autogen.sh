@@ -4,7 +4,7 @@
 # Bootstrap the development environment.  Optional arg "--libtoolize" means
 # also run "libtoolize --force".  The distribution was made w/ these tools:
 # - libtool 1.5 (1.1220 2003/04/05 19:32:58)
-# - autoconf 2.58
+# - autoconf 2.59
 # - automake 1.7.6
 
 #############################################################################
