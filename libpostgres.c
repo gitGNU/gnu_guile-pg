@@ -298,12 +298,12 @@ make_xr (PGresult *result, SCM conn)
 static SCM
 strip_newlines (char *str)
 {
-  char *p = str + strlen (str);
+  char *lc = str + strlen (str) - 1;    /* last char */
 
-  while (str <= --p && *p == '\n')
-    ;
+  while (str <= lc && *lc == '\n')
+    lc--;
 
-  return scm_makfromstr (str, p - str, 0);
+  return scm_makfromstr (str, lc + 1 - str, 0);
 }
 
 
@@ -508,7 +508,7 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
   SCM z;
   PGconn *dbconn;
   ConnStatusType connstat;
-  char *pgerrormsg;
+  SCM pgerrormsg = SCM_BOOL_F;
 
   SCM_ASSERT (SCM_NIMP (constr) && SCM_ROSTRINGP (constr), constr,
               SCM_ARG1, FUNC_NAME);
@@ -516,19 +516,19 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
 
   SCM_DEFER_INTS;
   dbconn = PQconnectdb (ROZT (constr));
-  pgerrormsg = PQerrorMessage (dbconn);
+
   if ((connstat = PQstatus (dbconn)) == CONNECTION_BAD)
-    PQfinish (dbconn);
+    {
+      /* Get error message before PQfinish, which zonks dbconn storage.  */
+      pgerrormsg = strip_newlines (PQerrorMessage (dbconn));
+      PQfinish (dbconn);
+    }
   SCM_ALLOW_INTS;
 
   if (connstat == CONNECTION_BAD)
-    {
-      SCM msg = strip_newlines (pgerrormsg);
-      scm_misc_error (FUNC_NAME, "~A", SCM_LIST1 (msg));
-    }
+    scm_misc_error (FUNC_NAME, "~A", SCM_LIST1 (pgerrormsg));
 
-  z = xc_box ((xc_t*)
-               scm_must_malloc (sizeof (xc_t), "PG-CONN"));
+  z = xc_box ((xc_t *) scm_must_malloc (sizeof (xc_t), "PG-CONN"));
   xc = xc_unbox (z);
 
   xc->dbconn = dbconn;
