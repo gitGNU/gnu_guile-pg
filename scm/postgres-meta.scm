@@ -36,9 +36,6 @@
   #:export (infer-defs
             describe-table!))
 
-(define put set-object-property!)
-(define get object-property)
-
 (define *class-defs*
   ;; todo: Either mine from "psql \d pg_class", or verify at "make install"
   ;;       time, and invalidate this with external psql fallback.
@@ -116,66 +113,8 @@
   (let ((M:pg-class (make-M:pg-class db-name)))
     (for-each (lambda (x) (display x) (newline))
               (infer-defs (M:pg-class 'pgdb) table-name))
-    (for-each (lambda (x) (display-table
-                           (cond ((pg-result? x)
-                                  (tuples-result->table x))
-                                 (else x))))
-              `(,(table-info M:pg-class table-name)
-                ,(table-fields-info (M:pg-class 'pgdb) table-name)))))
-
-;; --------------------------------------------------------------------------
-;; this belongs elsewhere
-
-(define (display-table table . style)
-
-  (define (styler name)
-    (case name
-      ((space)      (lambda (x) (case x ((h) #\space) (else " "))))
-      ((h-only)     (lambda (x) (case x ((h) #\-) ((v) " ") ((+) "-"))))
-      ((v-only)     (lambda (x) (case x ((h) #\space) ((v) "|") ((+) "|"))))
-      ((+-only)     (lambda (x) (case x ((h) #\space) ((v) " ") ((+) "+"))))
-      ((no-h)       (lambda (x) (case x ((h) #\space) ((v) "|") ((+) "+"))))
-      ((no-v)       (lambda (x) (case x ((h) #\-) ((v) " ") ((+) "+"))))
-      ((no-+)       (lambda (x) (case x ((h) #\-) ((v) "|") ((+) " "))))
-      ((fat-space)  (lambda (x) (case x ((h) #\space) (else "  "))))
-      ((fat-no-v)   (lambda (x) (case x ((h) #\-) ((v) "   ") ((+) "-+-"))))
-      ((fat-h-only) (lambda (x) (case x ((h) #\-) ((v) "  ") ((+) "--"))))
-      (else         (error "bad style:" style))))
-
-  (let* ((style (if (null? style)
-                    (lambda (x) (case x ((h) #\-) ((v) "|") ((+) "+")))
-                    (let ((style (car style)))
-                      (cond ((procedure? style) style)
-                            ((symbol? style) (styler style))
-                            (else (error "bad style:" style))))))
-         (names  (get table 'names))
-         (widths (get table 'widths))
-         (tuples (iota (car  (array-dimensions table))))
-         (fields (iota (cadr (array-dimensions table)))))
-
-    (define (-row sep producer padding)
-      (for-each (lambda (fn)
-                  (display sep)
-                  (let ((s (producer fn)))
-                    (display s)
-                    (display (make-string (- (array-ref widths fn)
-                                             (string-length s))
-                                          padding))))
-                fields)
-      (display sep)
-      (newline))
-
-    (define (-hr) (-row (style '+) (lambda (fn) "") (style 'h)))
-
-    ;; do it
-    (-hr)
-    (-row (style 'v) (lambda (fn) (array-ref names fn)) #\space)
-    (-hr)
-    (for-each (lambda (tn)
-                (-row (style 'v)
-                      (lambda (fn) (array-ref table tn fn))
-                      #\space))
-              tuples)
-    (-hr)))
+    (newline)
+    (pg-print (table-info M:pg-class table-name))
+    (pg-print (table-fields-info (M:pg-class 'pgdb) table-name))))
 
 ;;; postgres-meta.scm ends here
