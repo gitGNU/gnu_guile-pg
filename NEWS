@@ -3,6 +3,12 @@ NEWS for Guile-PG
 
 - version 0.14 NOT YET RELEASED
 
+  - Configuration bugfix: twerp2texi invocation conditionalized
+
+	The configure script, when --enable-maintainer-mode, now checks
+	if "guile-tools twerp2texi" is available and displays a warning
+	if not.
+
   - New (database postgres) proc: `pg-result?'
 
   - New (database postgres-types) built-in type converters
