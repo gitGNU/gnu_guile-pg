@@ -3,6 +3,30 @@ NEWS for Guile-PG
 
 - 0.18 | NOT YET RELEASED
 
+  - Variables removed from module (database postgres)
+
+	The following variables are obsolete; proc `pg-result-status'
+	started returning a symbolic value starting with Guile-PG 0.08
+	(2002-12-11).
+
+	PGRES_EMPTY_QUERY
+	PGRES_COMMAND_OK
+	PGRES_TUPLES_OK
+	PGRES_COPY_OUT
+	PGRES_COPY_IN
+	PGRES_BAD_RESPONSE
+	PGRES_NONFATAL_ERROR
+	PGRES_FATAL_ERROR
+
+  - Procs deleted from (database postgres-table)
+
+	The following procs are in module (database postgres-col-defs),
+	but w/o the "def:" prefix, since Guile-PG 0.15 (2003-01-15).
+
+	def:col-name
+	def:type-name
+	def:type-options
+
   - Bugfix: pg-lo-unlink returns #f only on error
 
 	This proc used to consider some non-error status cases as erroneous,
@@ -12,8 +36,9 @@ NEWS for Guile-PG
 
   - Build bugfix: pre-inst.merged-module-catalog conditionally built
 
-	The build process now checks if prerequisite tools are available
-	before attempting to make this file.
+	The "make" step now checks if prerequisite tools are available
+	before attempting to create this file, and uses a fallback
+	method if the tools are unavailable.
 
   - Limitation lifted: `pg-exec' query string size
 
