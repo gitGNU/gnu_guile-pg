@@ -1245,7 +1245,9 @@ on the unconverted result strings.
 
 The rest of the procedures in this chapter combine conversion of the raw
 result strings to Scheme objects, with different collection methods.
-@xref{Types Conversion}.  The examples are based upon a result object that can
+@xref{Types Conversion}.  (For access to the unconverted result strings, use
+the procedure @code{identity} as the @dfn{objectifier}, which in effect does
+no conversion at all.)  The examples are based upon a result object that can
 briefly described as:
 
 @itemize
