@@ -300,7 +300,13 @@ as the key.
 @node    Retrieving Data
 @chapter Procedures for Retrieving Data
 
+To get an answer you have to ask a question, i.e., send either a command or a
+query to the connection using @code{pg-exec}.  The return value's type can be
+tested with @code{pg-result?}.
+
 @twerpdoc (pg-exec)
+
+@twerpdoc (pg-result?)
 
 @heading Example
 This example defines a procedure @code{pg-exec/no-false} which wraps
