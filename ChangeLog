@@ -1,3 +1,35 @@
+2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-table.scm (drop-table-cmd): Delete proc.
+	(drop-sequence-cmd): Likewise.
+	(drop-proc): Incorporate `drop-table-cmd' and `drop-sequence-cmd'.
+	Use `serial?'.  Also, take `beex' instead of `pgdb'.  Update callers.
+	(create-cmd): Delete proc.
+	(create-proc): Incorporate `create-cmd'. No longer validate defs.
+	Also, take `beex' instead of `pgdb'.  Update callers.
+	(clean-defs): No longer validate defs.
+	(cdefs->cols): Delete proc.
+	(pre-insert-into): New proc.
+	(insert-values-cmd): Delete proc.
+	(insert-values-proc): Incorporate `insert-values-cmd' and `cdefs->cols'.
+	No longer validate defs.  Take `beex' instead of `pgdb'.  Update callers.
+	(insert-col-values-cmd): Take `pre' instead of `table-name'.
+	Update callers.
+	(insert-col-values-proc): No longer validate defs.
+	Take `beex' instead of `pgdb'.  Update callers.
+	(insert-alist-cmd): Delete proc.
+	(insert-alist-proc): Incorporate `insert-alist-cmd'.
+	No longer validate defs.  Take `beex' intead of `pgdb'.  Update callers.
+	(delete-rows-cmd): Delete proc.
+	(delete-rows-proc): Take `beex' instead of `pgdb'.  Also, take
+	third arg but do not do anything w/ it.  Update callers.
+	(update-col-cmd): Delete proc.
+	(update-col-proc): Incorporate `update-col-cmd'.
+	Take `beex' instead of `pgdb'.  Update callers.
+	(select-proc): Take `beex' instead of `pgdb'.  Update callers.
+	No longer validate defs.  Change `res' property to #:pgtable-ohints.
+	(pgtable-manager): Rewrite.  Update `res' property.
+
 2005-02-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm (pgdb-connection): Do not `fmt' error message.
