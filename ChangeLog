@@ -1,5 +1,9 @@
 2002-12-11  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* configure.in (VERSION): Bump to 0.08 for release.
+
+2002-12-11  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* libpostgres.c: Update copyright.
 	No longer #include <postgres.h>.
 	Include libpostgres.h using "" instead of <>.
