@@ -1,3 +1,8 @@
+2003-09-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (twerp-prep): For this AC_CONFIG_COMMANDS entry,
+	use "prep-Ptexi" instead of "twerp2texi --prep".
+
 2003-09-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in: Add "AC_CHECK_FUNCS(tmpfile)".
