@@ -50,14 +50,12 @@
 ;;; mirroring bootstrap
 
 (define *conditional-operations*        ; entry: NAME
-  '(= < <= > >= <>
+  '(= < <= > >= <> !=
       all any in like
       ALL ANY IN LIKE))
 
 (define *infix-operations*              ; entry: NAME
   (map identity *conditional-operations*))
-
-(define *sql-functions* '())            ; entry: (NAME ARGCOUNT)
 
 ;; Declare as part of @var{category} (a keyword) the symbol @var{x}.
 ;; @var{extra} information may be required for the particular category.
@@ -65,11 +63,7 @@
 ;;
 ;; @table @code
 ;; @item #:infix-op
-;; Render @code{(x A B)} as @code{( A x B )}.
-;;
-;; @item #:sql-function
-;; @var{extra} should be of the form @code{(ARGCOUNT)}.
-;; Render @code{(x A B ...)} as @code{x ( A , B , ...)}.
+;; Render @code{(x A B ...)} as @code{( A x B x ...)}.
 ;; @end table
 ;;
 (define (qcons-declare! category x . extra)
@@ -78,17 +72,13 @@
     ((#:infix-op)
      (set! *infix-operations*
            (cons x (delq! x *infix-operations*))))
-    ((#:sql-function)
-     (set! *sql-functions*
-           (let ((ent (cons x extra)))
-             (cons ent (delete! ent *sql-functions*)))))
     (else
      (error "bad category:" category))))
 
 
-;; Return a new string made by preceding each single quote in @var{s}
-;; (string or symbol) with a backslash, and prefixing and suffixing
-;; with single quote.  For example:
+;; Return a new string made by preceding each single quote in string
+;; @var{s} with a backslash, and prefixing and suffixing with single quote.
+;; For example:
 ;;
 ;; @lisp
 ;; (define bef "ab'cd")
@@ -101,7 +91,7 @@
 ;; the backslash appears twice (this is normal).
 ;;
 (define (sql-quote s)
-  (and (symbol? s) (set! s (symbol->string s)))
+  (or (string? s) (error "not a string:" s))
   (let* ((olen (string-length s))
          (len (+ 2 olen))
          (cuts (let loop ((stop olen) (acc (list olen)))
@@ -144,21 +134,55 @@
 (define commasep (list-sep-proc ","))
 
 (define (expr tree)
-  (if (pair? tree)
-      (let ((op (car tree))
-            (rest (cdr tree)))
-        (cond ((memq op '(#:AND #:and and))
-               (list "(" (andsep expr rest) ")"))
-              ((memq op '(#:OR #:or or))
-               (list "(" (orsep expr rest) ")"))
-              ((memq op *infix-operations*)
-               (list "(" ((list-sep-proc op) expr rest) ")"))
-              ((assq-ref *sql-functions* op)
-               => (lambda (argcount)
-                    ;; argcount unused, maybe better to ignore completely
-                    (list op "(" (commasep expr rest) ")")))
-              (else (error "(expr) bad op:" op))))
-      tree))
+
+  (define (add-noise! op rest)
+
+    (define (when-then-else branch)
+      (let ((val (car branch))
+            (res (cadr branch)))
+        (if (eq? 'else val)
+            (list #:ELSE (expr res))
+            (list #:WHEN (expr val)
+                  #:THEN (expr res)))))
+
+    (case op
+      ((#:q*)
+       (letrec ((q (lambda (x)
+                     (cond ((string? x) (sql-quote x))
+                           ((pair? x) (if (eq? #:q* (car x))
+                                          ;; neutralize meddlesome kids
+                                          (q (cadr x))
+                                          (map q x)))
+                           (else x)))))
+         (expr (q (car rest)))))
+      ((and)
+       (list "(" (andsep expr rest) ")"))
+      ((or)
+       (list "(" (orsep expr rest) ")"))
+      ((case)
+       (list #:CASE (expr (car rest))
+             (map when-then-else (cdr rest))
+             #:END))
+      ((cond)
+       (list #:CASE
+             (map when-then-else rest)
+             #:END))
+      ((if)
+       (list #:CASE (expr (car rest))
+             (map when-then-else
+                  `((#t ,(cadr  rest))
+                    (#f ,(caddr rest))))
+             #:END))
+      (else
+       (if (memq op *infix-operations*)
+           (list "(" ((list-sep-proc op) expr rest) ")")
+           (list op "(" (commasep expr rest) ")")))))
+
+  ;; do it!
+  (cond ((eq? #t tree) "'t'")
+        ((eq? #f tree) "'f'")
+        ((pair? tree) (add-noise! (car tree) (cdr tree)))
+        (else tree)))
 
 ;; Return a @dfn{where clause} tree for @var{condition}.
 ;;
@@ -221,7 +245,14 @@
         x
         (expr x)))
   (commasep (lambda (x)
-              (cond ((symbol? x) (fs "~S" (symbol->string x)))
+              (cond ((symbol? x)
+                     (let ((s (symbol->string x)))
+                       ;; double quote unless table name is included;
+                       ;; this is to protect against a column name
+                       ;; that happens to be a keyword (e.g., `desc')
+                       (if (string-index s #\.)
+                           x
+                           (fs "~S" s))))
                     ((string? x) x)     ; todo: zonk after 2005-12-31
                     ((and (pair? x) (string? (car x)))
                      (list (expr-nostring (cdr x)) #:AS (fs "~S" (car x))))
@@ -295,14 +326,5 @@
           '(+ - ~ * ||
               ;; todo: add here.
               ))
-
-(for-each (lambda (ls)
-            (qcons-declare! #:sql-function (car ls) (cdr ls)))
-          '((not 1)
-            (count 1)
-            (to_char 2)
-            (to_number 2)
-            ;; todo: add here.
-            ))
 
 ;;; postgres-qcons.scm ends here
