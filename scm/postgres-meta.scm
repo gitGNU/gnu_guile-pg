@@ -209,7 +209,7 @@
           *class-defs*)))
 
 (define (table-info M:pg-class name)
-  ((M:pg-class 'select) (force *table-info-selection*)
+  ((M:pg-class #:select) (force *table-info-selection*)
    #:where `(= relname ,name)))
 
 (define (table-fields-info conn table-name)
@@ -247,11 +247,12 @@
 ;; attnotnull, atthasdef, attnum).
 ;;
 (define (describe-table! db-name table-name)
-  (let ((M:pg-class (make-M:pg-class db-name)))
+  (let* ((M:pg-class (make-M:pg-class db-name))
+         (conn ((M:pg-class #:k) #:connection)))
     (for-each (lambda (x) (display x) (newline))
-              (infer-defs (M:pg-class 'pgdb) table-name))
+              (infer-defs conn table-name))
     (newline)
     (pg-print (table-info M:pg-class table-name))
-    (pg-print (table-fields-info (M:pg-class 'pgdb) table-name))))
+    (pg-print (table-fields-info conn table-name))))
 
 ;;; postgres-meta.scm ends here
