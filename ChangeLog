@@ -1,3 +1,19 @@
+2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-gxrepl.scm (dt): For this comma-command, convert
+	manually-constructed from tree into a `parse+make-SELECT/tail-tree'
+	argument.
+
+2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (make-FROM-tree): Add JOIN handling.
+
+2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (paren): New proc.
+	(make-comma-separated-tree): Use `paren'.
+	(expr): Remove internal proc `paren'.
+
 2005-02-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm: From module (database postgres-qcons),
