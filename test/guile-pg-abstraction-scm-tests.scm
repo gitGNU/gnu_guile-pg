@@ -1,21 +1,24 @@
-;;    Guile-pg - A Guile interface to PostgreSQL
-;;    Copyright (C) 2002, 2003, 2004 Free Software Foundation, Inc.
+;;; guile-pg-abstraction-scm-tests.scm
+
+;;	Copyright (C) 2002, 2003, 2004 Free Software Foundation, Inc.
 ;;
-;;    This program is free software; you can redistribute it and/or modify
-;;    it under the terms of the GNU General Public License as published by
-;;    the Free Software Foundation; either version 2 of the License, or
-;;    (at your option) any later version.
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2 of the License, or
+;; (at your option) any later version.
 ;;
-;;    This program is distributed in the hope that it will be useful,
-;;    but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;    GNU General Public License for more details.
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
 ;;
-;;    You should have received a copy of the GNU General Public License
-;;    along with this program; if not, write to the Free Software
-;;    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+;; You should have received a copy of the GNU General Public License
+;; along with this program; if not, write to the Free Software
+;; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ;;; Code:
+
+(load-from-path (in-vicinity *srcdir* "testing.scm"))
 
 (use-modules (database postgres)
              (database postgres-types)
@@ -293,34 +296,34 @@
   (set! select #f)
   (set! objwalk #f))
 
-;;; Load-time actions
+(define (main)
+  ;;(set! verbose #t)
+  (test-init "abstraction-scm-tests"    ; manularity sucks
+             (+ 7
+                (let ((count (list 5 3 3 2 2 3))) ; multiples
+                  (+ (* 2 (length count))
+                     (apply + count)))
+                1
+                (+ 6 (* 2 2) 8)))       ; m2
+  (test #t test:set!-m)
+  (test #t test:m-procs)
+  (test #t test:m-help)
+  (test #t test:m-create)
+  (test #t test:m-insert-1)
+  (test #t test:m-insert-2)
+  (test #t test:m-insert-3)
+  (mtest:select-*)
+  (mtest:select-*-error_condition)
+  (mtest:select-*-read)
+  (mtest:select-count)
+  (mtest:select-*-read<>)
+  (mtest:select-files/etc)
+  (test #t test:mtest-cleanup)
+  (test-m2)
+  (cleanup!)
+  (test-report))
 
-(load-from-path (string-append *srcdir* "/testing.scm"))
-;;(set! verbose #t)
-(test-init "abstraction-scm-tests"      ; manularity sucks
-           (+ 7
-              (let ((count (list 5 3 3 2 2 3))) ; multiples
-                (+ (* 2 (length count))
-                   (apply + count)))
-              1
-              (+ 6 (* 2 2) 8)))         ; m2
-(test #t test:set!-m)
-(test #t test:m-procs)
-(test #t test:m-help)
-(test #t test:m-create)
-(test #t test:m-insert-1)
-(test #t test:m-insert-2)
-(test #t test:m-insert-3)
-(mtest:select-*)
-(mtest:select-*-error_condition)
-(mtest:select-*-read)
-(mtest:select-count)
-(mtest:select-*-read<>)
-(mtest:select-files/etc)
-(test #t test:mtest-cleanup)
-(test-m2)
-(cleanup!)
-(exit (test-report))
+(exit (main))
 
 ;;; Local variables:
 ;;; eval: (put 'pass-if 'scheme-indent-function 1)
