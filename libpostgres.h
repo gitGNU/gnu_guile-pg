@@ -54,4 +54,10 @@ extern void init_libpostgres_lo (void);
 
 #define ROZT(x)  (SCM_ROCHARS (x))
 
+/* other abstractions */
+
+#define NOT_FALSEP(x)      (SCM_NFALSEP (x))
+#define EXACTLY_FALSEP(x)  (SCM_FALSEP (x))
+#define EXACTLY_TRUEP(x)   (gh_eq_p ((x), SCM_BOOL_T))
+
 /* libpostgres.h ends here */
