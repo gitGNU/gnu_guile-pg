@@ -379,6 +379,9 @@
 ;; alternating keywords and sexps.  These subsequences are recognized:
 ;;
 ;; @table @code
+;; @item #:from sexp
+;; Pass @var{sexp} to @code{make-FROM-tree}.
+;;
 ;; @item #:where sexp
 ;; Pass @var{sexp} to @code{make-WHERE-tree}.
 ;;
@@ -403,6 +406,7 @@
           (cdr acc)                     ; rv
           (let* ((kw (car ls))
                  (mk (case kw
+                       ((#:from)     make-FROM-tree)
                        ((#:where)    make-WHERE-tree)
                        ((#:group-by) make-GROUP-BY-tree)
                        ((#:having)   make-HAVING-tree)
