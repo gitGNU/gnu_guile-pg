@@ -1,3 +1,8 @@
+2004-11-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:asynchronous-retrieval): Fix bug:
+	Move tuple check inside `begin' block.  Also, no longer flush ports.
+
 2004-11-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (test:set-nonblocking!): New test proc.
