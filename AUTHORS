@@ -20,6 +20,7 @@ and modified:
     doc/guile-pg.texi
     test/basic-tests.sh		test/guile-pg-basic-tests.scm
     test/lo-tests.sh		test/guile-pg-lo-tests.scm
+    test/testing.scm
 
 
 Ian Grant <Ian.Grant@cl.cam.ac.uk> wrote:
