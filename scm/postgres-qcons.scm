@@ -231,11 +231,14 @@
             (list #:WHEN (expr val)
                   #:THEN (expr res)))))
 
+    (define (paren . x)
+      (list "(" x ")"))
+
     (case op
       ((and)
-       (list "(" (andsep expr rest) ")"))
+       (paren (andsep expr rest)))
       ((or)
-       (list "(" (orsep expr rest) ")"))
+       (paren (orsep expr rest)))
       ((case)
        (list #:CASE (expr (car rest))
              (map when-then-else (cdr rest))
@@ -252,11 +255,11 @@
              #:END))
       (else
        (cond ((memq op *infix-operations*)
-              (list "(" ((list-sep-proc op) expr rest) ")"))
+              (paren ((list-sep-proc op) expr rest)))
              ((memq op *postfix-operations*)
-              (list "(" (expr (car rest)) op ")"))
+              (paren (expr (car rest)) op))
              (else
-              (list op "(" (commasep expr rest) ")"))))))
+              (list op (paren (commasep expr rest))))))))
 
   ;; do it!
   (cond ((eq? #t tree) (sql-pre "'t'"))
