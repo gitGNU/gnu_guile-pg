@@ -65,7 +65,7 @@
  */
 
 static SCM strip_newlines (char *str);
-void scm_init_database_postgres_sup_module (void);
+void scm_init_database_postgres_module (void);
 
 typedef struct _smob_tag {
     long  type_tag; /* type tag */
@@ -319,7 +319,7 @@ PG_DEFINE (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
            "installation.  These are basically derived from C preprocessor\n"
            "macros determined at build time by the configure script.\n"
            "Presence of this procedure is also a good indicator that\n"
-           "the compiled module @code{(database postgres-sup)} is\n"
+           "the compiled module @code{(database postgres)} is\n"
            "available.  You can test this like so:\n\n"
            "@lisp\n"
            "(defined? 'pg-guile-pg-loaded)\n"
@@ -2035,8 +2035,8 @@ init_module (void)
   goodies = scm_protect_object (goodies);
 }
 
-GH_MODULE_LINK_FUNC ("database postgres-sup"
-                     ,database_postgres_sup
+GH_MODULE_LINK_FUNC ("database postgres"
+                     ,database_postgres
                      ,init_module)
 
 /* libpostgres.c ends here */
