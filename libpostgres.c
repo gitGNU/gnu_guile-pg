@@ -288,6 +288,14 @@ pg_guile_pg_loaded(void)
     return SCM_BOOL_T;
 }
 
+SCM_PROC(s_pg_guile_pg_rcsid, "pg-guile-pg-rcsid", 0, 0, 0, pg_guile_pg_rcsid);
+
+static SCM
+pg_guile_pg_rcsid(void)
+{
+    return scm_makfrom0str(rcsid);
+}
+
 SCM_PROC(s_pg_connectdb, "pg-connectdb", 1, 0, 0, pg_connectdb);
 
 static SCM
@@ -975,6 +983,14 @@ static SCM
 pg_guile_pg_version (void)
 {
    return scm_makfrom0str(VERSION);
+}
+
+SCM_PROC(s_pg_guile_pg_config_stamp,"pg-guile-pg-config-stamp",0,0,0,pg_guile_pg_config_stamp);
+
+static SCM
+pg_guile_pg_config_stamp (void)
+{
+   return scm_makfrom0str(GUILE_PG_STAMP);
 }
 
 SCM_PROC(s_pg_getline, "pg-getline", 1, 0, 0, pg_getline);

@@ -71,6 +71,14 @@ long lob_ptype;
 
 static SCM lob_mklobport (SCM conn, Oid oid, int fd, long modes, const char *caller);
 
+SCM_PROC(s_pg_guile_pg_lo_rcsid, "pg-guile-pg-lo-rcsid", 0, 0, 0, pg_guile_pg_lo_rcsid);
+
+static SCM
+pg_guile_pg_lo_rcsid(void)
+{
+    return scm_makfrom0str(rcsid);
+}
+
 SCM_PROC(s_lob_lo_creat, "pg-lo-creat", 2, 0, 0, lob_lo_creat);
 
 static SCM

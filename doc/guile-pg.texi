@@ -385,6 +385,18 @@ Returns a string giving the version of @code{guile-pg}. The string is
 always of the form "M.m" giving major and minor versions.
 @end defun
 
+@defun pg-guile-pg-module-version
+Returns a string giving the version of the scheme module @code{postgres.scm}.
+The string is always of the form "M.m" giving major and minor versions.
+Unless something is wrong with the installation, this should be the same as
+@code{pg-guile-pg-version}.
+@end defun
+
+@defun pg-guile-pg-module-config-stamp
+Returns a string containing the date and time at which @code{guile-pg}
+was configured (this is probably the build time.)
+@end defun
+
 @defun pg-trace conn port
 Starts outputting low-level trace information on the connection @var{conn} to
 @var{port}, which must have been opened for writing. This trace
