@@ -1,5 +1,9 @@
 2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* README: Rewrite.
+
+2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* Makefile.am (destroy-nonmodule-guile-pg-prior-install): New target.
 
 2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
