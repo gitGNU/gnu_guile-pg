@@ -1,3 +1,8 @@
+2004-05-17  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (strip_newlines): Use `scm_makfromstr'.
+	Update callers to no longer use `strdup' and `free'.
+
 2004-05-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* doc/guile-pg.twerp (Column Definitions): Fix typo.
