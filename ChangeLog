@@ -1,5 +1,6 @@
 $Id$
 Tue May 30 08:20:09 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
+
         * Fixed large object ports so that they work with the further
           changes to the ports interface.
 
@@ -19,9 +20,20 @@ Tue May 30 08:20:09 BST 2000 Ian Grant <Ian.Grant@cl.cam.ac.uk>
           Instead we install the .so in the $(library) directory and
           load it explicitly using the scheme interface to dlopen etc.
 
+        * As part of the above, the module is now loaded using
+
+                 (use-modules (database postgres))
+
+        * Addded procedure pg-guile-pg-loaded.  This is a marker, the
+          presence of which guarantees that guile-pg is present.  This
+          is tested in postgres.scm to see whether the guile is plain
+          guile or the statically-linked guile-pg.
+
         * Updated README
 
-        * Added $Id$ all over the place in preparation for CVS use.
+        * Added <Dollar>Id<Dollar> all over the place in preparation
+          for CVS use.  Also added PG-MODULE-RCSID procedure to get
+          the RCS Id of the scheme module (postgres.scm).
 
 Sun Jun 27 14:50:09 BST 1999 Ian Grant <Ian.Grant@cl.cam.ac.uk>
         * Changes to configure.in to check for Postgres 6.4 features.

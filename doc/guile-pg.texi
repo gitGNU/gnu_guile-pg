@@ -107,9 +107,11 @@ the @code{libpq} library and other similar interfaces like Edmund Mergl's
 @comment node-name,     next,          previous, up
 @chapter Examples
 
-To access a PostgreSQL database from Guile, first load the PostgreSQL database
-interface module. This is not required when using the @code{guile-pg} 
-executable because then the interface functions are automatically available.
+To access a PostgreSQL database from Guile, first load the @code{postgres}
+database module. This is done using the @code{use-modules} syntax:
+@example
+     (use-modules (database postgres))
+@end example
 
 The next step is to make a connection to the database using the
 @code{pg-connectdb} procedure. Then, having created a valid connection to a 
@@ -365,6 +367,18 @@ connection object that logs all the SQL statements it executes.
 
 @node    Miscellaneous, Retrieving Data, Database Connections, Procedures
 @section Miscellaneous Functions
+
+@defun pg-guile-pg-loaded
+Returns @code{#t} indicating that the binary part of @code{guile-pg} is loaded.
+Thus to test if @code{guile-pg} is loaded, use
+@lisp
+(defined? 'pg-guile-pg-loaded)
+@end lisp
+
+@heading Note
+This function is guaranteed to be present in all future versions of
+@code{guile-pg}.
+@end defun
 
 @defun pg-guile-pg-version
 Returns a string giving the version of @code{guile-pg}. The string is

@@ -280,6 +280,14 @@ strip_newlines(char *str)
    return str;
 }
 
+SCM_PROC(s_pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0, pg_guile_pg_loaded);
+
+static SCM
+pg_guile_pg_loaded(void)
+{
+    return SCM_BOOL_T;
+}
+
 SCM_PROC(s_pg_connectdb, "pg-connectdb", 1, 0, 0, pg_connectdb);
 
 static SCM
@@ -318,7 +326,8 @@ pg_connectdb(SCM constr)
 }
 
 /*****************************************************************************
-
+ OBSOLETE
+ *****************************************************************************
 SCM_PROC(s_pg_setdb, "pg-setdb", 5, 0, 0, pg_setdb);
 
 static SCM

@@ -18,13 +18,12 @@
 ;;
 ;;    Guile-pg was written by Ian Grant <Ian.Grant@cl.cam.ac.uk>
 
-(define-module (guile-user))
+;; (define-module (guile-user))
 
 ;; Load the C interface functions
-(dynamic-call "init_postgres" (dynamic-link "libpostgres.so"))
-(define (pg-module-config-stamp) "@GUILE_PG_STAMP@")
-(define (pg-guile-pg-module-version) "@VERSION@")
-(define (pg-module-rcsid) "$Id$")
+
+(if (not (defined? 'pg-guile-pg-version)) ;; Unless already loaded (static) ...
+  (dynamic-call "init_postgres" (dynamic-link "libpostgres.so")))
 
 (define-module (database postgres))
 
@@ -76,6 +75,10 @@
            (string-append (as-string twixt) (iter tail))
            (as-string aft)))))
   (string-append (as-string afore) (iter lst)))
+
+(define-public (pg-module-config-stamp) "@GUILE_PG_STAMP@")
+(define-public (pg-guile-pg-module-version) "@VERSION@")
+(define-public (pg-module-rcsid) "$Id$")
 
 (define-public (pg-make-table! conn tablename fields)
   (let ((sql-string (string-append

@@ -352,8 +352,9 @@
 
 (load-from-path "testing.scm")
 (set! verbose #t)
-(test-init "basic-tests" 30)
+(test-init "basic-tests" 31)
 (test "@VERSION@" pg-guile-pg-version)
+(test #t pg-guile-pg-loaded)
 (test #t test:make-connection)
 (test #t test:set-client-data)
 (test #t test:make-table)
