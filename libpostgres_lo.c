@@ -280,10 +280,9 @@ PG_DEFINE (lob_lo_unlink, "pg-lo-unlink", 2, 0, 0,
   SCM_DEFER_INTS;
   ret = lo_unlink (dbconn, SCM_INUM (oid));
   SCM_ALLOW_INTS;
-  if (ret != 0)
-    return SCM_BOOL_F;
-
-  return SCM_BOOL_T;
+  return (ret < 0
+          ? SCM_BOOL_F
+          : SCM_BOOL_T);
 #undef FUNC_NAME
 }
 
