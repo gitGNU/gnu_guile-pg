@@ -23,6 +23,7 @@
 AUTOMAKE_OPTIONS = foreign
 
 guile_postgres_sources = 			\
+  postgres-resdisp.scm				\
   postgres-types.scm 				\
   postgres-col-defs.scm				\
   postgres-resx.scm				\
