@@ -1,5 +1,22 @@
 2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-gxrepl.scm (fsel): For this comma-command,
+	handle arbitrary number of related expressions, not just one.
+	(gxrepl): Init connection property `#:cols'.
+
+2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-gxrepl.scm (fix): For this comma-command,
+	make handling consistent for unspecified set and reset
+	conditions.  Also, add `?' handling.
+
+2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-gxrepl.scm (gxrepl): In sub-proc `-print',
+	handle trees of strings marked `--for-display', as well.
+
+2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/Makefile.am (EXTRA_DIST): Add mkinc.
 
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
