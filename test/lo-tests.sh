@@ -1,11 +1,21 @@
 #! /bin/sh
 
-destroydb guile_pg_test >/dev/null 2>&1
+if type dropdb >/dev/null 2>&1 ; then
+    dropdb=dropdb
+else
+    dropdb=destroydb # old
+fi
+
+$dropdb guile_pg_test >/dev/null 2>&1
 createdb guile_pg_test || {
    echo test.sh: error: createdb failed. Giving up. 1>&2
    exit 1
 }
 PGDATABASE=guile_pg_test
-GUILE_LOAD_PATH=$srcdir
-export PGDATABASE GUILE_LOAD_PATH
-../guile-pg -s guile-pg-lo-tests.scm
+export PGDATABASE
+
+${GUILE-guile} -l $top_builddir/scm/postgres.scm -s guile-pg-lo-tests.scm
+
+$dropdb guile_pg_test
+
+# lo-tests.sh ends here
