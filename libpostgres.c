@@ -1628,6 +1628,43 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
 #undef FUNC_NAME
 
 
+/* Client encoding.  */
+
+PG_DEFINE (pg_client_encoding, "pg-client-encoding", 1, 0, 0,
+           (SCM conn),
+           "Return the current client encoding for @var{conn}.")
+#define FUNC_NAME s_pg_client_encoding
+{
+  SCM enc;
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+
+  /* Hmmm, `pg_encoding_to_char' is not in the headers.  However, it is
+     mentioned in the Multibyte Support chapter (section 7.2.2 -- Setting
+     the Encoding), and works w/ PostgreSQL 7.3.3.  */
+  enc = scm_makfrom0str (pg_encoding_to_char
+                         (PQclientEncoding
+                          (sec_unbox (conn)->dbconn)));
+  return enc;
+}
+#undef FUNC_NAME
+
+PG_DEFINE (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
+           (SCM conn, SCM encoding),
+           "Set the client encoding for @var{conn} to @var{encoding}.\n"
+           "Return #t if successful, #f otherwise.")
+#define FUNC_NAME s_pg_set_client_encoding_x
+{
+  SCM_ASSERT (sec_p (conn), conn, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (SCM_STRINGP (encoding), encoding, SCM_ARG2, FUNC_NAME);
+
+  return (0 == (PQsetClientEncoding
+                (sec_unbox (conn)->dbconn, SCM_CHARS (encoding)))
+          ? SCM_BOOL_T
+          : SCM_BOOL_F);
+}
+#undef FUNC_NAME
+
+
 /*
  * init
  */
