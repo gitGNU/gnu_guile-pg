@@ -59,7 +59,7 @@
       all any in like))
 
 (define *infix-operations*              ; entry: NAME
-  (append! '(|| * ~ - +)
+  (append! '(|| / * ~ - +)
            *conditional-operations*))
 
 (define *display-aliases*               ; entry: (NAME . ALIAS)
