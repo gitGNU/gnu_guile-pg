@@ -1,5 +1,13 @@
 2002-12-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* libpostgres.c (guile_pg_sec_p): Rename from `sec_p'.
+	(guile_pg_sec_unbox): Rename from `sec_unbox'.
+	* libpostgres.h: Likewise.
+
+	* libposgres_lo.c (sec_p, sec_unbox): New macros.
+
+2002-12-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* configure.in (AC_CONFIG_COMMANDS):
 	Conditionalize twerp2texi invocation.
 
