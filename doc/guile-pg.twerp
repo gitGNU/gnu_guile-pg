@@ -98,6 +98,7 @@ abstractions and convenience procedures.
 
 * Types Conversion::            Module: (database postgres-types).
 * Column Definitions::          Module: (database postgres-col-defs).
+* Query Construction::          Module: (database postgres-qcons).
 * Result Transforms::           Module: (database postgres-resx).
 * Single-Table Abstraction::    Module: (database postgres-table).
 * Introspection::               Module: (database postgres-meta).
@@ -1107,6 +1108,24 @@ Transforms}):
 
 @twerpdoc (objectifiers)
 @twerpdoc (stringifiers)
+
+@c ---------------------------------------------------------------------------
+@node    Query Construction
+@chapter Query Construction
+
+Constucting a typical SQL @code{SELECT} query (to be passed to @code{pg-exec})
+can be tedious and error prone due to the many string-munging operations
+involved.  Guile-PG provides some procedures to make things a little easier.
+
+To get started, load the @code{postgres-qcons} module:
+
+@lisp
+(use-modules (database postgres-qcons))
+@end lisp
+
+At the moment this provides only one low-level procedure: @code{sql-quote}.
+
+@twerpdoc (sql-quote)
 
 @c ---------------------------------------------------------------------------
 @node    Result Transforms
