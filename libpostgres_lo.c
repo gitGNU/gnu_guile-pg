@@ -155,7 +155,7 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
   int pg_modes = 0;
 
   ASSERT_CONNECTION (1, conn);
-  SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
+  SCM_VALIDATE_ULONG_COPY (2, oid, pg_oid);
   SCM_ASSERT (SCM_NIMP (modes) && SCM_ROSTRINGP (modes),
               modes, SCM_ARG3, FUNC_NAME);
   ROZT_X (modes);
@@ -171,7 +171,6 @@ PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
   if (pg_modes == 0)
     scm_misc_error (FUNC_NAME, "Invalid mode specification: ~S",
                     scm_listify (modes, SCM_UNDEFINED));
-  pg_oid = gh_scm2int (oid);
   SCM_DEFER_INTS;
   alod = lo_open (dbconn, pg_oid, pg_modes);
   SCM_ALLOW_INTS;
@@ -262,16 +261,16 @@ PG_DEFINE (lob_lo_unlink, "pg-lo-unlink", 2, 0, 0,
            "applied to @code{conn} should give an idea of what went wrong.")
 {
 #define FUNC_NAME s_lob_lo_unlink
-  int ret;
+  int ret, pg_oid;
   PGconn *dbconn;
 
   ASSERT_CONNECTION (1, conn);
-  SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
+  SCM_VALIDATE_ULONG_COPY (2, oid, pg_oid);
 
   dbconn = XCONN (conn);
 
   SCM_DEFER_INTS;
-  ret = lo_unlink (dbconn, gh_scm2int (oid));
+  ret = lo_unlink (dbconn, pg_oid);
   SCM_ALLOW_INTS;
   return (ret < 0
           ? SCM_BOOL_F
@@ -442,14 +441,15 @@ PG_DEFINE (lob_lo_seek, "pg-lo-seek", 3, 0, 0,
            "zero if an error occurred.")
 {
 #define FUNC_NAME s_lob_lo_seek
+  int cwhere, cwhence;
   SCM_ASSERT (SCM_NIMP (port) && OPLOBPORTP (port),
               port, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT (SCM_INUMP (where), where, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT (SCM_INUMP (whence), whence, SCM_ARG3, FUNC_NAME);
+  SCM_VALIDATE_INUM_COPY (2, where, cwhere);
+  SCM_VALIDATE_INUM_COPY (3, whence, cwhence);
 
   lob_flush (port);
 
-  return gh_int2scm (lob_seek (port, gh_scm2int (where), gh_scm2int (whence)));
+  return gh_int2scm (lob_seek (port, cwhere, cwhence));
 #undef FUNC_NAME
 }
 
@@ -568,15 +568,15 @@ PG_DEFINE (lob_lo_read, "pg-lo-read", 3, 0, 0,
 #define FUNC_NAME s_lob_lo_read
   scm_sizet n;
   SCM str;
-  int len;
+  int csiz, cnum, len;
   int done = 0;
 
-  SCM_ASSERT (SCM_INUMP (siz), siz, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT (SCM_INUMP (num), num, SCM_ARG2, FUNC_NAME);
+  SCM_VALIDATE_INUM_MIN_COPY (1, siz, 0, csiz);
+  SCM_VALIDATE_INUM_MIN_COPY (2, num, 0, cnum);
   SCM_ASSERT (SCM_NIMP (port) && OPINLOBPORTP (port),
               port, SCM_ARG3, FUNC_NAME);
 
-  len = gh_scm2int (siz) * gh_scm2int (num);
+  len = csiz * cnum;
   str = scm_make_string (gh_int2scm (len), SCM_UNDEFINED);
   for (n = 0 ; n < gh_scm2int (num) && ! done; n++)
     {
@@ -701,12 +701,11 @@ PG_DEFINE (lob_lo_export, "pg-lo-export", 3, 0, 0,
   int ret;
 
   ASSERT_CONNECTION (1, conn);
-  SCM_ASSERT (SCM_INUMP (oid), oid, SCM_ARG2, FUNC_NAME);
+  SCM_VALIDATE_ULONG_COPY (2, oid, pg_oid);
   SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename), filename,
               SCM_ARG3, FUNC_NAME);
   ROZT_X (filename);
   dbconn = XCONN (conn);
-  pg_oid = gh_scm2int (oid);
 
   SCM_DEFER_INTS;
   ret = lo_export (dbconn, pg_oid, ROZT (filename));
