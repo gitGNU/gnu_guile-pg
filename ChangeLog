@@ -1,5 +1,14 @@
 2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-meta.scm: Use module (database postgres-col-defs).
+	Autoload (srfi srfi-13) instead of using it directly.
+	Add autoload for module (ice-9 popen).
+	(defs-from-psql): New proc, exported.
+	(check-def/elaborate): Likewise.
+	(strictly-check-defs/elaborate!): Likewise.
+
+2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-types.scm (real): New built-in type converter.
 
 2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
