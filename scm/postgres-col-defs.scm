@@ -24,6 +24,7 @@
 ;;   (type-options DEF) => list of option elements
 ;;   (objectifiers DEFS) => list of objectifier procedures
 ;;   (stringifiers DEFS) => list of stringifier procedures
+;;   (validate-def OBJ [TYPECHECK]) => #t or signal error
 ;;
 ;; DEF is a single column definition.  DEFS is a list of column definitions.
 ;; Each option element is either a string (possibly with embedded spaces),
@@ -40,6 +41,7 @@
   #:export (column-name
             type-name
             type-options
+            validate-def
             objectifiers
             stringifiers))
 
@@ -66,6 +68,35 @@
     (if (pair? type-info)
         (cdr type-info)
         '())))
+
+;; Check @var{obj} and signal error if it does not appear to be a well-formed
+;; def.  Check that @var{obj} has a structure amenable to extraction of
+;; components using @code{column-name} and @code{type-name}: The name must be
+;; a symbol using only alphanumeric characters and underscore; the type must
+;; be a symbol.  Optional second arg @var{typecheck} is a procedure that takes
+;; the type (a symbol) and can do further checks on it.  It should return
+;; non-#f to indicate success.
+;;
+;;-sig: (obj [typecheck])
+;;
+(define (validate-def obj . typecheck)
+  (or (and (pair? obj)
+           (let ((col-name (column-name obj)))
+             (and (symbol? col-name)
+                  (let ((s (symbol->string col-name)))
+                    (= (string-length s)
+                       (apply + (map (lambda (c)
+                                       (if (or (char-alphabetic? c)
+                                               (char-numeric? c)
+                                               (char=? c #\_))
+                                           1 0))
+                                     (string->list s)))))))
+           (pair? (cdr obj))
+           (let ((col-type (type-name obj)))
+             (and (symbol? col-type)
+                  (or (null? typecheck)
+                      ((car typecheck) col-type)))))
+      (error "malformed def:" obj)))
 
 ;; Return a list of objectifiers associated with the types in @var{defs}.
 ;;
