@@ -231,7 +231,7 @@
 (test #t test:lo-tell)
 (for-each delete-file '("lo-tests-data-1" "lo-tests-data-2"))
 (set! conn #f)
-(test-report)
+(exit (test-report))
 
 ;; Local Variables:
 ;; eval: (put 'pg-transaction 'scheme-indent-function 1)
