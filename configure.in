@@ -67,20 +67,20 @@ AH_BOTTOM([
 ## PostgreSQL
 
 ## This little hack allows the tests for libpq etc. to be overridden by
-## setting the environment variables PQ_CFLAGS and PQ_LDFLAGS.  This is
+## setting the environment variables PQ_CPPFLAGS and PQ_LDFLAGS.  This is
 ## useful e.g. when running 'Make distcheck', which runs ./configure.
 
-if test "x$PQ_LDFLAGS" = "x" -a "x$PQ_CFLAGS" = "x" ; then
+if test "x$PQ_LDFLAGS" = "x" -a "x$PQ_CPPFLAGS" = "x" ; then
 PQ_FLAGS
 fi
 
-saved_CFLAGS="$CFLAGS"                  # restoration below
+saved_CPPFLAGS="$CPPFLAGS"                  # restoration below
 saved_LDFLAGS="$LDFLAGS"
-CFLAGS="$PQ_CFLAGS $CFLAGS"
+CPPFLAGS="$PQ_CPPFLAGS $CPPFLAGS"
 LDFLAGS="$PQ_LDFLAGS $LDFLAGS"
 
 AC_CHECK_LIB(pq, PQconnectdb, ,[
-  AC_MSG_NOTICE(CFLAGS: $CFLAGS)
+  AC_MSG_NOTICE(CPPFLAGS: $CPPFLAGS)
   AC_MSG_NOTICE(LDFLAGS: $LDFLAGS)
   AC_MSG_ERROR([cannot find libpq on the system])
 ])
@@ -106,7 +106,7 @@ if test "x$pg_ac_need_invalidoid" = xtrue ; then
   AC_MSG_ERROR([cannot find declaration for InvalidOid])
 fi
 
-CFLAGS="$saved_CFLAGS"
+CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"
 
 AC_CHECK_PROGS([DROPDB], [dropdb destroydb], [no],)

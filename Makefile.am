@@ -27,7 +27,7 @@ EXTRA_DIST = THANKS TODO HACKING ANONCVS \
 
 BUILT_SOURCES = libpostgres.x libpostgres_lo.x
 
-INCLUDES = -I. -I$(srcdir) $(GUILE_CFLAGS) $(PQ_CFLAGS)
+INCLUDES = -I. -I$(srcdir) $(GUILE_CFLAGS) $(PQ_CPPFLAGS)
 
 ddir = $(GUILE_LIBSITE)/database
 d_LTLIBRARIES = postgres.la
