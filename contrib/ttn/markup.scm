@@ -27,7 +27,7 @@
 (define (>>table heading manager)
   (format #t "TABLE: ~A\n" heading)
   (flush-all-ports)
-  (pg-print ((manager #:select) "*"))
+  (pg-print ((manager #:select) #t))
   (flush-all-ports))
 
 ;; markup table interface: extend pgtable-manager
@@ -74,7 +74,7 @@
       (add ls keys canonicalize))
 
     (define (->tree keys render)
-      (let ((res ((m #:select) "*"
+      (let ((res ((m #:select) #t
                   (where-clausifier (apply format #f key-match keys))
                   "ORDER BY seq")))
         (and (not (= 0 (pg-ntuples res)))
@@ -156,8 +156,8 @@
 
   (define (find-proj name)
     (let ((alist (car ((c #:tuples-result->alists)
-                       ((c #:select) "*" (where-clausifier
-                                          (format #f "name = '~A'" name)))))))
+                       ((c #:select) #t (where-clausifier
+                                         (format #f "name = '~A'" name)))))))
       (lambda (key) (assq-ref alist key))))
 
   (define (htmlize-markup raw mtype mdata)
