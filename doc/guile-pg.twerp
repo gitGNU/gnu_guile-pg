@@ -157,7 +157,7 @@ guile> test
 #<PG-CONN:1:test::5432:>
 guile> (define result (pg-exec test "SELECT * FROM PEOPLE"))
 guile> result
-#<PG-RESULT:1:PGRES_TUPLES_OK:3:5>
+#<PG-RESULT:1:TUPLES_OK:3:5>
 @end example
 @end cartouche
 
@@ -437,7 +437,8 @@ Guile-PG displays result objects in the following format:
 
 @var{n} is the serial number of the result, valid only for the current
 connection; @var{status} is the same as would be returned by
-@code{pg-result-status}; @var{ntuples} and @var{nfields} are integers,
+@code{pg-result-status} except without the @code{PGRES_} (it is
+redundant); @var{ntuples} and @var{nfields} are integers,
 the same as would be returned by @code{pg-ntuples} and @code{pg-nfields},
 respectively.  Everything else appears literally as shown here.
 
@@ -1359,27 +1360,27 @@ The rest of this chapter is an extended example showing some of the uses of
                              (details    text[]))))
 
 ((m #:create))
-@result{} #<PG-RESULT:1:PGRES_COMMAND_OK:0:0>
+@result{} #<PG-RESULT:1:COMMAND_OK:0:0>
 
 (define add (m #:insert-col-values))
 (define sel (m #:select))
 
 (add '(date amount) (current-time) 1.98)
-@result{} #<PG-RESULT:2:PGRES_COMMAND_OK:0:0>
+@result{} #<PG-RESULT:2:COMMAND_OK:0:0>
 
 (add '(date amount) (current-time) 2.98)
-@result{} #<PG-RESULT:3:PGRES_COMMAND_OK:0:0>
+@result{} #<PG-RESULT:3:COMMAND_OK:0:0>
 
 (define result (sel "count(*)" (where-clausifier "amount < 2.00")))
 
 result
-@result{} #<PG-RESULT:4:PGRES_TUPLES_OK:1:1>
+@result{} #<PG-RESULT:4:TUPLES_OK:1:1>
 
-(tuples-result->table result)
-@result{} #2(("1"))
+((m #:tuples-result->object-alist) result)
+@result{} ((count 1))
 
 ((m #:drop))
-@result{} (#<PG-RESULT:5:PGRES_COMMAND_OK:0:0> #<PG-RESULT:6:PGRES_COMMAND_OK:0:0>)
+@result{} (#<PG-RESULT:5:COMMAND_OK:0:0> #<PG-RESULT:6:COMMAND_OK:0:0>)
 @end lisp
 
 Two things to note in this example: (1) Both @code{#:create} and @code{#:drop}
