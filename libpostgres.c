@@ -1796,7 +1796,7 @@ PG_DEFINE (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
   SCM_ASSERT (SCM_STRINGP (encoding), encoding, SCM_ARG2, FUNC_NAME);
   ROZT_X (encoding);
 
-  return (0 == (PQsetClientEncoding (XCONN (conn), SCM_ROCHARS (encoding)))
+  return (0 == (PQsetClientEncoding (XCONN (conn), ROZT (encoding)))
           ? SCM_BOOL_T
           : SCM_BOOL_F);
 }
@@ -1818,7 +1818,7 @@ PG_DEFINE (pg_send_query, "pg-send-query", 2, 0, 0,
   SCM_ASSERT (SCM_STRINGP (query), query, SCM_ARG2, FUNC_NAME);
   ROZT_X (query);
 
-  return (PQsendQuery (XCONN (conn), SCM_ROCHARS (query))
+  return (PQsendQuery (XCONN (conn), ROZT (query))
           ? SCM_BOOL_T
           : SCM_BOOL_F);
 }
