@@ -1,37 +1,31 @@
-$Id$
-Please read the GNU Coding Standards. I have tried to conform to these.
-If there are any violations of them then please tell me.
+Please read the GNU Coding Standards.  We try to conform to these.
+If there are any violations of them then please let us know.
 
 One exception is the provision of non-ANSI function prototypes, which
-Guile doesn't do. Since you can't build a working Guile without an ANSI
+Guile doesn't do.  Since you can't build a working Guile without an ANSI
 C compiler it's no great problem that you can't build guile-pg either.
 
-This module uses aclocal, automake, autoconf and libtool. I've used automake
-version 1.4, autoconf version 2.13. The libtool version is 1.3.2
+Quick start:
 
-If you add a file remember to make sure it's included in the distribution
-automatically (because it's a standard file like README or it's an
-explicitly listed dependency) or put it in the EXTRA_DIST list.
+ $ CVSROOT=':pserver:anonymous@cvs.glug.org:/home/ttn/cvsroot'
+ $ export CVSROOT
+ $ cvs login			# type RET (empty password)
+ $ cvs co guile-pg
+ $ cd guile-pg
+ $ sh -x autogen.sh
 
-After changing any Makefile.am or the m4 macros in acinclude.m4, run
-
-     aclocal && automake && autoconf
-
-or use the ./autogen.sh which is in the build tree.
-
-When adding to any Makefile.am use $(srcdir) and check that the build can
-still be done in a directory other than top-level source directory.
+See autogen.sh comments for which versions of the auto* tools to install on
+your system (minimally -- probably later versions work, too).
 
 Please add test cases to the tests in the test directory, and run 'make check'
 to test them.
 
-The `dist' and `distcheck' targets are supremeley useful. To use distcheck
+The `dist' and `distcheck' targets are supremeley useful.  To use distcheck
 though you need to make sure that the shared libguile is on the load path
-because distcheck runs the tests. If libguile.so is on the load path
-anyway then this is no problem, but if it's not you can use the loader's
-load path environment variable. On Linux, SunOS etc you can say
+because distcheck runs the tests.  If libguile.so is on the load path anyway
+then this is no problem, but if it's not you can use the loader's load path
+environment variable.  On Linux, SunOS etc you can say:
 
        LD_LIBRARY_PATH=/opt/guile/lib make distcheck
 
 Of course the Postgres server must be running when you do this.
-
