@@ -859,7 +859,7 @@ be loaded like so:
               #:renamer (symbol-prefix-proc 'def:)))
 @end lisp
 
-In this example, we use the @code{:renamer} clause to systematically prefix
+In this example, we use the @code{#:renamer} clause to systematically prefix
 "def:" to the names that the client module would see (resulting in
 @code{def:column-name} and so on).
 
