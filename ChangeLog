@@ -1,3 +1,7 @@
+2004-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* test/show-platform (go): Also include guile-pg version.
+
 2004-01-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* test/guile-pg-lo-tests.scm: Update copyright.
