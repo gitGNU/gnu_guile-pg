@@ -57,6 +57,8 @@
       variables and other context. Callers must treat the connection options
       data as read-only.
 
+  - Use GNU style curly-brace placement in C code
+
 
 - Eventually
 
