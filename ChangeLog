@@ -1,5 +1,9 @@
 2004-07-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* guile.m4.snap: Sync w/ upstream.
+
+2004-07-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* acinclude.m4 (AC_GUILE_PG_FCOMPAT): Add check for
 	libguile.h provision of SCM_OUTPUT_PORT_P macro.
 
