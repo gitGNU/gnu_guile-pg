@@ -32,7 +32,7 @@ INCLUDES = -I. -I$(srcdir) $(GUILE_CFLAGS) $(PQ_CPPFLAGS)
 ddir = $(GUILE_LIBSITE)/database
 d_LTLIBRARIES = postgres.la
 postgres_la_SOURCES = libpostgres.c libpostgres_lo.c libpostgres.h \
-				tmpfile.c
+				tmpfile.c bcruft.h fcruft.h
 postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0 \
 				$(LDFLAGS) $(PQ_LDFLAGS)
 
