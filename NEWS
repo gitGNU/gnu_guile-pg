@@ -1,5 +1,13 @@
 NEWS for Guile-PG
 
+- version 0.12 [[ NOT YET RELEASED ]]
+
+  - PATH/configure where PATH != "./" supported
+
+	This is known as "vpath build" or "srcdir!=builddir build".
+	Previously, "make check" failed for such situations due to not
+	being able to find test/testing.scm.
+
 
 - version 0.11 released 2002-12-17
 
