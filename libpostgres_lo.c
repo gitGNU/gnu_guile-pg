@@ -309,7 +309,7 @@ PG_DEFINE (lob_lo_get_oid, "pg-lo-get-oid", 1, 0, 0,
 #define FUNC_NAME s_lob_lo_get_oid
   SCM_ASSERT (SCM_NIMP (port) && SCM_LOBPORTP (port),
               port, SCM_ARG1, FUNC_NAME);
-  return SCM_MAKINUM (((lob_stream *)SCM_STREAM (port))->oid);
+  return gh_int2scm (((lob_stream *)SCM_STREAM (port))->oid);
 #undef FUNC_NAME
 }
 
@@ -326,7 +326,7 @@ PG_DEFINE (lob_lo_tell, "pg-lo-tell", 1, 0, 0,
 #define FUNC_NAME s_lob_lo_tell
   SCM_ASSERT (SCM_NIMP (port)&&SCM_OPLOBPORTP (port),port,SCM_ARG1,FUNC_NAME);
 
-  return scm_seek (port, SCM_INUM0, SCM_MAKINUM (SEEK_CUR));
+  return scm_seek (port, SCM_INUM0, gh_int2scm (SEEK_CUR));
 #undef FUNC_NAME
 }
 
@@ -456,7 +456,7 @@ PG_DEFINE (lob_lo_seek, "pg-lo-seek", 3, 0, 0,
 
   lob_flush (port);
 
-  return SCM_MAKINUM (lob_seek (port, SCM_INUM (where), SCM_INUM (whence)));
+  return gh_int2scm (lob_seek (port, SCM_INUM (where), SCM_INUM (whence)));
 #undef FUNC_NAME
 }
 
@@ -488,7 +488,7 @@ lob_fill_input (SCM port)
         return EOF;
       else if (ret < 0)
         scm_misc_error ("lob_fill_buffer", "Error (~S) reading from lo port ~S",
-                        scm_listify (SCM_MAKINUM (ret), port, SCM_UNDEFINED));
+                        scm_listify (gh_int2scm (ret), port, SCM_UNDEFINED));
     }
   pt->read_pos = pt->read_buf;
   pt->read_end = pt->read_buf + ret;
@@ -547,7 +547,7 @@ lob_seek (SCM port, off_t offset, int whence)
   SCM_ALLOW_INTS;
   if (ret == -1)
     scm_misc_error ("lob_seek", "Error (~S) seeking on lo port ~S",
-                    scm_listify (SCM_MAKINUM (ret), port, SCM_UNDEFINED));
+                    scm_listify (gh_int2scm (ret), port, SCM_UNDEFINED));
 
   /* Adjust return value to account for guile port buffering.  */
   if (SEEK_CUR == whence)
@@ -584,7 +584,7 @@ PG_DEFINE (lob_lo_read, "pg-lo-read", 3, 0, 0,
               port, SCM_ARG3, FUNC_NAME);
 
   len = SCM_INUM (siz) * SCM_INUM (num);
-  str = scm_make_string (SCM_MAKINUM (len), SCM_UNDEFINED);
+  str = scm_make_string (gh_int2scm (len), SCM_UNDEFINED);
   for (n = 0 ; n < SCM_INUM (num) && ! done; n++)
     {
       scm_sizet m;
@@ -605,7 +605,7 @@ PG_DEFINE (lob_lo_read, "pg-lo-read", 3, 0, 0,
   if (n < SCM_INUM (num))
     {
       SCM_DEFER_INTS; /* See comment re scm_vector_set_len in libguile/unif.c */
-      scm_vector_set_length_x (str, SCM_MAKINUM (n * SCM_INUM (siz)));
+      scm_vector_set_length_x (str, gh_int2scm (n * SCM_INUM (siz)));
       SCM_ALLOW_INTS;
     }
   return str;
@@ -689,7 +689,7 @@ PG_DEFINE (lob_lo_import, "pg-lo-import", 2, 0, 0,
   if (ret <= 0)
     return SCM_BOOL_F;
 
-  return SCM_MAKINUM (ret);
+  return gh_int2scm (ret);
 #undef FUNC_NAME
 }
 
