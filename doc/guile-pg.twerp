@@ -129,13 +129,14 @@ Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 @chapter Quick Start
 
 To access a PostgreSQL database from Guile, first load the @code{postgres}
-database module. This is done using the @code{use-modules} syntax:
+database module.  This is done using the @code{use-modules} syntax:
+
 @lisp
 (use-modules (database postgres))
 @end lisp
 
 The next step is to make a connection to the database using the
-@code{pg-connectdb} procedure. Then, having created a valid connection to a
+@code{pg-connectdb} procedure.  Then, having created a valid connection to a
 database server, we can use the @code{pg-exec} procedure to execute
 queries and the other @code{pg-} procedures to retrieve the results of the
 queries.
@@ -430,7 +431,7 @@ using @code{pg-putline}.
 
 @item PGRES_BAD_RESPONSE
 This occurs when the @code{libpq} interface receives an unexpected response
-from the backend.  It indicates a problem with Postgres.
+from the backend.  It indicates a problem with PostgreSQL.
 
 @item PGRES_NONFATAL_ERROR
 It is not known under which circumstances this result-status is returned.
