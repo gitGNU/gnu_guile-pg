@@ -232,10 +232,10 @@ Optional arg SETTING turns on echoing if a positive number."
 
   (defcc (fix part . set)
     "Fix query PART to be SET..., or clear that part if SET is 0 (zero).
-PART is a keyword, one of #:cols, #:from, #:where, #:where/combiner,
-#:group-by, #:having, #:order-by, or #:limit.  SET is a space-separated
-list of elements.  When a part is fixed, it is used (unless overridden) in
-the \",fsel\" comma-command.
+When a part is fixed, it is used (unless overridden) in the \",fsel\"
+comma-command.  PART is a keyword, one of #:cols, #:from, #:where,
+#:where/combiner, #:group-by, #:having, #:order-by, #:limit or #:offset.
+SET is a space-separated list of elements.
 
 If PART is #:cols, each element of SET is either a column name, possibly
 qualified by the table name with a dot, e.g., `t.oid'; a prefix-style
@@ -258,7 +258,7 @@ where ORDFUNC is either `<', '>' or the name of an SQL function that
 takes two args and returns their ordering; and EXPR is a prefix-style
 SQL expression.
 
-If PART is #:limit, the first element of SET specifies an integer.
+If PART is #:limit or #:offset, the first element of SET specifies an integer.
 
 If PART is `?' display all the parts and their related expressions.
 If SET is omitted display the current value for PART."
@@ -271,7 +271,7 @@ If SET is omitted display the current value for PART."
       ((#:where/combiner)
        (new-val! (lambda () (and (memq (car set) '(and or))
                                  (car set)))))
-      ((#:limit)
+      ((#:limit #:offset)
        (new-val! (lambda () (and (integer? (car set))
                                  (car set)))))
       ((#:cols #:from #:where #:group-by #:having #:order-by)
@@ -279,7 +279,7 @@ If SET is omitted display the current value for PART."
       ((?)
        (for-display
         (let* ((all (list #:cols #:from #:where #:where/combiner
-                          #:group-by #:having #:order-by #:limit))
+                          #:group-by #:having #:order-by #:limit #:offset))
                ;; do this here to avoid potential arg-eval-order issue...
                (set (map (lambda (part)
                            (cond ((conn-get part)
@@ -328,7 +328,7 @@ specified by \",fix\".  Keywords without related expressions are ignored."
                     (collect-one (cdr ls) (cons (car ls) partial))))))))
     (let ((fixed (map (lambda (part)
                         (cons part (conn-get part)))
-                      '(#:limit #:cols #:from #:where
+                      '(#:limit #:offset #:cols #:from #:where
                                 #:group-by #:having #:order-by)))
           (oride (collect-keys (cons #:cols etc))))
       (define (o/f part)
@@ -352,7 +352,8 @@ specified by \",fix\".  Keywords without related expressions are ignored."
                      ,@(decide #:group-by)
                      ,@(decide #:having)
                      ,@(decide #:order-by)
-                     ,@(decide #:limit)))))
+                     ,@(decide #:limit)
+                     ,@(decide #:offset)))))
             (else
              (for-display "No columns selected")))))
 
