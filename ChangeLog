@@ -1,3 +1,13 @@
+2002-12-21  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* configure.in: Add check for `terminating' in libguile; define
+	HAVE_LIBGUILE_TERMINATING in config.h if available.
+
+	* libpostgres_lo.c: When not HAVE_SCM_TERMINATING, only declare
+	`terminating' if also HAVE_LIBGUILE_TERMINATING.
+	(lob_flush): On error, if neither HAVE_SCM_TERMINATING nor
+	HAVE_LIBGUILE_TERMINATING, unconditionally write to stderr.
+
 2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* configure.in (VERSION): Bump to 0.12 for release.
