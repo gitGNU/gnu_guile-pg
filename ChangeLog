@@ -1,3 +1,8 @@
+2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (DROPDB): New AC_CHECK_PROGS var.
+	Warn if neither dropdb nor destroydb is found.
+
 2004-03-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.c: Move #define and #undef
