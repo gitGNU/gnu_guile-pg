@@ -3,29 +3,37 @@
 ;;; "Recording Changes".
 
 Thien-Thi Nguyen <ttn@gnu.org> wrote:
-    scm/postgres-col-defs.scm             scm/postgres-meta.scm
-    scm/postgres-ql.scm                   scm/postgres-resx.scm
-    scm/postgres-stored-procedures.scm    scm/postgres-table.scm
-    scm/postgres-types.scm
-    doc/guile-pg.twerp
-    test/show-platform    test/alive.sh    test/config.scm.in
-    test/abstraction-scm-tests.sh    test/guile-pg-abstraction-scm-tests.scm
-    tmpfile.h    tmpfile.c
+  ./
+      tmpfile.h    tmpfile.c
+  scm/
+      postgres-col-defs.scm             postgres-meta.scm
+      postgres-ql.scm                   postgres-resx.scm
+      postgres-stored-procedures.scm    postgres-table.scm
+      postgres-types.scm
+  doc/
+      guile-pg.twerp
+  test/
+      show-platform    alive.sh    coverage.sh    config.scm.in
+      abstraction-scm-tests.sh    guile-pg-abstraction-scm-tests.scm
 and modified:
     everything else.
 
 
 Ian Grant <Ian.Grant@cl.cam.ac.uk> wrote:
-    configure.in
-    libpostgres.h    libpostgres.c    libpostgres_lo.c
-    scm/postgres.scm.in
-    doc/guile-pg.texi
-    test/basic-tests.sh		test/guile-pg-basic-tests.scm
-    test/lo-tests.sh		test/guile-pg-lo-tests.scm
+  ./
+      configure.in
+      libpostgres.h    libpostgres.c    libpostgres_lo.c
+  scm/
+      postgres.scm.in
+  doc/
+      guile-pg.texi
+  test/
+      basic-tests.sh            guile-pg-basic-tests.scm
+      lo-tests.sh               guile-pg-lo-tests.scm
 
 
 Per Bothner wrote:
-    test/testing.scm
+  test/testing.scm
 
 
 ;;; AUTHORS ends here
