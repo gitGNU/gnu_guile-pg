@@ -10,7 +10,7 @@
 
   + Add tests for pg-print and pg-make-print-options.
 
-  + Use tmpfile(3) for pg_print [ttn]
+  + Use tmpfile(3) for pg_print.
 
   - Review error handling; regularize; document.
 
