@@ -1,3 +1,19 @@
+2005-02-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (*conditional-operations*): New var.
+	(*binary-infix-operations*, *sql-functions*): Likewise.
+	(qcons-declare!): New proc, exported, used in load-time actions.
+	(fs, list-sep-proc, andsep, orsep, commasep, expr): New procs.
+	(make-WHERE-tree): New proc, exported.
+	(make-GROUP-BY-tree): Likewise.
+	(make-HAVING-tree): Likewise.
+	(make-ORDER-BY-tree): Likewise.
+	(make-SELECT/OUT-tree): Likewise.
+	(make-FROM-tree): Likewise.
+	(make-SELECT/FROM/OUT-tree): Likewise.
+	(sql<-trees): Likewise.
+	(sql-command<-trees): Likewise.
+
 2005-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-meta.scm (fs): New proc.
