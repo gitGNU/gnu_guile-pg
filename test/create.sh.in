@@ -11,6 +11,7 @@ if [ -z "$PGDATABASE" ] ; then echo PGDATABASE not set. ; exit 1 ; fi
 if [ x"$DEBUG" = x ] ; then
     $create $PGDATABASE >/dev/null 2>&1
 else
+    echo $create $PGDATABASE
     $create $PGDATABASE
 fi
 rv=$?
