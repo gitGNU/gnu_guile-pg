@@ -1,3 +1,8 @@
+2004-05-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (c2x): Add check for which method to use.
+	* Makefile.am (.c.x): Use $(c2x).
+
 2004-03-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in (VERSION): Bump to "0.18" for release.
