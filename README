@@ -19,7 +19,7 @@ Welcome!
 	`%load-path'.
 
 	This version of Guile-PG has been tested with PostgreSQL 7.3.5
-	and Guile 1.4.1.98, but you may find that it works with other
+	and Guile 1.4.1.100, but you may find that it works with other
 	combinations.  If so, please let us know the good news.  (You
 	can do this by changing to the test/ subdirectory and typing
 	"./show-platform && ./show-platform -m".  The "-m" means "mail
