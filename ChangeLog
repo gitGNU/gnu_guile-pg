@@ -1,5 +1,10 @@
 2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* test/guile-pg-lo-tests.scm.in, test/guile-pg-basic-tests.scm.in:
+	Rework "if" constructs using "and".  Refill.
+
+2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* libpostgres.c (MAX_SSI): Delete macro.
 	(ser_status_str, ser_status_str_count, ser_status): Delete vars.
 	(pgrs_t): New typedef.
