@@ -1,4 +1,5 @@
 #!/bin/sh
+# usage: drop.sh [--no-worries]
 
 drop="@DROPDB@"
 
@@ -8,7 +9,17 @@ if [ -z "$drop" -o "$drop" = no ] ; then
 fi
 if [ -z "$PGDATABASE" ] ; then echo PGDATABASE not set. ; exit 1 ; fi
 
-$drop $PGDATABASE >/dev/null 2>&1
-exit $?
+if [ x"$DEBUG" = x ] ; then
+    $drop $PGDATABASE >/dev/null 2>&1
+else
+    test x"$1" = x--no-worries \
+        && echo INFO: The following $drop command may display an error. \
+        && echo INFO: That is normal and does not indicate a problem.
+    echo $drop $PGDATABASE
+    $drop $PGDATABASE
+fi
+rv=$?
+
+exit $rv
 
 # drop.sh ends here
