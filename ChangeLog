@@ -1,6 +1,28 @@
 2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
-	* acconfig.h, aclocal.m4, configure: Delete.
+	* guile-pg.h, guile-pg.c: Delete.
+
+	* Makefile.am: Update copyright.
+	(EXTRA_DIST): Add autogen.sh.
+	(bin_PROGRAMS, guile_pg_SOURCES, guile_pg_LDADD, guile_pg_CFLAGS,
+	guile_pg_LDFLAGS): Delete.
+	(INCLUDES): Add "-I.".
+	(pkglibversdir): New var.
+	(pkglibvers_LTLIBRARIES): Renamed from `lib_LTLIBRARIES'.
+	(.c.x): Update guile-snarf invocation to use "-o OUT IN" syntax.
+	(CLEANFILES): New directive.
+
+	* configure.in: Update copyright.
+	(AC_INIT): Look for libpostgres.c instead of guile-pg.c.
+	(AC_INIT_AUTOMAKE): Use version 0.07u8 to indicate "under development".
+
+2002-12-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* acconfig.h, aclocal.m4, configure, Makefile.in, INSTALL,
+	config.guess, config.h.in, config.sub, install-sh, ltmain.sh,
+	missing, mkinstalldirs, doc/Makefile.in, doc/texinfo.tex,
+	scm/Makefile.in, test/Makefile.in: Delete.
+
 	* autogen.sh: Take "--libtoolize" option;
 	conditionalize libtoolize invocation.
 	Pass "-I ." to aclocal.
