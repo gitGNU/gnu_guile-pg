@@ -1,5 +1,9 @@
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* autogen.sh: Update libtool version; nfc.
+
+2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/.make-automake-frags (TAB): Delete var.
 	(spew_twerp_stuff): Rewrite.
 
