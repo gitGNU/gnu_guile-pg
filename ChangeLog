@@ -1,3 +1,8 @@
+2005-02-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (maybe-dq): New proc.
+	(make-ORDER-BY-tree, make-SELECT/OUT-tree): Use `maybe-dq'.
+
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm: From module (database postgres-qcons),
