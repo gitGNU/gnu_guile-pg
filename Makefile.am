@@ -64,7 +64,7 @@ SUFFIXES = .x .doc
 snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS)
 
 .c.x:
-	guile-tools c2x -o $@ $< $(snarfcppopts) $(CFLAGS)
+	$(c2x) -o $@ $< $(snarfcppopts) $(CFLAGS)
 .c.doc:
 	guile-tools c2doc -o $@ $< -- $(snarfcppopts)
 .scm.doc:
