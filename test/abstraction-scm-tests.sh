@@ -15,9 +15,9 @@ PGDATABASE=guile_pg_test
 export PGDATABASE
 
 ${GUILE-guile} -l $top_builddir/scm/postgres.scm \
-               -l $top_builddir/scm/postgres-types.scm \
-               -l $top_builddir/scm/postgres-table.scm \
-               -s guile-pg-abstraction-scm-tests.scm
+               -l $top_srcdir/scm/postgres-types.scm \
+               -l $top_srcdir/scm/postgres-table.scm \
+               -s $srcdir/guile-pg-abstraction-scm-tests.scm
 rv=$?
 
 $dropdb guile_pg_test
