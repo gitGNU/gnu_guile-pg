@@ -1,5 +1,8 @@
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c (pg_make_print_options):
+	Add newline in docstring; nfc.
+
 	* doc/guile-pg.twerp: Fix typo.
 
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
