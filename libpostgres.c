@@ -29,6 +29,11 @@
 #include <string.h>
 #endif
 
+#ifndef HAVE_TMPFILE
+#include "tmpfile.h"
+#define tmpfile guile_pg_tmpfile
+#endif
+
 #include <libguile.h>
 #include <guile/gh.h>
 
@@ -1496,12 +1501,12 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
              : options);
   SCM_ASSERT (sepo_p (options), options, SCM_ARG2, FUNC_NAME);
 
-#ifdef HAVE_TMPFILE
-
   redir_p = (! SCM_OPFPORTP (scm_current_output_port ())
              || (SCM_INUM (scm_fileno (scm_current_output_port ()))
                  != fileno (stdout)));
   fout = (redir_p ? tmpfile () : stdout);
+  if (fout == NULL)
+    scm_syserror (FUNC_NAME);
 
   PQprint (fout, ser_unbox (result)->result, sepo_unbox (options));
 
@@ -1523,12 +1528,6 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
         }
       fclose (fout);
     }
-
-#else /* !defined (HAVE_TMPFILE) */
-
-  PQprint (stdout, ser_unbox (result)->result, sepo_unbox (options));
-
-#endif /* !defined (HAVE_TMPFILE) */
 
   return SCM_UNSPECIFIED;
 }
