@@ -1,5 +1,9 @@
 2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* configure.in (VERSION): Bump to 0.12 for release.
+
+2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* scm/Makefile.am (EXTRA_DIST): Add $(guile_postgres_sources).
 
 2002-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
