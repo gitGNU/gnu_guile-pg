@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in.
 
-##      Copyright (C) 1998-2000, 2002, 2003 Free Software Foundation, Inc.
+##      Copyright (C) 1998-2000,02,03,2004 Free Software Foundation, Inc.
 ##
 ##   This file is part of GUILE-PG.
 ##
@@ -34,16 +34,15 @@ guile_postgres_sources = 			\
 # These should be installed, but not distributed.
 guile_postgres_generated = postgres.scm
 
-subpkgdatadir = $(datadir)/guile/database
-subpkgdata_DATA = $(guile_postgres_sources) $(guile_postgres_generated)
+ddir = $(GUILE_SITE)/database
+d_DATA = $(guile_postgres_sources) $(guile_postgres_generated)
+
 ETAGS_ARGS = $(subpkgdata_DATA)
 
 EXTRA_DIST = postgres.scm.in $(guile_postgres_sources)
 
-
 install-data-hook:
-	grep -v "DELETE ME ON INSTALL" postgres.scm > TMP
-	$(INSTALL_DATA) TMP $(subpkgdatadir)/postgres.scm
-	rm -f TMP
+	if guile-tools | grep -q make-module-catalog ; then \
+	   guile-tools make-module-catalog $(GUILE_SITE) ; fi
 
 ## Makefile.am ends here
