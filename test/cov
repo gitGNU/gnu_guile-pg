@@ -8,7 +8,7 @@ else
     dir="$1"
 fi
 
-all=`sed '/^SCM_PROC/!d;s/[^"]*"//;s/".*//' $dir/libpostgres*.c`
+all=`sed '/^PG_DEFINE/!d;s/[^"]*"//;s/".*//' $dir/libpostgres*.c`
 
 for p in $all ; do
     if grep -q "$p" *.scm.in ; then
