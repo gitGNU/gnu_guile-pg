@@ -26,9 +26,6 @@
 ;;   (tuples-result->table res)
 ;;   (where-clausifier string)
 ;;   (pgtable-manager db-spec table-name defs)
-;;   (def:col-name def)
-;;   (def:type-name def)
-;;   (def:type-options def)
 ;;
 ;; TODO: Move some of this into a query-construction module.
 
@@ -38,13 +35,19 @@
   :use-module (ice-9 common-list)
   :use-module (database postgres)
   :use-module (database postgres-types)
+  :use-module ((database postgres-col-defs)
+               :renamer (symbol-prefix-proc 'def:))
+  :use-module (database postgres-resx)
   :export (sql-pre
            tuples-result->table
            pgtable-manager
+           where-clausifier
+           ;; these will go away
            def:col-name
            def:type-name
-           def:type-options
-           where-clausifier))
+           def:type-options))
+
+(define def:col-name def:column-name)
 
 ;;; support
 
@@ -112,32 +115,10 @@
                             db)))
         (else (error (fmt "bad db-spec: ~A" db)))))
 
-;; column definition
-;; old / deprecated: (COL-NAME . TYPE-NAME)
-;; new and improved: (COL-NAME TYPE-NAME [TYPE-OPTIONS ...])
-
-;; Extract column name from @var{def}.
-(define (def:col-name def)
-  (car def))
-
-;; Extract type from @var{def}.
-(define (def:type-name def)
-  (let ((type-info (cdr def)))
-    (if (pair? type-info)
-        (car type-info)
-        type-info)))
-
-;; Extract type options from @var{def}.
-(define (def:type-options def)
-  (let ((type-info (cdr def)))
-    (if (pair? type-info)
-        (cdr type-info)
-        '())))
-
 (define (validate-def def)
   (or (object-property def 'validated)
       (and (pair? def)
-           (let ((col-name (def:col-name def)))
+           (let ((col-name (def:column-name def)))
              (and (symbol? col-name)
                   (every (lambda (c)
                            (or (char-alphabetic? c)
@@ -159,7 +140,7 @@
 (define (col-defs defs cols)
   (map (lambda (col)
          (or (find-if (lambda (def)
-                        (eq? (def:col-name def) col))
+                        (eq? (def:column-name def) col))
                       defs)
              (error "invalid field name:" col)))
        cols))
@@ -185,7 +166,7 @@
                                                "_seq"))))
                (pick-mappings (lambda (def)
                                 (and (eq? 'serial (def:type-name def))
-                                     (def:col-name def)))
+                                     (def:column-name def)))
                               defs)))))
 
 ;;; create table
@@ -193,7 +174,7 @@
 (define (create-cmd table-name defs)
   (validate-defs defs)
   (let ((dspec (csep (lambda (def)
-                       (let ((name (symbol->qstring (def:col-name def)))
+                       (let ((name (symbol->qstring (def:column-name def)))
                              (type (string-upcase
                                     (symbol->string
                                      (def:type-name def))))
@@ -227,7 +208,7 @@
 
 (define (cdefs->cols cdefs)
   (csep (lambda (def)
-          (symbol->qstring (def:col-name def)))
+          (symbol->qstring (def:column-name def)))
         cdefs))
 
 (define (insert-values-cmd table-name defs data)
@@ -280,7 +261,7 @@
 (define (update-col-cmd table-name defs cols data where-condition)
   (let* ((cdefs (col-defs defs cols))
          (stuff (csep (lambda (def val)
-                        (let* ((col (symbol->qstring (def:col-name def)))
+                        (let* ((col (symbol->qstring (def:column-name def)))
                                (type (def:type-name def))
                                (instr (->db-insert-string type val)))
                           (fmt "~A=~A" col instr)))
@@ -486,15 +467,16 @@
          (select (select-proc pgdb table-name defs))
          (t-obj-walk (t-obj-walk-proc defs))
          (table->object-alist (table->object-alist-proc t-obj-walk))
+         (objectifiers (def:objectifiers defs))
          (tuples-result->object-alist (lambda (res)
-                                        (table->object-alist
-                                         (tuples-result->table res))))
+                                        (result->object-alist
+                                         res objectifiers)))
          (table->alists (lambda (table)
                           (object-alist->alists
                            (table->object-alist table))))
          (tuples-result->alists (lambda (res)
-                                  (table->alists
-                                   (tuples-result->table res)))))
+                                  (result->object-alists
+                                   res objectifiers))))
     (lambda (choice)
       (case choice
         ((help menu) '(help menu
