@@ -63,14 +63,14 @@ typedef struct lob_stream_tag {
 #define SCM_LOBPORTP(x) (SCM_TYP16 (x)==lob_ptype)
 
 #define SCM_OPLOBPORTP(x) \
-  (((0xffff | SCM_OPN) & (int)SCM_CAR (x)) == (lob_ptype | SCM_OPN))
+  (((0xffff | SCM_OPN) & (int) gh_car (x)) == (lob_ptype | SCM_OPN))
 
-#define SCM_OPINLOBPORTP(x)                             \
-  (((0xffff | SCM_OPN | SCM_RDNG) & (int)SCM_CAR (x))   \
+#define SCM_OPINLOBPORTP(x)                           \
+  (((0xffff | SCM_OPN | SCM_RDNG) & (int) gh_car (x)) \
    == (lob_ptype | SCM_OPN | SCM_RDNG))
 
 #define SCM_OPOUTLOBPORTP(x)                            \
-  (((0xffff | SCM_OPN | SCM_WRTNG) & (int)SCM_CAR (x))  \
+  (((0xffff | SCM_OPN | SCM_WRTNG) & (int) gh_car (x))  \
    == (lob_ptype | SCM_OPN | SCM_WRTNG))
 
 /* ttn hack */
@@ -254,7 +254,7 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *caller)
     }
   pt->write_end = pt->write_buf + pt->write_buf_size;
 
-  SCM_SETCAR (port, TTN_COERCE_INT (SCM_CAR (port)) & ~SCM_BUF0);
+  SCM_SETCAR (port, TTN_COERCE_INT (gh_car (port)) & ~SCM_BUF0);
 
   SCM_ALLOW_INTS;
 
@@ -529,7 +529,7 @@ lob_write (SCM port, const void *data, size_t size)
             lob_flush (port);
         }
       /* handle line buffering.  */
-      if ((TTN_COERCE_INT (SCM_CAR (port)) & SCM_BUFLINE)
+      if ((TTN_COERCE_INT (gh_car (port)) & SCM_BUFLINE)
           && memchr (data, '\n', size))
         lob_flush (port);
     }
