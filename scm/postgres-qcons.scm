@@ -134,13 +134,14 @@
 
 ;; Return a new string made by preceding each single quote in string
 ;; @var{s} with a backslash, and prefixing and suffixing with single quote.
-;; For example:
+;; The returned string is marked by @code{sql-pre}.  For example:
 ;;
 ;; @lisp
 ;; (define bef "ab'cd")
 ;; (define aft (sql-quote bef))
 ;; aft @result{} "'ab\\'cd'"
 ;; (map string-length (list bef aft)) @result{} (5 8)
+;; (map sql-pre? (list bef aft)) @result{} (#f #t)
 ;; @end lisp
 ;;
 ;; Note that in the external representation of a Scheme string,
