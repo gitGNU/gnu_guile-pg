@@ -236,10 +236,14 @@
 (define (make-ORDER-BY-tree orderings)
   (list #:ORDER-BY
         (commasep (lambda (ord)
-                    (or (and (pair? ord) (symbol? (cadr ord)))
+                    (or (and (pair? ord)
+                             (or (integer? (cadr ord))
+                                 (symbol? (cadr ord))))
                         (error "bad ordering:" ord))
                     (list
-                     (expr (maybe-dq (cadr ord)))
+                     (if (integer? (cadr ord))
+                         (cadr ord)
+                         (expr (maybe-dq (cadr ord))))
                      (case (car ord)
                        ((< #:ASC #:asc) #:ASC)
                        ((> #:DESC #:desc) #:DESC)
