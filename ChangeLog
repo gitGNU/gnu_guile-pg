@@ -1,5 +1,12 @@
 2004-12-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c: Use `SCM_VALIDATE_INUM_MIN_COPY'.
+
+	* libpostgres_lo.c: Use `SCM_VALIDATE_INUM_MIN_COPY',
+	`SCM_VALIDATE_ULONG_COPY' and `SCM_VALIDATE_INUM_COPY'.
+
+2004-12-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.h (ASSERT_CONNECTION): New macro.
 
 	* libpostgres_lo.c: Use `ASSERT_CONNECTION'.
