@@ -157,6 +157,7 @@ AC_CONFIG_FILES([
   scm/postgres.scm
   test/Makefile
   test/config.scm
+  wily-guile
 ])
 
 AC_CONFIG_COMMANDS([twerp-prep],[
@@ -168,6 +169,17 @@ AC_CONFIG_COMMANDS([twerp-prep],[
       AC_MSG_WARN([[edit doc/guile-pg.texi manually if source changes]])
     fi
   fi
+])
+
+AC_CONFIG_COMMANDS([module-catalog-prep],[
+  test -d .deps || mkdir .deps
+  prereq=.deps/pre-inst.Pmerged-module-catalog
+  test -f $prereq || echo '# dummy' > $prereq
+  grep -q "include $prereq" Makefile || echo include $prereq >> Makefile
+])
+
+AC_CONFIG_COMMANDS([chmod-plus-x],[
+  chmod +x ./wily-guile
 ])
 
 AC_OUTPUT
