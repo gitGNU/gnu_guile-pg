@@ -1,5 +1,9 @@
 2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-types.scm (macaddr): New built-in type converter.
+
+2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* scm/postgres-types.scm (n+m-stringifier): New proc.
 	(n+m-objectifier): Likewise.
 	(host-stringifier): Likewise.
