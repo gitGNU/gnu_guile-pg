@@ -341,7 +341,8 @@ as the key.
 
 The PostgreSQL backend supports @dfn{asynchronous notifications}
 with the commands @code{LISTEN} and @code{NOTIFY}.  You can use
-@code{pg-notifies} to query the pending notifications queue.
+@code{pg-notifies} to query the pending notifications queue
+(@pxref{Asynchronous Retrieval}).
 
 @twerpdoc (pg-notifies)
 
@@ -397,6 +398,14 @@ PostgreSQL @code{declare(l)} and @code{fetch(l)} man pages for more details.
 @c ---------------------------------------------------------------------------
 @node    Asynchronous Retrieval
 @section Asynchronous Retrieval
+
+Sometimes you don't want to wait idly for @code{pg-exec} to complete --- for
+example, the query is complicated and/or the results are large --- instead
+prefering to do some other computation in the meantime.  In these cases, you
+can interact with the database @dfn{asynchronously}, that is, you register a
+query at one time, and check for its completion at a later time.  In between,
+you can collect partial results and notifications, or decide to cancel the
+query altogether.
 
 @twerpdoc (pg-send-query)
 @twerpdoc (pg-get-result)
