@@ -1,5 +1,18 @@
 2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
+	* libpostgres.c (MAX_SSI): Delete macro.
+	(ser_status_str, ser_status_str_count, ser_status): Delete vars.
+	(pgrs_t): New typedef.
+	(pgrs, pgrs_count): New vars, static.
+	(ser_display): Replace `ser_status' and `ser_status_str' lookup
+	with `pgrs' lookup.
+	(str2symbol): Delete macro.
+	(pg_result_status): No longer create symbol; use `pgrs' for lookup.
+	(init_postgres): No longer define PGRES_* vars.
+	Instead, initialize `sym' field in `pgrs'.
+
+2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
 	* libpostgres.c, libpostres_lo.c: Refill; nfc.
 
 2002-12-12  Thien-Thi Nguyen  <ttn@giblet.glug.org>
