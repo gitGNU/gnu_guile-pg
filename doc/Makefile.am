@@ -20,7 +20,7 @@
 ##   330, Boston, MA 02111-1307 USA
 
 info_TEXINFOS = guile-pg.texi
-guile_pg_TEXINFOS = version.texi
+guile_pg_TEXINFOS = guile-pg.texi
 
 CLEANFILES = guile-pg.info guile-pg.dvi guile-pg_toc.html guile-pg.html
 
