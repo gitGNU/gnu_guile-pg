@@ -1,5 +1,11 @@
 2004-03-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* libpostgres.c: Move #define and #undef
+	FUNC_NAME inside func body; nfc.
+	* libpostgres_lo.c: Likewise.
+
+2004-03-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* libpostgres.c (pg_set_client_encoding_x): Hse `ROZT'.
 	(pg_send_query): Likewise.
 
