@@ -160,11 +160,32 @@
                       (and (string=? check new-enc)
                            (string=? enc (pg-client-encoding *C*)))))))))))
 
+(define test:set-notice-out!-1
+  (add-test #t
+    (lambda ()
+      (let ((n (call-with-output-string
+                (lambda (port)
+                  (pg-set-notice-out! *C* port)
+                  (cexec "CREATE TABLE unused (ser serial, a int);")))))
+        (and (string? n)
+             (string=? n (string-append
+                          "NOTICE:  CREATE TABLE will create"
+                          " implicit sequence 'unused_ser_seq'"
+                          " for SERIAL column 'unused.ser'\n")))))))
+
 (define test:reset
   (add-test #t
     (lambda ()
       (pg-reset *C*)
       #t)))
+
+(define test:set-notice-out!-2
+  (add-test #t
+    (lambda ()
+      (let ((n (call-with-output-string
+                (lambda (port)
+                  (cexec "CREATE TABLE unused2 (ser serial, a int);")))))
+        (and (string? n) (string-null? n))))))
 
 (define test:set-client-data
   (add-test #t
@@ -416,17 +437,19 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 35)
+  (test-init "basic-tests" 37)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:make-connection
          test:various-connection-info
+         test:set-notice-out!-1
          test:set-client-data
          test:make-table
          test:pg-error-message
          test:load-records
          test:count-records-expect-100
          test:reset
+         test:set-notice-out!-2         ; must be after test:reset
          test:count-records-expect-100
          test:delete-some-records
          test:count-records-expect-50
