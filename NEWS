@@ -3,6 +3,14 @@ NEWS for Guile-PG
 
 - 0.21 | NOT YET RELEASED
 
+  - Copyright clarification
+
+	The original author of Guile-PG, Ian Grant, has confirmed that
+	the copyright notices stating "Copyright (C) YEAR(S) Free
+	Software Foundation, Inc" were incorrect.  The notices have
+	been changed to use "Ian Grant" for years up through 2000, and
+	"Thien-Thi Nguyen" for years afterwards.
+
   - Proc removed: pg-oid-status
 
 	The first mention of imminent removal of `pg-oid-status' was in
