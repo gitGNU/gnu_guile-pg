@@ -1,5 +1,16 @@
 2004-07-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* acinclude.m4 (AC_GUILE_PG_BCOMPAT): New AC_DEFUN.
+
+	* bcruft.h: New file.
+
+	* configure.in (AC_GUILE_PG_BCOMPAT): New macro call.
+	Move c2x method and modsup.h checks there.
+	(AH_BOTTOM): Include "bcruft.h".
+	Move modsup.h inclusion stanza there.
+
+2004-07-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* guile.m4.snap: Sync w/ upstream.
 
 2004-07-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
