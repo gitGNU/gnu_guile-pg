@@ -25,9 +25,9 @@ dnl
 # with PostgreSQL.  It sets two variables, marked for substitution,
 # as by AC_SUBST.
 #
-#   PQ_CFLAGS --- flags to pass to a C or C++ compiler to build
-#                 code that uses libpq header files.  This is almost
-#                 always just a -I flag.
+#   PQ_CPPFLAGS --- flags to pass to a C or C++ compiler to build
+#                   code that uses libpq header files.  This is almost
+#                   always just a -I flag.
 #
 #   PQ_LDFLAGS --- flags to pass to the linker to link a
 #                  program against libpq.  This includes `-lpq' for
@@ -54,7 +54,7 @@ AC_DEFUN([PQ_FLAGS],[
     else
       AC_MSG_RESULT(yes)
     fi
-    PQ_CFLAGS="-I$withval/include"
+    PQ_CPPFLAGS="-I$withval/include"
     PQ_LDFLAGS="-L$withval/lib -lpq"
    ],[
     AC_ARG_WITH(libpq-includes,
@@ -62,7 +62,7 @@ AC_DEFUN([PQ_FLAGS],[
        if test ! -f "$withval/libpq-fe.h" ; then
         AC_ERROR([$withval/libpq-fe.h does not exist.])
        fi
-       PQ_CFLAGS="-I$withval"],[
+       PQ_CPPFLAGS="-I$withval"],[
        AC_CHECK_HEADERS(libpq-fe.h)
        if test ! "$ac_cv_header_libpq_fe_h" = yes ; then
          AC_ERROR([Cannot find libpq-fe.h; try "--with-libpq-includes=DIR"])
@@ -89,7 +89,7 @@ AC_DEFUN([PQ_FLAGS],[
   if test "$ac_cv_lib_crypt" = yes ; then
      PQ_LDFLAGS="$PQ_LDFLAGS -lcrypt"
   fi
-  AC_SUBST(PQ_CFLAGS)
+  AC_SUBST(PQ_CPPFLAGS)
   AC_SUBST(PQ_LDFLAGS)
 ])
 
