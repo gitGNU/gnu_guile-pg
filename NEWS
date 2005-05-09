@@ -1,6 +1,27 @@
 NEWS for Guile-PG
 
 
+- 0.28 | 2005-05-09
+
+  - Bugfix: array reference handling in (database postgres-qcons)
+
+	To guard against column names that might also be SQL keywords
+	(for example "desc") confusing the PostgreSQL parser, symbols
+	are normally double-quoted.  Previously, the unique exception
+	was for symbols that include a table name.  Now, quoting is also
+	inhibited when array reference syntax is detected.  For example,
+	for the expression:
+
+	(or (= state "ok")
+	    (= my.state "ok")
+	    (= states[1] "ok"))
+
+	Before: "state" = 'ok' OR my.state = 'ok' OR "states[1]" = 'ok'
+	Now:    "state" = 'ok' OR my.state = 'ok' OR states[1] = 'ok'
+
+  - FSF street address updated in copyright notices
+
+
 - 0.27 | 2005-03-02
 
   - Result objects print without redundant "PGRES_" prefix
