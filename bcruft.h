@@ -16,7 +16,7 @@
 
    You should have received a copy of the GNU General Public License
    along with Guile-PG; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA  */
 
 /* This file is included in the AH_BOTTOM block (see configure.in).
    The tests for each HAVE_ symbol are defined in acinclude.m4 under
