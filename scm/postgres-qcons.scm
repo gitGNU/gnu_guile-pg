@@ -203,13 +203,15 @@
   (apply simple-format #f s args))
 
 (define (maybe-dq sym)
-  (if (eq? '* sym)
+    (if (eq? '* sym)
       sym
       (let ((s (symbol->string sym)))
-        ;; double quote unless table name is included;
-        ;; this is to protect against a column name
-        ;; that happens to be a keyword (e.g., `desc')
-        (if (string-index s #\.)
+        ;; double quote unless table name or array member syntax is
+        ;; included; this is to protect against a column name that
+        ;; happens to be a keyword (e.g., `desc')
+        (if (or (string-index s #\.)
+                (string-index s #\[)
+                (string-index s #\]))
             sym
             (sql-pre (fs "~S" s))))))
 
