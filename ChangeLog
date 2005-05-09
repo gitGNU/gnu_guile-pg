@@ -1,3 +1,8 @@
+2005-05-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (maybe-dq):
+	Inhibit quoting also for array member syntax.
+
 2005-03-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* doc/guile-pg.twerp: Remove @contents directive.
