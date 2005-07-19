@@ -1,3 +1,7 @@
+2005-07-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* doc/guile-pg.twerp (Top): Add @url for PostgreSQL homepage.
+
 2005-05-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in (AC_INIT): Bump version to "0.28" for release.
