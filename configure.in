@@ -133,9 +133,6 @@ case "$GCC" in
     CFLAGS="$CFLAGS -Wall -Wmissing-prototypes" ;;
 esac
 
-top_builddir_absolute=`pwd`
-AC_SUBST(top_builddir_absolute)
-
 AC_CONFIG_FILES([
   Makefile
   scm/Makefile
