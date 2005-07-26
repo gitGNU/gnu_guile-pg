@@ -1,3 +1,8 @@
+2005-07-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (top_builddir_absolute): Delete AC_SUBST var.
+	* wily-guile.in (top_builddir): Use `abs_top_builddir'.
+
 2005-07-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* doc/guile-pg.twerp (Top): Add @url for PostgreSQL homepage.

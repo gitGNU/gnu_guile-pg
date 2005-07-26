@@ -1,3 +1,8 @@
+2005-07-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* Makefile.am (abs_top_builddir): New var.
+	(TESTS_ENVIRONMENT): Use $(abs_top_builddir).
+
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-abstraction-scm-tests.scm (test:m-help): Delete test proc.
