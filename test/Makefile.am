@@ -20,10 +20,12 @@
 ##   write to the Free Software Foundation, Inc., 51 Franklin Street,
 ##   Fifth Floor, Boston, MA  02110-1301  USA
 
+abs_top_builddir = @abs_top_builddir@
+
 TESTS_ENVIRONMENT =				\
   PGDATABASE=guile_pg_test			\
-  GUILE=$(top_builddir_absolute)/wily-guile	\
-  top_builddir=$(top_builddir_absolute)		\
+  GUILE=$(abs_top_builddir)/wily-guile		\
+  top_builddir=$(abs_top_builddir)		\
   top_srcdir=$(top_srcdir)			\
   srcdir=$(srcdir)				\
   $(SHELL)
