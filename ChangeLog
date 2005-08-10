@@ -1,3 +1,8 @@
+2005-08-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostres.c (pg_guile_pg_loaded):
+	Use `false-if-exception' in docstring example.
+
 2005-07-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in (top_builddir_absolute): Delete AC_SUBST var.
