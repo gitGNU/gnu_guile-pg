@@ -349,7 +349,7 @@ PG_DEFINE (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
            "the compiled module @code{(database postgres)} is\n"
            "available.  You can test this like so:\n\n"
            "@lisp\n"
-           "(defined? 'pg-guile-pg-loaded)\n"
+           "(false-if-exception (pg-guile-pg-loaded))\n"
            "@end lisp")
 {
   return goodies;
