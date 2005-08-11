@@ -1436,8 +1436,6 @@ definitely migrate to other modules at some point before 1.0 release.]
 
 @twerpdoc (sql-pre)
 
-@twerpdoc (where-clausifier)
-
 The rest of this chapter is an extended example showing some of the uses of
 @code{pgtable-manager}.
 
@@ -1461,13 +1459,11 @@ The rest of this chapter is an extended example showing some of the uses of
 (add '(date amount) (current-time) 2.98)
 @result{} #<PG-RESULT:3:COMMAND_OK:0:0>
 
-;; opaque strings -- currently supported but not as good as...
-(define result (sel "count(*)"
-                     (where-clausifier "amount < 2.00")))
+(define (under n)
+  (sel '((integer #f (count *)))  ;; outspec
+       #:where `(< amount ,n)))   ;; prefix-style expression
 
-;; ...using a proper outspec and prefix-style expressions
-(define result (sel '((integer #f (count *)))
-                    #:where '(< amount 2.00)))
+(define result (under 2.00))
 
 result
 @result{} #<PG-RESULT:4:TUPLES_OK:1:1>
