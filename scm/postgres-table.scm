@@ -23,7 +23,6 @@
 ;; This module exports these procedures:
 ;;   (sql-pre string)
 ;;   (tuples-result->table res)
-;;   (where-clausifier string)
 ;;   (pgtable-manager db-spec table-name defs)
 ;;   (pgtable-worker db-spec table-name defs)
 ;;   (compile-outspec spec defs)
@@ -68,8 +67,7 @@
   #:export (tuples-result->table
             pgtable-manager
             pgtable-worker
-            compile-outspec
-            where-clausifier))
+            compile-outspec))
 
 ;;; support
 
@@ -625,14 +623,5 @@
         (if (procedure? proc)
             (apply proc args)
             (error "command does not yield a procedure:" command))))))
-
-;;; "where" clausifier
-
-;; Return an SQL "where clause" from STRING.
-;;
-;; NOTE: This procedure WILL BE REMOVED after 2005-08-13; DO NOT rely on it.
-;;
-(define (where-clausifier string)
-  (sql-pre (fmt "WHERE ~A" string)))
 
 ;;; postgres-table.scm ends here
