@@ -1,6 +1,6 @@
 ## Some -*-autoconf-*- macros for working with Guile.
 ##
-##   Copyright (C) 1998,2001,02,03,2004 Free Software Foundation, Inc.
+##   Copyright (C) 1998,2001,02,03,04,2005 Free Software Foundation, Inc.
 ##
 ## This file is part of GUILE
 ##
@@ -16,8 +16,8 @@
 ##
 ## You should have received a copy of the GNU General Public License
 ## along with this software; see the file COPYING.  If not, write to
-## the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
-## Boston, MA 02111-1307 USA
+## the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+## Boston, MA 02110-1301, USA.
 ##
 ## As a special exception, the Free Software Foundation gives permission
 ## for additional uses of the text contained in its release of GUILE.
@@ -146,15 +146,17 @@ AC_DEFUN([GUILE_FLAGS],
 AC_DEFUN([GUILE_SITE_DIR],
  [AC_REQUIRE([GUILE_PROGS])dnl
   AC_MSG_CHECKING(for Guile site directory)
-  # Give priority to the directory used for Guile installation.
-  GUILE_SITE=`[$GUILE_CONFIG] info pkgdatadir`/site
-  # If no joy, try re-prefixing, first via re-prefix-info.
-  if test x"$GUILE_SITE" = x/site ; then
-    GUILE_SITE=`[$GUILE_CONFIG] re-prefix-info scheme_site_dir`
-  fi
-  # If still no joy, re-prefix "manually", guessing the path.
+  # Try built-in reprefixing.
+  GUILE_SITE=`[$GUILE_CONFIG] re-prefix-info scheme_site_dir 2>/dev/null`
+  # If no joy, do it "manually".
   if test x"$GUILE_SITE" = x ; then
-    GUILE_SITE='${prefix}/share/guile/site'
+    GUILE_SITE=`[$GUILE_CONFIG] info prefix`
+    GUILE_SITE=`[$GUILE_CONFIG] info pkgdatadir | sed s,$GUILE_SITE,'${prefix}',`
+    GUILE_SITE="$GUILE_SITE/site"
+  fi
+  # If still no joy, make an educated guess.
+  if test x"$GUILE_SITE" = x/site ; then
+    GUILE_SITE='${datadir}/guile/site'
   fi
   AC_MSG_RESULT($GUILE_SITE)
   AC_SUBST(GUILE_SITE)
@@ -175,15 +177,17 @@ AC_DEFUN([GUILE_SITE_DIR],
 AC_DEFUN([GUILE_LIBSITE_DIR],
  [AC_REQUIRE([GUILE_PROGS])dnl
   AC_MSG_CHECKING(for Guile library site directory)
-  # Give priority to the directory used for Guile installation.
-  GUILE_LIBSITE=`[$GUILE_CONFIG] info pkglibdir`/site
-  # If no joy, try re-prefixing, first via re-prefix-info.
-  if test x"$GUILE_LIBSITE" = x/site ; then
-    GUILE_LIBSITE=`[$GUILE_CONFIG] re-prefix-info pkglibdir`/site
+  # Try built-in reprefixing.
+  GUILE_LIBSITE=`[$GUILE_CONFIG] re-prefix-info pkglibdir 2>/dev/null`
+  # If no joy, do it "manually".
+  if test x"$GUILE_LIBSITE" = x ; then
+    GUILE_LIBSITE=`[$GUILE_CONFIG] info exec_prefix`
+    GUILE_LIBSITE=`[$GUILE_CONFIG] info pkglibdir | sed s,$GUILE_LIBSITE,'${exec_prefix}',`
   fi
-  # If still no joy, re-prefix "manually", guessing the path.
+  GUILE_LIBSITE="$GUILE_LIBSITE"/site
+  # If still no joy, make an educated guess.
   if test x"$GUILE_LIBSITE" = x/site ; then
-    GUILE_LIBSITE='${prefix}/lib/guile/site'
+    GUILE_LIBSITE='${libdir}/guile/site'
   fi
   AC_MSG_RESULT($GUILE_LIBSITE)
   AC_SUBST(GUILE_LIBSITE)
