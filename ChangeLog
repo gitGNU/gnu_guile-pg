@@ -1,7 +1,6 @@
 2005-08-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostres.c (pg_print):
-	Flush current output port before `PQprint' call.
+	* libpostres.c (pg_print): Force output prior to `PQprint' call.
 
 2005-08-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
