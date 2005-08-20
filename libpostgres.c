@@ -1685,6 +1685,7 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
   if (fout == NULL)
     scm_syserror (FUNC_NAME);
 
+  (void) scm_force_output (scm_current_output_port ());
   (void) PQprint (fout, res, sepo_unbox (options));
 
   if (redir_p)
