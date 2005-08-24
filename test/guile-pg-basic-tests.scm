@@ -463,6 +463,33 @@
       (or (not (memq 'PQISNONBLOCKING (pg-guile-pg-loaded)))
           (pg-is-nonblocking? *C*)))))
 
+(define test:asynchronous-notification
+  (add-test #t
+    (lambda ()
+      (and
+       ;; Start listening for the sooper-sikret message!
+       (command-ok? (cexec "LISTEN \"sooper-sikret message\""))
+       ;; Another request is harmless.
+       (command-ok? (cexec "LISTEN \"sooper-sikret message\""))
+       ;; Pre-checks: No word yet, even if we tickle.
+       (not (pg-notifies *C*))
+       (not (pg-notifies *C* #t))
+       ;; Methodology Note: Ideally, the notification should be signalled by
+       ;; another process and/or backend entirely; the approach used here may
+       ;; mask bugs.
+       (command-ok? (cexec "NOTIFY \"sooper-sikret message\""))
+       ;; Post-checks: Although one notification is all we want, we need to
+       ;; use short-circuit `or' for the "first" in this post-checks series.
+       ;; Subsequent checks are invalid.
+       (let ((ans (or (pg-notifies *C*) (pg-notifies *C* #t))))
+         (and (pair? ans)
+              (string? (car ans))
+              (string=? "sooper-sikret message" (car ans))
+              (integer? (cdr ans))
+              (let ((bpid (pg-backend-pid *C*)))
+                (or (= -1 bpid) (= bpid (cdr ans))))))
+       (not (or (pg-notifies *C*) (pg-notifies *C* #t)))))))
+
 (define test:asynchronous-retrieval
   (add-test #t
     (lambda ()
@@ -498,7 +525,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 41)
+  (test-init "basic-tests" 43)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:make-connection
@@ -537,7 +564,9 @@
          test:get-proc:pg-get-tty
          test:get-proc:pg-get-port
          test:get-proc:pg-get-options
+         test:asynchronous-notification ; once before test:set-nonblocking!
          test:set-nonblocking!
+         test:asynchronous-notification ; once after
          test:is-nonblocking?           ; must be after test:set-nonblocking!
          test:asynchronous-retrieval)
   (set! *C* #f)
