@@ -1,5 +1,11 @@
 2005-08-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* scm/postgres-gxrepl.scm:
+	From module (database postgres), select `pg-make-print-options'.
+	(gxrepl -print): Print result rows with separator " | ".
+
+2005-08-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Selected Notes About Some Types):
 	Say "client" or "client code" instead of "application".
 
