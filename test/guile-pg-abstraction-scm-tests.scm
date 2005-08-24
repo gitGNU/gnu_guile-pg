@@ -36,7 +36,6 @@
 (define create #f)
 (define insert #f)
 (define select #f)
-(define objwalk #f)
 
 ;; support
 
@@ -47,14 +46,14 @@
   `(test #t (lambda () ,exp)))
 
 (define-macro (sel/check sel . body)
-  `(let* ((tupres ,sel)
-          (table (tuples-result->table tupres))
-          (tref (lambda (tn fn) (array-ref table tn fn))))
+  `(let ((tupres ,sel))
+     (define (check-dim tn fn)
+       (and (= tn (pg-ntuples tupres))
+            (= fn (pg-nfields tupres))))
+     (define (tref tn fn)
+       (pg-getvalue tupres tn fn))
      (pass-if "result status"
        (eq? 'PGRES_TUPLES_OK (pg-result-status tupres)))
-     (pass-if "table well-formed"
-       (and (array? table)
-            (= 2 (length (array-dimensions table)))))
      ,@body))
 
 ;;; Tests
@@ -89,9 +88,8 @@
   (cond (m (set! drop    (m 'drop))
            (set! create  (m 'create))
            (set! insert  (m 'insert-values))
-           (set! select  (m 'select))
-           (set! objwalk (m 't-obj-walk))))
-  (every procedure? (list drop create insert select objwalk)))
+           (set! select  (m 'select))))
+  (every procedure? (list drop create insert select)))
 
 ;; Test pgtable-manager create
 ;; expect #t
@@ -128,7 +126,7 @@
 
 (define (mtest:select-*)                ; 5
   (sel/check (select "*")               ; todo: change to #t after 2005-12-31
-             (pass-if "dim" (equal? '(3 9) (array-dimensions table)))
+             (pass-if "dim" (check-dim 3 9))
              (pass-if "ugh" (string=? "ugh" (tref 0 1)))
              (pass-if "5" (string=? "5" (tref 0 3)))
              (pass-if "130.135" (string=? "130.135" (tref 1 7)))
@@ -136,7 +134,7 @@
 
 (define (mtest:select-*-error_condition) ; 3
   (sel/check (select #t "where error_condition = 'foo'")
-             (pass-if "size" (equal? '(1 9) (array-dimensions table)))
+             (pass-if "size" (check-dim 1 9))
              (pass-if "files"
                (let ((val (tref 0 2)))
                  (or
@@ -148,7 +146,7 @@
 
 (define (mtest:select-*-read)           ; 3
   (sel/check (select #t "where read[2][1] = ','")
-             (pass-if "size" (equal? '(1 9) (array-dimensions table)))
+             (pass-if "size" (check-dim 1 9))
              (pass-if "25" (string=? "25" (tref 0 6)))
              (pass-if "read"
                (let ((val (tref 0 4)))
@@ -160,17 +158,17 @@
 
 (define (mtest:select-count)            ; 2
   (sel/check (select '((int4 #f (count *))))
-             (pass-if "size" (equal? '(1 1) (array-dimensions table)))
+             (pass-if "size" (check-dim 1 1))
              (pass-if "3" (string=? "3" (tref 0 0)))))
 
 (define (mtest:select-*-read<>)         ; 2
   (sel/check (select #t "where read[2][1] <> ','")
-             (pass-if "size" (equal? '(1 9) (array-dimensions table)))
+             (pass-if "size" (check-dim 1 9))
              (pass-if "115.12" (string=? "115.12" (tref 0 5)))))
 
 (define (mtest:select-files/etc)        ; 3
   (sel/check (select '(files etc) "where etc[2] < 0")
-             (pass-if "size" (equal? '(1 2) (array-dimensions table)))
+             (pass-if "size" (check-dim 1 2))
              (pass-if "files"
                (let ((val (tref 0 0)))
                  (or
@@ -231,16 +229,10 @@
       (command-ok? ((m2 'insert-values)
                     13 "average age of kid first trying pot")))
 
-    ;; at this point there are two rows of two elements, so the following
-    ;; should accumulate four calls to "pass-if".
-
-    (let ((res ((m2 'select) #t)))
-      ((m2 't-obj-walk) (tuples-result->table res)
-       (lambda (table tn fn str obj)
-         (pass-if (format #f "m2 t-obj-walk tn=~A fn=~A" tn fn)
-           ((if (= fn 0) number? string?) obj)))
-       (lambda (table tn fn str)
-         (error "badness!"))))
+    (pass-if "m2 is 2x2"
+      (let ((res ((m2 'select) #t)))
+        (and (= 2 (pg-ntuples res))
+             (= 2 (pg-nfields res)))))
 
     (pass-if "m2 insert-col-values 1"
       (command-ok? ((m2 'insert-col-values) '(n) 31)))
@@ -279,18 +271,17 @@
   (set! drop #f)
   (set! create #f)
   (set! insert #f)
-  (set! select #f)
-  (set! objwalk #f))
+  (set! select #f))
 
 (define (main)
   ;;(set! verbose #t)
   (test-init "abstraction-scm-tests"    ; manularity sucks
              (+ 6
                 (let ((count (list 5 3 3 2 2 3))) ; multiples
-                  (+ (* 2 (length count))
+                  (+ (length count)
                      (apply + count)))
                 1
-                (+ 6 (* 2 2) 8)))       ; m2
+                (+ 6 1 8)))             ; m2
   (test #t test:set!-m)
   (test #t test:m-procs)
   (test #t test:m-create)
