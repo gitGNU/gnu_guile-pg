@@ -523,9 +523,40 @@
          ;; Sync up.
          (tuples-ok? (pg-get-result *C*)))))))
 
+(define test:request-cancel
+  (add-test #t
+    (lambda ()
+      (and
+       (not (pg-is-busy? *C*))
+       ;; Start a transaction that's easy to cancel.
+       ;; [Insert cynical comparison to inept manglement/politicos here.]
+       (pg-send-query *C* "BEGIN; UPDATE async SET a = ! a * sqrt (a);")
+       ;; Dispatch goes through.
+       (pg-request-cancel *C*)
+       ;; Result handling, however, may finish, or may signal error.
+       (begin
+         (display "INFO: (async checks) ")
+         ;; Wait for quiescence.
+         (let loop ((checks 0))
+           (cond ((pg-is-busy? *C*)
+                  (pg-consume-input *C*)
+                  (sleep 1)
+                  (display ".")
+                  (loop (1+ checks)))
+                 (else
+                  (display checks)
+                  (newline))))
+         ;; Sync up with the cancellation.
+         (and (not (tuples-ok? (pg-get-result *C*)))
+              (return-it #t (format #t "INFO: (~A)\n"
+                                    (let ((reason (pg-error-message *C*)))
+                                      (if (string-null? reason)
+                                          "cancellation"
+                                          reason))))))))))
+
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 43)
+  (test-init "basic-tests" 44)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:make-connection
@@ -568,7 +599,8 @@
          test:set-nonblocking!
          test:asynchronous-notification ; once after
          test:is-nonblocking?           ; must be after test:set-nonblocking!
-         test:asynchronous-retrieval)
+         test:asynchronous-retrieval
+         test:request-cancel)
   (set! *C* #f)
   (test-report))
 
