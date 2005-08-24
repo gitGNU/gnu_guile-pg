@@ -1751,8 +1751,9 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
            (SCM conn, SCM tickle),
            "Return the next as-yet-unhandled notification\n"
            "from @var{conn}, or #f if there are none available.\n"
-           "The notification is a pair (RELNAME . PID), where\n"
-           "@var{relname} is a string and @var{pid} is the pid\n"
+           "The notification is a pair with @sc{car} @var{relname},\n"
+           "a string naming the relation containing data; and\n"
+           "@sc{cdr} @var{pid}, the integer pid\n"
            "of the backend delivering the notification.\n"
            "Optional arg @var{tickle} non-#f means to do a\n"
            "\"consume input\" operation prior to the query.")
