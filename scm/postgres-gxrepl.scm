@@ -41,6 +41,7 @@
                           pg-error-message
                           pg-result-error-message
                           pg-connectdb
+                          pg-make-print-options
                           pg-print))
   #:use-module ((database postgres-qcons)
                 #:select (parse+make-SELECT-tree
@@ -422,7 +423,8 @@ specified by \",fix\".  Keywords without related expressions are ignored."
        (cond ((pg-result? res)
               (let ((status (pg-result-status res)))
                 (if (eq? 'PGRES_TUPLES_OK status)
-                    (pg-print res)
+                    (pg-print res (pg-make-print-options
+                                   '((field-sep . " | "))))
                     (let ((msg (pg-result-error-message res)))
                 (display status) (newline)
                   (or (string=? "" msg)
