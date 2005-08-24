@@ -36,8 +36,6 @@ TESTS = alive.sh                                \
         lo-tests.sh                             \
         abstraction-scm-tests.sh
 
-XFAIL_TESTS = coverage.sh
-
 CLEANFILES = basic-tests.log                    \
              lo-tests.log                       \
              abstraction-scm-tests.log          \
