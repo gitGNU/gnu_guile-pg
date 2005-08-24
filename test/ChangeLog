@@ -1,3 +1,16 @@
+2005-08-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:request-cancel): New test proc.
+	(main): Use new test proc; update expected-pass number.
+
+	* Makefile.am (XFAIL_TESTS): Delete var.
+
+2005-08-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm
+	(test:asynchronous-notification): New test proc.
+	(main): Use new test proc; update expected-pass number.
+
 2005-07-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* Makefile.am (abs_top_builddir): New var.
