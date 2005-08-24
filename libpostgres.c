@@ -1358,7 +1358,7 @@ PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
            "Start outputting low-level trace information on the\n"
            "connection @var{conn} to @var{port}, which must have been\n"
            "opened for writing.  This trace is more useful for debugging\n"
-           "Postgres than it is for debugging applications.\n"
+           "PostgreSQL than it is for debugging its clients.\n"
            "The return value is unspecified.")
 {
 #define FUNC_NAME s_pg_trace
@@ -1948,16 +1948,16 @@ PG_DEFINE (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
            (SCM conn),
            "Request a cancellation on @var{conn}.\n"
            "Return #t iff the cancel request was successfully\n"
-           "dispatched, #f if not.  (If not, @code{pg-error-message}\n"
-           "tells why not.)  Successful dispatch is no guarantee\n"
+           "dispatched.  If not, @code{pg-error-message}\n"
+           "tells why not.  Successful dispatch is no guarantee\n"
            "that the request will have any effect, however.\n"
            "Regardless of the return value,\n"
-           "the application must continue with the normal\n"
+           "the client must continue with the normal\n"
            "result-reading sequence using @code{pg-get-result}.\n"
            "If the cancellation is effective, the current query\n"
            "will terminate early and return an error result.\n"
-           "If the cancellation fails (say because the backend was\n"
-           "already done processing the query), then there\n"
+           "If the cancellation fails (say, because the backend\n"
+           "was already done processing the query), then there\n"
            "will be no visible result at all.\n\n"
            "Note that if the current query is part of a transaction,\n"
            "cancellation will abort the whole transaction.")
