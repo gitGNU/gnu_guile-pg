@@ -1,3 +1,12 @@
+2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-abstraction-scm-tests.scm (objwalk): Delete data structure.
+	(sel/check check-dim): New internal proc. Update callers to use it.
+	(sel/check): No longer compute and validate array.
+	(test:m-procs, cleanup!): Don't set or clear `objwalk', respectively.
+	(test-m2): Simplify 2x2 test into single "m2 is 2x2" test.
+	(main): Update expected-pass counts.
+
 2005-08-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (test:request-cancel): New test proc.

@@ -1,3 +1,13 @@
+2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-table.scm (make-v): Delete proc.
+	(tuples-result->table): Likewise.
+	(t-obj-walk-proc): Likewise.
+	(table->object-alist-proc): Likewise.
+	(object-alist->alists): Likewise.
+	(pgtable-manager): Remove support for
+	#:t-obj-walk, #:table->object-alist, and #:table->alists.
+
 2005-08-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm:
