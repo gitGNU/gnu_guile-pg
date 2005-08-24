@@ -1159,9 +1159,9 @@ provide @code{double}, but now there is ambiguity upon reflection, and
 the single-table abstraction @code{#:create} method fails.
 
 @item When there is no native Guile type that maps cleanly, Guile-PG must
-choose an object representation, which may not be ideal for the application.
+choose an object representation, which may not be ideal for the client.
 For example, Guile-PG defines an @code{inet} object to be a two-element
-vector; perhaps an application uses a cons or simply one number, since all its
+vector; perhaps client code uses a cons or simply one number, since all its
 @code{inet} objects are host addresses (constant netmask).  Sure, it is no big
 deal to box/unbox, but that's an extra level of conversion that the whole
 system was trying to avoid in the first place.
