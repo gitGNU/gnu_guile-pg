@@ -22,7 +22,6 @@
 
 ;; This module exports these procedures:
 ;;   (sql-pre string)
-;;   (tuples-result->table res)
 ;;   (pgtable-manager db-spec table-name defs)
 ;;   (pgtable-worker db-spec table-name defs)
 ;;   (compile-outspec spec defs)
@@ -64,8 +63,7 @@
                 #:select (result->object-alist
                           result->object-alists))
   #:re-export (sql-pre)
-  #:export (tuples-result->table
-            pgtable-manager
+  #:export (pgtable-manager
             pgtable-worker
             compile-outspec))
 
@@ -342,105 +340,6 @@
           (and hints (put res #:pgtable-ohints hints))
           res)))))
 
-;;; results processing
-
-(define (make-v len val-at)
-  (let ((v (make-vector len)))
-    (array-index-map! v val-at)
-    v))
-
-;; Extract data from the tuples result RES, and return an annotated array.
-;; The array's values correspond to the data from RES, and has dimensions
-;; `pg-ntuples' by `pg-nfields'.  Annotations are object properties:
-;; @example
-;;     names   -- vector of field names
-;;     widths  -- vector of maximum field widths
-;; @end example
-;; When either number of tuples or number of fields is zero, they are taken
-;; as one, instead, which ensures that the returned array has consistent
-;; rank.  (This might not be such a hot idea, long-run; still evaluating.)
-;;
-;; NOTE: This procedure WILL BE REMOVED after 2005-08-13; DO NOT rely on it.
-;;
-(define (tuples-result->table res)
-  (let* ((ntuples (pg-ntuples res))
-         (nfields (pg-nfields res))
-         (table (make-array #f (max 1 ntuples) (max 1 nfields)))
-         (names (make-v nfields (lambda (fn)
-                                  (pg-fname res fn))))
-         (widths (make-v nfields (lambda (fn)
-                                   (string-length (vector-ref names fn))))))
-    (do ((tn 0 (1+ tn))) ((= ntuples tn))
-      (do ((fn 0 (1+ fn))) ((= nfields fn))
-        (let* ((val (pg-getvalue res tn fn))
-               (len (string-length val)))
-          (and (< (vector-ref widths fn) len)
-               (vector-set! widths fn len))
-          (array-set! table val tn fn))))
-    ;; save some info
-    (put table 'names names)
-    (put table 'widths widths)
-    table))
-
-(define (t-obj-walk-proc defs)
-  (lambda (table proc-o proc-non-o)
-    (let* ((dim (array-dimensions table))
-           (ntuples (car  dim))
-           (nfields (cadr dim))
-           (names (get table 'names)))
-      (do ((fn 0 (1+ fn)))
-          ((= nfields fn))
-        (let* ((type (and=> (assq-ref defs (string->symbol
-                                            (vector-ref names fn)))
-                            (lambda (x) (if (pair? x)
-                                            (car x)
-                                            x))))
-               (lookup (dbcoltype-lookup type)))
-          (if lookup
-              (and proc-o
-                   (let ((o (lambda (s)
-                              ((dbcoltype:objectifier lookup)
-                               (or (and (< 0 (string-length s))
-                                        (char=? #\' (string-ref s 0))
-                                        (sql-unquote s))
-                                   s)))))
-                     (do ((tn 0 (1+ tn)))
-                         ((= ntuples tn))
-                       (let ((s (array-ref table tn fn)))
-                         (proc-o table tn fn s (o s))))))
-              (and proc-non-o
-                   (do ((tn 0 (1+ tn)))
-                       ((= ntuples tn))
-                     (let ((s (array-ref table tn fn)))
-                       (proc-non-o table tn fn s))))))))))
-
-(define (table->object-alist-proc t-obj-walk)
-  (lambda (table)
-    (let* ((ret (map list (map string->symbol
-                               (vector->list
-                                (get table 'names)))))
-           (lsfn 0)                     ; last-seen field number
-           (place ret)                  ; advances every time lsfn changes
-           (stash (lambda (fn x)
-                    (or (= fn lsfn)
-                        (begin
-                          (set! place (cdr place))
-                          (set! lsfn fn)))
-                    (let ((inside (car place)))
-                      (set-cdr! inside (cons x (cdr inside)))))))
-      (t-obj-walk table
-                  (lambda (table tn fn str obj) (stash fn obj))
-                  (lambda (table tn fn str)     (stash fn str)))
-      (do ((ls ret (cdr ls)))
-          ((null? ls) ret)
-        (set-cdr! (car ls) (reverse! (cdar ls)))))))
-
-(define (object-alist->alists object-alist)
-  (let ((names (map car object-alist)))
-    (apply map (lambda slice
-                 (map cons names slice))
-           (map cdr object-alist))))
-
 ;;; dispatch
 
 ;; Return a closure that manages a table specified by DB-SPEC TABLE-NAME DEFS.
@@ -471,10 +370,7 @@
 ;; * #:delete-rows WHERE-CONDITION
 ;; * #:update-col COLS DATA WHERE-CONDITION
 ;; * #:select OUTSPEC [REST-CLAUSES ...]
-;;   #:t-obj-walk TABLE PROC-O PROC-NON-O
-;;   #:table->object-alist TABLE
 ;;   #:tuples-result->object-alist RES
-;;   #:table->alists TABLE
 ;;   #:tuples-result->alists RES
 ;;   #:trace-exec OPORT
 ;; @end example
@@ -486,21 +382,10 @@
 ;; that `compile-outspec' can process to produce such a result.  NOTE: Some
 ;; older versions of `pgtable-manager' also accept a string for OUTSPEC.
 ;; DO NOT rely on this; string support WILL BE REMOVED after 2005-12-31.
-;; REST-CLAUSES are zero or more strings.  TABLE and RES are the same
-;; types as for proc `tuples-result->table', q.v.  OPORT specifies an
+;; REST-CLAUSES are zero or more strings.  RES is a tuples result, as
+;; returned by `pg-exec' (assuming no error occurred).  OPORT specifies an
 ;; output port to write the `pg-exec' command to immediately prior to
 ;; executing it, or #f to disable tracing.
-;;
-;; PROC-O is #f, or a procedure that is called by the table walker like so:
-;;  (PROC-O TABLE TN FN STRING OBJ)
-;;
-;; Similarly, PROC-NON-O is #f, or a procedure with signature:
-;;  (PROC-NON-O TABLE TN FN STRING)
-;;
-;; For both these procedures, TABLE is as described above, TN and FN are the
-;; tuple and field numbers (zero-origin), respectively, STRING is the string
-;; representation of the data and OBJ is the Scheme object converted from
-;; STRING.
 ;;
 ;; The starred (*) procedures return whatever `pg-exec' returns for that type
 ;; of procedure.
@@ -533,8 +418,7 @@
          (res->foo-proc (lambda (proc)
                           (lambda (res)
                             (proc res (or (get res #:pgtable-ohints)
-                                          objectifiers)))))
-         (t-obj-walk (t-obj-walk-proc defs)))
+                                          objectifiers))))))
 
     (define drop (pp drop-proc))
 
@@ -552,12 +436,7 @@
 
     (define select (pp select-proc))
 
-    (define table->object-alist (table->object-alist-proc t-obj-walk))
-
     (define tuples-result->object-alist (res->foo-proc result->object-alist))
-
-    (define (table->alists table)
-      (object-alist->alists (table->object-alist table)))
 
     (define tuples-result->alists (res->foo-proc result->object-alists))
 
@@ -583,10 +462,7 @@
         ((#:delete-rows) delete-rows)
         ((#:update-col) update-col)
         ((#:select) select)
-        ((#:t-obj-walk) t-obj-walk)
-        ((#:table->object-alist) table->object-alist)
         ((#:tuples-result->object-alist) tuples-result->object-alist)
-        ((#:table->alists) table->alists)
         ((#:tuples-result->alists) tuples-result->alists)
         ((#:trace-exec) (lambda (op)
                           (or (not op)
