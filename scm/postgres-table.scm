@@ -240,8 +240,9 @@
 ;;
 ;; @itemize
 ;; @item @var{expr} is a prefix-style expression to compute for the column
-;; (@pxref{Query Construction}); or a string (note, however, that support
-;; for string @var{expr} WILL BE REMOVED after 2005-12-31; DO NOT rely on it)
+;; (@pxref{Query Construction}); or a string (@emph{NOTE}, however, that
+;; support for string @var{expr} WILL BE REMOVED after 2005-12-31; DO NOT
+;; rely on it)
 ;;
 ;; @item @var{title} is the title (string) of the column, or #f
 ;;
@@ -357,8 +358,11 @@
 ;; The closure accepts a single keyword arg CHOICE (symbol ok) and returns
 ;; the associated variable or procedure.  The keywords #:table-name, #:defs
 ;; and #:pgdb return constant values (the last being a connection object).
-;; Support for these WILL BE REMOVED after 2005-12-31; DO NOT rely on them.
-;; (Use `#:k' instead.)  Other keywords return a procedure:
+;;
+;; @emph{NOTE}: Support for #:table-name, #:defs and #:pgdb WILL BE REMOVED
+;; after 2005-12-31; DO NOT rely on them.  (Use `#:k' instead.)
+;;
+;; Other keywords return a procedure:
 ;;
 ;; @example
 ;;   #:k VAR
@@ -379,9 +383,12 @@
 ;; or more Scheme objects.  COLS is either a list of column names (symbols),
 ;; or a single string of comma-delimited column names.  WHERE-CONDITION is a
 ;; string.  OUTSPEC is either the result of `compile-outspec', or a spec
-;; that `compile-outspec' can process to produce such a result.  NOTE: Some
-;; older versions of `pgtable-manager' also accept a string for OUTSPEC.
-;; DO NOT rely on this; string support WILL BE REMOVED after 2005-12-31.
+;; that `compile-outspec' can process to produce such a result.
+;;
+;; @emph{NOTE}: Some older versions of `pgtable-manager' also accept a
+;; string for OUTSPEC.  DO NOT rely on this; string support WILL BE REMOVED
+;; after 2005-12-31.
+;;
 ;; REST-CLAUSES are zero or more strings.  RES is a tuples result, as
 ;; returned by `pg-exec' (assuming no error occurred).  OPORT specifies an
 ;; output port to write the `pg-exec' command to immediately prior to
