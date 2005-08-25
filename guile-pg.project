@@ -2,7 +2,7 @@
  (location (url "http://www.glug.org/people/ttn/software/guile-pg/"))
  (category "Libraries/Database")
  (description "An interface to PostgreSQL from guile.")
- (status "version 0.28 released 2005-05-09")
+ (status "version 0.29 released 2005-08-25")
  (authors (email "Ian Grant" "iang@pobox.com") " and "
 	  (email "Thien-Thi Nguyen" "ttn@glug.org"))
  (maintainer (email "ttn" "ttn@glug.org"))
