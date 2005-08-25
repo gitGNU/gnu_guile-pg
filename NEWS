@@ -1,6 +1,37 @@
 NEWS for Guile-PG
 
 
+- 0.29 | 2005-08-25
+
+  - Dropped proc: where-clausifier
+  - Dropped proc: tuples-result->table
+
+	These used to be in module (database postgres-table); see NEWS
+	entry for version 0.26 (2005-02-24).  The first proc can be
+	emulated with `string-append', and the latter with a combination
+	of #:tuples-result->alists (or #:tuples-result->object-alist)
+	commands to a `pgtable-manager' closure followed by a mapping
+	into a two-dimensional array.
+
+	As a side effect of dropping `tuples-result->table', the closure
+	returned by `pgtable-manager' no longer recognizes the commands
+	#:t-obj-walk, #:table->object-alist and #:table->alists.
+
+  - For `gxrepl', results are now printed with " | " field separator
+
+	That is, space-pipe-space, instead of simply pipe, as before.
+	The result is that gxrepl in an Emacs buffer (preferred env :-)
+	is much more friendly to `dabbrev-expand'.
+
+  - All (database postgres) procs now tested
+
+	The `XFAIL_TESTS' in tests/Makefile.am has been removed.  This
+	means that we don't expect any tests to fail now; a failing test
+	indicates a bug.  Note that coverage does not imply good coverage!
+
+  - Support files guile.m4 and modsup.h synched with Guile 1.4.1.106
+
+
 - 0.28 | 2005-05-09
 
   - Bugfix: array reference handling in (database postgres-qcons)
