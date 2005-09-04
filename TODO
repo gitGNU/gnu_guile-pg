@@ -1,5 +1,12 @@
 - 1.x
 
+  - Extend (database postgres-qcons) to handle subquery expressions
+
+    Particularly: IN (scalar form) and NOT IN (scalar form).  It would
+    be nice to handle the subquery forms of these operators as well, in
+    which case, might as well handle: EXISTS, ANY/SOME, ALL.  Lastly,
+    row-wise comparison may not be worth the hassle.
+
   - Provide builtin converters for all PostgreSQL "native" types.
 
   - Regularize error handling.
