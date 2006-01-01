@@ -5,7 +5,7 @@
 # also run "libtoolize --force".  The distribution was made w/ these tools:
 # - libtool 1.5.10 (1.1220.2.130 2004/09/19 12:13:49)
 # - autoconf 2.59
-# - automake 1.7.6
+# - automake 1.9.6
 # - guile 1.4.1.106
 
 #############################################################################
