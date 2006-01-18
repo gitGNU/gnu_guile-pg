@@ -1432,8 +1432,6 @@ The other procedures are useful for succintly codifying queries, and
 translating the result en mass to Scheme objects.  [NOTE: These will
 definitely migrate to other modules at some point before 1.0 release.]
 
-@twerpdoc (tuples-result->table)
-
 @twerpdoc (sql-pre)
 
 The rest of this chapter is an extended example showing some of the uses of
