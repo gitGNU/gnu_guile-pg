@@ -201,10 +201,14 @@ AC_DEFUN([GUILE_LIBSITE_DIR],
 #
 # Set @var{var} to the numeric return value of evaluating @var{check}.
 # @var{var} is a shell variable name to be set to the return value.
-# @var{check} is a Guile Scheme expression, evaluated with "$GUILE -c",
-# and returning either 0 or non-#f to indicate the check passed.  Non-0
-# number or #f indicates failure.  Avoid using the character "#" since
-# that confuses autoconf.
+#
+# @var{check} is one or more Guile Scheme expression, evaluated with
+# "$GUILE -c", the last of which should return either 0 or non-#f to
+# indicate the check passed.  Non-0 number or #f indicates failure.
+# This is conventionally achieved by wrapping the last expression in
+# @code{exit}.  For example, @code{(foo) (bar) (exit (baz))}.
+#
+# Avoid using the character "#" since that confuses autoconf.  
 #
 AC_DEFUN([GUILE_CHECK],
  [AC_REQUIRE([GUILE_PROGS])
