@@ -136,6 +136,12 @@
                                                    (inner (cdr d)))))))
                                  (loop (cdr ls)))))))))))
 
+(define test:protocol-version/bad-connection
+  (add-test #f
+    (lambda ()
+      (or (pg-protocol-version #:foo)
+          (pg-protocol-version *C*))))) ; not yet set
+
 (define test:make-connection
   (add-test #t
     (lambda ()
@@ -143,6 +149,14 @@
         (and (pg-connection? new)
              (begin (set! *C* new)
                     #t))))))
+
+(define test:protocol-version
+  (add-test #t
+    (lambda ()
+      (let ((v (pg-protocol-version *C*)))
+        (and (number? v)
+             (not (= 0 v))
+             (< 1 v))))))
 
 (define test:untracing-untraced-connection
   (add-test (if #f #f)
@@ -556,10 +570,12 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 44)
+  (test-init "basic-tests" 46)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
+         test:protocol-version/bad-connection
          test:make-connection
+         test:protocol-version
          test:untracing-untraced-connection
          test:various-connection-info
          test:set-notice-out!-1
