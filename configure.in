@@ -86,9 +86,11 @@ AC_CHECK_LIB(pq, PQconnectdb, ,[
   AC_MSG_NOTICE(LDFLAGS: $LDFLAGS)
   AC_MSG_ERROR([cannot find libpq on the system])
 ])
-AC_CHECK_FUNCS(PQfmod PQbinaryTuples PQbackendPID               dnl
-               PQresultErrorMessage PQpass PQputnbytes          dnl
-               PQoidValue PQsetnonblocking PQisnonblocking)
+AC_CHECK_FUNCS([ \
+  PQfmod PQbinaryTuples PQbackendPID \
+  PQresultErrorMessage PQpass PQputnbytes \
+  PQoidValue PQsetnonblocking PQisnonblocking
+])
 
 AC_CHECK_DECL([InvalidOid],,
               [pg_ac_need_invalidoid=true],
