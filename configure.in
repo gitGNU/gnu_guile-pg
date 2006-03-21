@@ -86,10 +86,12 @@ AC_CHECK_LIB(pq, PQconnectdb, ,[
   AC_MSG_NOTICE(LDFLAGS: $LDFLAGS)
   AC_MSG_ERROR([cannot find libpq on the system])
 ])
+dnl In this check, PQprotocolVersion begins the "Protocol 3.0" functions.
 AC_CHECK_FUNCS([ \
   PQfmod PQbinaryTuples PQbackendPID \
   PQresultErrorMessage PQpass PQputnbytes \
-  PQoidValue PQsetnonblocking PQisnonblocking
+  PQoidValue PQsetnonblocking PQisnonblocking \
+  PQprotocolVersion
 ])
 
 AC_CHECK_DECL([InvalidOid],,
