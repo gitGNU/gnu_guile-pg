@@ -355,6 +355,29 @@ PG_DEFINE (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
   return goodies;
 }
 
+PG_DEFINE (pg_protocol_version, "pg-protocol-version", 1, 0, 0,
+           (SCM conn),
+           "Return the client protocol version for @var{conn}.\n"
+           "This (integer) will be 2 prior to PostgreSQL 7.4.\n"
+           "If @var{conn} is not a connection object, return #f.")
+{
+#define FUNC_NAME s_pg_protocol_version
+  PGconn *dbconn;
+  int v = 2;
+
+  if (! xc_p (conn))
+    return SCM_BOOL_F;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+
+#ifdef HAVE_PQPROTOCOLVERSION
+  v = PQprotocolVersion (dbconn);
+#endif
+
+  return (0 == v ? SCM_BOOL_F : gh_int2scm (v));
+#undef FUNC_NAME
+}
+
 #define SIMPLE_KEYWORD(name) \
   SCM_KEYWORD (kwd_ ## name, # name)
 
@@ -1982,6 +2005,9 @@ PG_DEFINE (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
 
 #define SYM(s)  (pg_sym_ ## s)
 
+#ifdef HAVE_PQPROTOCOLVERSION
+SIMPLE_SYMBOL (PQPROTOCOLVERSION);
+#endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
 SIMPLE_SYMBOL (PQRESULTERRORMESSAGE);
 #endif
@@ -2099,6 +2125,9 @@ init_module (void)
 
 #define PUSH(x)  goodies = gh_cons (SYM (x), goodies)
 
+#ifdef HAVE_PQPROTOCOLVERSION
+  PUSH (PQPROTOCOLVERSION);
+#endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
   PUSH (PQRESULTERRORMESSAGE);
 #endif
