@@ -952,6 +952,31 @@ PG_DEFINE (pg_transaction_status, "pg-transaction-status", 1, 0, 0,
 #undef FUNC_NAME
 }
 
+PG_DEFINE (pg_parameter_status, "pg-parameter-status", 2, 0, 0,
+           (SCM conn, SCM parm),
+           "Return the status (a string) of a parameter for @var{conn}.\n"
+           "@var{parm} is a keyword, such as @code{#:client_encoding}.\n"
+           "If the installation does not support\n"
+           "@code{PQPARAMETERSTATUS}, return #f.")
+{
+#define FUNC_NAME s_pg_parameter_status
+  PGconn *dbconn;
+  char *cstatus = NULL;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+  SCM_VALIDATE_KEYWORD (2, parm);
+
+#ifdef HAVE_PQPARAMETERSTATUS
+  parm = SCM_KEYWORDSYM (parm);
+  ROZT_X (parm);
+  /* Offset by one to skip the symbol name's initial hyphen.  */
+  cstatus = PQparameterStatus (dbconn, 1 + ROZT (parm));
+#endif
+
+  return (cstatus ? gh_str02scm (cstatus) : SCM_BOOL_F);
+#undef FUNC_NAME
+}
+
 PG_DEFINE (pg_result_status, "pg-result-status", 1, 0, 0,
            (SCM result),
            "Return the symbolic status of a @code{PG_RESULT} object\n"
@@ -2049,6 +2074,9 @@ SIMPLE_SYMBOL (PQPROTOCOLVERSION);
 #ifdef HAVE_PQTRANSACTIONSTATUS
 SIMPLE_SYMBOL (PQTRANSACTIONSTATUS);
 #endif
+#ifdef HAVE_PQPARAMETERSTATUS
+SIMPLE_SYMBOL (PQPARAMETERSTATUS);
+#endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
 SIMPLE_SYMBOL (PQRESULTERRORMESSAGE);
 #endif
@@ -2171,6 +2199,9 @@ init_module (void)
 #endif
 #ifdef HAVE_PQTRANSACTIONSTATUS
   PUSH (PQTRANSACTIONSTATUS);
+#endif
+#ifdef HAVE_PQPARAMETERSTATUS
+  PUSH (PQPARAMETERSTATUS);
 #endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
   PUSH (PQRESULTERRORMESSAGE);
