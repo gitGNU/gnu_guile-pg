@@ -182,6 +182,21 @@
                       (and (string=? check new-enc)
                            (string=? enc (pg-client-encoding *C*)))))))))))
 
+(define test:transaction-status
+  (add-test #t
+    (let* ((st (lambda () (pg-transaction-status *C*)))
+           (st-ok? (lambda (expected) (eq? expected (st)))))
+      (lambda ()
+        (and (st-ok? #:idle)
+             (command-ok? (cexec "START TRANSACTION"))
+             (st-ok? #:intrans)
+             (eq? 'PGRES_FATAL_ERROR
+                  (pg-result-status
+                   (cexec "INSERT INTO nonexistent VALUES (42)")))
+             (st-ok? #:inerror)
+             (command-ok? (cexec "ROLLBACK"))
+             (st-ok? #:idle))))))
+
 (define test:set-notice-out!-1
   (add-test #t
     (lambda ()
@@ -572,7 +587,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 46)
+  (test-init "basic-tests" 47)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:protocol-version/bad-connection
@@ -580,6 +595,7 @@
          test:protocol-version
          test:untracing-untraced-connection
          test:various-connection-info
+         test:transaction-status
          test:set-notice-out!-1
          test:set-client-data
          test:make-table
