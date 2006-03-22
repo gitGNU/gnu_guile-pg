@@ -507,6 +507,8 @@
 (define test:asynchronous-retrieval
   (add-test #t
     (lambda ()
+      ;; Test fails for PostgreSQL 7.4.12 at `pg-endcopy' if this is omitted.
+      (pg-set-nonblocking! *C* #f)
       (and
        ;; Create a table.
        (command-ok? (cexec "CREATE TABLE async (a numeric (20, 10))"))
