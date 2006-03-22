@@ -294,6 +294,8 @@ default, they are sent to the current output port.
 
 @twerpdoc (pg-backend-pid)
 
+@twerpdoc (pg-transaction-status)
+
 @section Client Data
 
 The libpq interface upon which Guile-PG is built supports assocation of
