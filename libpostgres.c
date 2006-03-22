@@ -914,6 +914,44 @@ PG_DEFINE (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
 #endif /* !HAVE_PQBACKENDPID */
 }
 
+SIMPLE_KEYWORD (idle);
+SIMPLE_KEYWORD (active);
+SIMPLE_KEYWORD (intrans);
+SIMPLE_KEYWORD (inerror);
+SIMPLE_KEYWORD (unknown);
+
+PG_DEFINE (pg_transaction_status, "pg-transaction-status", 1, 0, 0,
+           (SCM conn),
+           "Return a keyword describing the current transaction status,\n"
+           "one of: @code{#:idle} (connection idle),\n"
+           "@code{#:active} (command in progress),\n"
+           "@code{#:intrans} (idle, within transaction block),\n"
+           "@code{#:inerror} (idle, within failed transaction),\n"
+           "@code{#:unknown} (cannot determine status).\n\n"
+           "If the installation does not support\n"
+           "@code{PQTRANSACTIONSTATUS}, return @code{#:unknown}.")
+{
+#define FUNC_NAME s_pg_transaction_status
+  PGconn *dbconn;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+
+#ifdef HAVE_PQTRANSACTIONSTATUS
+  switch (PQtransactionStatus (dbconn))
+    {
+    case PQTRANS_IDLE:    return KWD (idle);
+    case PQTRANS_ACTIVE:  return KWD (active);
+    case PQTRANS_INTRANS: return KWD (intrans);
+    case PQTRANS_INERROR: return KWD (inerror);
+    case PQTRANS_UNKNOWN:
+    default:              return KWD (unknown);
+    }
+#else /* not HAVE_PQTRANSACTIONSTATUS */
+  return KWD (unknown);
+#endif /* not HAVE_PQTRANSACTIONSTATUS */
+#undef FUNC_NAME
+}
+
 PG_DEFINE (pg_result_status, "pg-result-status", 1, 0, 0,
            (SCM result),
            "Return the symbolic status of a @code{PG_RESULT} object\n"
@@ -2008,6 +2046,9 @@ PG_DEFINE (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
 #ifdef HAVE_PQPROTOCOLVERSION
 SIMPLE_SYMBOL (PQPROTOCOLVERSION);
 #endif
+#ifdef HAVE_PQTRANSACTIONSTATUS
+SIMPLE_SYMBOL (PQTRANSACTIONSTATUS);
+#endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
 SIMPLE_SYMBOL (PQRESULTERRORMESSAGE);
 #endif
@@ -2127,6 +2168,9 @@ init_module (void)
 
 #ifdef HAVE_PQPROTOCOLVERSION
   PUSH (PQPROTOCOLVERSION);
+#endif
+#ifdef HAVE_PQTRANSACTIONSTATUS
+  PUSH (PQTRANSACTIONSTATUS);
 #endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
   PUSH (PQRESULTERRORMESSAGE);
