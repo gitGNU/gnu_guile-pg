@@ -197,6 +197,20 @@
              (command-ok? (cexec "ROLLBACK"))
              (st-ok? #:idle))))))
 
+(define test:parameter-status
+  (add-test #t
+    (lambda ()
+      (or (not (memq 'PQPARAMETERSTATUS (pg-guile-pg-loaded)))
+          (and-map (lambda (k)
+                     (let ((v (pg-parameter-status *C* k)))
+                       (format #t "INFO: parameter ~S => ~S\n" k v)
+                       (string? v)))
+                   '(#:server_version
+                     #:client_encoding
+                     #:is_superuser
+                     #:session_authorization
+                     #:DateStyle))))))
+
 (define test:set-notice-out!-1
   (add-test #t
     (lambda ()
@@ -587,7 +601,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 47)
+  (test-init "basic-tests" 48)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:protocol-version/bad-connection
@@ -596,6 +610,7 @@
          test:untracing-untraced-connection
          test:various-connection-info
          test:transaction-status
+         test:parameter-status
          test:set-notice-out!-1
          test:set-client-data
          test:make-table
