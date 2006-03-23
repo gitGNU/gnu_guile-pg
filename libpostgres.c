@@ -961,7 +961,7 @@ PG_DEFINE (pg_parameter_status, "pg-parameter-status", 2, 0, 0,
 {
 #define FUNC_NAME s_pg_parameter_status
   PGconn *dbconn;
-  char *cstatus = NULL;
+  const char *cstatus = NULL;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_KEYWORD (2, parm);
