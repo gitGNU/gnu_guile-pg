@@ -777,6 +777,9 @@ necessarily belong in the other chapters.
 
 @twerpdoc (pg-guile-pg-loaded)
 
+@erindex Invalid vebosity
+@twerpdoc (pg-set-error-verbosity)
+
 @erindex due to @code{dup(3)} failure
 @erindex due to @code{fopen(3)} failure
 @twerpdoc (pg-trace)
