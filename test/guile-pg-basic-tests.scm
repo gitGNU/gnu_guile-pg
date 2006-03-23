@@ -211,6 +211,16 @@
                      #:session_authorization
                      #:DateStyle))))))
 
+(define test:set-error-verbosity
+  (add-test #:default
+    (lambda ()
+      (and (pg-set-error-verbosity *C* #:terse)
+           (eq? (if (memq 'PQSETERRORVERBOSITY (pg-guile-pg-loaded))
+                    #:terse
+                    #:default)
+                (pg-set-error-verbosity *C* #:default))
+           (pg-set-error-verbosity *C* #:default)))))
+
 (define test:set-notice-out!-1
   (add-test #t
     (lambda ()
@@ -601,7 +611,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 48)
+  (test-init "basic-tests" 49)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:protocol-version/bad-connection
@@ -611,6 +621,7 @@
          test:various-connection-info
          test:transaction-status
          test:parameter-status
+         test:set-error-verbosity
          test:set-notice-out!-1
          test:set-client-data
          test:make-table
