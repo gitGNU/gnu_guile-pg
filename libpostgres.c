@@ -1439,6 +1439,52 @@ PG_DEFINE (pg_endcopy, "pg-endcopy", 1, 0, 0,
 #undef FUNC_NAME
 }
 
+SIMPLE_KEYWORD (terse);
+SIMPLE_KEYWORD (default);
+SIMPLE_KEYWORD (verbose);
+
+PG_DEFINE (pg_set_error_verbosity, "pg-set-error-verbosity", 2, 0, 0,
+           (SCM conn, SCM verbosity),
+           "Set the error verbosity for @var{conn} to @var{verbosity}.\n"
+           "@var{verbosity} is a keyword, one of: @code{#:terse},\n"
+           "@code{#:default} or @code{#:verbose}.  Return the previous\n"
+           "verbosity.  If the installation does not support\n"
+           "@code{PQSETERRORVERBOSITY}, simply return @code{#:default}.")
+{
+#define FUNC_NAME s_pg_set_error_verbosity
+  PGconn *dbconn;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+  SCM_VALIDATE_KEYWORD (2, verbosity);
+
+#ifndef HAVE_PQSETERRORVERBOSITY
+  return KWD (default);
+#else /* HAVE_PQSETERRORVERBOSITY */
+  {
+    PGVerbosity now = PQERRORS_DEFAULT;
+
+    if (gh_eq_p (verbosity, KWD (terse)))
+      now = PQERRORS_TERSE;
+    else if (gh_eq_p (verbosity, KWD (default)))
+      now = PQERRORS_DEFAULT;
+    else if (gh_eq_p (verbosity, KWD (verbose)))
+      now = PQERRORS_VERBOSE;
+    else
+      scm_misc_error (FUNC_NAME, "Invalid verbosity: ~A",
+                      SCM_LIST1 (verbosity));
+ 
+    switch (PQsetErrorVerbosity (dbconn, now))
+      {
+      case PQERRORS_TERSE:   return KWD (terse);
+      case PQERRORS_DEFAULT: return KWD (default);
+      case PQERRORS_VERBOSE: return KWD (verbose);
+      default:               return SCM_BOOL_F; /* hmm, server error */
+      }
+  }
+#endif /* HAVE_PQSETERRORVERBOSITY */
+#undef FUNC_NAME
+}
+
 PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
            (SCM conn, SCM port),
            "Start outputting low-level trace information on the\n"
@@ -2077,6 +2123,9 @@ SIMPLE_SYMBOL (PQTRANSACTIONSTATUS);
 #ifdef HAVE_PQPARAMETERSTATUS
 SIMPLE_SYMBOL (PQPARAMETERSTATUS);
 #endif
+#ifdef HAVE_PQSETERRORVERBOSITY
+SIMPLE_SYMBOL (PQSETERRORVERBOSITY);
+#endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
 SIMPLE_SYMBOL (PQRESULTERRORMESSAGE);
 #endif
@@ -2202,6 +2251,9 @@ init_module (void)
 #endif
 #ifdef HAVE_PQPARAMETERSTATUS
   PUSH (PQPARAMETERSTATUS);
+#endif
+#ifdef HAVE_PQSETERRORVERBOSITY
+  PUSH (PQSETERRORVERBOSITY);
 #endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
   PUSH (PQRESULTERRORMESSAGE);
