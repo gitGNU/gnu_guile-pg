@@ -380,16 +380,97 @@ query to the connection using either @code{pg-exec} or some combination of the
 lower-level non-blocking operations that comprise @code{pg-exec}.
 
 @menu
+* Parameters::                  Strings containing typed placeholders.
 * Synchronous Retrieval::       Using @code{pg-exec}.
 * Asynchronous Retrieval::      Using pieces of @code{pg-exec}.
 * Processing Results::          What to do with data and/or errors.
 @end menu
 
 @c ---------------------------------------------------------------------------
+@node    Parameters
+@section Parameters
+
+The sections following this one revolve around describing the essential
+method of communicating with the PostgreSQL server, namely, by sending
+it a properly-constructed string representing a command or statement.
+However, @dots{}
+
+@quotation
+The string is a stark data structure and everywhere
+it is passed there is much duplication of process.
+It is a perfect vehicle for hiding information.
+			--- Alan Perlis
+@end quotation
+
+To reduce this inefficiency for heavily-repeated statements that may
+differ only slightly from one instance to the next, PostgreSQL 7.4
+introduced libpq variants that make use of @dfn{parameterized strings},
+which are normal strings with embedded placeholders (such as @code{$1},
+@code{$2}, and so on) that can be sent to the server accompanied by
+@dfn{typed parameters}.  These operate similarly to the @code{PREPARE}
+and @code{EXECUTE} SQL statements.
+
+@xref{Synchronous Retrieval}.  @xref{Asynchronous Retrieval}.
+
+Even if a statement is not heavily-repeated (thus offering little
+performance improvement potential), using these variants can be
+advantageous anyway since they remove the need for tricky and
+error-prone sql-quoting.
+
+Guile-PG wraps these variants differently from the way it does the other
+libpq functions, departing from close congruence to the C-langauge
+argument list in favor of a simplified, ``more Schemey'', interface.
+The Scheme procedures take, in addition to the connection object and the
+command or statement (parameterized string), a vector of parameters,
+conventionally named @var{parms}.
+
+@heading Restrictions
+@erindex bad parameter-vector element
+Guile-PG support for parameters is in its infancy.  All elements of
+@var{parms} @emph{must} be strings otherwise a ``bad parameter-vector
+element'' error is signalled.  Relatedly, the @dfn{binary parameters}
+are not supported; only @dfn{text parameters} (strings) are supported
+for now.  Basically, Guile-PG support is a step up from not having
+parameters at all, but not (yet) fully generalized.
+
+Here is an example of how to work within these restrictions:
+
+@example
+(define C (pg-connectdb ...))
+
+(define (sel s . args)
+  (apply format #f (string-append "SELECT " s ";")
+         args))
+
+(define (straightforward-square n)
+  (pg-exec C (sel "~A * ~A" n n)))
+
+(define (parameterized-square n)
+  (pg-exec-params C (sel "$1::integer * $1::integer")
+                  (vector (number->string n))))
+
+(define (single result)
+  (pg-getvalue result 0 0))
+
+(equal? (single (straightforward-square 42))
+        (single (parameterized-square 42)))
+@result{} #t
+@end example
+
+In the future, it should be possible to specify @code{integer} in
+@var{parms} instead of in the parameterized string.
+
+@c ---------------------------------------------------------------------------
 @node    Synchronous Retrieval
 @section Synchronous Retrieval
 
+This section describes the procedures @code{pg-exec}, @code{pg-exec-params}
+and @code{pg-exec-prepared}.  @xref{Parameters}, for backtround info on the
+latter two.
+
 @twerpdoc (pg-exec)
+@twerpdoc (pg-exec-params)
+@twerpdoc (pg-exec-prepared)
 
 @heading Example
 This example defines a procedure @code{pg-exec/no-false} which wraps
@@ -424,7 +505,12 @@ query at one time, and check for its completion at a later time.  In between,
 you can collect partial results and notifications, or decide to cancel the
 query altogether.
 
+@xref{Parameters}, for background info on @code{pg-send-query-params} and
+@code{pg-send-query-prepared}.
+
 @twerpdoc (pg-send-query)
+@twerpdoc (pg-send-query-params)
+@twerpdoc (pg-send-query-prepared)
 @twerpdoc (pg-get-result)
 @twerpdoc (pg-consume-input)
 @twerpdoc (pg-is-busy?)
