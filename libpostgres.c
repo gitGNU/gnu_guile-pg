@@ -327,6 +327,77 @@ strip_newlines (char *str)
 
 
 /*
+ * common parameter handling
+ */
+
+#ifndef HAVE_PARAMVARIANTS
+
+static char noparams[] = "param variant unsupported";
+
+#define SORRYNOPARAMS()  (scm_misc_error (FUNC_NAME, noparams, SCM_EOL))
+
+#else /* HAVE_PARAMVARIANTS */
+
+struct paramspecs
+{
+  int          len;
+  Oid         *types;
+  const char **values;
+  int         *lengths;
+  int         *formats;
+};
+
+#define VALIDATE_PARAM_RELATED_ARGS(what)               \
+  do {                                                  \
+    VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn); \
+    ROZT_X (what);                                      \
+    SCM_VALIDATE_VECTOR (3, parms);                     \
+  } while (0)
+
+#define VREF(v,i)  (SCM_VELTS (v)[i])
+
+static void
+prep_paramspecs (const char *func_name, struct paramspecs *ps, SCM v)
+{
+  int i, len;
+  SCM elem;
+
+  /* To avoid hairy Oid specification/lookup, for now we support vector of
+     strings only.  This lameness is not good long-term, but the Scheme
+     procedure programming interface is upward-compatible by design, so we
+     can ease into full specification later (by relaxing/extending the
+     vector element validation).  */
+  ps->len = len = SCM_LENGTH (v);
+  for (i = 0; i < len; i++)
+    {
+      elem = VREF (v, i);
+      if (! gh_string_p (elem))
+        scm_misc_error (func_name, "bad parameter-vector element: ~S",
+                        SCM_LIST1 (elem));
+    }
+  ps->types = NULL;
+  ps->values = (const char **) malloc (len * sizeof (char *));
+  if (! ps->values)
+    scm_misc_error (func_name, "memory exhausted", SCM_EOL);
+  for (i = 0; i < len; i++)
+    ps->values[i] = ROZT (VREF (v, i));
+  ps->lengths = NULL;
+  ps->formats = NULL;
+}
+
+static void
+drop_paramspecs (struct paramspecs *ps)
+{
+  if (ps->types)   free (ps->types);
+  if (ps->values)  free (ps->values);
+  if (ps->lengths) free (ps->lengths);
+  if (ps->formats) free (ps->formats);
+}
+
+#endif /* HAVE_PARAMVARIANTS */
+
+
+/*
  * other abstractions
  */
 
@@ -674,6 +745,84 @@ PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
   return z;
+#undef FUNC_NAME
+}
+
+PG_DEFINE (pg_exec_params, "pg-exec-params", 3, 0, 0,
+           (SCM conn, SCM statement, SCM parms),
+           "Like @code{pg-exec}, except that @var{statement} is a\n"
+           "parameterized string, and @var{parms} is a parameter-vector.")
+{
+#define FUNC_NAME s_pg_exec_params
+#ifndef HAVE_PARAMVARIANTS
+
+  return SORRYNOPARAMS ();
+
+#else /* HAVE_PARAMVARIANTS */
+
+  SCM z;
+  PGconn *dbconn;
+  PGresult *result;
+  struct paramspecs ps;
+  int result_format;
+
+  VALIDATE_PARAM_RELATED_ARGS (statement);
+
+  (void) prep_paramspecs (FUNC_NAME, &ps, parms);
+  result_format = 0;                    /* string */
+  SCM_DEFER_INTS;
+  result = PQexecParams (dbconn, ROZT (statement), ps.len,
+                         ps.types, ps.values, ps.lengths, ps.formats,
+                         result_format);
+  z = (result
+       ? make_xr (result, conn)
+       : SCM_BOOL_F);
+  SCM_ALLOW_INTS;
+  (void) drop_paramspecs (&ps);
+  return z;
+
+#endif /* HAVE_PARAMVARIANTS */
+#undef FUNC_NAME
+}
+
+PG_DEFINE (pg_exec_prepared, "pg-exec-prepared", 3, 0, 0,
+           (SCM conn, SCM stname, SCM parms),
+           "Execute the statement named by @var{stname} (a string)\n"
+           "on a given connection @var{conn} returning either a result\n"
+           "object or @code{#f}.  @var{stname} must match the\n"
+           "name specified in some prior SQL @code{PREPARE} statement.\n"
+           "@var{parms} is a parameter-vector.")
+{
+#define FUNC_NAME s_pg_exec_prepared
+
+#ifndef HAVE_PARAMVARIANTS
+
+  return SORRYNOPARAMS ();
+
+#else /* HAVE_PARAMVARIANTS */
+
+  SCM z;
+  PGconn *dbconn;
+  PGresult *result;
+  struct paramspecs ps;
+  int result_format;
+
+  VALIDATE_PARAM_RELATED_ARGS (stname);
+
+  (void) prep_paramspecs (FUNC_NAME, &ps, parms);
+  result_format = 0;                    /* string */
+  SCM_DEFER_INTS;
+  result = PQexecPrepared (dbconn, ROZT (stname), ps.len,
+                           ps.values, ps.lengths, ps.formats,
+                           result_format);
+  z = (result
+       ? make_xr (result, conn)
+       : SCM_BOOL_F);
+  SCM_ALLOW_INTS;
+  (void) drop_paramspecs (&ps);
+  return z;
+
+#endif /* HAVE_PARAMVARIANTS */
 #undef FUNC_NAME
 }
 
@@ -1472,7 +1621,7 @@ PG_DEFINE (pg_set_error_verbosity, "pg-set-error-verbosity", 2, 0, 0,
     else
       scm_misc_error (FUNC_NAME, "Invalid verbosity: ~A",
                       SCM_LIST1 (verbosity));
- 
+
     switch (PQsetErrorVerbosity (dbconn, now))
       {
       case PQERRORS_TERSE:   return KWD (terse);
@@ -2026,6 +2175,70 @@ PG_DEFINE (pg_send_query, "pg-send-query", 2, 0, 0,
 #undef FUNC_NAME
 }
 
+PG_DEFINE (pg_send_query_params, "pg-send-query-params", 3, 0, 0,
+           (SCM conn, SCM query, SCM parms),
+           "Like @code{pg-send-query}, except that @var{query} is a\n"
+           "parameterized string, and @var{parms} is a parameter-vector.")
+{
+#define FUNC_NAME s_pg_send_query_params
+#ifndef HAVE_PARAMVARIANTS
+
+  return SORRYNOPARAMS ();
+
+#else /* HAVE_PARAMVARIANTS */
+
+  PGconn *dbconn;
+  struct paramspecs ps;
+  int result, result_format;
+
+  VALIDATE_PARAM_RELATED_ARGS (query);
+
+  (void) prep_paramspecs (FUNC_NAME, &ps, parms);
+  result_format = 0;                    /* string */
+  SCM_DEFER_INTS;
+  result = PQsendQueryParams (dbconn, ROZT (query), ps.len,
+                              ps.types, ps.values, ps.lengths, ps.formats,
+                              result_format);
+  SCM_ALLOW_INTS;
+  (void) drop_paramspecs (&ps);
+  return result ? SCM_BOOL_T : SCM_BOOL_F;
+
+#endif /* HAVE_PARAMVARIANTS */
+#undef FUNC_NAME
+}
+
+PG_DEFINE (pg_send_query_prepared, "pg-send-query-prepared", 3, 0, 0,
+           (SCM conn, SCM stname, SCM parms),
+           "Like @code{pg-exec-prepared}, except asynchronous.\n"
+           "Also, return @code{#t} if successful.")
+{
+#define FUNC_NAME s_pg_send_query_prepared
+#ifndef HAVE_PARAMVARIANTS
+
+  return SORRYNOPARAMS ();
+
+#else /* HAVE_PARAMVARIANTS */
+
+  PGconn *dbconn;
+  struct paramspecs ps;
+  int result, result_format;
+
+  VALIDATE_PARAM_RELATED_ARGS (stname);
+
+  (void) prep_paramspecs (FUNC_NAME, &ps, parms);
+  result_format = 0;                    /* string */
+  SCM_DEFER_INTS;
+  result = PQsendQueryPrepared (dbconn, ROZT (stname), ps.len,
+                                ps.values, ps.lengths, ps.formats,
+                                result_format);
+  SCM_ALLOW_INTS;
+  (void) drop_paramspecs (&ps);
+  return result ? SCM_BOOL_T : SCM_BOOL_F;
+
+#endif /* HAVE_PARAMVARIANTS */
+#undef FUNC_NAME
+}
+
 PG_DEFINE (pg_get_result, "pg-get-result", 1, 0, 0,
            (SCM conn),
            "Return a result from @var{conn}, or #f.")
@@ -2125,6 +2338,9 @@ SIMPLE_SYMBOL (PQPARAMETERSTATUS);
 #endif
 #ifdef HAVE_PQSETERRORVERBOSITY
 SIMPLE_SYMBOL (PQSETERRORVERBOSITY);
+#endif
+#ifdef HAVE_PARAMVARIANTS
+SIMPLE_SYMBOL (PARAMVARIANTS);
 #endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
 SIMPLE_SYMBOL (PQRESULTERRORMESSAGE);
@@ -2254,6 +2470,9 @@ init_module (void)
 #endif
 #ifdef HAVE_PQSETERRORVERBOSITY
   PUSH (PQSETERRORVERBOSITY);
+#endif
+#ifdef HAVE_PARAMVARIANTS
+  PUSH (PARAMVARIANTS);
 #endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
   PUSH (PQRESULTERRORMESSAGE);
