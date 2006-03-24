@@ -462,6 +462,68 @@
              (not (false-if-exception (pg-getlength res 0 2)))
              (not (false-if-exception (pg-getlength res 1 0))))))))
 
+(define test:pg-exec-params
+  (add-test #t
+    (lambda ()
+      (define (single res)
+        (if (tuples-ok? res)
+            (pg-getvalue res 0 0)
+            (let ((msg (pg-result-error-message res)))
+              (format #t "EWHY: pg-exec-params ~A\n" msg)
+              msg)))
+      (define (spin spec)
+        (define (sel pos)
+          (format #f "SELECT ~A;" (list-ref spec pos)))
+        (string=? (single (cexec (sel 0)))
+                  (single (pg-exec-params
+                           *C* (sel 1)
+                           (apply vector (cddr spec))))))
+      (or (= 2 (pg-protocol-version *C*))
+          (and-map spin
+                   '(("42"     "$1::integer" "42")
+                     ("'foo'"  "$1::text"    "foo")
+                     ("'a''b'" "$1::text"    "a'b")
+                     ("6 * 6 + 6"
+                      "$1::integer * $2::integer + $3::integer"
+                      "6" "6" "6")
+                     ("4 ^ 2"
+                      "CAST ($1 AS integer) ^ CAST ($2 AS integer)"
+                      "4" "2")))))))
+
+(define test:pg-exec-prepared
+  (add-test #t
+    (lambda ()
+      (define (single res)
+        (if (tuples-ok? res)
+            (pg-getvalue res 0 0)
+            (let ((msg (pg-result-error-message res)))
+              (format #t "EWHY: pg-exec-prepared ~A\n" msg)
+              msg)))
+      (define (spin spec)
+        (define (sel pos)
+          (format #f "SELECT ~A;" (list-ref spec pos)))
+        (cexec "DEALLOCATE plan;")
+        (and (command-ok? (cexec (format #f "PREPARE plan (~A) AS ~A"
+                                         (list-ref spec 2) ; blech
+                                         (sel 1))))
+             (string=? (single (cexec (sel 0)))
+                       (single (pg-exec-prepared
+                                *C* "plan"
+                                (apply vector (cdddr spec)))))))
+      (or (= 2 (pg-protocol-version *C*))
+          (and-map spin
+                   '(("42"     "$1" "integer" "42")
+                     ("'foo'"  "$1" "text"    "foo")
+                     ("'a''b'" "$1" "text"    "a'b")
+                     ("6 * 6 + 6"
+                      "$1 * $2 + $3"
+                      "integer, integer, integer"
+                      "6" "6" "6")
+                     ("4 ^ 2"
+                      "CAST ($1 AS integer) ^ CAST ($2 AS integer)"
+                      "integer, integer"
+                      "4" "2")))))))
+
 (define test:getline
   (add-test #t
     (lambda ()
@@ -543,6 +605,17 @@
                 (or (= -1 bpid) (= bpid (cdr ans))))))
        (not (or (pg-notifies *C*) (pg-notifies *C* #t)))))))
 
+(define test:send-query-param-variants  ; cleanup?
+  (add-test #t
+    (lambda ()
+      (or (= 2 (pg-protocol-version *C*))
+          (let ((v (vector "42")))
+            (and (pg-send-query-params *C* "SELECT $1::integer;" v)
+                 (begin (cexec "DEALLOCATE plan;")
+                        (command-ok?
+                         (cexec "PREPARE plan (integer) AS SELECT $1;")))
+                 (pg-send-query-prepared *C* "plan" v)))))))
+
 (define test:asynchronous-retrieval
   (add-test #t
     (lambda ()
@@ -611,7 +684,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 49)
+  (test-init "basic-tests" 52)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:protocol-version/bad-connection
@@ -646,6 +719,8 @@
          test:getisnull
          test:fsize
          test:getlength
+         test:pg-exec-params
+         test:pg-exec-prepared
          test:getline
          test:getlineasync
          test:putline
@@ -659,6 +734,7 @@
          test:set-nonblocking!
          test:asynchronous-notification ; once after
          test:is-nonblocking?           ; must be after test:set-nonblocking!
+         test:send-query-param-variants
          test:asynchronous-retrieval
          test:request-cancel)
   (set! *C* #f)
