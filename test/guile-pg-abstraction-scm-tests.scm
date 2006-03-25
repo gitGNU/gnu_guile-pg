@@ -131,7 +131,7 @@
 ;;; multiple tests rolled into each
 
 (define (mtest:select-*)                ; 5
-  (sel/check (select "*")               ; todo: change to #t after 2005-12-31
+  (sel/check (select #t)
              (pass-if "dim" (check-dim 3 9))
              (pass-if "ugh" (string=? "ugh" (tref 0 1)))
              (pass-if "5" (string=? "5" (tref 0 3)))
@@ -139,7 +139,7 @@
              (pass-if "{}" (string=? "{}" (tref 2 2)))))
 
 (define (mtest:select-*-error_condition) ; 3
-  (sel/check (select #t "where error_condition = 'foo'")
+  (sel/check (select #t #:where '(= error_condition "foo"))
              (pass-if "size" (check-dim 1 9))
              (pass-if "files"
                (let ((val (tref 0 2)))
@@ -151,7 +151,7 @@
              (pass-if "etc" (string=? "{3,-4}" (tref 0 8)))))
 
 (define (mtest:select-*-read)           ; 3
-  (sel/check (select #t "where read[2][1] = ','")
+  (sel/check (select #t #:where '(= read[2][1] ","))
              (pass-if "size" (check-dim 1 9))
              (pass-if "25" (string=? "25" (tref 0 6)))
              (pass-if "read"
@@ -168,12 +168,12 @@
              (pass-if "3" (string=? "3" (tref 0 0)))))
 
 (define (mtest:select-*-read<>)         ; 2
-  (sel/check (select #t "where read[2][1] <> ','")
+  (sel/check (select #t #:where '(<> read[2][1] ","))
              (pass-if "size" (check-dim 1 9))
              (pass-if "115.12" (string=? "115.12" (tref 0 5)))))
 
 (define (mtest:select-files/etc)        ; 3
-  (sel/check (select '(files etc) "where etc[2] < 0")
+  (sel/check (select '(files etc) #:where '(< etc[2] 0))
              (pass-if "size" (check-dim 1 2))
              (pass-if "files"
                (let ((val (tref 0 0)))
@@ -280,7 +280,7 @@
   (set! select #f))
 
 (define (main)
-  ;;(set! verbose #t)
+  (set! verbose #t)
   (test-init "abstraction-scm-tests"    ; manularity sucks
              (+ 6
                 (let ((count (list 5 3 3 2 2 3))) ; multiples
