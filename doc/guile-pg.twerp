@@ -1178,7 +1178,7 @@ rough edges to be found in selected cases.  We hope to resolve these issues
 (and thus be able to revise this section significantly) before Guile-PG 1.0 is
 released.
 
-Converters for the following PostgresSQL 7.3.8 types are not provided.
+Converters for the following PostgreSQL 7.3.8 types are not provided.
 (Dot-separated numbers indicate a section in the PostgreSQL User's Guide
 describing the type.)
 
