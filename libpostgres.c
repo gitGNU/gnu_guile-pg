@@ -175,7 +175,7 @@ xc_free (SCM obj)
 
   /* close connection to postgres */
   if (xc->dbconn)
-    (void) PQfinish (xc->dbconn);
+    PQfinish (xc->dbconn);
 
   /* free this object itself */
   free (xc);
@@ -279,7 +279,7 @@ xr_free (SCM obj)
 
   /* clear the result */
   if (xr->result)
-    (void) PQclear (xr->result);
+    PQclear (xr->result);
 
   /* free this object itself */
   free (xr);
@@ -525,7 +525,7 @@ PG_DEFINE (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
 #undef MAYBEFALSE
 
   if (head)
-    (void) PQconninfoFree (head);
+    PQconninfoFree (head);
 
   return rv;
 }
@@ -642,7 +642,7 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
     {
       /* Get error message before PQfinish, which zonks dbconn storage.  */
       pgerrormsg = strip_newlines (PQerrorMessage (dbconn));
-      (void) PQfinish (dbconn);
+      PQfinish (dbconn);
     }
   SCM_ALLOW_INTS;
 
@@ -659,7 +659,7 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
   xc->fptrace = (FILE *) NULL;
 
   /* Whatever the default was before, we don't care.  */
-  (void) PQsetNoticeProcessor (dbconn, &notice_processor, xc);
+  PQsetNoticeProcessor (dbconn, &notice_processor, xc);
 
   return z;
 #undef FUNC_NAME
@@ -686,7 +686,7 @@ PG_DEFINE (pg_reset, "pg-reset", 1, 0, 0,
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_DEFER_INTS;
-  (void) PQreset (dbconn);
+  PQreset (dbconn);
   SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -768,7 +768,7 @@ PG_DEFINE (pg_exec_params, "pg-exec-params", 3, 0, 0,
 
   VALIDATE_PARAM_RELATED_ARGS (statement);
 
-  (void) prep_paramspecs (FUNC_NAME, &ps, parms);
+  prep_paramspecs (FUNC_NAME, &ps, parms);
   result_format = 0;                    /* string */
   SCM_DEFER_INTS;
   result = PQexecParams (dbconn, ROZT (statement), ps.len,
@@ -778,7 +778,7 @@ PG_DEFINE (pg_exec_params, "pg-exec-params", 3, 0, 0,
        ? make_xr (result, conn)
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
-  (void) drop_paramspecs (&ps);
+  drop_paramspecs (&ps);
   return z;
 
 #endif /* HAVE_PARAMVARIANTS */
@@ -809,7 +809,7 @@ PG_DEFINE (pg_exec_prepared, "pg-exec-prepared", 3, 0, 0,
 
   VALIDATE_PARAM_RELATED_ARGS (stname);
 
-  (void) prep_paramspecs (FUNC_NAME, &ps, parms);
+  prep_paramspecs (FUNC_NAME, &ps, parms);
   result_format = 0;                    /* string */
   SCM_DEFER_INTS;
   result = PQexecPrepared (dbconn, ROZT (stname), ps.len,
@@ -819,7 +819,7 @@ PG_DEFINE (pg_exec_prepared, "pg-exec-prepared", 3, 0, 0,
        ? make_xr (result, conn)
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
-  (void) drop_paramspecs (&ps);
+  drop_paramspecs (&ps);
   return z;
 
 #endif /* HAVE_PARAMVARIANTS */
@@ -1532,7 +1532,7 @@ PG_DEFINE (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
     /* We don't care if there was an error consuming input; caller can use
        `pg_error_message' to find out afterwards, or simply avoid tickling in
        the first place.  */
-    (void) PQconsumeInput (dbconn);
+    PQconsumeInput (dbconn);
 
   return gh_int2scm (PQgetlineAsync (dbconn,
                                      SCM_ROCHARS (buf),
@@ -1662,7 +1662,7 @@ PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
     scm_syserror (FUNC_NAME);
 
   SCM_DEFER_INTS;
-  (void) PQtrace (dbconn, fpout);
+  PQtrace (dbconn, fpout);
   CONN_FPTRACE (conn) = fpout;
   SCM_ALLOW_INTS;
 
@@ -1688,7 +1688,7 @@ PG_DEFINE (pg_untrace, "pg-untrace", 1, 0, 0,
     return SCM_UNSPECIFIED;
 
   SCM_DEFER_INTS;
-  (void) PQuntrace (dbconn);
+  PQuntrace (dbconn);
   SCM_SYSCALL (ret = fclose (CONN_FPTRACE (conn)));
   CONN_FPTRACE (conn) = (FILE *) NULL;
   SCM_ALLOW_INTS;
@@ -1966,8 +1966,8 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
   if (fout == NULL)
     scm_syserror (FUNC_NAME);
 
-  (void) scm_force_output (scm_current_output_port ());
-  (void) PQprint (fout, res, sepo_unbox (options));
+  scm_force_output (scm_current_output_port ());
+  PQprint (fout, res, sepo_unbox (options));
 
   if (redir_p)
     {
@@ -2050,7 +2050,7 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
     /* We don't care if there was an error consuming input; caller can use
        `pg_error_message' to find out afterwards, or simply avoid tickling in
        the first place.  */
-    (void) PQconsumeInput (dbconn);
+    PQconsumeInput (dbconn);
   n = PQnotifies (dbconn);
   if (n)
     {
@@ -2193,14 +2193,14 @@ PG_DEFINE (pg_send_query_params, "pg-send-query-params", 3, 0, 0,
 
   VALIDATE_PARAM_RELATED_ARGS (query);
 
-  (void) prep_paramspecs (FUNC_NAME, &ps, parms);
+  prep_paramspecs (FUNC_NAME, &ps, parms);
   result_format = 0;                    /* string */
   SCM_DEFER_INTS;
   result = PQsendQueryParams (dbconn, ROZT (query), ps.len,
                               ps.types, ps.values, ps.lengths, ps.formats,
                               result_format);
   SCM_ALLOW_INTS;
-  (void) drop_paramspecs (&ps);
+  drop_paramspecs (&ps);
   return result ? SCM_BOOL_T : SCM_BOOL_F;
 
 #endif /* HAVE_PARAMVARIANTS */
@@ -2225,14 +2225,14 @@ PG_DEFINE (pg_send_query_prepared, "pg-send-query-prepared", 3, 0, 0,
 
   VALIDATE_PARAM_RELATED_ARGS (stname);
 
-  (void) prep_paramspecs (FUNC_NAME, &ps, parms);
+  prep_paramspecs (FUNC_NAME, &ps, parms);
   result_format = 0;                    /* string */
   SCM_DEFER_INTS;
   result = PQsendQueryPrepared (dbconn, ROZT (stname), ps.len,
                                 ps.values, ps.lengths, ps.formats,
                                 result_format);
   SCM_ALLOW_INTS;
-  (void) drop_paramspecs (&ps);
+  drop_paramspecs (&ps);
   return result ? SCM_BOOL_T : SCM_BOOL_F;
 
 #endif /* HAVE_PARAMVARIANTS */
