@@ -42,8 +42,10 @@
 (define (command-ok? raw)
   (eq? 'PGRES_COMMAND_OK (pg-result-status raw)))
 
-(define-macro (pass-if ignored:explanation exp)
-  `(test #t (lambda () ,exp)))
+(define-macro (pass-if explanation exp)
+  `(let ((proc (lambda () ,exp)))
+     (set-procedure-property! proc 'name ,explanation)
+     (test #t proc)))
 
 (define-macro (sel/check sel . body)
   `(let ((tupres ,sel))
@@ -53,7 +55,11 @@
      (define (tref tn fn)
        (pg-getvalue tupres tn fn))
      (pass-if "result status"
-       (eq? 'PGRES_TUPLES_OK (pg-result-status tupres)))
+       (let ((s (pg-result-status tupres)))
+         (cond ((eq? 'PGRES_TUPLES_OK s))
+               (else (format #t "EWHY: result status: ~A\n      ~A\n"
+                             s (pg-result-error-message tupres))
+                     #f))))
      ,@body))
 
 ;;; Tests
