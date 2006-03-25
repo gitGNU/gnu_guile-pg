@@ -435,7 +435,7 @@ parameters at all, but not (yet) fully generalized.
 
 Here is an example of how to work within these restrictions:
 
-@example
+@lisp
 (define C (pg-connectdb ...))
 
 (define (sel s . args)
@@ -455,7 +455,7 @@ Here is an example of how to work within these restrictions:
 (equal? (single (straightforward-square 42))
         (single (parameterized-square 42)))
 @result{} #t
-@end example
+@end lisp
 
 In the future, it should be possible to specify @code{integer} in
 @var{parms} instead of in the parameterized string.
