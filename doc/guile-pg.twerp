@@ -418,7 +418,7 @@ advantageous anyway since they remove the need for tricky and
 error-prone sql-quoting.
 
 Guile-PG wraps these variants differently from the way it does the other
-libpq functions, departing from close congruence to the C-langauge
+libpq functions, departing from close congruence to the C-language
 argument list in favor of a simplified, ``more Schemey'', interface.
 The Scheme procedures take, in addition to the connection object and the
 command or statement (parameterized string), a vector of parameters,
