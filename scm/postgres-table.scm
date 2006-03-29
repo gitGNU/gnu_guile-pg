@@ -1,6 +1,6 @@
 ;;; postgres-table.scm --- abstract manipulation of a single PostgreSQL table
 
-;;	Copyright (C) 2002, 2003, 2004, 2005 Thien-Thi Nguyen
+;; Copyright (C) 2002, 2003, 2004, 2005, 2006 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;
@@ -66,6 +66,8 @@
   #:export (pgtable-manager
             pgtable-worker
             compile-outspec))
+
+;;; ZOSS: zonk opaque string support
 
 ;;; support
 
@@ -195,7 +197,7 @@
     (sql-command<-trees
      (force pre)
      (make-WHERE-tree
-      (if (string? where-condition)     ; todo: zonk after 2005-12-31
+      (if (string? where-condition)     ; todo: ZOSS
           (sql-pre where-condition)
           where-condition))))
   ;; rv
@@ -216,7 +218,7 @@
                (col-defs defs cols)
                #f data)
      (make-WHERE-tree
-      (if (string? where-condition)     ; todo: zonk after 2005-12-31
+      (if (string? where-condition)     ; todo: ZOSS
           (sql-pre where-condition)
           where-condition))))
   ;; rv
@@ -241,8 +243,8 @@
 ;; @itemize
 ;; @item @var{expr} is a prefix-style expression to compute for the column
 ;; (@pxref{Query Construction}); or a string (@emph{NOTE}, however, that
-;; support for string @var{expr} WILL BE REMOVED after 2005-12-31; DO NOT
-;; rely on it)
+;; support for opaque string @var{expr} WILL BE REMOVED after 2006-12-31;
+;; DO NOT rely on it)
 ;;
 ;; @item @var{title} is the title (string) of the column, or #f
 ;;
@@ -279,8 +281,8 @@
             ((and (list? x) (= 3 (length x)))
              (apply-to-args
               x (lambda (type title expr)
-                  ;; todo: enable after 2005-12-31
-                  ;;+ (and (string? expr) (bad-select-part expr))
+                  ;;ZOSS todo: enable
+                  ;;ZOSS+ (and (string? expr) (bad-select-part expr))
                   (push! (cond ((symbol? type)
                                 type)
                                ((eq? #f type)
@@ -325,14 +327,14 @@
                       froms
                       (cond ((compiled-outspec?-extract outspec)
                              => set-hints!+sel)
-                            ;; todo: zonk after 2005-12-31
+                            ;; todo: ZOSS
                             ((string? outspec)
                              (list (sql-pre outspec)))
                             (else
                              (set-hints!+sel
                               (cdr (compile-outspec outspec defs))))))
                      (cond ((null? rest-clauses) '())
-                           ;; todo: zonk after 2005-12-31
+                           ;; todo: ZOSS
                            ((string? (car rest-clauses))
                             (map sql-pre rest-clauses))
                            (else (parse+make-SELECT/tail-tree
@@ -360,7 +362,7 @@
 ;; and #:pgdb return constant values (the last being a connection object).
 ;;
 ;; @emph{NOTE}: Support for #:table-name, #:defs and #:pgdb WILL BE REMOVED
-;; after 2005-12-31; DO NOT rely on them.  (Use `#:k' instead.)
+;; after 2006-09-30; DO NOT rely on them.  (Use `#:k' instead.)
 ;;
 ;; Other keywords return a procedure:
 ;;
@@ -382,12 +384,13 @@
 ;; VAR is a keyword: #:table-name, #:col-defs, #:connection.  DATA is one
 ;; or more Scheme objects.  COLS is either a list of column names (symbols),
 ;; or a single string of comma-delimited column names.  WHERE-CONDITION is a
-;; string.  OUTSPEC is either the result of `compile-outspec', or a spec
+;; prefix-style expression or a string.  OUTSPEC is either the result of
+;; `compile-outspec', or a spec
 ;; that `compile-outspec' can process to produce such a result.
 ;;
 ;; @emph{NOTE}: Some older versions of `pgtable-manager' also accept a
-;; string for OUTSPEC.  DO NOT rely on this; string support WILL BE REMOVED
-;; after 2005-12-31.
+;; string for OUTSPEC and WHERE-CONDITION.  DO NOT rely on this; so-called
+;; opaque string support WILL BE REMOVED after 2006-12-31.
 ;;
 ;; REST-CLAUSES are zero or more strings.  RES is a tuples result, as
 ;; returned by `pg-exec' (assuming no error occurred).  OPORT specifies an
@@ -497,6 +500,9 @@
 ;;
 ;; This example is not intended to be wry commentary on the behavioral
 ;; patterns of human managers and workers, btw.
+;;
+;; @emph{NOTE}: See @code{pgtable-manager} regarding planned removal
+;; of opaque string support.
 ;;
 (define (pgtable-worker db-spec table-name defs)
   (let ((M (pgtable-manager db-spec table-name defs)))

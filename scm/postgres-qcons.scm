@@ -1,6 +1,6 @@
 ;;; postgres-qcons.scm --- construct SELECT queries
 
-;;	Copyright (C) 2005 Thien-Thi Nguyen
+;; Copyright (C) 2005, 2006 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;
@@ -59,6 +59,8 @@
             parse+make-SELECT-tree
             sql<-trees
             sql-command<-trees))
+
+;;; ZOSS: zonk opaque string support
 
 
 ;;; mirroring bootstrap
@@ -359,17 +361,17 @@
 ;;
 ;; For the present (to ease migration in client modules), EXPR may also be a
 ;; string, in which case it is passed through opaquely w/o further processing.
-;; This support WILL BE REMOVED after 2005-12-31; DO NOT rely on it.
+;; This support WILL BE REMOVED after 2006-12-31; DO NOT rely on it.
 ;;
 (define (make-SELECT/COLS-tree cols)
-  (define (expr-nostring x)             ; todo: zonk after 2005-12-31
+  (define (expr-nostring x)             ; ZOSS
     (if (string? x)
         x
         (expr x)))
   (commasep (lambda (x)
               (cond ((number? x) x)
                     ((symbol? x) (maybe-dq x))
-                    ((string? x) (sql-pre x)) ; todo: zonk after 2005-12-31
+                    ((string? x) (sql-pre x)) ; ZOSS
                     ((and (pair? x) (string? (car x)))
                      (as (expr-nostring (cdr x))
                          (sql-pre (fs "~S" (car x)))))
