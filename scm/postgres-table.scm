@@ -376,6 +376,7 @@
 ;; * #:insert-alist ALIST
 ;; * #:delete-rows WHERE-CONDITION
 ;; * #:update-col COLS DATA WHERE-CONDITION
+;; * #:update-col-alist ALIST WHERE-CONDITION
 ;; * #:select OUTSPEC [REST-CLAUSES ...]
 ;;   #:tuples-result->object-alist RES
 ;;   #:tuples-result->alists RES
@@ -445,6 +446,11 @@
 
     (define update-col (pp update-col-proc))
 
+    (define update-col-alist (lambda (alist where-condition)
+                               (update-col (map car alist)
+                                           (map cdr alist)
+                                           where-condition)))
+
     (define select (pp select-proc))
 
     (define tuples-result->object-alist (res->foo-proc result->object-alist))
@@ -472,6 +478,7 @@
         ((#:insert-alist) insert-alist)
         ((#:delete-rows) delete-rows)
         ((#:update-col) update-col)
+        ((#:update-col-alist) update-col-alist)
         ((#:select) select)
         ((#:tuples-result->object-alist) tuples-result->object-alist)
         ((#:tuples-result->alists) tuples-result->alists)
