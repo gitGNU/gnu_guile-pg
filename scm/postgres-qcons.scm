@@ -65,6 +65,18 @@
 
 ;;; mirroring bootstrap
 
+;; Naming convention: Hash tables begin with "==".  They are
+;; initialized on module load and updated by `qcons-declare!'.
+
+(define-macro (define-hash name size pair? init)
+  `(begin
+     (define ,name (make-hash-table ,size))
+     (for-each (lambda (x)
+                 (hashq-set! ,name
+                             ,(if pair? '(car x) 'x)
+                             ,(if pair? '(cdr x) #t)))
+               ,init)))
+
 (define *conditional-operations*        ; entry: NAME
   '(= < <= > >= <> !=
       all any in
@@ -81,6 +93,8 @@
                        ?- ?-| @-@ ?| ?||
                        @@ ~= <<= >>=)
            *conditional-operations*))
+
+(define-hash ==infix-operations 67 #f *infix-operations*)
 
 (define *postfix-display-aliases*
   '((null?        . "IS NULL")
@@ -99,9 +113,13 @@
             (similar      . "SIMILAR TO")
             (not-similar  . "NOT SIMILAR TO"))))
 
+(define-hash ==display-aliases 17 #t *display-aliases*)
+
 (define *postfix-operations*            ; entry: NAME
   (append '(!)
           (map car *postfix-display-aliases*)))
+
+(define-hash ==postfix-operations 11 #f *postfix-operations*)
 
 ;; Declare as part of @var{category} (a keyword) the symbol @var{x}.
 ;; @var{extra} information may be required for the particular category.
@@ -125,14 +143,11 @@
   (or (symbol? x) (error "not a symbol:" x))
   (case category
     ((#:infix)
-     (set! *infix-operations*
-           (cons x (delq! x *infix-operations*))))
+     (hashq-set! ==infix-operations x #t))
     ((#:postfix)
-     (set! *postfix-operations*
-           (cons x (delq! x *postfix-operations*))))
+     (hashq-set! ==postfix-operations x #t))
     ((#:display-alias)
-     (set! *display-aliases*
-           (assq-set! *display-aliases* x (car extra))))
+     (hashq-set! ==display-aliases x (car extra)))
     (else
      (error "bad category:" category))))
 
@@ -290,9 +305,9 @@
       ((::)
        (list #:CAST (paren (as (expr (cadr rest)) (car rest)))))
       (else
-       (cond ((memq op *infix-operations*)
+       (cond ((hashq-ref ==infix-operations op)
               (paren ((list-sep-proc op) expr rest)))
-             ((memq op *postfix-operations*)
+             ((hashq-ref ==postfix-operations op)
               (paren (expr (car rest)) op))
              (else
               (list op (paren (commasep expr rest))))))))
@@ -550,7 +565,7 @@
               ((#:FROM #:WHERE) (fs "\n~A" (keyword->symbol x)))
               (else (keyword->symbol x)))))
           ((symbol? x)
-           (display (or (assq-ref *display-aliases* x) x)))
+           (display (hashq-ref ==display-aliases x x)))
           ((or (string? x) (number? x))
            (display x))
           ((pair? x)
