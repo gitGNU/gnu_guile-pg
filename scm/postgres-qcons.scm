@@ -121,6 +121,13 @@
 
 (define-hash ==postfix-operations 11 #f *postfix-operations*)
 
+(define-hash ==kw-over-commas 7 #f
+  (append
+   ;; string funcs
+   '(convert overlay position substring trim)
+   ;; date/time funcs
+   '(extract)))
+
 ;; Declare as part of @var{category} (a keyword) the symbol @var{x}.
 ;; @var{extra} information may be required for the particular category.
 ;; Currently, these categories are recognized:
@@ -137,6 +144,12 @@
 ;; that specifies what to display instead of @var{x}.  For example,
 ;; @code{null?} and @code{not-null?} are pre-declared to render as
 ;; @code{IS NULL} and @code{IS NOT NULL}, respectively.
+;;
+;; @item #:keyword-args-ok
+;; Render @code{(x A B ...)} as @code{x (A, B, ...)} if none
+;; of @code{A}, @code{B}, @dots{} are keywords.  In the presence
+;; of keywords, render it as @code{x (A B ...)}, without any commas
+;; in the argument list.
 ;; @end table
 ;;
 (define (qcons-declare! category x . extra)
@@ -148,6 +161,8 @@
      (hashq-set! ==postfix-operations x #t))
     ((#:display-alias)
      (hashq-set! ==display-aliases x (car extra)))
+    ((#:keyword-args-ok)
+     (hashq-set! ==kw-over-commas x #t))
     (else
      (error "bad category:" category))))
 
@@ -309,6 +324,13 @@
               (paren ((list-sep-proc op) expr rest)))
              ((hashq-ref ==postfix-operations op)
               (paren (expr (car rest)) op))
+             ((and (hashq-ref ==kw-over-commas op)
+                   (or-map keyword? rest))
+              (list op (paren (map (lambda (x)
+                                     (if (keyword? x)
+                                         x
+                                         (expr x)))
+                                   rest))))
              (else
               (list op (paren (commasep expr rest))))))))
 
