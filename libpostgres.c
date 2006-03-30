@@ -834,6 +834,97 @@ PG_DEFINE (pg_result_p, "pg-result?", 1, 0, 0,
   return xr_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
+SIMPLE_KEYWORD (severity);
+SIMPLE_KEYWORD (sqlstate);
+SCM_KEYWORD (kwd_messageprimary, "message-primary");
+SCM_KEYWORD (kwd_messagedetail, "message-detail");
+SCM_KEYWORD (kwd_messagehint, "message-hint");
+SCM_KEYWORD (kwd_statementposition, "statement-position");
+SIMPLE_KEYWORD (context);
+SCM_KEYWORD (kwd_sourcefile, "source-file");
+SCM_KEYWORD (kwd_sourceline, "source-line");
+SCM_KEYWORD (kwd_sourcefunction, "source-function");
+
+PG_DEFINE (pg_result_error_field, "pg-result-error-field", 2, 0, 0,
+           (SCM result, SCM fieldcode),
+           "Return information associated with @var{result}, on\n"
+           "@var{fieldcode}, a keyword, or @code{#f} if either\n"
+           "@var{fieldcode} is unrecognized or the field value is\n"
+           "not available for some reason.  The type of the\n"
+           "return value depends on @var{fieldcode}:\n\n"
+           "@table @code\n"
+           "@item #:severity\n"
+           "@itemx #:sqlstate\n"
+           "@itemx #:message-primary\n"
+           "@itemx #:message-detail\n"
+           "@itemx #:message-hint\n"
+           "@itemx #:context\n"
+           "@itemx #:source-file\n"
+           "A string.  The value for @code{#:message-primary} is\n"
+           "typically one line, whereas for @code{#:message-detail},\n"
+           "@code{#:message-hint} and @code{#:context}, it may run\n"
+           "to multiple lines.  For @code{#:sqlstate}, it is always\n"
+           "five characters long.\n"
+           "@item #:statement-position\n"
+           "@itemx #:source-line\n"
+           "An integer.  Statement position counts characters\n"
+           "(not bytes), starting from 1.\n"
+           "@item #:source-function\n"
+           "A symbol.\n"
+           "@end table\n\n"
+           "If the installation does not support\n"
+           "@code{PQRESULTERRORFIELD}, simply return #f.")
+{
+#define FUNC_NAME s_pg_result_error_field
+  SCM rv = SCM_BOOL_F;
+
+#ifdef HAVE_PQRESULTERRORFIELD
+  xr_t *xr; PGresult *res;
+  int fc;
+  char *s;
+
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  SCM_VALIDATE_KEYWORD (2, fieldcode);
+
+#define CHKFC(x,y)                              \
+  if (gh_eq_p (fieldcode, (x)))                 \
+    do { fc = (y); goto gotfc; } while (0)
+
+  CHKFC (KWD (severity),          PG_DIAG_SEVERITY);
+  CHKFC (KWD (sqlstate),          PG_DIAG_SQLSTATE);
+  CHKFC (KWD (messageprimary),    PG_DIAG_MESSAGE_PRIMARY);
+  CHKFC (KWD (messagedetail),     PG_DIAG_MESSAGE_DETAIL);
+  CHKFC (KWD (messagehint),       PG_DIAG_MESSAGE_HINT);
+  CHKFC (KWD (statementposition), PG_DIAG_STATEMENT_POSITION);
+  CHKFC (KWD (context),           PG_DIAG_CONTEXT);
+  CHKFC (KWD (sourcefile),        PG_DIAG_SOURCE_FILE);
+  CHKFC (KWD (sourceline),        PG_DIAG_SOURCE_LINE);
+  CHKFC (KWD (sourcefunction),    PG_DIAG_SOURCE_FUNCTION);
+  return rv;
+#undef CHKFC
+
+ gotfc:
+  if ((s = PQresultErrorField (res, fc)))
+    {
+      rv = gh_str02scm (s);
+      switch (fc)
+        {
+        case PG_DIAG_STATEMENT_POSITION:
+        case PG_DIAG_SOURCE_LINE:
+          rv = scm_string_to_number (rv, SCM_MAKINUM (10));
+          break;
+        case PG_DIAG_SOURCE_FUNCTION:
+          rv = gh_symbol2scm (ROZT (rv));
+          break;
+        }
+    }
+
+#endif /* HAVE_PQRESULTERRORFIELD */
+
+  return rv;
+#undef FUNC_NAME
+}
+
 PG_DEFINE (pg_result_error_message, "pg-result-error-message", 1, 0, 0,
            (SCM result),
            "Return the error message associated with @var{result},\n"
@@ -2343,6 +2434,9 @@ SIMPLE_SYMBOL (PQSETERRORVERBOSITY);
 #ifdef HAVE_PARAMVARIANTS
 SIMPLE_SYMBOL (PARAMVARIANTS);
 #endif
+#ifdef HAVE_PQRESULTERRORFIELD
+SIMPLE_SYMBOL (PQRESULTERRORFIELD);
+#endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
 SIMPLE_SYMBOL (PQRESULTERRORMESSAGE);
 #endif
@@ -2474,6 +2568,9 @@ init_module (void)
 #endif
 #ifdef HAVE_PARAMVARIANTS
   PUSH (PARAMVARIANTS);
+#endif
+#ifdef HAVE_PQRESULTERRORFIELD
+  PUSH (PQRESULTERRORFIELD);
 #endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
   PUSH (PQRESULTERRORMESSAGE);
