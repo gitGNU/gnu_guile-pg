@@ -38,9 +38,15 @@
         (pg-print result po)))))
 
 (define (ok? expected-status)
-  (lambda (result)
-    (and result (string=? "" (pg-result-error-message result))
-                (eq? expected-status (pg-result-status result)))))
+  (lambda (result)                      ; => #f unless All Goes Well
+    (cond ((and result (string=? "" (pg-result-error-message result))
+                (eq? expected-status (pg-result-status result))))
+          ((pg-result-error-field result #:sqlstate)
+           => (lambda (s)
+                (format #t "INFO: sqlstate is ~S\n" s)
+                #f))
+          (else
+           #f))))
 
 (define tuples-ok? (let ((check (ok? 'PGRES_TUPLES_OK)))
                      (lambda (result)
@@ -181,6 +187,11 @@
                       (pg-set-client-encoding! *C* enc)
                       (and (string=? check new-enc)
                            (string=? enc (pg-client-encoding *C*)))))))))))
+
+(define test:known-bad-command
+  (add-test #f
+    (lambda ()
+      (command-ok? (cexec "LIKELY-TO-BE-INVALID-COMMAND;")))))
 
 (define test:transaction-status
   (add-test #t
@@ -684,7 +695,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 52)
+  (test-init "basic-tests" 53)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:protocol-version/bad-connection
@@ -692,6 +703,7 @@
          test:protocol-version
          test:untracing-untraced-connection
          test:various-connection-info
+         test:known-bad-command
          test:transaction-status
          test:parameter-status
          test:set-error-verbosity
