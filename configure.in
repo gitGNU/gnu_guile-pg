@@ -92,7 +92,7 @@ AC_CHECK_FUNCS([ \
   PQresultErrorMessage PQpass PQputnbytes \
   PQoidValue PQsetnonblocking PQisnonblocking \
   PQprotocolVersion PQtransactionStatus PQparameterStatus \
-  PQsetErrorVerbosity \
+  PQsetErrorVerbosity PQresultErrorField \
 ])
 
 AC_CHECK_DECL([InvalidOid],,
