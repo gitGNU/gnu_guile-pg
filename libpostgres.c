@@ -839,7 +839,8 @@ PG_DEFINE (pg_result_error_message, "pg-result-error-message", 1, 0, 0,
            "Return the error message associated with @var{result},\n"
            "or the empty string if there was no error.\n"
            "If the installation does not support\n"
-           "@code{PQRESULTERRORMESSAGE}, return the empty string.")
+           "@code{PQRESULTERRORMESSAGE}, return the empty string.\n"
+           "The returned string has no trailing newlines.")
 {
 #ifdef HAVE_PQRESULTERRORMESSAGE
 
