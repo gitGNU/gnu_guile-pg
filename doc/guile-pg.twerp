@@ -539,6 +539,8 @@ respectively.  Everything else appears literally as shown here.
 
 @twerpdoc (pg-result?)
 
+@twerpdoc (pg-result-error-field)
+
 @twerpdoc (pg-result-error-message)
 
 @twerpdoc (pg-error-message)
