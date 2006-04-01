@@ -211,7 +211,7 @@
 (define test:parameter-status
   (add-test #t
     (lambda ()
-      (or (not (memq 'PQPARAMETERSTATUS (pg-guile-pg-loaded)))
+      (or (not (memq 'PQPROTOCOLVERSION (pg-guile-pg-loaded)))
           (and-map (lambda (k)
                      (let ((v (pg-parameter-status *C* k)))
                        (format #t "INFO: parameter ~S => ~S\n" k v)
@@ -226,7 +226,7 @@
   (add-test #:default
     (lambda ()
       (and (pg-set-error-verbosity *C* #:terse)
-           (eq? (if (memq 'PQSETERRORVERBOSITY (pg-guile-pg-loaded))
+           (eq? (if (memq 'PQPROTOCOLVERSION (pg-guile-pg-loaded))
                     #:terse
                     #:default)
                 (pg-set-error-verbosity *C* #:default))
