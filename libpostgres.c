@@ -873,12 +873,12 @@ PG_DEFINE (pg_result_error_field, "pg-result-error-field", 2, 0, 0,
            "A symbol.\n"
            "@end table\n\n"
            "If the installation does not support\n"
-           "@code{PQRESULTERRORFIELD}, simply return #f.")
+           "@code{PQPROTOCOLVERSION}, simply return #f.")
 {
 #define FUNC_NAME s_pg_result_error_field
   SCM rv = SCM_BOOL_F;
 
-#ifdef HAVE_PQRESULTERRORFIELD
+#ifdef HAVE_PQPROTOCOLVERSION
   xr_t *xr; PGresult *res;
   int fc;
   char *s;
@@ -919,7 +919,7 @@ PG_DEFINE (pg_result_error_field, "pg-result-error-field", 2, 0, 0,
         }
     }
 
-#endif /* HAVE_PQRESULTERRORFIELD */
+#endif /* HAVE_PQPROTOCOLVERSION */
 
   return rv;
 #undef FUNC_NAME
@@ -1170,14 +1170,14 @@ PG_DEFINE (pg_transaction_status, "pg-transaction-status", 1, 0, 0,
            "@code{#:inerror} (idle, within failed transaction),\n"
            "@code{#:unknown} (cannot determine status).\n\n"
            "If the installation does not support\n"
-           "@code{PQTRANSACTIONSTATUS}, return @code{#:unknown}.")
+           "@code{PQPROTOCOLVERSION}, return @code{#:unknown}.")
 {
 #define FUNC_NAME s_pg_transaction_status
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
-#ifdef HAVE_PQTRANSACTIONSTATUS
+#ifdef HAVE_PQPROTOCOLVERSION
   switch (PQtransactionStatus (dbconn))
     {
     case PQTRANS_IDLE:    return KWD (idle);
@@ -1187,9 +1187,9 @@ PG_DEFINE (pg_transaction_status, "pg-transaction-status", 1, 0, 0,
     case PQTRANS_UNKNOWN:
     default:              return KWD (unknown);
     }
-#else /* not HAVE_PQTRANSACTIONSTATUS */
+#else /* not HAVE_PQPROTOCOLVERSION */
   return KWD (unknown);
-#endif /* not HAVE_PQTRANSACTIONSTATUS */
+#endif /* not HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -1198,7 +1198,7 @@ PG_DEFINE (pg_parameter_status, "pg-parameter-status", 2, 0, 0,
            "Return the status (a string) of a parameter for @var{conn}.\n"
            "@var{parm} is a keyword, such as @code{#:client_encoding}.\n"
            "If the installation does not support\n"
-           "@code{PQPARAMETERSTATUS}, return #f.")
+           "@code{PQPROTOCOLVERSION}, return #f.")
 {
 #define FUNC_NAME s_pg_parameter_status
   PGconn *dbconn;
@@ -1207,7 +1207,7 @@ PG_DEFINE (pg_parameter_status, "pg-parameter-status", 2, 0, 0,
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_KEYWORD (2, parm);
 
-#ifdef HAVE_PQPARAMETERSTATUS
+#ifdef HAVE_PQPROTOCOLVERSION
   parm = SCM_KEYWORDSYM (parm);
   ROZT_X (parm);
   /* Offset by one to skip the symbol name's initial hyphen.  */
@@ -1690,7 +1690,7 @@ PG_DEFINE (pg_set_error_verbosity, "pg-set-error-verbosity", 2, 0, 0,
            "@var{verbosity} is a keyword, one of: @code{#:terse},\n"
            "@code{#:default} or @code{#:verbose}.  Return the previous\n"
            "verbosity.  If the installation does not support\n"
-           "@code{PQSETERRORVERBOSITY}, simply return @code{#:default}.")
+           "@code{PQPROTOCOLVERSION}, simply return @code{#:default}.")
 {
 #define FUNC_NAME s_pg_set_error_verbosity
   PGconn *dbconn;
@@ -1698,9 +1698,9 @@ PG_DEFINE (pg_set_error_verbosity, "pg-set-error-verbosity", 2, 0, 0,
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_KEYWORD (2, verbosity);
 
-#ifndef HAVE_PQSETERRORVERBOSITY
+#ifndef HAVE_PQPROTOCOLVERSION
   return KWD (default);
-#else /* HAVE_PQSETERRORVERBOSITY */
+#else /* HAVE_PQPROTOCOLVERSION */
   {
     PGVerbosity now = PQERRORS_DEFAULT;
 
@@ -1722,7 +1722,7 @@ PG_DEFINE (pg_set_error_verbosity, "pg-set-error-verbosity", 2, 0, 0,
       default:               return SCM_BOOL_F; /* hmm, server error */
       }
   }
-#endif /* HAVE_PQSETERRORVERBOSITY */
+#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -2422,20 +2422,8 @@ PG_DEFINE (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
 #ifdef HAVE_PQPROTOCOLVERSION
 SIMPLE_SYMBOL (PQPROTOCOLVERSION);
 #endif
-#ifdef HAVE_PQTRANSACTIONSTATUS
-SIMPLE_SYMBOL (PQTRANSACTIONSTATUS);
-#endif
-#ifdef HAVE_PQPARAMETERSTATUS
-SIMPLE_SYMBOL (PQPARAMETERSTATUS);
-#endif
-#ifdef HAVE_PQSETERRORVERBOSITY
-SIMPLE_SYMBOL (PQSETERRORVERBOSITY);
-#endif
 #ifdef HAVE_PARAMVARIANTS
 SIMPLE_SYMBOL (PARAMVARIANTS);
-#endif
-#ifdef HAVE_PQRESULTERRORFIELD
-SIMPLE_SYMBOL (PQRESULTERRORFIELD);
 #endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
 SIMPLE_SYMBOL (PQRESULTERRORMESSAGE);
@@ -2557,20 +2545,8 @@ init_module (void)
 #ifdef HAVE_PQPROTOCOLVERSION
   PUSH (PQPROTOCOLVERSION);
 #endif
-#ifdef HAVE_PQTRANSACTIONSTATUS
-  PUSH (PQTRANSACTIONSTATUS);
-#endif
-#ifdef HAVE_PQPARAMETERSTATUS
-  PUSH (PQPARAMETERSTATUS);
-#endif
-#ifdef HAVE_PQSETERRORVERBOSITY
-  PUSH (PQSETERRORVERBOSITY);
-#endif
 #ifdef HAVE_PARAMVARIANTS
   PUSH (PARAMVARIANTS);
-#endif
-#ifdef HAVE_PQRESULTERRORFIELD
-  PUSH (PQRESULTERRORFIELD);
 #endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
   PUSH (PQRESULTERRORMESSAGE);
