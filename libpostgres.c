@@ -330,13 +330,13 @@ strip_newlines (char *str)
  * common parameter handling
  */
 
-#ifndef HAVE_PARAMVARIANTS
+#ifndef HAVE_PQPROTOCOLVERSION
 
 static char noparams[] = "param variant unsupported";
 
 #define SORRYNOPARAMS()  (scm_misc_error (FUNC_NAME, noparams, SCM_EOL))
 
-#else /* HAVE_PARAMVARIANTS */
+#else /* HAVE_PQPROTOCOLVERSION */
 
 struct paramspecs
 {
@@ -394,7 +394,7 @@ drop_paramspecs (struct paramspecs *ps)
   if (ps->formats) free (ps->formats);
 }
 
-#endif /* HAVE_PARAMVARIANTS */
+#endif /* HAVE_PQPROTOCOLVERSION */
 
 
 /*
@@ -754,11 +754,11 @@ PG_DEFINE (pg_exec_params, "pg-exec-params", 3, 0, 0,
            "parameterized string, and @var{parms} is a parameter-vector.")
 {
 #define FUNC_NAME s_pg_exec_params
-#ifndef HAVE_PARAMVARIANTS
+#ifndef HAVE_PQPROTOCOLVERSION
 
   return SORRYNOPARAMS ();
 
-#else /* HAVE_PARAMVARIANTS */
+#else /* HAVE_PQPROTOCOLVERSION */
 
   SCM z;
   PGconn *dbconn;
@@ -781,7 +781,7 @@ PG_DEFINE (pg_exec_params, "pg-exec-params", 3, 0, 0,
   drop_paramspecs (&ps);
   return z;
 
-#endif /* HAVE_PARAMVARIANTS */
+#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -795,11 +795,11 @@ PG_DEFINE (pg_exec_prepared, "pg-exec-prepared", 3, 0, 0,
 {
 #define FUNC_NAME s_pg_exec_prepared
 
-#ifndef HAVE_PARAMVARIANTS
+#ifndef HAVE_PQPROTOCOLVERSION
 
   return SORRYNOPARAMS ();
 
-#else /* HAVE_PARAMVARIANTS */
+#else /* HAVE_PQPROTOCOLVERSION */
 
   SCM z;
   PGconn *dbconn;
@@ -822,7 +822,7 @@ PG_DEFINE (pg_exec_prepared, "pg-exec-prepared", 3, 0, 0,
   drop_paramspecs (&ps);
   return z;
 
-#endif /* HAVE_PARAMVARIANTS */
+#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -2351,11 +2351,11 @@ PG_DEFINE (pg_send_query_params, "pg-send-query-params", 3, 0, 0,
            "parameterized string, and @var{parms} is a parameter-vector.")
 {
 #define FUNC_NAME s_pg_send_query_params
-#ifndef HAVE_PARAMVARIANTS
+#ifndef HAVE_PQPROTOCOLVERSION
 
   return SORRYNOPARAMS ();
 
-#else /* HAVE_PARAMVARIANTS */
+#else /* HAVE_PQPROTOCOLVERSION */
 
   PGconn *dbconn;
   struct paramspecs ps;
@@ -2373,7 +2373,7 @@ PG_DEFINE (pg_send_query_params, "pg-send-query-params", 3, 0, 0,
   drop_paramspecs (&ps);
   return result ? SCM_BOOL_T : SCM_BOOL_F;
 
-#endif /* HAVE_PARAMVARIANTS */
+#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -2383,11 +2383,11 @@ PG_DEFINE (pg_send_query_prepared, "pg-send-query-prepared", 3, 0, 0,
            "Also, return @code{#t} if successful.")
 {
 #define FUNC_NAME s_pg_send_query_prepared
-#ifndef HAVE_PARAMVARIANTS
+#ifndef HAVE_PQPROTOCOLVERSION
 
   return SORRYNOPARAMS ();
 
-#else /* HAVE_PARAMVARIANTS */
+#else /* HAVE_PQPROTOCOLVERSION */
 
   PGconn *dbconn;
   struct paramspecs ps;
@@ -2405,7 +2405,7 @@ PG_DEFINE (pg_send_query_prepared, "pg-send-query-prepared", 3, 0, 0,
   drop_paramspecs (&ps);
   return result ? SCM_BOOL_T : SCM_BOOL_F;
 
-#endif /* HAVE_PARAMVARIANTS */
+#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -2499,9 +2499,6 @@ PG_DEFINE (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
 
 #ifdef HAVE_PQPROTOCOLVERSION
 SIMPLE_SYMBOL (PQPROTOCOLVERSION);
-#endif
-#ifdef HAVE_PARAMVARIANTS
-SIMPLE_SYMBOL (PARAMVARIANTS);
 #endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
 SIMPLE_SYMBOL (PQRESULTERRORMESSAGE);
@@ -2622,9 +2619,6 @@ init_module (void)
 
 #ifdef HAVE_PQPROTOCOLVERSION
   PUSH (PQPROTOCOLVERSION);
-#endif
-#ifdef HAVE_PARAMVARIANTS
-  PUSH (PARAMVARIANTS);
 #endif
 #ifdef HAVE_PQRESULTERRORMESSAGE
   PUSH (PQRESULTERRORMESSAGE);
