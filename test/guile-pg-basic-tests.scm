@@ -539,6 +539,21 @@
                       "integer, integer"
                       "4" "2")))))))
 
+(define test:get-copy-data
+  (add-test #t
+    (lambda ()
+      (or (not (memq 'PQPROTOCOLVERSION (pg-guile-pg-loaded)))
+          (and (command-ok?
+                (cexec "SELECT * INTO t1 FROM test WHERE col1 = 1"))
+               (let ((res (cexec "COPY t1 TO STDOUT"))
+                     (box (list #f)))
+                 (and ((ok? 'PGRES_COPY_OUT) res)
+                      (< 0 (pg-get-copy-data *C* box #f))
+                      (car box)
+                      (= -1 (pg-get-copy-data *C* box #f))
+                      (car box)
+                      (string=? "1\tColumn 1\n" (car box)))))))))
+
 (define test:getline
   (add-test #t
     (lambda ()
@@ -566,6 +581,21 @@
                      (let ((chunk (substring buf 0 count)))
                        (loop (pg-getlineasync *C* buf)
                              (cons chunk acc)))))))))))
+
+(define test:put-copy-data/end
+  (add-test #t
+    (lambda ()
+      (let ((res (cexec "COPY t1 FROM STDIN")))
+        (and ((ok? 'PGRES_COPY_IN) res)
+             (begin
+               (for-each (lambda (s) (pg-put-copy-data *C* s))
+                         '("2\tColumn 2" "\n" "\\." "\n"))
+               (and (= 1 (pg-put-copy-end *C*))
+                    (let ((res (cexec "SELECT * FROM t1 WHERE col1 = 2")))
+                      (and res (tuples-ok? res)
+                           (equal? (list (pg-getvalue res 0 0)
+                                         (pg-getvalue res 0 1))
+                                   '("2" "Column 2")))))))))))
 
 (define test:putline
   (add-test #t
@@ -699,7 +729,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 53)
+  (test-init "basic-tests" 55)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:protocol-version/bad-connection
@@ -737,8 +767,10 @@
          test:getlength
          test:pg-exec-params
          test:pg-exec-prepared
+         test:get-copy-data
          test:getline
          test:getlineasync
+         test:put-copy-data/end
          test:putline
          test:get-proc:pg-get-db
          test:get-proc:pg-get-user
