@@ -1,5 +1,9 @@
 2006-04-04  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
+	* configure.in (AC_INIT): Bump version to "0.30" for release.
+
+2006-04-04  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
 	* doc/guile-pg.twerp (Processing Results):
 	Add procs to blurb for "Invalid field number" error.
 
