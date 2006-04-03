@@ -1374,6 +1374,84 @@ PG_DEFINE (pg_fnumber, "pg-fnumber", 2, 0, 0,
 #undef FUNC_NAME
 }
 
+PG_DEFINE (pg_ftable, "pg-ftable", 2, 0, 0,
+           (SCM result, SCM num),
+           "Return the OID of the table from which the field @var{num}\n"
+           "was fetched in @var{result}.  If the installation does not\n"
+           "support @code{PQPROTOCOLVERSION}, return @code{#f}.")
+{
+#define FUNC_NAME s_pg_ftable
+  xr_t *xr; PGresult *res;
+  int field;
+
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
+
+#ifndef HAVE_PQPROTOCOLVERSION
+
+  return SCM_BOOL_F;
+
+#else /* HAVE_PQPROTOCOLVERSION */
+
+  return gh_ulong2scm (PQftable (res, field));
+
+#endif /* HAVE_PQPROTOCOLVERSION */
+#undef FUNC_NAME
+}
+
+PG_DEFINE (pg_ftablecol, "pg-ftablecol", 2, 0, 0,
+           (SCM result, SCM num),
+           "Return the column number (within its table) of the column\n"
+           "making up field @var{num} of @var{result}.  Column numbers\n"
+           "start at 0.  If the installation does not support\n"
+           "@code{PQPROTOCOLVERSION}, return @code{#f}.")
+{
+#define FUNC_NAME s_pg_ftablecol
+  xr_t *xr; PGresult *res;
+  int field;
+
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
+
+#ifndef HAVE_PQPROTOCOLVERSION
+
+  return SCM_BOOL_F;
+
+#else /* HAVE_PQPROTOCOLVERSION */
+
+  return gh_ulong2scm (PQftablecol (res, field));
+
+#endif /* HAVE_PQPROTOCOLVERSION */
+#undef FUNC_NAME
+}
+
+PG_DEFINE (pg_fformat, "pg-fformat", 2, 0, 0,
+           (SCM result, SCM num),
+           "Return the format code indicating the format of field\n"
+           "@var{num} of @var{result}.  Zero (0) indicates textual\n"
+           "data representation; while one (1) indicates binary.  If\n"
+           "the installation does not support @code{PQPROTOCOLVERSION},\n"
+           "return @code{#f}.")
+{
+#define FUNC_NAME s_pg_fformat
+  xr_t *xr; PGresult *res;
+  int field;
+
+  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
+
+#ifndef HAVE_PQPROTOCOLVERSION
+
+  return SCM_BOOL_F;
+
+#else /* HAVE_PQPROTOCOLVERSION */
+
+  return gh_ulong2scm (PQfformat (res, field));
+
+#endif /* HAVE_PQPROTOCOLVERSION */
+#undef FUNC_NAME
+}
+
 PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
            (SCM result, SCM num),
            "Return the PostgreSQL internal integer representation of\n"
