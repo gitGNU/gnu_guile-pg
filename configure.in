@@ -112,12 +112,6 @@ if test "x$pg_ac_need_invalidoid" = xtrue ; then
   AC_MSG_ERROR([cannot find declaration for InvalidOid])
 fi
 
-dnl PQexecParams presence means all "param variants" are present.
-AC_CHECK_FUNCS(PQexecParams,[
-  AC_DEFINE(HAVE_PARAMVARIANTS, 1,
-            [Support for param variants of PQexec and friends])
-])
-
 CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"
 
