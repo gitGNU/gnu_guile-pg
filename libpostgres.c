@@ -2226,7 +2226,11 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
     {
       rv = gh_str02scm (n->relname);
       rv = gh_cons (rv, gh_int2scm (n->be_pid));
-      free (n);
+#ifndef HAVE_PQFREEMEM
+      PQfreeNotify (n);
+#else /* HAVE_PQFREEMEM */
+      PQfreemem (n);
+#endif /* HAVE_PQFREEMEM */
     }
   return rv;
 #undef FUNC_NAME
