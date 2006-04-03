@@ -612,8 +612,10 @@ The procedure could be called as follows
 @twerpdoc (pg-binary-tuples?)
 
 @erindex Invalid field number
-The procedures @code{pg-fmod}, @code{pg-ftype}, @code{pg-fname}
-and @code{pg-fsize} can all throw an @dfn{Invalid field number} error.
+The procedures @code{pg-fmod}, @code{pg-ftype}, @code{pg-fname},
+@code{pg-ftable}, @code{pg-ftablecol}, @code{pg-fformat}, @code{pg-ftype}
+and @code{pg-fsize} can all throw an @dfn{Argument out of range} error
+if the specified field does not exist in the result.
 
 @twerpdoc (pg-fmod)
 
