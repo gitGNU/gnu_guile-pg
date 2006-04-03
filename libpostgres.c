@@ -332,6 +332,10 @@ strip_newlines (char *str)
 
 #ifndef HAVE_PQPROTOCOLVERSION
 
+static char nosupp[] = "unsupported procedure";
+
+#define SORRYNOSUPPORT()  (scm_misc_error (FUNC_NAME, nosupp, SCM_EOL))
+
 static char noparams[] = "param variant unsupported";
 
 #define SORRYNOPARAMS()  (scm_misc_error (FUNC_NAME, noparams, SCM_EOL))
@@ -1651,6 +1655,125 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
   return gh_int2scm (-1);
 
 #endif /* !HAVE_PQFMOD */
+}
+
+PG_DEFINE (pg_put_copy_data, "pg-put-copy-data", 2, 0, 0,
+           (SCM conn, SCM data),
+           "Send on @var{conn} the @var{data} (a string).\n"
+           "Return 1 if ok; 0 if the server is in nonblocking mode\n"
+           "and the attempt would block; and -1 if an error occurred. If\n"
+           "the installation does not support @code{PQPROTOCOLVERSION},\n"
+           "signal @samp{unsupported} error.")
+{
+#define FUNC_NAME s_pg_put_copy_data
+  PGconn *dbconn;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+  SCM_VALIDATE_STRING (2, data);
+
+#ifndef HAVE_PQPROTOCOLVERSION
+
+  return SORRYNOSUPPORT ();
+
+#else /* HAVE_PQPROTOCOLVERSION */
+
+  ROZT_X (data);
+  return gh_int2scm (PQputCopyData (dbconn,
+                                    ROZT (data),
+                                    SCM_ROLENGTH (data)));
+
+#endif /* HAVE_PQPROTOCOLVERSION */
+#undef FUNC_NAME
+}
+
+PG_DEFINE (pg_put_copy_end, "pg-put-copy-end", 1, 1, 0,
+           (SCM conn, SCM errmsg),
+           "Send an end-of-data indication over @var{conn}.\n"
+           "Optional arg @var{errmsg} is a string, which if present,\n"
+           "forces the COPY operation to fail with @var{errmsg} as the\n"
+           "error message.\n"
+           "Return 1 if ok; 0 if the server is in nonblocking mode\n"
+           "and the attempt would block; and -1 if an error occurred. If\n"
+           "the installation does not support @code{PQPROTOCOLVERSION},\n"
+           "signal @samp{unsupported} error.")
+{
+#define FUNC_NAME s_pg_put_copy_end
+  PGconn *dbconn;
+  char *cerrmsg = NULL;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+  if (errmsg != SCM_UNDEFINED)
+    SCM_VALIDATE_STRING (2, errmsg);
+
+#ifndef HAVE_PQPROTOCOLVERSION
+
+  return SORRYNOSUPPORT ();
+
+#else /* HAVE_PQPROTOCOLVERSION */
+
+  if (errmsg != SCM_UNDEFINED)
+    {
+      ROZT_X (errmsg);
+      cerrmsg = ROZT (errmsg);
+    }
+
+  return gh_int2scm (PQputCopyEnd (dbconn, cerrmsg));
+
+#endif /* HAVE_PQPROTOCOLVERSION */
+#undef FUNC_NAME
+}
+
+PG_DEFINE (pg_get_copy_data, "pg-get-copy-data", 2, 1, 0,
+           (SCM conn, SCM port, SCM asyncp),
+           "Get a line of COPY data from @var{conn}, writing it to\n"
+           "output @var{port}.  If @var{port} is a pair, construct\n"
+           "a new string and set its @sc{car} to the new string.\n"
+           "Return the number of data bytes in the row (always greater\n"
+           "than zero); or zero to mean the COPY is still in progress\n"
+           "and no data is yet available; or -1 to mean the COPY is\n"
+           "done; or -2 to mean an error occurred.\n"
+           "If the installation does not support @code{PQPROTOCOLVERSION},\n"
+           "signal @samp{unsupported} error.")
+{
+#define FUNC_NAME s_pg_get_copy_data
+  PGconn *dbconn;
+  int pwritep = 0, swritep = 0, rv;
+  char *newbuf;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+  if (SCM_OUTPORTP (port))
+    pwritep = 1;
+  else
+    {
+      if (gh_pair_p (port))
+        swritep = 1;
+      else
+        SCM_WTA (SCM_ARG2, port);
+    }
+
+#ifndef HAVE_PQPROTOCOLVERSION
+
+  return SORRYNOSUPPORT ();
+
+#else /* HAVE_PQPROTOCOLVERSION */
+
+  SCM_DEFER_INTS;
+  rv = PQgetCopyData (dbconn, &newbuf, SCM_NFALSEP (asyncp));
+  if (0 < rv)
+    {
+      SCM s = gh_str2scm (newbuf, rv);
+      if (pwritep)
+        scm_display (s, port);
+      if (swritep)
+        scm_set_car_x (port, s);
+    }
+  SCM_ALLOW_INTS;
+  PQfreemem (newbuf);
+
+  return gh_int2scm (rv);
+
+#endif /* HAVE_PQPROTOCOLVERSION */
+#undef FUNC_NAME
 }
 
 PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
