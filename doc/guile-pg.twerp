@@ -718,6 +718,17 @@ then be associated with each connection using @code{pg-set-client-data!}.
 @node    Writing/Reading Data
 @chapter Procedures for Copying Data
 
+As of PostgreSQL 7.4, you can send arbitrarily-sized chunks of data after
+issuing the @code{COPY <table> FROM STDIN} command.  Also, both send and
+receive (with the @code{COPY <table> TO STDOUT} command) paths can be
+performed asynchronously.  See below for the older (obsolete) interface.
+
+@twerpdoc (pg-put-copy-data)
+@twerpdoc (pg-put-copy-end)
+@twerpdoc (pg-get-copy-data)
+
+@heading Obsolete functions for COPY
+
 There are two procedures for reading a line of data associated with the
 command @code{COPY <table> TO STDOUT}.  For both, when the @dfn{end-of-copy
 marker} is recognized, that means the results from the @code{COPY} command
