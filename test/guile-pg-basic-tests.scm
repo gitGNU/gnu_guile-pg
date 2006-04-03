@@ -419,14 +419,18 @@
                     (> oid 0)
                     (eq? (string->number (pg-cmdtuples res)) 1))))))))
 
-(define test:fnumber
+(define test:fnumber-and-friends
   (add-test #t
     (lambda ()
       (let ((res (cexec "SELECT col1, col2 FROM test WHERE col1 <= 100")))
         (and (tuples-ok? res)
              (eq? (pg-fnumber res "col1") 0)
              (eq? (pg-fnumber res "col2") 1)
-             (eq? (pg-fnumber res "invalid_column_name") -1))))))
+             (eq? (pg-fnumber res "invalid_column_name") -1)
+             (or (not (memq 'PQPROTOCOLVERSION (pg-guile-pg-loaded)))
+                 (and (integer? (pg-ftable res 0))
+                      (integer? (pg-ftablecol res 0))
+                      (= 0 (pg-fformat res 0)))))))))
 
 (define test:getvalue
   (add-test #t
@@ -726,7 +730,7 @@
          test:nfields
          test:oid-value-was-oid-status
          test:oid-value
-         test:fnumber
+         test:fnumber-and-friends
          test:getvalue
          test:getisnull
          test:fsize
