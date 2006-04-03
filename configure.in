@@ -91,7 +91,7 @@ AC_CHECK_FUNCS([ \
   PQfmod PQbinaryTuples PQbackendPID \
   PQresultErrorMessage PQpass PQputnbytes \
   PQoidValue PQsetnonblocking PQisnonblocking \
-  PQprotocolVersion \
+  PQprotocolVersion PQfreemem \
 ])
 
 AC_CHECK_DECL([InvalidOid],,
