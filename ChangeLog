@@ -1,3 +1,208 @@
+2006-04-04  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* doc/guile-pg.twerp (Processing Results):
+	Add procs to blurb for "Invalid field number" error.
+
+2006-04-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c
+	[! HAVE_PQPROTOCOLVERSION] (nosupp): New static string.
+	[! HAVE_PQPROTOCOLVERSION] (SORRYNOSUPPORT): New macro.
+	(pg_put_copy_data, pg_put_copy_end, pg_get_copy_data):
+	New PG_DEFINE funcs.
+
+	* doc/guile-pg.twerp (Writing/Reading Data): Add blurb and
+	@twerpdoc for `pg-put-copy-data', `pg-put-copy-end' and
+	`pg-get-copy-data'.  Add @heading for obsolete COPY funcs.
+
+2006-04-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (PQfreemem): Check for this func.
+
+	* libpostgres.c (pg_notifies) [HAVE_PQFREEMEM]: Use `PQfreemem'.
+
+2006-04-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (HAVE_PARAMVARIANTS): Delete AC_DEFINE.
+
+	* libpostgres.c: Throughout, use HAVE_PQPROTOCOLVERSION
+	instead of HAVE_PARAMVARIANTS.
+	(PARAMVARIANTS): Delete symbol.
+
+2006-04-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (pg_ftable, pg_ftablecol, pg_fformat):
+	New PG_DEFINE funcs.
+
+	* doc/guile-pg.twerp (Processing Results): Add @twerpdoc
+	for `pg-ftable', `pg-ftablecol' and `pg-fformat'.
+
+2006-04-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (PQtransactionStatus, PQparameterStatus)
+	(PQsetErrorVerbosity, PQresultErrorField):
+	No longer check for these functions.
+
+	* libpostgres.c (pg_result_error_field, pg_transaction_status)
+	(pg_parameter_status, pg_set_error_verbosity):
+	Use `HAVE_PQPROTOCOLVERSION'.
+	(PQTRANSACTIONSTATUS, PQPARAMETERSTATUS, PQSETERRORVERBOSITY)
+	(PQRESULTERRORFIELD): Delete symbols.  Update `init_module'.
+
+2006-03-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (PQresultErrorField): Check for this func.
+
+	* libpostgres.c (kwd_severity, kwd_sqlstate, kwd_messageprimary)
+	(kwd_messagedetail, kwd_messagehint, kwd_statementposition)
+	(kwd_context, kwd_sourcefile, kwd_sourceline, kwd_sourcefunction):
+	New keywords.
+	(pg_result_error_field): New PG_DEFINE func.
+	(PQRESULTERRORFIELD) [HAVE_PQRESULTERRORFIELD]: New symbol.
+	(init_module) [HAVE_PQRESULTERRORFIELD]:
+	Include `PQRESULTERRORFIELD' in `goodies'.
+
+	* doc/guile-pg.twerp (Processing Results):
+	Add @twerpdoc for `pg-result-error-field'.
+
+2006-03-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (pg_result_error_message):
+	In docstring, mention no trailing newlines.
+
+2006-03-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-meta.scm (*class-defs*): Create local string and
+	use it repeatedly instead of using separate identical strings.
+
+2006-03-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-table.scm (pgtable-manager):
+	Handle #:update-col-alist.
+
+2006-03-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-table.scm (->db-insert-string):
+	For #:NULL, return "NULL".
+
+2006-03-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (==kw-over-commas): New hash table.
+	(qcons-declare!): For #:keyword-args-ok, augment `==kw-over-commas'.
+	(expr add-noise!): Do kw rendering for ops in `==kw-over-commas'.
+
+	* doc/mkinc: Add blurb and processed output of `==kw-over-commas'.
+
+2006-03-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* scm/postgres-qcons.scm (define-hash): New macro.
+	(==infix-operations, ==display-aliases)
+	(==postfix-operations): New hash tables.
+	(qcons-declare!): Update hashes instead of lists.
+	(expr add-noise!, sql<-trees out):
+	Look up in hashes instead of in lists.
+
+2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c: Throughout, remove explicit `(void)' casts.
+
+2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* doc/guile-pg.twerp (Parameters): Convert @example to @lisp.
+
+2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (HAVE_PARAMVARIANTS):
+	New AC_DEFINE if `PQexecParams' found.
+
+	* libpostgres.c
+	(noparams) [! HAVE_PARAMVARIANTS]: New static string.
+	(SORRYNOPARAMS) [! HAVE_PARAMVARIANTS]: New macro.
+	(paramspecs) [HAVE_PARAMVARIANTS]: New struct.
+	(VALIDATE_PARAM_RELATED_ARGS) [HAVE_PARAMVARIANTS]: New macro.
+	(VREF) [HAVE_PARAMVARIANTS]: New macro.
+	(prep_paramspecs) [HAVE_PARAMVARIANTS]: New static func.
+	(drop_paramspecs) [HAVE_PARAMVARIANTS]: New static func.
+	(pg_exec_params): New PG_DEFINE func.
+	(pg_exec_prepared): Likewise.
+	(pg_send_query_params): Likewise.
+	(pg_send_query_prepared): Likewise.
+	(PARAMVARIANTS) [HAVE_PARAMVARIANTS]: New symbol.
+	(init_module) [HAVE_PARAMVARIANTS]:
+	Include `PARAMVARIANTS' in `goodies'.
+
+	* doc/guile-pg.twerp (Retrieving Data): Add "Parameters" to menu.
+	(Parameters): New node/section.
+	(Synchronous Retrieval): Add intro blurb, @xref to "Parameters",
+	and @twerpdoc for `pg-exec-params' and `pg-exec-prepared'.
+	(Asynchronous Retrieval): Add @xref to "Parameters" and @twerpdoc
+	for `pg-send-query-params' and `pg-send-query-prepared'.
+
+2006-03-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* libpostgres.c (pg_parameter_status): Make const auto var `cstatus'.
+
+2006-03-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (PQsetErrorVerbosity): Check for this func.
+
+	* libpostgres.c (kwd_terse, kwd_default, kwd_verbose): New keywords.
+	(pg_set_error_verbosity): New PG_DEFINE func.
+	[HAVE_PQSETERRORVERBOSITY] (PQSETERRORVERBOSITY): New symbol.
+	(init_module) [HAVE_PQSETERRORVERBOSITY]:
+	Include `PQSETERRORVERBOSITY' in `goodies'.
+
+	* doc/guile-pg.twerp (Miscellaneous): Add
+	@erindex and @twerpdoc for `pg-set-error-verbosity'.
+
+2006-03-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (PQparameterStatus): Check for this func.
+
+	* libpostgres.c (pg_parameter_status): New PG_DEFINE func.
+	[HAVE_PQPARAMETERSTATUS] (PQPARAMETERSTATUS): New symbol.
+	(init_module) [HAVE_PQPARAMETERSTATUS]:
+	Include `PQPARAMETERSTATUS' in `goodies'.
+
+	* doc/guile-pg.twerp (Database Connections):
+	Add @twerpdoc for `pg-parameter-status'.
+
+2006-03-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (PQtransactionStatus): Check for this func.
+
+	* libpostgres.c (kwd_idle, kwd_active, kwd_intrans, kwd_inerror)
+	(kwd_unknown): New keywords.
+	(pg_transaction_status): New PG_DEFINE func.
+	(PQTRANSACTIONSTATUS) [HAVE_PQTRANSACTIONSTATUS]: New symbol.
+	(init_module) [HAVE_PQTRANSACTIONSTATUS]:
+	Include `PQTRANSACTIONSTATUS' in `goodies'.
+
+	* doc/guile-pg.twerp (Database Connections):
+	Add @twerdoc for `pg-transaction-status'.
+
+2006-03-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (PQprotocolVersion): Check for this func.
+
+	* libpostgres.c (pg_protocol_version): New PG_DEFINE func.
+	[HAVE_PQPROTOCOLVERSION] (PQPROTOCOLVERSION): New symbol.
+	(init_module) [HAVE_PQPROTOCOLVERSION]:
+	Include `PQPROTOCOLVERSION' in `goodies'.
+
+	* doc/guile-pg.twerp (Database Connections):
+	Add blurb and @twerpdoc for `pg-protocol-version'.
+
+2006-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in: Quote (with square brackets) AC_CHECK_FUNCS arg.
+	Also for the arg, use backslash at eol instead of `dnl'.
+
+2006-01-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* doc/guile-pg.twerp (Single-Table Abstraction):
+	Remove @twerpdoc for `tuples-result->table'.
+
 2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in (AC_INIT): Bump version to "0.29" for release.

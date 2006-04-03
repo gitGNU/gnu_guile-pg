@@ -1,6 +1,143 @@
 NEWS for Guile-PG
 
 
+- 0.30 | NOT YET RELEASED
+
+  - Expiration date extended for opaque string support
+
+	Opaque string support in modules (database postgres-table) and
+	(database postgres-qcons) will be removed after 2006-12-31; DO
+	NOT rely on it.  This represents a consolidation of disparate
+	expiration dates, including the one announced in NEWS below for
+	Guile-PG 0.26 (2005-02-24).  The lack of central announcement
+	(comments in the source and documentation don't count) caused
+	some confusion -- sorry about that.
+
+	Generally, the replacement for opaque strings is some kind of
+	form that either is a prefix-style expression or includes one.
+	Note: such expressions do not preclude strings, only opaque
+	ones.  See "Query Construction" in the manual for details.
+
+	Here are the areas that will be affected (i.e., where you will
+	want to avoid opaque strings and instead use prefix-style exprs):
+	- module (database postgres-table)
+	  - `pgtable-manger' and `pgtable-worker' commands
+	    - #:select (both OUTSPEC and REST-CLAUSES)
+	    - #:update-col and #:delete-rows WHERE-CONDITION
+	  - EXPR in `compile-outspec' DEFS
+	- module (database postgres-qcons) proc `make-SELECT/COLS-tree'
+	  - specifically, EXPR in COLS
+	  - other procs that call `make-SELECT/COLS-tree'
+	    - `make-SELECT/FROM/COLS-tree'
+	    - `parse+make-SELECT-tree'
+
+  - Expiration date extended for `pgtable-manager' "data commands"
+
+	Similar to parts of the opaque string support (above), the
+	expiration for `pgtable-manager' "data commands" (i.e.,
+	#:table-name, #:defs and #:pgdb, all which return a non-
+	procedure value), was mentioned in source and documentation
+	but not in NEWS.  So now here it is (with an extension).
+
+	These commands will be removed after 2006-12-31; DO NOT rely on
+	them.  Instead, you can use the #:k command specifying, with a
+	keyword, the info you'd like returned: #:table-name, #:col-defs
+	or #:connection, respectively.  For example:
+
+	(define M (pgtable-manager ...))
+	(eq? (M #:defs)			; old way
+ 	     ((M #:k) #:col-defs))	; new way
+	=> #t
+
+	The following example shows the contrast w/ `pgtable-worker',
+	which never accepted "data commands" anyway:
+
+	(define W (pgtable-worker ...))
+	(eq? (W #:k #:col-defs)
+	     ((M #:k) #:col-defs))
+	=> #t
+
+  - New support for keyword args in module (database postgres-qcons)
+
+	Previously, it was not possible to straightforwardly (without
+	bletcherous `sql-pre' strings) render SQL with keywords in the
+	args, such as:
+
+	substring ('gnufoo' FROM position ('foo' IN 'gnufoo'))
+
+	Now, this can be done with the prefix-style expression:
+
+	(substring "gnufoo" #:FROM (position "foo" #:IN "gnufoo"))
+
+	Along with this, `qcons-declare!' now handles a new category:
+	#:keyword-args-ok, and the manual lists the handful of functions
+	for which this declaration is builtin.
+
+  - New stuff for `pgtable-manager' (and by extension `pgtable-worker')
+
+    - Support for NULL
+
+	You can now use the keyword #:NULL to specify NULL as the value
+	to insert into a table, or to update a column.
+
+    - New command: #:update-col-alist
+
+	This is like #:update-col, except that the COLS and DATA are
+	specified as a single alist arg, not separately.
+
+  - New (database postgres) procs
+
+	The following procs are associated with the `PQPROTOCOLVERSION'
+	feature in the `pg-guile-pg-loaded' return value.  Note that
+	this is in contrast to the one-to-one correspondance between
+	feature and libpq function for previous Guile-PG releases.
+
+    - pg-protocol-version
+    - pg-transaction-status
+    - pg-parameter-status
+    - pg-set-error-verbosity
+    - pg-result-error-field
+    - pg-ftable
+    - pg-ftablecol
+    - pg-fformat
+
+	These adhere closely to the C functions in the libpq interface.
+	Here is a table listing the functions and their behavior for
+	installations prior to PostgreSQL 7.4.
+
+	libpq func            behavior: do nothing and return
+	 PQprotocolVersion     2
+	 PQtransactionStatus   #:unknown
+	 PQparameterStatus     #f
+	 PQsetErrorVerbosity   #:default
+	 PQresultErrorField    #f
+	 PQftable              #f
+	 PQftablecol           #f
+	 PQfformat             #f
+
+    - pg-put-copy-data
+    - pg-put-copy-end
+    - pg-get-copy-data
+
+	These have a simplified, "more Schemey", interface.  They cannot
+	be used when connected to a "Protocol 2.0" (PostgreSQL 7.3.x and
+	prior) server.
+
+    - pg-exec-params
+    - pg-exec-prepared
+    - pg-send-query-params
+    - pg-send-query-prepared
+
+	These have a simplified, "more Schemey", interface, and some
+	serious (though provisionary) restrictions.  They cannot be used
+	when connected to a "Protocol 2.0" (PostgreSQL 7.3.x and prior)
+	server.  See new section "Parameters" in the manual for details.
+
+  - Tested against PostgreSQL 7.4.12 and Guile 1.4.1.107
+
+  - Maintenance uses GNU Automake 1.9.6
+
+
 - 0.29 | 2005-08-25
 
   - Dropped proc: where-clausifier

@@ -1,3 +1,75 @@
+2006-04-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm
+	(test:get-copy-data, test:put-copy-data/end): New test procs.
+	(main): Use new test procs; update expected-pass number.
+
+2006-04-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:asynchronous-retrieval):
+	Turn off nonblocking mode right before `pg-endcopy' call.
+
+2006-04-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:fnumber-and-friends):
+	Rename test from `test:fnumber'.  Update unique caller.
+
+2006-04-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:parameter-status)
+	(test:set-error-verbosity): Use `PQPROTOCOLVERSION'.
+
+2006-03-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (ok?): If not ok,
+	try to find the "sqlstate" and display it.
+	(test:known-bad-command): New test proc.
+	(main): Use new test proc; update expected-pass number.
+
+2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-abstraction-scm-tests.scm:
+	Convert "where ..." clauses to `#:where EXPR'.
+	(main): Enable verbose output.
+
+2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-abstraction-scm-tests.scm
+	(pass-if): Set procedure's `name' property.
+	(sel/check): If tuples not ok, display its error message.
+
+2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:pg-exec-params): New test proc.
+	(test:pg-exec-prepared, test:send-query-param-variants): Likewise.
+	(main): Use new test procs; update expected-pass number.
+
+2006-03-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:set-error-verbosity): New test proc.
+	(main): Use new test proc; update expected-pass number.
+
+2006-03-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:parameter-status): New test proc.
+	(main): Use new test proc; update expected-pass number.
+
+2006-03-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:transaction-status): New test proc.
+	(main): Use new test proc; update expected-pass number.
+
+2006-03-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:asynchronous-retrieval):
+	Disable non-blocking before starting.
+
+2006-03-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:protocol-version)
+	(test:protocol-version/bad-connection): New test procs.
+	(main): Use new test procs; update expected-pass number.
+
 2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-abstraction-scm-tests.scm (objwalk): Delete data structure.
