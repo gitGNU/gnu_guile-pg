@@ -634,8 +634,6 @@
 (define test:asynchronous-retrieval
   (add-test #t
     (lambda ()
-      ;; Test fails for PostgreSQL 7.4.12 at `pg-endcopy' if this is omitted.
-      (pg-set-nonblocking! *C* #f)
       (and
        ;; Create a table.
        (command-ok? (cexec "CREATE TABLE async (a numeric (20, 10))"))
@@ -644,6 +642,8 @@
                   ((= i 0))
                 (pg-putline *C* (format #f "~A.~A\n" i i)))
               (pg-putline *C* "\\.\n")
+              ;; Test fails for PostgreSQL 7.4.12 at `pg-endcopy' if omitted.
+              (pg-set-nonblocking! *C* #f)
               (pg-endcopy *C*))
        ;; Perhaps usage protocol does not absolutely require this check, but
        ;; removing it causes the subsequent `pg-send-query' to return #f, with
