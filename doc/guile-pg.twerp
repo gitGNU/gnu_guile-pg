@@ -629,6 +629,12 @@ and @code{pg-fsize} can all throw an @dfn{Invalid field number} error.
 
 @twerpdoc (pg-fnumber)
 
+@twerpdoc (pg-ftable)
+
+@twerpdoc (pg-ftablecol)
+
+@twerpdoc (pg-fformat)
+
 @twerpdoc (pg-getvalue)
 
 This example defines a procedure @code{tuple->alist} which returns a given
