@@ -1,6 +1,6 @@
 /* fcruft.h --- sometimes kids make messes for others to clean up
 
-   Copyright (C) 2004,2005 Thien-Thi Nguyen
+   Copyright (C) 2004,2005,2006 Thien-Thi Nguyen
 
    This file is part of Guile-PG.
 

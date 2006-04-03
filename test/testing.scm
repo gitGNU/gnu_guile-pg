@@ -1,4 +1,4 @@
-;; Copyright (C) 2004 Thien-Thi Nguyen
+;; Copyright (C) 2004, 2006 Thien-Thi Nguyen
 ;; Copyright (C) 1996, 1997, 1998 Per Bothner.
 ;;
 ;; Usage:

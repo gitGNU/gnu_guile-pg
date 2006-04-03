@@ -1,6 +1,6 @@
 ;;; postgres-col-defs.scm --- column definitions
 
-;;	Copyright (C) 2002, 2003, 2004, 2005 Thien-Thi Nguyen
+;; Copyright (C) 2002, 2003, 2004, 2005, 2006 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;
