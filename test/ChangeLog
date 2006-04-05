@@ -1,3 +1,8 @@
+2006-04-05  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* guile-pg-basic-tests.scm (test:asynchronous-retrieval):
+	Move nonblocking disabling prior to first `pg-putline'.
+
 2006-04-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm
