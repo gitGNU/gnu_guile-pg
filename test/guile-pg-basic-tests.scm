@@ -668,13 +668,16 @@
        ;; Create a table.
        (command-ok? (cexec "CREATE TABLE async (a numeric (20, 10))"))
        ((ok? 'PGRES_COPY_IN) (cexec "COPY async FROM STDIN"))
-       (begin (do ((i 4224 (1- i)))
-                  ((= i 0))
-                (pg-putline *C* (format #f "~A.~A\n" i i)))
-              (pg-putline *C* "\\.\n")
+       (begin
+         (and (memq 'PQPROTOCOLVERSION (pg-guile-pg-loaded))
               ;; Test fails for PostgreSQL 7.4.12 at `pg-endcopy' if omitted.
-              (pg-set-nonblocking! *C* #f)
-              (pg-endcopy *C*))
+              ;; This needs to be done prior to `pg-putline', as well.
+              (pg-set-nonblocking! *C* #f))
+         (do ((i 4224 (1- i)))
+             ((= i 0))
+           (pg-putline *C* (format #f "~A.~A\n" i i)))
+         (pg-putline *C* "\\.\n")
+         (pg-endcopy *C*))
        ;; Perhaps usage protocol does not absolutely require this check, but
        ;; removing it causes the subsequent `pg-send-query' to return #f, with
        ;; error message "another command is already in progress".
