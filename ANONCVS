@@ -1,12 +1,1 @@
-Anonymous CVS is available for the "guile-pg" module.
-Here are the commands to use:
-
-  rootopt='-d :pserver:anonymous@cvs.glug.org:/home/ttn/cvsroot'
-
-  cvs $rootopt login    # just type RET at the prompt
-
-  cvs $rootopt co guile-pg
-
-Look at autogen.sh to get started.
-
-Happy hacking!
+Anonymous CVS for the "guile-pg" module is no longer available.
