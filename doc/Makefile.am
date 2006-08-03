@@ -21,7 +21,12 @@
 ##   Fifth Floor, Boston, MA  02110-1301  USA
 
 info_TEXINFOS = guile-pg.texi
-guile_pg_TEXINFOS = guile-pg.texi qcons-tables.texi
+guile_pg_TEXINFOS = guile-pg.texi relinfo.texi qcons-tables.texi
+
+relinfo.texi: $(top_srcdir)/configure
+	@echo Creating $@
+	@echo "This manual documents $(PACKAGE_STRING)" > $@
+	@echo "(released `date +%Y-%m-%d -r $<`)." >> $@
 
 qcons-tables.texi: $(top_srcdir)/scm/postgres-qcons.scm
 	$(srcdir)/mkinc $< > $@
