@@ -86,6 +86,8 @@ correspondence with the PostgreSQL @code{libpq} C library interface.  Other
 higher-level modules, typically named @code{(database postgres-FOO)}, provide
 abstractions and convenience procedures.
 
+@include relinfo.texi
+
 @menu
 * Legalities::                  Your rights and freedoms.
 * Quick Start::                 Overview and brief examples.
