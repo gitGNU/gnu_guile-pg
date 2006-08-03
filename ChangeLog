@@ -1,3 +1,9 @@
+2006-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* doc/guile-pg.twerp (Top): Include relinfo.texi.
+	* doc/Makefile.am (guile_pg_TEXINFOS): Add relinfo.texi.
+	(relinfo.texi): New target.
+
 2006-04-04  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in (AC_INIT): Bump version to "0.30" for release.
