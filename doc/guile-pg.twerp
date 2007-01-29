@@ -903,7 +903,7 @@ opens the required file and starts/stops the trace.
 
 @lisp
 (define (trace-on conn filename)
-  (let ((port (open-file filename "w")))
+  (let ((port (open-output-file filename)))
     (pg-set-client-data! conn port)
     (pg-trace conn port)))
 
