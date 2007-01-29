@@ -160,7 +160,7 @@
   (add-test #t
     (lambda ()
       (transaction
-       (let* ((trace-port (open-file "test-lo-seek.log" "w"))
+       (let* ((trace-port (open-output-file "test-lo-seek.log"))
               (lo-port (pg-lo-open *C* *N* "w")))
          (and (pg-trace *C* trace-port)
               lo-port
