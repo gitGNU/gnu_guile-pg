@@ -20,7 +20,7 @@
 (define conn (pg-connectdb "dbname=test"))
 (define oid #f)
 
-(define trace-port (open-file "testloseek.scm.log" "w"))
+(define trace-port (open-output-file "testloseek.scm.log"))
 (pg-trace conn trace-port)
 
 (pg-transaction conn

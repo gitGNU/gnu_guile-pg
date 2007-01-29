@@ -12,7 +12,7 @@
 (if (not (pg:exec conn "BEGIN TRANSACTION"))
      (write-line  (pg:error-message conn)))
      
-(define trace-port (open-file "testlobseek.log" "w"))
+(define trace-port (open-output-file "testlobseek.log"))
 (pg:trace conn trace-port)
 (define lop (pg:lo-creat conn "w"))
 (if (not lop) (write-line (pg:error-message conn)))

@@ -6,6 +6,6 @@
         (iter (- n 1))))
   (iter n))
 
-(define port (open-file "testwrite.out" "w"))
+(define port (open-output-file "testwrite.out"))
 (write-chars 10000 #\X port)
 (close-port port)
