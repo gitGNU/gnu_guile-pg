@@ -252,10 +252,10 @@
                     '(n desc) 343 "a nice prime")))
 
     (pass-if "m2 delete-rows"
-      (command-ok? ((m2 'delete-rows) "n = 13")))
+      (command-ok? ((m2 'delete-rows) '(= 13 n))))
 
     (pass-if "m2 update-col"
-      (command-ok? ((m2 'update-col) '(desc) '("almost 2^5, eh?") "n = 31")))
+      (command-ok? ((m2 'update-col) '(desc) '("almost 2^5, eh?") '(= 31 n))))
 
     (let ((res ((m2 'select) '(desc))))
       (pass-if "m2 select"
