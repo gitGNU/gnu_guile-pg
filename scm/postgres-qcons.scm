@@ -401,18 +401,13 @@
 ;; This support WILL BE REMOVED after 2006-12-31; DO NOT rely on it.
 ;;
 (define (make-SELECT/COLS-tree cols)
-  (define (expr-nostring x)             ; ZOSS
-    (if (string? x)
-        x
-        (expr x)))
   (commasep (lambda (x)
               (cond ((number? x) x)
                     ((symbol? x) (maybe-dq x))
-                    ((string? x) (sql-pre x)) ; ZOSS
                     ((and (pair? x) (string? (car x)))
-                     (as (expr-nostring (cdr x))
+                     (as (expr (cdr x))
                          (sql-pre (fs "~S" (car x)))))
-                    ((pair? x) (expr-nostring x))
+                    ((pair? x) (expr x))
                     (else (error "bad col spec:" x))))
             cols))
 
