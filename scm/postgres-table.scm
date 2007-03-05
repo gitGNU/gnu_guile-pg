@@ -67,8 +67,6 @@
             pgtable-worker
             compile-outspec))
 
-;;; ZOSS: zonk opaque string support
-
 ;;; support
 
 (define put set-object-property!)
@@ -197,10 +195,7 @@
   (define (make-cmd where-condition)
     (sql-command<-trees
      (force pre)
-     (make-WHERE-tree
-      (if (string? where-condition)     ; todo: ZOSS
-          (sql-pre where-condition)
-          where-condition))))
+     (make-WHERE-tree where-condition)))
   ;; rv
   (lambda (where-condition)
     (beex (make-cmd where-condition))))
@@ -218,10 +213,7 @@
                        (->db-insert-string (def:type-name def) val)))
                (col-defs defs cols)
                #f data)
-     (make-WHERE-tree
-      (if (string? where-condition)     ; todo: ZOSS
-          (sql-pre where-condition)
-          where-condition))))
+     (make-WHERE-tree where-condition)))
   ;; rv
   (lambda (cols data where-condition)
     (beex (make-cmd cols data where-condition))))
@@ -282,8 +274,7 @@
             ((and (list? x) (= 3 (length x)))
              (apply-to-args
               x (lambda (type title expr)
-                  ;;ZOSS todo: enable
-                  ;;ZOSS+ (and (string? expr) (bad-select-part expr))
+                  (and (string? expr) (bad-select-part expr))
                   (push! (cond ((symbol? type)
                                 type)
                                ((eq? #f type)
@@ -328,16 +319,10 @@
                       froms
                       (cond ((compiled-outspec?-extract outspec)
                              => set-hints!+sel)
-                            ;; todo: ZOSS
-                            ((string? outspec)
-                             (list (sql-pre outspec)))
                             (else
                              (set-hints!+sel
                               (cdr (compile-outspec outspec defs))))))
                      (cond ((null? rest-clauses) '())
-                           ;; todo: ZOSS
-                           ((string? (car rest-clauses))
-                            (map sql-pre rest-clauses))
                            (else (parse+make-SELECT/tail-tree
                                   rest-clauses)))))
                (res (beex cmd)))
