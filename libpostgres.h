@@ -39,11 +39,6 @@ extern int   xc_display (SCM exp, SCM port, scm_print_state *pstate);
 
 extern void init_libpostgres_lo (void);
 
-/* SCM_DEFINE alone doesn't declare static, so we prefix that decl.  */
-#define PG_DEFINE(FNAME, PRIMNAME, REQ, OPT, VAR, ARGLIST, DOCSTRING) \
-  SCM_SNARF_HERE(static SCM FNAME ARGLIST;) \
-  SCM_DEFINE (FNAME, PRIMNAME, REQ, OPT, VAR, ARGLIST, DOCSTRING)
-
 /* string munging */
 
 /* Coerce a string that is to be used in contexts where the extracted C
