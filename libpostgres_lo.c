@@ -68,19 +68,20 @@ long lob_ptype;
 static SCM lob_mklobport (SCM conn, Oid oid, int alod,
                           long modes, const char *caller);
 
-PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
-           (SCM conn, SCM modes),
-           "Create a new large object and open a port over it for reading\n"
-           "and/or writing.  @var{modes} is a string describing the mode in\n"
-           "which the port is to be opened.  The mode string must include\n"
-           "one of @code{r} for reading, @code{w} for writing or @code{a}\n"
-           "for append (but since the object is empty to start with this is\n"
-           "the same as @code{w}.)  The return value is a large object port\n"
-           "which can be used to read or write data to/from the object, or\n"
-           "@code{#f} on failure in which case @code{pg-error-message} from\n"
-           "the connection should give some idea of what happened.\n\n"
-           "In addition to returning @code{#f} on failure this procedure\n"
-           "throws a @code{misc-error} if the @code{modes} string is invalid.")
+GH_DEFPROC
+(lob_lo_creat, "pg-lo-creat", 2, 0, 0,
+ (SCM conn, SCM modes),
+ "Create a new large object and open a port over it for reading\n"
+ "and/or writing.  @var{modes} is a string describing the mode in\n"
+ "which the port is to be opened.  The mode string must include\n"
+ "one of @code{r} for reading, @code{w} for writing or @code{a}\n"
+ "for append (but since the object is empty to start with this is\n"
+ "the same as @code{w}.)  The return value is a large object port\n"
+ "which can be used to read or write data to/from the object, or\n"
+ "@code{#f} on failure in which case @code{pg-error-message} from\n"
+ "the connection should give some idea of what happened.\n\n"
+ "In addition to returning @code{#f} on failure this procedure\n"
+ "throws a @code{misc-error} if the @code{modes} string is invalid.")
 {
 #define FUNC_NAME s_lob_lo_creat
   long mode_bits;
@@ -123,22 +124,23 @@ PG_DEFINE (lob_lo_creat, "pg-lo-creat", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (lob_lo_open, "pg-lo-open", 3, 0, 0,
-           (SCM conn, SCM oid, SCM modes),
-           "Open a port over an existing large object.  The port can be\n"
-           "used to read or write data from/to the object.  @var{oid}\n"
-           "should be an integer identifier representing the large object.\n"
-           "@var{modes} must be a string describing the mode in which the\n"
-           "port is to be opened.  The mode string must include one of\n"
-           "@code{r} for reading, @code{w} for writing, @code{a} for\n"
-           "append or @code{+} with any of the above indicating both\n"
-           "reading and writing/appending.  @code{A} is equivalent to\n"
-           "opening the port for writing and immediately doing a\n"
-           "@code{(pg-lo-seek)} to the end.  The return value is either\n"
-           "an open large object port or @code{#f} on failure in which\n"
-           "case @code{pg-error-message} from the connection should give\n"
-           "some idea of what happened.\n\n"
-           "Throw @code{misc-error} if the @code{modes} is invalid.")
+GH_DEFPROC
+(lob_lo_open, "pg-lo-open", 3, 0, 0,
+ (SCM conn, SCM oid, SCM modes),
+ "Open a port over an existing large object.  The port can be\n"
+ "used to read or write data from/to the object.  @var{oid}\n"
+ "should be an integer identifier representing the large object.\n"
+ "@var{modes} must be a string describing the mode in which the\n"
+ "port is to be opened.  The mode string must include one of\n"
+ "@code{r} for reading, @code{w} for writing, @code{a} for\n"
+ "append or @code{+} with any of the above indicating both\n"
+ "reading and writing/appending.  @code{A} is equivalent to\n"
+ "opening the port for writing and immediately doing a\n"
+ "@code{(pg-lo-seek)} to the end.  The return value is either\n"
+ "an open large object port or @code{#f} on failure in which\n"
+ "case @code{pg-error-message} from the connection should give\n"
+ "some idea of what happened.\n\n"
+ "Throw @code{misc-error} if the @code{modes} is invalid.")
 {
 #define FUNC_NAME s_lob_lo_open
   long mode_bits;
@@ -245,12 +247,13 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *caller)
   return port;
 }
 
-PG_DEFINE (lob_lo_unlink, "pg-lo-unlink", 2, 0, 0,
-           (SCM conn, SCM oid),
-           "Delete the large object identified by @var{oid}.\n"
-           "Return @code{#t} if the object was successfully deleted,\n"
-           "@code{#f} otherwise, in which case @code{pg-error-message}\n"
-           "applied to @code{conn} should give an idea of what went wrong.")
+GH_DEFPROC
+(lob_lo_unlink, "pg-lo-unlink", 2, 0, 0,
+ (SCM conn, SCM oid),
+ "Delete the large object identified by @var{oid}.\n"
+ "Return @code{#t} if the object was successfully deleted,\n"
+ "@code{#f} otherwise, in which case @code{pg-error-message}\n"
+ "applied to @code{conn} should give an idea of what went wrong.")
 {
 #define FUNC_NAME s_lob_lo_unlink
   int ret, pg_oid;
@@ -268,11 +271,12 @@ PG_DEFINE (lob_lo_unlink, "pg-lo-unlink", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (lob_lo_get_connection, "pg-lo-get-connection", 1, 0, 0,
-           (SCM port),
-           "Return the connection associated with a given large object port.\n"
-           "@var{port} must be a large object port returned from\n"
-           "@code{pg-lo-creat} or @code{pg-lo-open}.")
+GH_DEFPROC
+(lob_lo_get_connection, "pg-lo-get-connection", 1, 0, 0,
+ (SCM port),
+ "Return the connection associated with a given large object port.\n"
+ "@var{port} must be a large object port returned from\n"
+ "@code{pg-lo-creat} or @code{pg-lo-open}.")
 {
 #define FUNC_NAME s_lob_lo_get_connection
   SCM_ASSERT (SCM_NIMP (port) && OPLOBPORTP (port),
@@ -282,11 +286,12 @@ PG_DEFINE (lob_lo_get_connection, "pg-lo-get-connection", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (lob_lo_get_oid, "pg-lo-get-oid", 1, 0, 0,
-           (SCM port),
-           "Return the integer identifier of the object to which a given\n"
-           "port applies.  @var{port} must be a large object port returned\n"
-           "from @code{pg-lo-creat} or @code{pg-lo-open}.")
+GH_DEFPROC
+(lob_lo_get_oid, "pg-lo-get-oid", 1, 0, 0,
+ (SCM port),
+ "Return the integer identifier of the object to which a given\n"
+ "port applies.  @var{port} must be a large object port returned\n"
+ "from @code{pg-lo-creat} or @code{pg-lo-open}.")
 {
 #define FUNC_NAME s_lob_lo_get_oid
   SCM_ASSERT (SCM_NIMP (port) && LOBPORTP (port),
@@ -295,15 +300,16 @@ PG_DEFINE (lob_lo_get_oid, "pg-lo-get-oid", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (lob_lo_tell, "pg-lo-tell", 1, 0, 0,
-           (SCM port),
-           "Return the position of the file pointer for the given large\n"
-           "object port.  @var{port} must be a large object port returned\n"
-           "from @code{pg-lo-creat} or @code{pg-lo-open}.  The return\n"
-           "value is either an integer greater than or equal to zero or\n"
-           "@code{#f} if an error occurred.  In the latter case\n"
-           "@code{pg-error-message} applied to @code{conn} should\n"
-           "explain what went wrong.")
+GH_DEFPROC
+(lob_lo_tell, "pg-lo-tell", 1, 0, 0,
+ (SCM port),
+ "Return the position of the file pointer for the given large\n"
+ "object port.  @var{port} must be a large object port returned\n"
+ "from @code{pg-lo-creat} or @code{pg-lo-open}.  The return\n"
+ "value is either an integer greater than or equal to zero or\n"
+ "@code{#f} if an error occurred.  In the latter case\n"
+ "@code{pg-error-message} applied to @code{conn} should\n"
+ "explain what went wrong.")
 {
 #define FUNC_NAME s_lob_lo_tell
   SCM_ASSERT (SCM_NIMP (port)&&OPLOBPORTP (port),port,SCM_ARG1,FUNC_NAME);
@@ -411,24 +417,25 @@ lob_end_input (SCM port, int offset)
 
 static off_t lob_seek (SCM port, off_t offset, int whence);
 
-PG_DEFINE (lob_lo_seek, "pg-lo-seek", 3, 0, 0,
-           (SCM port, SCM where, SCM whence),
-           "Set the position of the next read or write to/from the given\n"
-           "large object port.  @var{port} must be a large object port\n"
-           "returned from @code{pg-lo-creat} or @code{pg-lo-open}.\n"
-           "@var{where} is the position to set the pointer.  @var{whence}\n"
-           "must be one of\n\n"
-           "@table @code\n\n"
-           "@item SEEK_SET\n"
-           "Relative to the beginning of the file.\n\n"
-           "@item SEEK_CUR\n"
-           "Relative to the current position.\n\n"
-           "@item SEEK_END\n"
-           "Relative to the end of the file.\n\n"
-           "@end table\n"
-           "The return value is an integer which is the new position\n"
-           "relative to the beginning of the object, or a number less than\n"
-           "zero if an error occurred.")
+GH_DEFPROC
+(lob_lo_seek, "pg-lo-seek", 3, 0, 0,
+ (SCM port, SCM where, SCM whence),
+ "Set the position of the next read or write to/from the given\n"
+ "large object port.  @var{port} must be a large object port\n"
+ "returned from @code{pg-lo-creat} or @code{pg-lo-open}.\n"
+ "@var{where} is the position to set the pointer.  @var{whence}\n"
+ "must be one of\n\n"
+ "@table @code\n\n"
+ "@item SEEK_SET\n"
+ "Relative to the beginning of the file.\n\n"
+ "@item SEEK_CUR\n"
+ "Relative to the current position.\n\n"
+ "@item SEEK_END\n"
+ "Relative to the end of the file.\n\n"
+ "@end table\n"
+ "The return value is an integer which is the new position\n"
+ "relative to the beginning of the object, or a number less than\n"
+ "zero if an error occurred.")
 {
 #define FUNC_NAME s_lob_lo_seek
   int cwhere, cwhence;
@@ -549,11 +556,12 @@ lob_input_waiting_p (SCM port)
   return 1;
 }
 
-PG_DEFINE (lob_lo_read, "pg-lo-read", 3, 0, 0,
-           (SCM siz, SCM num, SCM port),
-           "Read @var{num} objects each of length @var{siz} from @var{port}.\n"
-           "Return a string containing the data read from the port or\n"
-           "@code{#f} if an error occurred.")
+GH_DEFPROC
+(lob_lo_read, "pg-lo-read", 3, 0, 0,
+ (SCM siz, SCM num, SCM port),
+ "Read @var{num} objects each of length @var{siz} from @var{port}.\n"
+ "Return a string containing the data read from the port or\n"
+ "@code{#f} if an error occurred.")
 {
 #define FUNC_NAME s_lob_lo_read
   scm_sizet n;
@@ -644,15 +652,16 @@ lob_free (SCM port)
   return 0;
 }
 
-PG_DEFINE (lob_lo_import, "pg-lo-import", 2, 0, 0,
-           (SCM conn, SCM filename),
-           "Create a new large object and loads it with the contents of\n"
-           "the specified file.  @var{filename} must be a string containing\n"
-           "the name of the file to be loaded into the new object.  Return\n"
-           "the integer identifier (OID) of the newly created large object,\n"
-           "or @code{#f} if an error occurred, in which case\n"
-           "@code{pg-error-message} should be consulted to determine\n"
-           "the failure.")
+GH_DEFPROC
+(lob_lo_import, "pg-lo-import", 2, 0, 0,
+ (SCM conn, SCM filename),
+ "Create a new large object and loads it with the contents of\n"
+ "the specified file.  @var{filename} must be a string containing\n"
+ "the name of the file to be loaded into the new object.  Return\n"
+ "the integer identifier (OID) of the newly created large object,\n"
+ "or @code{#f} if an error occurred, in which case\n"
+ "@code{pg-error-message} should be consulted to determine\n"
+ "the failure.")
 {
 #define FUNC_NAME s_lob_lo_import
   PGconn *dbconn;
@@ -674,14 +683,15 @@ PG_DEFINE (lob_lo_import, "pg-lo-import", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (lob_lo_export, "pg-lo-export", 3, 0, 0,
-           (SCM conn, SCM oid, SCM filename),
-           "Write the contents of a given large object to a file.\n"
-           "@var{oid} is the integer identifying the large object to be\n"
-           "exported and @var{filename} the name of the file to contain the\n"
-           "object data.  Return @code{#t} on success, @code{#f} otherwise,\n"
-           "in which case @code{pg-error-message} may offer an explanation\n"
-           "of the failure.")
+GH_DEFPROC
+(lob_lo_export, "pg-lo-export", 3, 0, 0,
+ (SCM conn, SCM oid, SCM filename),
+ "Write the contents of a given large object to a file.\n"
+ "@var{oid} is the integer identifying the large object to be\n"
+ "exported and @var{filename} the name of the file to contain the\n"
+ "object data.  Return @code{#t} on success, @code{#f} otherwise,\n"
+ "in which case @code{pg-error-message} may offer an explanation\n"
+ "of the failure.")
 {
 #define FUNC_NAME s_lob_lo_export
   PGconn *dbconn;

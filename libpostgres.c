@@ -415,26 +415,28 @@ drop_paramspecs (struct paramspecs *ps)
 
 static SCM goodies;
 
-PG_DEFINE (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
-           (void),
-           "Return a list of symbols describing the Guile-PG\n"
-           "installation.  These are basically derived from C preprocessor\n"
-           "macros determined at build time by the configure script.\n"
-           "Presence of this procedure is also a good indicator that\n"
-           "the compiled module @code{(database postgres)} is\n"
-           "available.  You can test this like so:\n\n"
-           "@lisp\n"
-           "(false-if-exception (pg-guile-pg-loaded))\n"
-           "@end lisp")
+GH_DEFPROC
+(pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
+ (void),
+ "Return a list of symbols describing the Guile-PG\n"
+ "installation.  These are basically derived from C preprocessor\n"
+ "macros determined at build time by the configure script.\n"
+ "Presence of this procedure is also a good indicator that\n"
+ "the compiled module @code{(database postgres)} is\n"
+ "available.  You can test this like so:\n\n"
+ "@lisp\n"
+ "(false-if-exception (pg-guile-pg-loaded))\n"
+ "@end lisp")
 {
   return goodies;
 }
 
-PG_DEFINE (pg_protocol_version, "pg-protocol-version", 1, 0, 0,
-           (SCM conn),
-           "Return the client protocol version for @var{conn}.\n"
-           "This (integer) will be 2 prior to PostgreSQL 7.4.\n"
-           "If @var{conn} is not a connection object, return #f.")
+GH_DEFPROC
+(pg_protocol_version, "pg-protocol-version", 1, 0, 0,
+ (SCM conn),
+ "Return the client protocol version for @var{conn}.\n"
+ "This (integer) will be 2 prior to PostgreSQL 7.4.\n"
+ "If @var{conn} is not a connection object, return #f.")
 {
 #define FUNC_NAME s_pg_protocol_version
   PGconn *dbconn;
@@ -465,26 +467,27 @@ SIMPLE_KEYWORD (dispsize);
 
 #define KWD(name)  (kwd_ ## name)
 
-PG_DEFINE (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
-           (void),
-           "Return an alist associating options with their connection\n"
-           "defaults.  The option name is a keyword.\n"
-           "Each associated value is in turn a sub-alist, with\n"
-           "the following keys:\n\n"
-           "@itemize\n"
-           "@item #:envvar\n\n"
-           "@item #:compiled\n"
-           "@item #:val\n"
-           "@item #:label\n"
-           "@item #:dispchar (character: @code{#\\*} or @code{#\\D}; or #f)\n"
-           "@item #:dispsize (integer)\n"
-           "@end itemize\n\n"
-           "Values are strings or #f, unless noted otherwise.\n"
-           "A @code{dispchar} of @code{#\\*} means the option should\n"
-           "be treated like a password: user dialogs should hide\n"
-           "the value; while @code{#\\D} means the option is for\n"
-           "debugging purposes: probably a good idea to entirely avoid\n"
-           "presenting this option in the first place.")
+GH_DEFPROC
+(pg_conndefaults, "pg-conndefaults", 0, 0, 0,
+ (void),
+ "Return an alist associating options with their connection\n"
+ "defaults.  The option name is a keyword.\n"
+ "Each associated value is in turn a sub-alist, with\n"
+ "the following keys:\n\n"
+ "@itemize\n"
+ "@item #:envvar\n\n"
+ "@item #:compiled\n"
+ "@item #:val\n"
+ "@item #:label\n"
+ "@item #:dispchar (character: @code{#\\*} or @code{#\\D}; or #f)\n"
+ "@item #:dispsize (integer)\n"
+ "@end itemize\n\n"
+ "Values are strings or #f, unless noted otherwise.\n"
+ "A @code{dispchar} of @code{#\\*} means the option should\n"
+ "be treated like a password: user dialogs should hide\n"
+ "the value; while @code{#\\D} means the option is for\n"
+ "debugging purposes: probably a good idea to entirely avoid\n"
+ "presenting this option in the first place.")
 {
   PQconninfoOption *opt, *head;
   SCM tem, pdl, rv = SCM_EOL;
@@ -558,75 +561,76 @@ notice_processor (void *xc, const char *message)
     scm_apply (out, msg, scm_listofnull);
 }
 
-PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
-           (SCM constr),
-           "Open and return a connection to the database specified\n"
-           "and configured by @var{constr}, a possibly empty string\n"
-           "consisting of space-separated @code{name=value} pairs.\n"
-           "The @var{name} can be any of:\n"
-           "\n"
-           "@table @code\n"
-           "@item host\n"
-           "The host-name or dotted-decimal IP address of the host\n"
-           "on which the postmaster is running.  If no @code{host=}\n"
-           "sub-string is given then consult in order: the\n"
-           "environment variable @code{PGHOST}, otherwise the name\n"
-           "of the local host.\n"
-           "\n"
-           "@item port\n"
-           "The TCP or Unix socket on which the backend is\n"
-           "listening.  If this is not specified then consult in\n"
-           "order: the environment variable @code{PGPORT},\n"
-           "otherwise the default port (5432).\n"
-           "\n"
-           "@item options\n"
-           "A string containing the options to the backend server.\n"
-           "The options given here are in addition to the options\n"
-           "given by the environment variable @code{PGOPTIONS}.\n"
-           "The options string should be a set of command line\n"
-           "switches as would be passed to the backend.  See the\n"
-           "postgres(1) man page for more details.\n"
-           "\n"
-           "@item tty\n"
-           "A string defining the file or device on which error\n"
-           "messages from the backend are to be displayed.  If this\n"
-           "is empty (@code{\"\"}), then consult the environment\n"
-           "variable @code{PGTTY}.  If the specified tty is a file\n"
-           "then the file will be readable only by the user the\n"
-           "postmaster runs as (usually @code{postgres}).\n"
-           "Similarly, if the specified tty is a device then it\n"
-           "must have permissions allowing the postmaster user to\n"
-           "write to it.\n"
-           "\n"
-           "@item dbname\n"
-           "The name of the database.  If no @code{dbname=}\n"
-           "sub-string is given then consult in order: the\n"
-           "environment variable @code{PGDATABASE}, the environment\n"
-           "variable @code{USER}, otherwise the @code{user} value.\n"
-           "\n"
-           "@item user\n"
-           "The login name of the user to authenticate.  If none is\n"
-           "given then consult in order: the environment variable\n"
-           "@code{PGUSER}, otherwise the login name of the user\n"
-           "owning the process.\n"
-           "\n"
-           "@item password\n"
-           "The password.  Whether or not this is used depends upon\n"
-           "the contents of the @file{pg_hba.conf} file.  See the\n"
-           "pg_hba.conf(5) man page for details.\n"
-           "\n"
-           "@item authtype\n"
-           "This must be set to @code{password} if password\n"
-           "authentication is in use, otherwise it must not be\n"
-           "specified.  @end table\n"
-           "\n"
-           "If @var{value} contains spaces it must be enclosed in\n"
-           "single quotes, and any single quotes appearing in\n"
-           "@var{value} must be escaped using backslashes.\n"
-           "Backslashes appearing in @var{value} must similarly be\n"
-           "escaped.  Note that if the @var{constr} is a Guile\n"
-           "string literal then all the backslashes will themselves\n"
-           "need to be escaped a second time.")
+GH_DEFPROC
+(pg_connectdb, "pg-connectdb", 1, 0, 0,
+ (SCM constr),
+ "Open and return a connection to the database specified\n"
+ "and configured by @var{constr}, a possibly empty string\n"
+ "consisting of space-separated @code{name=value} pairs.\n"
+ "The @var{name} can be any of:\n"
+ "\n"
+ "@table @code\n"
+ "@item host\n"
+ "The host-name or dotted-decimal IP address of the host\n"
+ "on which the postmaster is running.  If no @code{host=}\n"
+ "sub-string is given then consult in order: the\n"
+ "environment variable @code{PGHOST}, otherwise the name\n"
+ "of the local host.\n"
+ "\n"
+ "@item port\n"
+ "The TCP or Unix socket on which the backend is\n"
+ "listening.  If this is not specified then consult in\n"
+ "order: the environment variable @code{PGPORT},\n"
+ "otherwise the default port (5432).\n"
+ "\n"
+ "@item options\n"
+ "A string containing the options to the backend server.\n"
+ "The options given here are in addition to the options\n"
+ "given by the environment variable @code{PGOPTIONS}.\n"
+ "The options string should be a set of command line\n"
+ "switches as would be passed to the backend.  See the\n"
+ "postgres(1) man page for more details.\n"
+ "\n"
+ "@item tty\n"
+ "A string defining the file or device on which error\n"
+ "messages from the backend are to be displayed.  If this\n"
+ "is empty (@code{\"\"}), then consult the environment\n"
+ "variable @code{PGTTY}.  If the specified tty is a file\n"
+ "then the file will be readable only by the user the\n"
+ "postmaster runs as (usually @code{postgres}).\n"
+ "Similarly, if the specified tty is a device then it\n"
+ "must have permissions allowing the postmaster user to\n"
+ "write to it.\n"
+ "\n"
+ "@item dbname\n"
+ "The name of the database.  If no @code{dbname=}\n"
+ "sub-string is given then consult in order: the\n"
+ "environment variable @code{PGDATABASE}, the environment\n"
+ "variable @code{USER}, otherwise the @code{user} value.\n"
+ "\n"
+ "@item user\n"
+ "The login name of the user to authenticate.  If none is\n"
+ "given then consult in order: the environment variable\n"
+ "@code{PGUSER}, otherwise the login name of the user\n"
+ "owning the process.\n"
+ "\n"
+ "@item password\n"
+ "The password.  Whether or not this is used depends upon\n"
+ "the contents of the @file{pg_hba.conf} file.  See the\n"
+ "pg_hba.conf(5) man page for details.\n"
+ "\n"
+ "@item authtype\n"
+ "This must be set to @code{password} if password\n"
+ "authentication is in use, otherwise it must not be\n"
+ "specified.  @end table\n"
+ "\n"
+ "If @var{value} contains spaces it must be enclosed in\n"
+ "single quotes, and any single quotes appearing in\n"
+ "@var{value} must be escaped using backslashes.\n"
+ "Backslashes appearing in @var{value} must similarly be\n"
+ "escaped.  Note that if the @var{constr} is a Guile\n"
+ "string literal then all the backslashes will themselves\n"
+ "need to be escaped a second time.")
 {
 #define FUNC_NAME s_pg_connectdb
   xc_t *xc;
@@ -669,21 +673,23 @@ PG_DEFINE (pg_connectdb, "pg-connectdb", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_connection_p, "pg-connection?", 1, 0, 0,
-           (SCM obj),
-           "Return #t iff @var{obj} is a connection object\n"
-           "returned by @code{pg-connectdb}.")
+GH_DEFPROC
+(pg_connection_p, "pg-connection?", 1, 0, 0,
+ (SCM obj),
+ "Return #t iff @var{obj} is a connection object\n"
+ "returned by @code{pg-connectdb}.")
 {
   return xc_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
-PG_DEFINE (pg_reset, "pg-reset", 1, 0, 0,
-           (SCM conn),
-           "Reset the connection @var{conn} with the backend.\n"
-           "Equivalent to closing the connection and re-opening it again\n"
-           "with the same connect options as given to @code{pg-connectdb}.\n"
-           "@var{conn} must be a valid @code{PG_CONN} object returned by\n"
-           "@code{pg-connectdb}.")
+GH_DEFPROC
+(pg_reset, "pg-reset", 1, 0, 0,
+ (SCM conn),
+ "Reset the connection @var{conn} with the backend.\n"
+ "Equivalent to closing the connection and re-opening it again\n"
+ "with the same connect options as given to @code{pg-connectdb}.\n"
+ "@var{conn} must be a valid @code{PG_CONN} object returned by\n"
+ "@code{pg-connectdb}.")
 {
 #define FUNC_NAME s_pg_reset
   PGconn *dbconn;
@@ -697,9 +703,10 @@ PG_DEFINE (pg_reset, "pg-reset", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_get_client_data, "pg-get-client-data", 1, 0, 0,
-           (SCM conn),
-           "Return the the client data associated with @var{conn}.")
+GH_DEFPROC
+(pg_get_client_data, "pg-get-client-data", 1, 0, 0,
+ (SCM conn),
+ "Return the the client data associated with @var{conn}.")
 {
 #define FUNC_NAME s_pg_get_client_data
   ASSERT_CONNECTION (1, conn);
@@ -707,9 +714,10 @@ PG_DEFINE (pg_get_client_data, "pg-get-client-data", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_set_client_data, "pg-set-client-data!", 2, 0, 0,
-           (SCM conn, SCM data),
-           "Associate @var{data} with @var{conn}.")
+GH_DEFPROC
+(pg_set_client_data, "pg-set-client-data!", 2, 0, 0,
+ (SCM conn, SCM data),
+ "Associate @var{data} with @var{conn}.")
 {
 #define FUNC_NAME s_pg_set_client_data
   ASSERT_CONNECTION (1, conn);
@@ -720,16 +728,17 @@ PG_DEFINE (pg_set_client_data, "pg-set-client-data!", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
-           (SCM conn, SCM statement),
-           "Execute the SQL string @var{statement} on a given connection\n"
-           "@var{conn} returning either a @code{PG_RESULT} object containing\n"
-           "a @code{pg-result-status} or @code{#f} if an error occurred,\n"
-           "in which case the error message can be obtained using\n"
-           "@code{pg-error-message}, passing it the @code{PG_CONN} object\n"
-           "on which the statement was attempted.  Note that the error\n"
-           "message is available only until the next call to @code{pg-exec}\n"
-           "on this connection.")
+GH_DEFPROC
+(pg_exec, "pg-exec", 2, 0, 0,
+ (SCM conn, SCM statement),
+ "Execute the SQL string @var{statement} on a given connection\n"
+ "@var{conn} returning either a @code{PG_RESULT} object containing\n"
+ "a @code{pg-result-status} or @code{#f} if an error occurred,\n"
+ "in which case the error message can be obtained using\n"
+ "@code{pg-error-message}, passing it the @code{PG_CONN} object\n"
+ "on which the statement was attempted.  Note that the error\n"
+ "message is available only until the next call to @code{pg-exec}\n"
+ "on this connection.")
 {
 #define FUNC_NAME s_pg_exec
   SCM z;
@@ -752,10 +761,11 @@ PG_DEFINE (pg_exec, "pg-exec", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_exec_params, "pg-exec-params", 3, 0, 0,
-           (SCM conn, SCM statement, SCM parms),
-           "Like @code{pg-exec}, except that @var{statement} is a\n"
-           "parameterized string, and @var{parms} is a parameter-vector.")
+GH_DEFPROC
+(pg_exec_params, "pg-exec-params", 3, 0, 0,
+ (SCM conn, SCM statement, SCM parms),
+ "Like @code{pg-exec}, except that @var{statement} is a\n"
+ "parameterized string, and @var{parms} is a parameter-vector.")
 {
 #define FUNC_NAME s_pg_exec_params
 #ifndef HAVE_PQPROTOCOLVERSION
@@ -789,13 +799,14 @@ PG_DEFINE (pg_exec_params, "pg-exec-params", 3, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_exec_prepared, "pg-exec-prepared", 3, 0, 0,
-           (SCM conn, SCM stname, SCM parms),
-           "Execute the statement named by @var{stname} (a string)\n"
-           "on a given connection @var{conn} returning either a result\n"
-           "object or @code{#f}.  @var{stname} must match the\n"
-           "name specified in some prior SQL @code{PREPARE} statement.\n"
-           "@var{parms} is a parameter-vector.")
+GH_DEFPROC
+(pg_exec_prepared, "pg-exec-prepared", 3, 0, 0,
+ (SCM conn, SCM stname, SCM parms),
+ "Execute the statement named by @var{stname} (a string)\n"
+ "on a given connection @var{conn} returning either a result\n"
+ "object or @code{#f}.  @var{stname} must match the\n"
+ "name specified in some prior SQL @code{PREPARE} statement.\n"
+ "@var{parms} is a parameter-vector.")
 {
 #define FUNC_NAME s_pg_exec_prepared
 
@@ -830,10 +841,11 @@ PG_DEFINE (pg_exec_prepared, "pg-exec-prepared", 3, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_result_p, "pg-result?", 1, 0, 0,
-           (SCM obj),
-           "Return #t iff @var{obj} is a result object\n"
-           "returned by @code{pg-exec}.")
+GH_DEFPROC
+(pg_result_p, "pg-result?", 1, 0, 0,
+ (SCM obj),
+ "Return #t iff @var{obj} is a result object\n"
+ "returned by @code{pg-exec}.")
 {
   return xr_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
 }
@@ -849,35 +861,36 @@ SCM_KEYWORD (kwd_sourcefile, "source-file");
 SCM_KEYWORD (kwd_sourceline, "source-line");
 SCM_KEYWORD (kwd_sourcefunction, "source-function");
 
-PG_DEFINE (pg_result_error_field, "pg-result-error-field", 2, 0, 0,
-           (SCM result, SCM fieldcode),
-           "Return information associated with @var{result}, on\n"
-           "@var{fieldcode}, a keyword, or @code{#f} if either\n"
-           "@var{fieldcode} is unrecognized or the field value is\n"
-           "not available for some reason.  The type of the\n"
-           "return value depends on @var{fieldcode}:\n\n"
-           "@table @code\n"
-           "@item #:severity\n"
-           "@itemx #:sqlstate\n"
-           "@itemx #:message-primary\n"
-           "@itemx #:message-detail\n"
-           "@itemx #:message-hint\n"
-           "@itemx #:context\n"
-           "@itemx #:source-file\n"
-           "A string.  The value for @code{#:message-primary} is\n"
-           "typically one line, whereas for @code{#:message-detail},\n"
-           "@code{#:message-hint} and @code{#:context}, it may run\n"
-           "to multiple lines.  For @code{#:sqlstate}, it is always\n"
-           "five characters long.\n"
-           "@item #:statement-position\n"
-           "@itemx #:source-line\n"
-           "An integer.  Statement position counts characters\n"
-           "(not bytes), starting from 1.\n"
-           "@item #:source-function\n"
-           "A symbol.\n"
-           "@end table\n\n"
-           "If the installation does not support\n"
-           "@code{PQPROTOCOLVERSION}, simply return #f.")
+GH_DEFPROC
+(pg_result_error_field, "pg-result-error-field", 2, 0, 0,
+ (SCM result, SCM fieldcode),
+ "Return information associated with @var{result}, on\n"
+ "@var{fieldcode}, a keyword, or @code{#f} if either\n"
+ "@var{fieldcode} is unrecognized or the field value is\n"
+ "not available for some reason.  The type of the\n"
+ "return value depends on @var{fieldcode}:\n\n"
+ "@table @code\n"
+ "@item #:severity\n"
+ "@itemx #:sqlstate\n"
+ "@itemx #:message-primary\n"
+ "@itemx #:message-detail\n"
+ "@itemx #:message-hint\n"
+ "@itemx #:context\n"
+ "@itemx #:source-file\n"
+ "A string.  The value for @code{#:message-primary} is\n"
+ "typically one line, whereas for @code{#:message-detail},\n"
+ "@code{#:message-hint} and @code{#:context}, it may run\n"
+ "to multiple lines.  For @code{#:sqlstate}, it is always\n"
+ "five characters long.\n"
+ "@item #:statement-position\n"
+ "@itemx #:source-line\n"
+ "An integer.  Statement position counts characters\n"
+ "(not bytes), starting from 1.\n"
+ "@item #:source-function\n"
+ "A symbol.\n"
+ "@end table\n\n"
+ "If the installation does not support\n"
+ "@code{PQPROTOCOLVERSION}, simply return #f.")
 {
 #define FUNC_NAME s_pg_result_error_field
   SCM rv = SCM_BOOL_F;
@@ -929,13 +942,14 @@ PG_DEFINE (pg_result_error_field, "pg-result-error-field", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_result_error_message, "pg-result-error-message", 1, 0, 0,
-           (SCM result),
-           "Return the error message associated with @var{result},\n"
-           "or the empty string if there was no error.\n"
-           "If the installation does not support\n"
-           "@code{PQRESULTERRORMESSAGE}, return the empty string.\n"
-           "The returned string has no trailing newlines.")
+GH_DEFPROC
+(pg_result_error_message, "pg-result-error-message", 1, 0, 0,
+ (SCM result),
+ "Return the error message associated with @var{result},\n"
+ "or the empty string if there was no error.\n"
+ "If the installation does not support\n"
+ "@code{PQRESULTERRORMESSAGE}, return the empty string.\n"
+ "The returned string has no trailing newlines.")
 {
 #ifdef HAVE_PQRESULTERRORMESSAGE
 
@@ -955,15 +969,16 @@ PG_DEFINE (pg_result_error_message, "pg-result-error-message", 1, 0, 0,
 #endif /* !HAVE_PQRESULTERRORMESSAGE */
 }
 
-PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
-           (SCM conn),
-           "Return the most-recent error message that occurred on the\n"
-           "connection @var{conn}, or an empty string.\n"
-           "For backward compatability, if @var{conn} is actually\n"
-           "a result object returned from calling @code{pg-exec},\n"
-           "delegate the call to @code{pg-result-error-message}\n"
-           "transparently (new code should call that procedure\n"
-           "directly).")
+GH_DEFPROC
+(pg_error_message, "pg-error-message", 1, 0, 0,
+ (SCM conn),
+ "Return the most-recent error message that occurred on the\n"
+ "connection @var{conn}, or an empty string.\n"
+ "For backward compatability, if @var{conn} is actually\n"
+ "a result object returned from calling @code{pg-exec},\n"
+ "delegate the call to @code{pg-result-error-message}\n"
+ "transparently (new code should call that procedure\n"
+ "directly).")
 {
 #define FUNC_NAME s_pg_error_message
   if (xr_p (conn))
@@ -985,10 +1000,11 @@ PG_DEFINE (pg_error_message, "pg-error-message", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_get_db, "pg-get-db", 1, 0, 0,
-           (SCM conn),
-           "Return a string containing the name of the database\n"
-           "to which @var{conn} represents a connection.")
+GH_DEFPROC
+(pg_get_db, "pg-get-db", 1, 0, 0,
+ (SCM conn),
+ "Return a string containing the name of the database\n"
+ "to which @var{conn} represents a connection.")
 {
 #define FUNC_NAME s_pg_get_db
   PGconn *dbconn;
@@ -1003,10 +1019,11 @@ PG_DEFINE (pg_get_db, "pg-get-db", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_get_user, "pg-get-user", 1, 0, 0,
-           (SCM conn),
-           "Return a string containing the user name used to\n"
-           "authenticate the connection @var{conn}.")
+GH_DEFPROC
+(pg_get_user, "pg-get-user", 1, 0, 0,
+ (SCM conn),
+ "Return a string containing the user name used to\n"
+ "authenticate the connection @var{conn}.")
 {
 #define FUNC_NAME s_pg_get_user
   PGconn *dbconn;
@@ -1021,11 +1038,12 @@ PG_DEFINE (pg_get_user, "pg-get-user", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_get_pass, "pg-get-pass", 1, 0, 0,
-           (SCM conn),
-           "Return a string containing the password used to\n"
-           "authenticate the connection @var{conn}.\n"
-           "If the installation does not support @code{PQPASS}, return #f.")
+GH_DEFPROC
+(pg_get_pass, "pg-get-pass", 1, 0, 0,
+ (SCM conn),
+ "Return a string containing the password used to\n"
+ "authenticate the connection @var{conn}.\n"
+ "If the installation does not support @code{PQPASS}, return #f.")
 {
 #ifdef HAVE_PQPASS
 
@@ -1048,10 +1066,11 @@ PG_DEFINE (pg_get_pass, "pg-get-pass", 1, 0, 0,
 #endif /* !HAVE_PQPASS */
 }
 
-PG_DEFINE (pg_get_host, "pg-get-host", 1, 0, 0,
-           (SCM conn),
-           "Return a string containing the name of the host to which\n"
-           "@var{conn} represents a connection.")
+GH_DEFPROC
+(pg_get_host, "pg-get-host", 1, 0, 0,
+ (SCM conn),
+ "Return a string containing the name of the host to which\n"
+ "@var{conn} represents a connection.")
 {
 #define FUNC_NAME s_pg_get_host
   PGconn *dbconn;
@@ -1066,10 +1085,11 @@ PG_DEFINE (pg_get_host, "pg-get-host", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_get_port,"pg-get-port", 1, 0, 0,
-           (SCM conn),
-           "Return a string containing the port number to which\n"
-           "@var{conn} represents a connection.")
+GH_DEFPROC
+(pg_get_port,"pg-get-port", 1, 0, 0,
+ (SCM conn),
+ "Return a string containing the port number to which\n"
+ "@var{conn} represents a connection.")
 {
 #define FUNC_NAME s_pg_get_port
   PGconn *dbconn;
@@ -1084,10 +1104,11 @@ PG_DEFINE (pg_get_port,"pg-get-port", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_get_tty, "pg-get-tty", 1, 0, 0,
-           (SCM conn),
-           "Return a string containing the the name of the\n"
-           "diagnostic tty for @var{conn}.")
+GH_DEFPROC
+(pg_get_tty, "pg-get-tty", 1, 0, 0,
+ (SCM conn),
+ "Return a string containing the the name of the\n"
+ "diagnostic tty for @var{conn}.")
 {
 #define FUNC_NAME s_pg_get_tty
   PGconn *dbconn;
@@ -1102,9 +1123,10 @@ PG_DEFINE (pg_get_tty, "pg-get-tty", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_get_options, "pg-get-options", 1, 0, 0,
-           (SCM conn),
-           "Return a string containing the the options string for @var{conn}.")
+GH_DEFPROC
+(pg_get_options, "pg-get-options", 1, 0, 0,
+ (SCM conn),
+ "Return a string containing the the options string for @var{conn}.")
 {
 #define FUNC_NAME s_pg_get_options
   PGconn *dbconn;
@@ -1119,10 +1141,11 @@ PG_DEFINE (pg_get_options, "pg-get-options", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_get_connection, "pg-get-connection", 1, 0, 0,
-           (SCM result),
-           "Return the @code{PG_CONN} object representing the connection\n"
-           "from which a @var{result} was returned.")
+GH_DEFPROC
+(pg_get_connection, "pg-get-connection", 1, 0, 0,
+ (SCM result),
+ "Return the @code{PG_CONN} object representing the connection\n"
+ "from which a @var{result} was returned.")
 {
 #define FUNC_NAME s_pg_get_connection
   xr_t *xr; PGresult *res;
@@ -1131,12 +1154,13 @@ PG_DEFINE (pg_get_connection, "pg-get-connection", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
-           (SCM conn),
-           "Return an integer which is the the PID of the backend\n"
-           "process for @var{conn}.\n"
-           "If the installation does not support @code{PQBACKENDPID},\n"
-           "return -1.")
+GH_DEFPROC
+(pg_backend_pid, "pg-backend-pid", 1, 0, 0,
+ (SCM conn),
+ "Return an integer which is the the PID of the backend\n"
+ "process for @var{conn}.\n"
+ "If the installation does not support @code{PQBACKENDPID},\n"
+ "return -1.")
 {
 #ifdef HAVE_PQBACKENDPID
 
@@ -1165,16 +1189,17 @@ SIMPLE_KEYWORD (intrans);
 SIMPLE_KEYWORD (inerror);
 SIMPLE_KEYWORD (unknown);
 
-PG_DEFINE (pg_transaction_status, "pg-transaction-status", 1, 0, 0,
-           (SCM conn),
-           "Return a keyword describing the current transaction status,\n"
-           "one of: @code{#:idle} (connection idle),\n"
-           "@code{#:active} (command in progress),\n"
-           "@code{#:intrans} (idle, within transaction block),\n"
-           "@code{#:inerror} (idle, within failed transaction),\n"
-           "@code{#:unknown} (cannot determine status).\n\n"
-           "If the installation does not support\n"
-           "@code{PQPROTOCOLVERSION}, return @code{#:unknown}.")
+GH_DEFPROC
+(pg_transaction_status, "pg-transaction-status", 1, 0, 0,
+ (SCM conn),
+ "Return a keyword describing the current transaction status,\n"
+ "one of: @code{#:idle} (connection idle),\n"
+ "@code{#:active} (command in progress),\n"
+ "@code{#:intrans} (idle, within transaction block),\n"
+ "@code{#:inerror} (idle, within failed transaction),\n"
+ "@code{#:unknown} (cannot determine status).\n\n"
+ "If the installation does not support\n"
+ "@code{PQPROTOCOLVERSION}, return @code{#:unknown}.")
 {
 #define FUNC_NAME s_pg_transaction_status
   PGconn *dbconn;
@@ -1197,12 +1222,13 @@ PG_DEFINE (pg_transaction_status, "pg-transaction-status", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_parameter_status, "pg-parameter-status", 2, 0, 0,
-           (SCM conn, SCM parm),
-           "Return the status (a string) of a parameter for @var{conn}.\n"
-           "@var{parm} is a keyword, such as @code{#:client_encoding}.\n"
-           "If the installation does not support\n"
-           "@code{PQPROTOCOLVERSION}, return #f.")
+GH_DEFPROC
+(pg_parameter_status, "pg-parameter-status", 2, 0, 0,
+ (SCM conn, SCM parm),
+ "Return the status (a string) of a parameter for @var{conn}.\n"
+ "@var{parm} is a keyword, such as @code{#:client_encoding}.\n"
+ "If the installation does not support\n"
+ "@code{PQPROTOCOLVERSION}, return #f.")
 {
 #define FUNC_NAME s_pg_parameter_status
   PGconn *dbconn;
@@ -1222,10 +1248,11 @@ PG_DEFINE (pg_parameter_status, "pg-parameter-status", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_result_status, "pg-result-status", 1, 0, 0,
-           (SCM result),
-           "Return the symbolic status of a @code{PG_RESULT} object\n"
-           "returned by @code{pg-exec}.")
+GH_DEFPROC
+(pg_result_status, "pg-result-status", 1, 0, 0,
+ (SCM result),
+ "Return the symbolic status of a @code{PG_RESULT} object\n"
+ "returned by @code{pg-exec}.")
 {
 #define FUNC_NAME s_pg_result_status
   xr_t *xr; PGresult *res;
@@ -1248,9 +1275,10 @@ PG_DEFINE (pg_result_status, "pg-result-status", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_ntuples, "pg-ntuples", 1, 0, 0,
-           (SCM result),
-           "Return the number of tuples in @var{result}.")
+GH_DEFPROC
+(pg_ntuples, "pg-ntuples", 1, 0, 0,
+ (SCM result),
+ "Return the number of tuples in @var{result}.")
 {
 #define FUNC_NAME s_pg_ntuples
   xr_t *xr; PGresult *res;
@@ -1266,9 +1294,10 @@ PG_DEFINE (pg_ntuples, "pg-ntuples", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_nfields, "pg-nfields", 1, 0, 0,
-           (SCM result),
-           "Return the number of fields in @var{result}.")
+GH_DEFPROC
+(pg_nfields, "pg-nfields", 1, 0, 0,
+ (SCM result),
+ "Return the number of fields in @var{result}.")
 {
 #define FUNC_NAME s_pg_nfields
   xr_t *xr; PGresult *res;
@@ -1284,12 +1313,13 @@ PG_DEFINE (pg_nfields, "pg-nfields", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_cmdtuples, "pg-cmdtuples", 1, 0, 0,
-           (SCM result),
-           "Return the number of tuples in @var{result} affected by a\n"
-           "command.  This is a string which is empty in the case of\n"
-           "commands like @code{CREATE TABLE}, @code{GRANT}, @code{REVOKE}\n"
-           "etc. which don't affect tuples.")
+GH_DEFPROC
+(pg_cmdtuples, "pg-cmdtuples", 1, 0, 0,
+ (SCM result),
+ "Return the number of tuples in @var{result} affected by a\n"
+ "command.  This is a string which is empty in the case of\n"
+ "commands like @code{CREATE TABLE}, @code{GRANT}, @code{REVOKE}\n"
+ "etc. which don't affect tuples.")
 {
 #define FUNC_NAME s_pg_cmdtuples
   xr_t *xr; PGresult *res;
@@ -1305,12 +1335,13 @@ PG_DEFINE (pg_cmdtuples, "pg-cmdtuples", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_oid_value, "pg-oid-value", 1, 0, 0,
-           (SCM result),
-           "If the @var{result} is that of an SQL @code{INSERT} command,\n"
-           "return the integer OID of the inserted tuple, otherwise return\n"
-           "@code{#f}.\n"
-           "If the installation does not support @code{PQOIDVALUE}, return #f.")
+GH_DEFPROC
+(pg_oid_value, "pg-oid-value", 1, 0, 0,
+ (SCM result),
+ "If the @var{result} is that of an SQL @code{INSERT} command,\n"
+ "return the integer OID of the inserted tuple, otherwise return\n"
+ "@code{#f}.\n"
+ "If the installation does not support @code{PQOIDVALUE}, return #f.")
 {
 #ifdef HAVE_PQOIDVALUE
 
@@ -1337,11 +1368,12 @@ PG_DEFINE (pg_oid_value, "pg-oid-value", 1, 0, 0,
 #endif /* !HAVE_PQOIDVALUE */
 }
 
-PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
-           (SCM result, SCM num),
-           "Return a string containing the canonical lower-case name\n"
-           "of the field number @var{num} in @var{result}.  SQL variables\n"
-           "and field names are not case-sensitive.")
+GH_DEFPROC
+(pg_fname, "pg-fname", 2, 0, 0,
+ (SCM result, SCM num),
+ "Return a string containing the canonical lower-case name\n"
+ "of the field number @var{num} in @var{result}.  SQL variables\n"
+ "and field names are not case-sensitive.")
 {
 #define FUNC_NAME s_pg_fname
   xr_t *xr; PGresult *res;
@@ -1355,11 +1387,12 @@ PG_DEFINE (pg_fname, "pg-fname", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_fnumber, "pg-fnumber", 2, 0, 0,
-           (SCM result, SCM fname),
-           "Return the integer field-number corresponding to field\n"
-           "@var{fname} if this exists in @var{result}, or @code{-1}\n"
-           "otherwise.")
+GH_DEFPROC
+(pg_fnumber, "pg-fnumber", 2, 0, 0,
+ (SCM result, SCM fname),
+ "Return the integer field-number corresponding to field\n"
+ "@var{fname} if this exists in @var{result}, or @code{-1}\n"
+ "otherwise.")
 {
 #define FUNC_NAME s_pg_fnumber
   xr_t *xr; PGresult *res;
@@ -1378,11 +1411,12 @@ PG_DEFINE (pg_fnumber, "pg-fnumber", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_ftable, "pg-ftable", 2, 0, 0,
-           (SCM result, SCM num),
-           "Return the OID of the table from which the field @var{num}\n"
-           "was fetched in @var{result}.  If the installation does not\n"
-           "support @code{PQPROTOCOLVERSION}, return @code{#f}.")
+GH_DEFPROC
+(pg_ftable, "pg-ftable", 2, 0, 0,
+ (SCM result, SCM num),
+ "Return the OID of the table from which the field @var{num}\n"
+ "was fetched in @var{result}.  If the installation does not\n"
+ "support @code{PQPROTOCOLVERSION}, return @code{#f}.")
 {
 #define FUNC_NAME s_pg_ftable
   xr_t *xr; PGresult *res;
@@ -1403,12 +1437,13 @@ PG_DEFINE (pg_ftable, "pg-ftable", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_ftablecol, "pg-ftablecol", 2, 0, 0,
-           (SCM result, SCM num),
-           "Return the column number (within its table) of the column\n"
-           "making up field @var{num} of @var{result}.  Column numbers\n"
-           "start at 0.  If the installation does not support\n"
-           "@code{PQPROTOCOLVERSION}, return @code{#f}.")
+GH_DEFPROC
+(pg_ftablecol, "pg-ftablecol", 2, 0, 0,
+ (SCM result, SCM num),
+ "Return the column number (within its table) of the column\n"
+ "making up field @var{num} of @var{result}.  Column numbers\n"
+ "start at 0.  If the installation does not support\n"
+ "@code{PQPROTOCOLVERSION}, return @code{#f}.")
 {
 #define FUNC_NAME s_pg_ftablecol
   xr_t *xr; PGresult *res;
@@ -1429,13 +1464,14 @@ PG_DEFINE (pg_ftablecol, "pg-ftablecol", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_fformat, "pg-fformat", 2, 0, 0,
-           (SCM result, SCM num),
-           "Return the format code indicating the format of field\n"
-           "@var{num} of @var{result}.  Zero (0) indicates textual\n"
-           "data representation; while one (1) indicates binary.  If\n"
-           "the installation does not support @code{PQPROTOCOLVERSION},\n"
-           "return @code{#f}.")
+GH_DEFPROC
+(pg_fformat, "pg-fformat", 2, 0, 0,
+ (SCM result, SCM num),
+ "Return the format code indicating the format of field\n"
+ "@var{num} of @var{result}.  Zero (0) indicates textual\n"
+ "data representation; while one (1) indicates binary.  If\n"
+ "the installation does not support @code{PQPROTOCOLVERSION},\n"
+ "return @code{#f}.")
 {
 #define FUNC_NAME s_pg_fformat
   xr_t *xr; PGresult *res;
@@ -1456,14 +1492,15 @@ PG_DEFINE (pg_fformat, "pg-fformat", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
-           (SCM result, SCM num),
-           "Return the PostgreSQL internal integer representation of\n"
-           "the type of the given attribute.  The integer is actually an\n"
-           "OID (object ID) which can be used as the primary key to\n"
-           "reference a tuple from the system table @code{pg_type}.  A\n"
-           "@code{misc-error} is thrown if the @code{field-number} is\n"
-           "not valid for the given @code{result}.")
+GH_DEFPROC
+(pg_ftype, "pg-ftype", 2, 0, 0,
+ (SCM result, SCM num),
+ "Return the PostgreSQL internal integer representation of\n"
+ "the type of the given attribute.  The integer is actually an\n"
+ "OID (object ID) which can be used as the primary key to\n"
+ "reference a tuple from the system table @code{pg_type}.  A\n"
+ "@code{misc-error} is thrown if the @code{field-number} is\n"
+ "not valid for the given @code{result}.")
 {
 #define FUNC_NAME s_pg_ftype
   xr_t *xr; PGresult *res;
@@ -1478,10 +1515,11 @@ PG_DEFINE (pg_ftype, "pg-ftype", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
-           (SCM result, SCM num),
-           "Return the size of a @var{result} field @var{num} in bytes,\n"
-           "or -1 if the field is variable-length.")
+GH_DEFPROC
+(pg_fsize, "pg-fsize", 2, 0, 0,
+ (SCM result, SCM num),
+ "Return the size of a @var{result} field @var{num} in bytes,\n"
+ "or -1 if the field is variable-length.")
 {
 #define FUNC_NAME s_pg_fsize
   xr_t *xr; PGresult *res;
@@ -1495,11 +1533,12 @@ PG_DEFINE (pg_fsize, "pg-fsize", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_getvalue, "pg-getvalue", 3, 0, 0,
-           (SCM result, SCM stuple, SCM sfield),
-           "Return a string containing the value of the attribute\n"
-           "@var{sfield}, tuple @var{stuple} of @var{result}.  It is\n"
-           "up to the caller to convert this to the required type.")
+GH_DEFPROC
+(pg_getvalue, "pg-getvalue", 3, 0, 0,
+ (SCM result, SCM stuple, SCM sfield),
+ "Return a string containing the value of the attribute\n"
+ "@var{sfield}, tuple @var{stuple} of @var{result}.  It is\n"
+ "up to the caller to convert this to the required type.")
 {
 #define FUNC_NAME s_pg_getvalue
   xr_t *xr; PGresult *res;
@@ -1539,9 +1578,10 @@ PG_DEFINE (pg_getvalue, "pg-getvalue", 3, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_getlength, "pg-getlength", 3, 0, 0,
-           (SCM result, SCM stuple, SCM sfield),
-           "The size of the datum in bytes.")
+GH_DEFPROC
+(pg_getlength, "pg-getlength", 3, 0, 0,
+ (SCM result, SCM stuple, SCM sfield),
+ "The size of the datum in bytes.")
 {
 #define FUNC_NAME s_pg_getlength
   xr_t *xr; PGresult *res;
@@ -1568,10 +1608,11 @@ PG_DEFINE (pg_getlength, "pg-getlength", 3, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_getisnull, "pg-getisnull", 3, 0, 0,
-           (SCM result, SCM stuple, SCM sfield),
-           "Return @code{#t} if the attribute is @code{NULL},\n"
-           "@code{#f} otherwise.")
+GH_DEFPROC
+(pg_getisnull, "pg-getisnull", 3, 0, 0,
+ (SCM result, SCM stuple, SCM sfield),
+ "Return @code{#t} if the attribute is @code{NULL},\n"
+ "@code{#f} otherwise.")
 {
 #define FUNC_NAME s_pg_getisnull
   xr_t *xr; PGresult *res;
@@ -1599,12 +1640,13 @@ PG_DEFINE (pg_getisnull, "pg-getisnull", 3, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_binary_tuples, "pg-binary-tuples?", 1, 0, 0,
-           (SCM result),
-           "Return @code{#t} if @var{result} contains binary tuple\n"
-           "data, @code{#f} otherwise.\n"
-           "If the installation does not support @code{PQBINARYTUPLES},\n"
-           "return #f.")
+GH_DEFPROC
+(pg_binary_tuples, "pg-binary-tuples?", 1, 0, 0,
+ (SCM result),
+ "Return @code{#t} if @var{result} contains binary tuple\n"
+ "data, @code{#f} otherwise.\n"
+ "If the installation does not support @code{PQBINARYTUPLES},\n"
+ "return #f.")
 {
 #ifdef HAVE_PQBINARYTUPLES
 
@@ -1631,11 +1673,12 @@ PG_DEFINE (pg_binary_tuples, "pg-binary-tuples?", 1, 0, 0,
 #endif /* !HAVE_PQBINARYTUPLES */
 }
 
-PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
-           (SCM result, SCM num),
-           "Return the integer type-specific modification data for\n"
-           "the given field (field number @var{num}) of @var{result}.\n"
-           "If the installation does not support @code{PQFMOD}, return -1.")
+GH_DEFPROC
+(pg_fmod, "pg-fmod", 2, 0, 0,
+ (SCM result, SCM num),
+ "Return the integer type-specific modification data for\n"
+ "the given field (field number @var{num}) of @var{result}.\n"
+ "If the installation does not support @code{PQFMOD}, return -1.")
 {
 #ifdef HAVE_PQFMOD
 
@@ -1657,13 +1700,14 @@ PG_DEFINE (pg_fmod, "pg-fmod", 2, 0, 0,
 #endif /* !HAVE_PQFMOD */
 }
 
-PG_DEFINE (pg_put_copy_data, "pg-put-copy-data", 2, 0, 0,
-           (SCM conn, SCM data),
-           "Send on @var{conn} the @var{data} (a string).\n"
-           "Return 1 if ok; 0 if the server is in nonblocking mode\n"
-           "and the attempt would block; and -1 if an error occurred. If\n"
-           "the installation does not support @code{PQPROTOCOLVERSION},\n"
-           "signal @samp{unsupported} error.")
+GH_DEFPROC
+(pg_put_copy_data, "pg-put-copy-data", 2, 0, 0,
+ (SCM conn, SCM data),
+ "Send on @var{conn} the @var{data} (a string).\n"
+ "Return 1 if ok; 0 if the server is in nonblocking mode\n"
+ "and the attempt would block; and -1 if an error occurred. If\n"
+ "the installation does not support @code{PQPROTOCOLVERSION},\n"
+ "signal @samp{unsupported} error.")
 {
 #define FUNC_NAME s_pg_put_copy_data
   PGconn *dbconn;
@@ -1686,16 +1730,17 @@ PG_DEFINE (pg_put_copy_data, "pg-put-copy-data", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_put_copy_end, "pg-put-copy-end", 1, 1, 0,
-           (SCM conn, SCM errmsg),
-           "Send an end-of-data indication over @var{conn}.\n"
-           "Optional arg @var{errmsg} is a string, which if present,\n"
-           "forces the COPY operation to fail with @var{errmsg} as the\n"
-           "error message.\n"
-           "Return 1 if ok; 0 if the server is in nonblocking mode\n"
-           "and the attempt would block; and -1 if an error occurred. If\n"
-           "the installation does not support @code{PQPROTOCOLVERSION},\n"
-           "signal @samp{unsupported} error.")
+GH_DEFPROC
+(pg_put_copy_end, "pg-put-copy-end", 1, 1, 0,
+ (SCM conn, SCM errmsg),
+ "Send an end-of-data indication over @var{conn}.\n"
+ "Optional arg @var{errmsg} is a string, which if present,\n"
+ "forces the COPY operation to fail with @var{errmsg} as the\n"
+ "error message.\n"
+ "Return 1 if ok; 0 if the server is in nonblocking mode\n"
+ "and the attempt would block; and -1 if an error occurred. If\n"
+ "the installation does not support @code{PQPROTOCOLVERSION},\n"
+ "signal @samp{unsupported} error.")
 {
 #define FUNC_NAME s_pg_put_copy_end
   PGconn *dbconn;
@@ -1723,17 +1768,18 @@ PG_DEFINE (pg_put_copy_end, "pg-put-copy-end", 1, 1, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_get_copy_data, "pg-get-copy-data", 2, 1, 0,
-           (SCM conn, SCM port, SCM asyncp),
-           "Get a line of COPY data from @var{conn}, writing it to\n"
-           "output @var{port}.  If @var{port} is a pair, construct\n"
-           "a new string and set its @sc{car} to the new string.\n"
-           "Return the number of data bytes in the row (always greater\n"
-           "than zero); or zero to mean the COPY is still in progress\n"
-           "and no data is yet available; or -1 to mean the COPY is\n"
-           "done; or -2 to mean an error occurred.\n"
-           "If the installation does not support @code{PQPROTOCOLVERSION},\n"
-           "signal @samp{unsupported} error.")
+GH_DEFPROC
+(pg_get_copy_data, "pg-get-copy-data", 2, 1, 0,
+ (SCM conn, SCM port, SCM asyncp),
+ "Get a line of COPY data from @var{conn}, writing it to\n"
+ "output @var{port}.  If @var{port} is a pair, construct\n"
+ "a new string and set its @sc{car} to the new string.\n"
+ "Return the number of data bytes in the row (always greater\n"
+ "than zero); or zero to mean the COPY is still in progress\n"
+ "and no data is yet available; or -1 to mean the COPY is\n"
+ "done; or -2 to mean an error occurred.\n"
+ "If the installation does not support @code{PQPROTOCOLVERSION},\n"
+ "signal @samp{unsupported} error.")
 {
 #define FUNC_NAME s_pg_get_copy_data
   PGconn *dbconn;
@@ -1776,12 +1822,13 @@ PG_DEFINE (pg_get_copy_data, "pg-get-copy-data", 2, 1, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
-           (SCM conn),
-           "Read a line from @var{conn} on which a @code{COPY <table> TO\n"
-           "STDOUT} has been issued.  Return a string from the connection.\n"
-           "A returned string consisting of a backslash followed by a full\n"
-           "stop signifies an end-of-copy marker.")
+GH_DEFPROC
+(pg_getline, "pg-getline", 1, 0, 0,
+ (SCM conn),
+ "Read a line from @var{conn} on which a @code{COPY <table> TO\n"
+ "STDOUT} has been issued.  Return a string from the connection.\n"
+ "A returned string consisting of a backslash followed by a full\n"
+ "stop signifies an end-of-copy marker.")
 {
 #define FUNC_NAME s_pg_getline
   PGconn *dbconn;
@@ -1804,16 +1851,17 @@ PG_DEFINE (pg_getline, "pg-getline", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
-           (SCM conn, SCM buf, SCM tickle),
-           "Read a line from @var{conn} on which a @code{COPY <table> TO\n"
-           "STDOUT} has been issued, into @var{buf} (a string).\n"
-           "Return -1 to mean end-of-copy marker recognized, or a number\n"
-           "(possibly zero) indicating how many bytes of data were read.\n"
-           "The returned data may contain at most one newline (in the last\n"
-           "byte position).\n"
-           "Optional arg @var{tickle} non-#f means to do a\n"
-           "\"consume input\" operation prior to the read.")
+GH_DEFPROC
+(pg_getlineasync, "pg-getlineasync", 2, 1, 0,
+ (SCM conn, SCM buf, SCM tickle),
+ "Read a line from @var{conn} on which a @code{COPY <table> TO\n"
+ "STDOUT} has been issued, into @var{buf} (a string).\n"
+ "Return -1 to mean end-of-copy marker recognized, or a number\n"
+ "(possibly zero) indicating how many bytes of data were read.\n"
+ "The returned data may contain at most one newline (in the last\n"
+ "byte position).\n"
+ "Optional arg @var{tickle} non-#f means to do a\n"
+ "\"consume input\" operation prior to the read.")
 {
 #define FUNC_NAME s_pg_getlineasync
   PGconn *dbconn;
@@ -1833,15 +1881,16 @@ PG_DEFINE (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_putline, "pg-putline", 2, 0, 0,
-           (SCM conn, SCM str),
-           "Write a line to the connection on which a @code{COPY <table>\n"
-           "FROM STDIN} has been issued.  The lines written should include\n"
-           "the final newline characters.  The last line should be a\n"
-           "backslash, followed by a full-stop.  After this, the\n"
-           "@code{pg-endcopy} procedure should be called for this\n"
-           "connection before any further @code{pg-exec} call is made.\n"
-           "Return #t if successful.")
+GH_DEFPROC
+(pg_putline, "pg-putline", 2, 0, 0,
+ (SCM conn, SCM str),
+ "Write a line to the connection on which a @code{COPY <table>\n"
+ "FROM STDIN} has been issued.  The lines written should include\n"
+ "the final newline characters.  The last line should be a\n"
+ "backslash, followed by a full-stop.  After this, the\n"
+ "@code{pg-endcopy} procedure should be called for this\n"
+ "connection before any further @code{pg-exec} call is made.\n"
+ "Return #t if successful.")
 {
 #define FUNC_NAME s_pg_putline
   PGconn *dbconn;
@@ -1861,12 +1910,13 @@ PG_DEFINE (pg_putline, "pg-putline", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_endcopy, "pg-endcopy", 1, 0, 0,
-           (SCM conn),
-           "Resynchronize with the backend process.  This procedure\n"
-           "must be called after the last line of a table has been\n"
-           "transferred using @code{pg-getline}, @code{pg-getlineasync}\n"
-           "or @code{pg-putline}.  Return #t if successful.")
+GH_DEFPROC
+(pg_endcopy, "pg-endcopy", 1, 0, 0,
+ (SCM conn),
+ "Resynchronize with the backend process.  This procedure\n"
+ "must be called after the last line of a table has been\n"
+ "transferred using @code{pg-getline}, @code{pg-getlineasync}\n"
+ "or @code{pg-putline}.  Return #t if successful.")
 {
 #define FUNC_NAME s_pg_endcopy
   PGconn *dbconn;
@@ -1885,13 +1935,14 @@ SIMPLE_KEYWORD (terse);
 SIMPLE_KEYWORD (default);
 SIMPLE_KEYWORD (verbose);
 
-PG_DEFINE (pg_set_error_verbosity, "pg-set-error-verbosity", 2, 0, 0,
-           (SCM conn, SCM verbosity),
-           "Set the error verbosity for @var{conn} to @var{verbosity}.\n"
-           "@var{verbosity} is a keyword, one of: @code{#:terse},\n"
-           "@code{#:default} or @code{#:verbose}.  Return the previous\n"
-           "verbosity.  If the installation does not support\n"
-           "@code{PQPROTOCOLVERSION}, simply return @code{#:default}.")
+GH_DEFPROC
+(pg_set_error_verbosity, "pg-set-error-verbosity", 2, 0, 0,
+ (SCM conn, SCM verbosity),
+ "Set the error verbosity for @var{conn} to @var{verbosity}.\n"
+ "@var{verbosity} is a keyword, one of: @code{#:terse},\n"
+ "@code{#:default} or @code{#:verbose}.  Return the previous\n"
+ "verbosity.  If the installation does not support\n"
+ "@code{PQPROTOCOLVERSION}, simply return @code{#:default}.")
 {
 #define FUNC_NAME s_pg_set_error_verbosity
   PGconn *dbconn;
@@ -1927,13 +1978,14 @@ PG_DEFINE (pg_set_error_verbosity, "pg-set-error-verbosity", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
-           (SCM conn, SCM port),
-           "Start outputting low-level trace information on the\n"
-           "connection @var{conn} to @var{port}, which must have been\n"
-           "opened for writing.  This trace is more useful for debugging\n"
-           "PostgreSQL than it is for debugging its clients.\n"
-           "The return value is unspecified.")
+GH_DEFPROC
+(pg_trace, "pg-trace", 2, 0, 0,
+ (SCM conn, SCM port),
+ "Start outputting low-level trace information on the\n"
+ "connection @var{conn} to @var{port}, which must have been\n"
+ "opened for writing.  This trace is more useful for debugging\n"
+ "PostgreSQL than it is for debugging its clients.\n"
+ "The return value is unspecified.")
 {
 #define FUNC_NAME s_pg_trace
   PGconn *dbconn;
@@ -1963,10 +2015,11 @@ PG_DEFINE (pg_trace, "pg-trace", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_untrace, "pg-untrace", 1, 0, 0,
-           (SCM conn),
-           "Stop tracing on connection @var{conn}.\n"
-           "The return value is unspecified.")
+GH_DEFPROC
+(pg_untrace, "pg-untrace", 1, 0, 0,
+ (SCM conn),
+ "Stop tracing on connection @var{conn}.\n"
+ "The return value is unspecified.")
 {
 #define FUNC_NAME s_pg_untrace
   PGconn *dbconn;
@@ -2113,31 +2166,32 @@ SCM_SYMBOL (pg_sym_field_names, "field-names");
 static SCM valid_print_option_flags;
 static SCM valid_print_option_keys;
 
-PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
-           (SCM spec),
-           "Return an opaque print options object created from @var{spec},\n"
-           "suitable for use with @code{pg-print}.  @var{spec} is a list\n"
-           "of elements, each either a flag (symbol) or a key-value pair\n"
-           "(with the key being a symbol).  Recognized flags:\n\n"
-           "@itemize\n"
-           "@item header: Print output field headings and row count.\n"
-           "@item align: Fill align the fields.\n"
-           "@item standard: Old brain-dead format.\n"
-           "@item html3: Output HTML tables.\n"
-           "@item expanded: Expand tables.\n"
-           "@end itemize\n\n"
-           "To specify a disabled flag, use @dfn{no-FLAG}, e.g.,"
-           "@code{no-header}.  Recognized keys:\n\n"
-           "@itemize\n"
-           "@item field-sep\n\n"
-           "String specifying field separator.\n"
-           "@item table-opt\n\n"
-           "String specifying HTML table attributes.\n"
-           "@item caption\n\n"
-           "String specifying caption to use in HTML table.\n"
-           "@item field-names\n\n"
-           "List of replacement field names, each a string.\n"
-           "@end itemize\n\n")
+GH_DEFPROC
+(pg_make_print_options, "pg-make-print-options", 1, 0, 0,
+ (SCM spec),
+ "Return an opaque print options object created from @var{spec},\n"
+ "suitable for use with @code{pg-print}.  @var{spec} is a list\n"
+ "of elements, each either a flag (symbol) or a key-value pair\n"
+ "(with the key being a symbol).  Recognized flags:\n\n"
+ "@itemize\n"
+ "@item header: Print output field headings and row count.\n"
+ "@item align: Fill align the fields.\n"
+ "@item standard: Old brain-dead format.\n"
+ "@item html3: Output HTML tables.\n"
+ "@item expanded: Expand tables.\n"
+ "@end itemize\n\n"
+ "To specify a disabled flag, use @dfn{no-FLAG}, e.g.,"
+ "@code{no-header}.  Recognized keys:\n\n"
+ "@itemize\n"
+ "@item field-sep\n\n"
+ "String specifying field separator.\n"
+ "@item table-opt\n\n"
+ "String specifying HTML table attributes.\n"
+ "@item caption\n\n"
+ "String specifying caption to use in HTML table.\n"
+ "@item field-names\n\n"
+ "List of replacement field names, each a string.\n"
+ "@end itemize\n\n")
 {
 #define FUNC_NAME s_pg_make_print_options
   PQprintOpt *po;
@@ -2234,12 +2288,13 @@ PG_DEFINE (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
-           (SCM result, SCM options),
-           "Display @var{result} on the current output port.\n"
-           "Optional second arg @var{options} is an\n"
-           "object returned by @code{pg-make-print-options} that\n"
-           "specifies various parameters of the output format.")
+GH_DEFPROC
+(pg_print, "pg-print", 1, 1, 0,
+ (SCM result, SCM options),
+ "Display @var{result} on the current output port.\n"
+ "Optional second arg @var{options} is an\n"
+ "object returned by @code{pg-make-print-options} that\n"
+ "specifies various parameters of the output format.")
 {
 #define FUNC_NAME s_pg_print
   xr_t *xr; PGresult *res;
@@ -2293,15 +2348,16 @@ PG_DEFINE (pg_print, "pg-print", 1, 1, 0,
    procedure that takes a string.  For these reasons, we name the procedure
    `pg-set-notice-out!' to help avoid confusion.  */
 
-PG_DEFINE (pg_set_notice_out_x, "pg-set-notice-out!", 2, 0, 0,
-           (SCM conn, SCM out),
-           "Set notice output handler of @var{conn} to @var{out}.\n"
-           "@var{out} can be #f, which means discard notices;\n"
-           "#t, which means send them to the current error port;\n"
-           "an output port to send the notice to; or a procedure that\n"
-           "takes one argument, the notice string.  It's usually a good\n"
-           "idea to call @code{pg-set-notice-out!} soon after establishing\n"
-           "the connection.")
+GH_DEFPROC
+(pg_set_notice_out_x, "pg-set-notice-out!", 2, 0, 0,
+ (SCM conn, SCM out),
+ "Set notice output handler of @var{conn} to @var{out}.\n"
+ "@var{out} can be #f, which means discard notices;\n"
+ "#t, which means send them to the current error port;\n"
+ "an output port to send the notice to; or a procedure that\n"
+ "takes one argument, the notice string.  It's usually a good\n"
+ "idea to call @code{pg-set-notice-out!} soon after establishing\n"
+ "the connection.")
 {
 #define FUNC_NAME s_pg_set_notice_out_x
   ASSERT_CONNECTION (1, conn);
@@ -2321,16 +2377,17 @@ PG_DEFINE (pg_set_notice_out_x, "pg-set-notice-out!", 2, 0, 0,
 
 /* Fetch asynchronous notifications.  */
 
-PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
-           (SCM conn, SCM tickle),
-           "Return the next as-yet-unhandled notification\n"
-           "from @var{conn}, or #f if there are none available.\n"
-           "The notification is a pair with @sc{car} @var{relname},\n"
-           "a string naming the relation containing data; and\n"
-           "@sc{cdr} @var{pid}, the integer pid\n"
-           "of the backend delivering the notification.\n"
-           "Optional arg @var{tickle} non-#f means to do a\n"
-           "\"consume input\" operation prior to the query.")
+GH_DEFPROC
+(pg_notifies, "pg-notifies", 1, 1, 0,
+ (SCM conn, SCM tickle),
+ "Return the next as-yet-unhandled notification\n"
+ "from @var{conn}, or #f if there are none available.\n"
+ "The notification is a pair with @sc{car} @var{relname},\n"
+ "a string naming the relation containing data; and\n"
+ "@sc{cdr} @var{pid}, the integer pid\n"
+ "of the backend delivering the notification.\n"
+ "Optional arg @var{tickle} non-#f means to do a\n"
+ "\"consume input\" operation prior to the query.")
 {
 #define FUNC_NAME s_pg_notifies
   PGconn *dbconn;
@@ -2367,9 +2424,10 @@ PG_DEFINE (pg_notifies, "pg-notifies", 1, 1, 0,
    the Encoding), and seems to work w/ PostgreSQL 7.3.8.  */
 extern char * pg_encoding_to_char (int encoding);
 
-PG_DEFINE (pg_client_encoding, "pg-client-encoding", 1, 0, 0,
-           (SCM conn),
-           "Return the current client encoding for @var{conn}.")
+GH_DEFPROC
+(pg_client_encoding, "pg-client-encoding", 1, 0, 0,
+ (SCM conn),
+ "Return the current client encoding for @var{conn}.")
 {
 #define FUNC_NAME s_pg_client_encoding
   PGconn *dbconn;
@@ -2381,10 +2439,11 @@ PG_DEFINE (pg_client_encoding, "pg-client-encoding", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
-           (SCM conn, SCM encoding),
-           "Set the client encoding for @var{conn} to @var{encoding}.\n"
-           "Return #t if successful, #f otherwise.")
+GH_DEFPROC
+(pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
+ (SCM conn, SCM encoding),
+ "Set the client encoding for @var{conn} to @var{encoding}.\n"
+ "Return #t if successful, #f otherwise.")
 {
 #define FUNC_NAME s_pg_set_client_encoding_x
   PGconn *dbconn;
@@ -2404,13 +2463,14 @@ PG_DEFINE (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
  * non-blocking connection mode
  */
 
-PG_DEFINE (pg_set_nonblocking_x, "pg-set-nonblocking!", 2, 0, 0,
-           (SCM conn, SCM mode),
-           "Set the nonblocking status of @var{conn} to @var{mode}.\n"
-           "If @var{mode} is non-#f, set it to nonblocking, otherwise\n"
-           "set it to blocking.  Return #t if successful.\n"
-           "If @code{pg-guile-pg-loaded} does not include\n"
-           "@code{PQSETNONBLOCKING}, do nothing and return #f.")
+GH_DEFPROC
+(pg_set_nonblocking_x, "pg-set-nonblocking!", 2, 0, 0,
+ (SCM conn, SCM mode),
+ "Set the nonblocking status of @var{conn} to @var{mode}.\n"
+ "If @var{mode} is non-#f, set it to nonblocking, otherwise\n"
+ "set it to blocking.  Return #t if successful.\n"
+ "If @code{pg-guile-pg-loaded} does not include\n"
+ "@code{PQSETNONBLOCKING}, do nothing and return #f.")
 {
 #define FUNC_NAME s_pg_set_nonblocking_x
   PGconn *dbconn;
@@ -2427,11 +2487,12 @@ PG_DEFINE (pg_set_nonblocking_x, "pg-set-nonblocking!", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_is_nonblocking_p, "pg-is-nonblocking?", 1, 0, 0,
-           (SCM conn),
-           "Return #t if @var{conn} is in nonblocking mode.\n"
-           "If @code{pg-guile-pg-loaded} does not include\n"
-           "@code{PQISNONBLOCKING}, do nothing and return #f.")
+GH_DEFPROC
+(pg_is_nonblocking_p, "pg-is-nonblocking?", 1, 0, 0,
+ (SCM conn),
+ "Return #t if @var{conn} is in nonblocking mode.\n"
+ "If @code{pg-guile-pg-loaded} does not include\n"
+ "@code{PQISNONBLOCKING}, do nothing and return #f.")
 {
 #define FUNC_NAME s_pg_is_nonblocking_p
   PGconn *dbconn;
@@ -2453,11 +2514,12 @@ PG_DEFINE (pg_is_nonblocking_p, "pg-is-nonblocking?", 1, 0, 0,
  * non-blocking query operations
  */
 
-PG_DEFINE (pg_send_query, "pg-send-query", 2, 0, 0,
-           (SCM conn, SCM query),
-           "Send @var{conn} a non-blocking @var{query} (string).\n"
-           "Return #t iff successful.  If not successful, error\n"
-           "message is retrievable with @code{pg-error-message}.")
+GH_DEFPROC
+(pg_send_query, "pg-send-query", 2, 0, 0,
+ (SCM conn, SCM query),
+ "Send @var{conn} a non-blocking @var{query} (string).\n"
+ "Return #t iff successful.  If not successful, error\n"
+ "message is retrievable with @code{pg-error-message}.")
 {
 #define FUNC_NAME s_pg_send_query
   PGconn *dbconn;
@@ -2472,10 +2534,11 @@ PG_DEFINE (pg_send_query, "pg-send-query", 2, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_send_query_params, "pg-send-query-params", 3, 0, 0,
-           (SCM conn, SCM query, SCM parms),
-           "Like @code{pg-send-query}, except that @var{query} is a\n"
-           "parameterized string, and @var{parms} is a parameter-vector.")
+GH_DEFPROC
+(pg_send_query_params, "pg-send-query-params", 3, 0, 0,
+ (SCM conn, SCM query, SCM parms),
+ "Like @code{pg-send-query}, except that @var{query} is a\n"
+ "parameterized string, and @var{parms} is a parameter-vector.")
 {
 #define FUNC_NAME s_pg_send_query_params
 #ifndef HAVE_PQPROTOCOLVERSION
@@ -2504,10 +2567,11 @@ PG_DEFINE (pg_send_query_params, "pg-send-query-params", 3, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_send_query_prepared, "pg-send-query-prepared", 3, 0, 0,
-           (SCM conn, SCM stname, SCM parms),
-           "Like @code{pg-exec-prepared}, except asynchronous.\n"
-           "Also, return @code{#t} if successful.")
+GH_DEFPROC
+(pg_send_query_prepared, "pg-send-query-prepared", 3, 0, 0,
+ (SCM conn, SCM stname, SCM parms),
+ "Like @code{pg-exec-prepared}, except asynchronous.\n"
+ "Also, return @code{#t} if successful.")
 {
 #define FUNC_NAME s_pg_send_query_prepared
 #ifndef HAVE_PQPROTOCOLVERSION
@@ -2536,9 +2600,10 @@ PG_DEFINE (pg_send_query_prepared, "pg-send-query-prepared", 3, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_get_result, "pg-get-result", 1, 0, 0,
-           (SCM conn),
-           "Return a result from @var{conn}, or #f.")
+GH_DEFPROC
+(pg_get_result, "pg-get-result", 1, 0, 0,
+ (SCM conn),
+ "Return a result from @var{conn}, or #f.")
 {
 #define FUNC_NAME s_pg_send_query
   PGconn *dbconn;
@@ -2557,9 +2622,10 @@ PG_DEFINE (pg_get_result, "pg-get-result", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_consume_input, "pg-consume-input", 1, 0, 0,
-           (SCM conn),
-           "Consume input from @var{conn}.  Return #t iff successful.")
+GH_DEFPROC
+(pg_consume_input, "pg-consume-input", 1, 0, 0,
+ (SCM conn),
+ "Consume input from @var{conn}.  Return #t iff successful.")
 {
 #define FUNC_NAME s_pg_consume_input
   PGconn *dbconn;
@@ -2571,10 +2637,11 @@ PG_DEFINE (pg_consume_input, "pg-consume-input", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_is_busy_p, "pg-is-busy?", 1, 0, 0,
-           (SCM conn),
-           "Return #t if there is data waiting for\n"
-           "@code{pg-consume-input}, otherwise #f.")
+GH_DEFPROC
+(pg_is_busy_p, "pg-is-busy?", 1, 0, 0,
+ (SCM conn),
+ "Return #t if there is data waiting for\n"
+ "@code{pg-consume-input}, otherwise #f.")
 {
 #define FUNC_NAME s_pg_is_busy_p
   PGconn *dbconn;
@@ -2586,23 +2653,24 @@ PG_DEFINE (pg_is_busy_p, "pg-is-busy?", 1, 0, 0,
 #undef FUNC_NAME
 }
 
-PG_DEFINE (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
-           (SCM conn),
-           "Request a cancellation on @var{conn}.\n"
-           "Return #t iff the cancel request was successfully\n"
-           "dispatched.  If not, @code{pg-error-message}\n"
-           "tells why not.  Successful dispatch is no guarantee\n"
-           "that the request will have any effect, however.\n"
-           "Regardless of the return value,\n"
-           "the client must continue with the normal\n"
-           "result-reading sequence using @code{pg-get-result}.\n"
-           "If the cancellation is effective, the current query\n"
-           "will terminate early and return an error result.\n"
-           "If the cancellation fails (say, because the backend\n"
-           "was already done processing the query), then there\n"
-           "will be no visible result at all.\n\n"
-           "Note that if the current query is part of a transaction,\n"
-           "cancellation will abort the whole transaction.")
+GH_DEFPROC
+(pg_request_cancel, "pg-request-cancel", 1, 0, 0,
+ (SCM conn),
+ "Request a cancellation on @var{conn}.\n"
+ "Return #t iff the cancel request was successfully\n"
+ "dispatched.  If not, @code{pg-error-message}\n"
+ "tells why not.  Successful dispatch is no guarantee\n"
+ "that the request will have any effect, however.\n"
+ "Regardless of the return value,\n"
+ "the client must continue with the normal\n"
+ "result-reading sequence using @code{pg-get-result}.\n"
+ "If the cancellation is effective, the current query\n"
+ "will terminate early and return an error result.\n"
+ "If the cancellation fails (say, because the backend\n"
+ "was already done processing the query), then there\n"
+ "will be no visible result at all.\n\n"
+ "Note that if the current query is part of a transaction,\n"
+ "cancellation will abort the whole transaction.")
 {
 #define FUNC_NAME s_pg_is_busy_p
   PGconn *dbconn;
