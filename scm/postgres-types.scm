@@ -59,26 +59,28 @@
             define-db-col-type
             define-db-col-type-array-variant))
 
-(define put set-object-property!)
-(define get object-property)
+(define o/t (make-object-property))     ; oid/type-name info
 
 ;; Query connection @var{conn} for oid/type-name info, caching results.
-;; Optional arg @var{fresh?} forces a (re-)query, bypassing the cache.
+;; Optional arg @var{fresh?} non-#f a (re-)query, updating the cache.
 ;; Return a list of oid/type-name (number/string) pairs.
 ;;
-(define (oid-type-name-cache conn . fresh?)
-  (or (and (null? fresh?)
-           (get conn oid-type-name-cache))
-      (put conn oid-type-name-cache
-           (let ((res (pg-exec conn "SELECT oid,typname FROM pg_type;")))
-             (and (eq? 'PGRES_TUPLES_OK (pg-result-status res))
-                  (let loop ((n (1- (pg-ntuples res))) (acc '()))
-                    (if (> 0 n)
-                        acc
-                        (loop (1- n)
-                              (acons (string->number (pg-getvalue res n 0))
-                                     (pg-getvalue res n 1)
-                                     acc)))))))))
+;;-sig: (conn [fresh?])
+;;
+(define (oid-type-name-cache conn . opt)
+  (define (fresh)
+    (let ((res (pg-exec conn "SELECT oid,typname FROM pg_type;")))
+      (and (eq? 'PGRES_TUPLES_OK (pg-result-status res))
+           (let loop ((n (1- (pg-ntuples res))) (acc '()))
+             (if (> 0 n)
+                 acc
+                 (loop (1- n)
+                       (acons (string->number (pg-getvalue res n 0))
+                              (pg-getvalue res n 1)
+                              acc)))))))
+  (cond ((and (not (null? opt)) (car opt)) (set! (o/t conn) (fresh)))
+        ((o/t conn))
+        (else (set! (o/t conn) (fresh)))))
 
 ;; column types / definition
 
