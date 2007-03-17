@@ -331,24 +331,22 @@ connection object that logs all the SQL statements it executes.
 @end lisp
 
 Here is an implementation using object properties,
-using the keyword @code{#:log} as the key.
+using the object property @code{log}.
 
 @lisp
-(define put set-object-property!)
-(define get object-property)
+(define log (make-object-property))
 
 (define (pg-connectdb/logged options)
   (let ((conn (pg-connectdb options)))
-    (put conn #:log '())
+    (set! (log conn) '())
     conn))
 
 (define (pg-exec/logged conn sql)
-  (put conn #:log (append! (get conn #:log)
-                           (list sql)))
+  (set! (log conn) (append! (log conn) (list sql)))
   (pg-exec conn sql))
 
 (define (conn-log conn)
-  (get conn #:log))
+  (log conn))
 @end lisp
 
 @section Asynchronous Notifications
