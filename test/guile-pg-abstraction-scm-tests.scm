@@ -307,8 +307,4 @@
 
 (exit (main))
 
-;;; Local variables:
-;;; eval: (put 'pass-if 'scheme-indent-function 1)
-;;; End:
-
 ;;; guile-pg-abstraction-scm-tests.scm ends here
