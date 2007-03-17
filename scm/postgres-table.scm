@@ -69,8 +69,7 @@
 
 ;;; support
 
-(define put set-object-property!)
-(define get object-property)
+(define ohints (make-object-property))
 
 (define (fmt . args)
   (apply simple-format #f args))
@@ -326,7 +325,7 @@
                            (else (parse+make-SELECT/tail-tree
                                   rest-clauses)))))
                (res (beex cmd)))
-          (and hints (put res #:pgtable-ohints hints))
+          (and hints (set! (ohints res) hints))
           res)))))
 
 ;;; dispatch
@@ -414,7 +413,7 @@
                           defs)))
          (res->foo-proc (lambda (proc)
                           (lambda (res)
-                            (proc res (or (get res #:pgtable-ohints)
+                            (proc res (or (ohints res)
                                           objectifiers))))))
 
     (define drop (pp drop-proc))
