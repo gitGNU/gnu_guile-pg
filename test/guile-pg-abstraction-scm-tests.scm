@@ -64,6 +64,13 @@
 
 ;;; Tests
 
+;; Test types cache
+;; expect #t
+;;
+(define (test:query-oid/type-name)
+  (->bool (oid-type-name-cache
+           (pg-connectdb (simple-format #f "dbname=~A" db-name)))))
+
 ;; Test pgtable-manager
 ;; expect #t
 ;;
@@ -282,12 +289,14 @@
 (define (main)
   (set! verbose #t)
   (test-init "abstraction-scm-tests"    ; manularity sucks
-             (+ 6
+             (+ 1
+                6
                 (let ((count (list 5 3 3 2 2 3))) ; multiples
                   (+ (length count)
                      (apply + count)))
                 1
                 (+ 6 1 8)))             ; m2
+  (test #t test:query-oid/type-name)
   (test #t test:set!-m)
   (test #t test:m-procs)
   (test #t test:m-create)
