@@ -2,7 +2,9 @@
 @c %**start of header
 @setfilename guile-pg.info
 @settitle The (database postgres*) Modules
+@ifinfo
 @paragraphindent 0
+@end ifinfo
 @c %**end of header
 @code{}
 @setchapternewpage odd
@@ -140,6 +142,7 @@ database module.  This is done using the @code{use-modules} syntax:
 (use-modules (database postgres))
 @end lisp
 
+@noindent
 The next step is to make a connection to the database using the
 @code{pg-connectdb} procedure.  Then, having created a valid connection to a
 database server, we can use the @code{pg-exec} procedure to execute
@@ -241,6 +244,7 @@ Guile-PG displays connection objects in the following format:
 #<PG-CONN:N:DB:HOST:PORT:OPTIONS>
 @end example
 
+@noindent
 @var{n} is the serial number of the connection, valid only for the current
 session; @var{db} is the database name, or @code{?}; @var{host} is the host
 name, empty in the case of unix-domain connections; @var{port} is the TCP port
@@ -399,7 +403,9 @@ However, @dots{}
 The string is a stark data structure and everywhere
 it is passed there is much duplication of process.
 It is a perfect vehicle for hiding information.
+@flushright
 			--- Alan Perlis
+@end flushright
 @end quotation
 
 To reduce this inefficiency for heavily-repeated statements that may
@@ -457,6 +463,7 @@ Here is an example of how to work within these restrictions:
 @result{} #t
 @end lisp
 
+@noindent
 In the future, it should be possible to specify @code{integer} in
 @var{parms} instead of in the parameterized string.
 
@@ -530,6 +537,7 @@ Guile-PG displays result objects in the following format:
 #<PG-RESULT:N:STATUS:NTUPLES:NFIELDS>
 @end example
 
+@noindent
 @var{n} is the serial number of the result, valid only for the current
 connection; @var{status} is the same as would be returned by
 @code{pg-result-status} except without the @code{PGRES_} (it is
@@ -601,6 +609,7 @@ error occurred.
          (string->number (pg-cmdtuples result)))))
 @end lisp
 
+@noindent
 The procedure could be called as follows
 
 @lisp
@@ -661,12 +670,14 @@ called.
        (get-values result tuple)))
 @end lisp
 
+@noindent
 Field values can be extracted from the tuple using @code{assq-ref}, eg:
 
 @lisp
 (assq-ref (tuple->alist result 0) 'firstname)
 @end lisp
 
+@noindent
 Using this procedure we can define a version of @code{for-each} which
 iterates through the tuples returned from a given @code{SELECT} query:
 
@@ -678,6 +689,7 @@ iterates through the tuples returned from a given @code{SELECT} query:
       (proc (tuple->alist result tuple)))))
 @end lisp
 
+@noindent
 This implementation of @code{for-each-tuple} inherits inefficiency from the
 @code{tuple->alist} procedure.
 
@@ -843,6 +855,7 @@ Guile-PG displays large-object port objects in the following format:
 #<PG-LO-PORT:MODE: ALOD:OID:CONN>
 @end example
 
+@noindent
 @var{mode} is one of @code{closed}, @code{input-output}, @code{input},
 @code{output} or @code{bogus}; @var{alod} is a large-object descriptor (small
 integer similar to a file descriptor); @var{oid} is the OID (integer); and
@@ -927,6 +940,7 @@ To get started, load the @code{postgres-qcons} module:
 (use-modules (database postgres-qcons))
 @end lisp
 
+@noindent
 This provides procedures to render @dfn{prefix-style expressions} to SQL
 syntax, essentially by constructing stylized trees (nested lists) and then
 flattening them to a string on output.
@@ -986,6 +1000,7 @@ CASE exp
 END
 @end example
 
+@noindent
 where the changes from @code{PEXP}, @code{MAYBE1}, @code{VAL1} and
 @code{DEFAULT-VAL} to @code{exp}, @code{maybe1}, @code{val1} and
 @code{default}, respectively, involve recursive layout transforms.
@@ -1000,6 +1015,7 @@ CASE
 END
 @end example
 
+@noindent
 where the changes from @code{MAYBE1}, @code{VAL1} and
 @code{DEFAULT-VAL} to @code{maybe1}, @code{val1} and
 @code{default}, respectively, involve recursive layout transforms.
@@ -1014,6 +1030,7 @@ CASE exp
 END
 @end example
 
+@noindent
 where the changes from @code{PEXP}, @code{YES-VAL} and
 @code{NO-VAL} to @code{exp}, @code{yes} and
 @code{no}, respectively, involve recursive layout transforms.
@@ -1026,6 +1043,7 @@ This maps to the SQL @code{CAST} statement:
 CAST exp AS type
 @end example
 
+@noindent
 where the change from @code{PEXP} to @code{exp} involves a recursive layout
 transform.  Note that the result is identical to using (SQL) suffix
 @code{::TYPE}; the operator @code{::} was actually chosen with this
@@ -1131,6 +1149,7 @@ To get started, load the @code{postgres-types} module:
 (use-modules (database postgres-types))
 @end lisp
 
+@noindent
 But before we get to conversions, recall that the @code{pg-ftype} example
 (@pxref{Processing Results})
 defines a procedure that returns the name of a PostgreSQL type by doing a
@@ -1143,6 +1162,7 @@ implementation:
             (pg-ftype result fnum)))
 @end lisp
 
+@noindent
 It uses a bonus procedure in this module:
 
 @twerpdoc (oid-type-name-cache)
@@ -1182,6 +1202,7 @@ into a nested list:
 @print{} (("a" "b") ("c" "d"))
 @end lisp
 
+@noindent
 Note that even though the type is an "array", as implied by the square
 brackets, the result is a list.  This is mostly due to a limitation in
 PostgreSQL: dimensionality is not stored for array types, so the conversion
@@ -1377,6 +1398,7 @@ type and any additional options.  It has the form:
 (NAME TYPE [OPTIONS...])
 @end lisp
 
+@noindent
 @var{name} and @var{type} are symbols specifying the name and type of the
 column, respectively (@pxref{Types Conversion}).  @var{options} are strings
 passed directly to PostgreSQL as part of a @code{CREATE TABLE} command.  For
@@ -1396,6 +1418,7 @@ form:
           (etc             int4[])))
 @end lisp
 
+@noindent
 Likewise, here is an example that might be useful in keeping a table of
 expenses (although probably using @code{float4} is not a good idea for
 monetary values):
@@ -1408,6 +1431,7 @@ monetary values):
           (details text[])))
 @end lisp
 
+@noindent
 Note that there are no options in these examples.  The components of a def can
 be extracted with procedures in the @code{postgres-col-defs} module, which can
 be loaded like so:
@@ -1417,6 +1441,7 @@ be loaded like so:
               #:renamer (symbol-prefix-proc 'def:)))
 @end lisp
 
+@noindent
 In this example, we use the @code{#:renamer} clause to systematically prefix
 "def:" to the names that the client module would see (resulting in
 @code{def:column-name} and so on).
@@ -1448,6 +1473,7 @@ To get started, load the @code{postgres-resx} module:
 (use-modules (database postgres-resx))
 @end lisp
 
+@noindent
 The most basic procedure is @code{for-each-tuple}, useful for quick searches
 on the unconverted result strings.
 
@@ -1477,6 +1503,7 @@ The defs (@pxref{Column Definitions}) for the examples are:
 (define defs '((date timestamp) (note text[])))
 @end lisp
 
+@noindent
 Actually the @code{note} field in its raw form involves curly braces and extra
 quoting, but we omit that to reduce clutter.
 
@@ -1498,6 +1525,7 @@ queries.
 @result{} (("now" "the present") ("yesterday" "the past"))
 @end lisp
 
+@noindent
 The @code{result->object-FOO} procedures
 have the same signature but return the data in different ways.
 
@@ -1537,6 +1565,7 @@ To get started, load the @code{postgres-table} module:
 (use-modules (database postgres-table))
 @end lisp
 
+@noindent
 Basically, the @code{pgtable-manager} procedure encapsulates specification,
 query and mutation (including create/delete) of a PostgreSQL table; and the
 @code{pgtable-worker} procedure encapsulates @code{pgtable-manager}.
@@ -1615,6 +1644,7 @@ To get started, load the @code{postgres-meta} module:
 (use-modules (database postgres-meta))
 @end lisp
 
+@noindent
 The column definitions of an existing table can be discovered to some extent
 by the @code{defs-from-psql}, @code{infer-defs} and @code{describe-table!}
 procedures, the last one also displaying details on field/column innards.
@@ -1667,6 +1697,7 @@ To get started, load the @code{postgres-gxrepl} module:
 (use-modules (database postgres-gxrepl))
 @end lisp
 
+@noindent
 This provides the procedure @code{gxrepl}.  The ``gx'' stands for ``guile
 extensible'', which is not the case at the moment, but we have great and
 humble plans for this module...
@@ -1700,6 +1731,7 @@ We are scatterbrained, which helps ameliorate the evilness.
 Uh oh, wits recovered, we once again are a menace.
 @end example
 
+@noindent
 For comparison, here is the last example again, recast into SQL:
 
 @example
