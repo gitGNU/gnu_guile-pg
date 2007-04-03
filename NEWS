@@ -1,6 +1,23 @@
 NEWS for Guile-PG
 
 
+- 0.31 | 2007-04-03
+
+  - Opaque string support removed
+
+	Opaque string support in modules (database postgres-table) and
+	(database postgres-qcons) has been removed.  This was announced
+	in NEWS below for Guile-PG 0.30 (2006-04-04).
+
+  - Support for `pgtable-manager' "data commands" removed
+
+	Announced in NEWS below for Guile-PG 0.30 (2006-04-04).
+
+  - Tested against PostgreSQL 7.4.16
+
+  - Maintenance uses GNU Autoconf 2.60
+
+
 - 0.30 | 2006-04-04
 
   - Expiration date extended for opaque string support

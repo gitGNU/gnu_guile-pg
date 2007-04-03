@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 ##
-##   Copyright (C) 2002,2003,2004,2005,2006 Thien-Thi Nguyen
+##   Copyright (C) 2002,2003,2004,2005,2006,2007 Thien-Thi Nguyen
 ##   Portions Copyright (C) 1998,1999,2000 Ian Grant
 ##
 ##   This file is part of Guile-PG.
@@ -23,7 +23,7 @@
 SUBDIRS = scm test doc
 
 EXTRA_DIST = THANKS TODO HACKING ANONCVS \
-		modsup.h contrib acinclude.m4 autogen.sh
+		modsup.h contrib autogen.sh
 
 BUILT_SOURCES = libpostgres.x libpostgres_lo.x
 
