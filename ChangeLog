@@ -4,6 +4,10 @@
 
 2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	* Makefile.am (EXTRA_DIST): Remove acinclude.m4.
+
+2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	* doc/mkinc (pp-ls): Output three spaces between list elements.
 
 2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
