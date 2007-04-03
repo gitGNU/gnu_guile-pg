@@ -1,8 +1,8 @@
 #!/bin/sh
 # usage: show-platform      # display "uname -a" and "tool: version" info
-#        show-platform -m   # also mail info to good-news-guile-pg@glug.org
+#        show-platform -m   # also mail info to ttn
 
-recip='good-news-guile-pg@glug.org'
+recip='ttn@gnuvola.org'
 
 go ()
 {
