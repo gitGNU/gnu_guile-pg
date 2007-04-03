@@ -1,6 +1,6 @@
 /* modsup.h */
 
-/*	Copyright (C) 2003,2005 Free Software Foundation, Inc.
+/* Copyright (C) 2003, 2005, 2007 Thien-Thi Nguyen
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,31 +16,7 @@
  * along with this software; see the file COPYING.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
- * As a special exception, the Free Software Foundation gives permission
- * for additional uses of the text contained in its release of GUILE.
- *
- * The exception is that, if you link the GUILE library with other files
- * to produce an executable, this does not by itself cause the
- * resulting executable to be covered by the GNU General Public License.
- * Your use of that executable is in no way restricted on account of
- * linking the GUILE library code into it.
- *
- * This exception does not however invalidate any other reasons why
- * the executable file might be covered by the GNU General Public License.
- *
- * This exception applies only to the code released by the
- * Free Software Foundation under the name GUILE.  If you copy
- * code from other Free Software Foundation releases into a copy of
- * GUILE, as the General Public License permits, the exception does
- * not apply to the code that you add in this way.  To avoid misleading
- * anyone as to the status of such modified files, you must delete
- * this exception notice from them.
- *
- * If you write modifications of your own for GUILE, it is your choice
- * whether to permit this exception to apply to your modifications.
- * If you do not wish that, delete this exception notice.  */
-
+ */
 
 /* Usage:
 
@@ -69,7 +45,7 @@
    the function.  Each string except the last must end in @code{\n}.
 */
 #define GH_DEFPROC(fname, primname, req, opt, var, arglist, docstring) \
-  SCM_SNARF_HERE(static SCM fname arglist;)                            \
+  SCM_SNARF_HERE (static SCM fname arglist;)                           \
   SCM_DEFINE (fname, primname, req, opt, var, arglist, docstring)
 
 /*:Define the C function to be called at link time for a non-needy module.
@@ -79,8 +55,13 @@
    module-specific initializations.  @var{fname_frag} is the C translation of
    @var{module_name} with unrepresentable characters replaced by underscore.
    It should have the same length as @var{module_name}.
+
+   The macro also generates a forward declaration of the function,
+   immediately prior to the function definition, so that you don't have to.
 */
 #define GH_MODULE_LINK_FUNC(module_name, fname_frag, module_init_func)  \
+void                                                                    \
+scm_init_ ## fname_frag ## _module (void);                              \
 void                                                                    \
 scm_init_ ## fname_frag ## _module (void)                               \
 {                                                                       \
@@ -97,8 +78,13 @@ scm_init_ ## fname_frag ## _module (void)                               \
    array of strings (elements have type @code{char *}) that name the upstream
    modules whose interfaces are required to be resolved before commencing
    initialization of this one.  The last element of the array must be NULL.
+
+   The macro also generates a forward declaration of the function,
+   immediately prior to the function definition, so that you don't have to.
 */
 #define GH_NEEDY_MODULE_LINK_FUNC(module_name,fname_frag, module_init_func, up) \
+void                                                                    \
+scm_init_ ## fname_frag ## _module (void);                              \
 void                                                                    \
 scm_init_ ## fname_frag ## _module (void)                               \
 {                                                                       \
