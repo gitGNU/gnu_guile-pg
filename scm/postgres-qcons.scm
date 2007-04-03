@@ -60,8 +60,6 @@
             sql<-trees
             sql-command<-trees))
 
-;;; ZOSS: zonk opaque string support
-
 
 ;;; mirroring bootstrap
 
@@ -395,10 +393,6 @@
 ;; EXPR is a prefix-style expression.  The name of the output column
 ;; described by EXPR is usually EXPR's outermost function or operator.
 ;; @end table
-;;
-;; For the present (to ease migration in client modules), EXPR may also be a
-;; string, in which case it is passed through opaquely w/o further processing.
-;; This support WILL BE REMOVED after 2006-12-31; DO NOT rely on it.
 ;;
 (define (make-SELECT/COLS-tree cols)
   (commasep (lambda (x)

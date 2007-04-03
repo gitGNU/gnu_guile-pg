@@ -234,9 +234,7 @@
 ;;
 ;; @itemize
 ;; @item @var{expr} is a prefix-style expression to compute for the column
-;; (@pxref{Query Construction}); or a string (@emph{NOTE}, however, that
-;; support for opaque string @var{expr} WILL BE REMOVED after 2006-12-31;
-;; DO NOT rely on it)
+;; (@pxref{Query Construction})
 ;;
 ;; @item @var{title} is the title (string) of the column, or #f
 ;;
@@ -374,10 +372,6 @@
 ;; `compile-outspec', or a spec
 ;; that `compile-outspec' can process to produce such a result.
 ;;
-;; @emph{NOTE}: Some older versions of `pgtable-manager' also accept a
-;; string for OUTSPEC and WHERE-CONDITION.  DO NOT rely on this; so-called
-;; opaque string support WILL BE REMOVED after 2006-12-31.
-;;
 ;; REST-CLAUSES are zero or more strings.  RES is a tuples result, as
 ;; returned by `pg-exec' (assuming no error occurred).  OPORT specifies an
 ;; output port to write the `pg-exec' command to immediately prior to
@@ -492,9 +486,6 @@
 ;;
 ;; This example is not intended to be wry commentary on the behavioral
 ;; patterns of human managers and workers, btw.
-;;
-;; @emph{NOTE}: See @code{pgtable-manager} regarding planned removal
-;; of opaque string support.
 ;;
 (define (pgtable-worker db-spec table-name defs)
   (let ((M (pgtable-manager db-spec table-name defs)))
