@@ -23,7 +23,7 @@ if [ -s TMP ] ; then
     cat TMP
 fi
 
-aclocal -I . --output=- | sed '$raclocal-suffix' > aclocal.m4
+aclocal -I . --output=- | sed '$rbuild-aux/aclocal-suffix' > aclocal.m4
 
 autoheader
 autoconf
