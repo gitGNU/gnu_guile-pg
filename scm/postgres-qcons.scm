@@ -381,17 +381,17 @@
 ;; Each element of @var{cols} can take one of several forms:
 ;;
 ;; @table @code
-;; @item TITLE
-;; TITLE is a symbol, a column name possibly qualified with the table name.
+;; @item @var{title}
+;; A symbol, a column name possibly qualified with the table name.
 ;; For example, @code{foo.bar} means table @code{foo}, column @code{bar}.
 ;;
-;; @item (TITLE . EXPR)
-;; TITLE is a string to be used to name the output for the column
-;; described by prefix-style expression EXPR.
+;; @item (@var{title} . @var{expr})
+;; @var{title} is a string to be used to name the output for the column
+;; described by prefix-style expression @var{expr}.
 ;;
-;; @item EXPR
-;; EXPR is a prefix-style expression.  The name of the output column
-;; described by EXPR is usually EXPR's outermost function or operator.
+;; @item @var{expr}
+;; A prefix-style expression.  The name of the output column described by
+;; @var{expr} is usually @var{expr}'s outermost function or operator.
 ;; @end table
 ;;
 (define (make-SELECT/COLS-tree cols)
@@ -406,22 +406,29 @@
             cols))
 
 ;; Return a @dfn{from clause} tree for @var{items} (a list).
-;; Each element of @var{items} is either TABLE-NAME, or a pair
-;; @code{(ALIAS . TABLE-NAME)} (both symbols), or a @dfn{join clause}
-;; having the form @code{(JTYPE JCONDITION LEFT-FROM RIGHT-FROM)}.
+;; Each element of @var{items}, a @dfn{from-item},
+;; can take one of several forms:
 ;;
-;; JTYPE is a keyword, one of #:join, #:left-join, #:right-join, #:full-join.
-;;
-;; If JTYPE is #:join, JCONDITION must be omitted.  Otherwise, it is one of:
+;; @table @code
+;; @item @var{table-name}
+;; A symbol.
+;; @item (@var{alias} . @var{table-name})
+;; A pair of symbols.
+;; @item (@var{jtype} [@var{jcondition}] @var{left-from} @var{right-from})
+;; This is a @dfn{join clause},
+;; where @var{jtype} is a keyword, one of @code{#:join},
+;; @code{#:left-join}, @code{#:right-join}, @code{#:full-join};
+;; and @var{left-from} and @var{right-from} are each a single
+;; from-item to be handled recursively.
+;; If @var{jtype} is @code{#:join}, @var{jcondition} must be omitted.
+;; Otherwise, it is one of:
 ;;
 ;; @table @code
 ;; @item #:natural
-;; @item (#:using COL1 COL2...)
-;; @item (#:on PEXP)
+;; @item (#:using @var{col1} @var{col2}...)
+;; @item (#:on @var{pexp})
 ;; @end table
-;;
-;; LEFT-FROM and RIGHT-FROM are each a single from-item to be
-;; handled recursively.
+;; @end table
 ;;
 (define (make-FROM-tree items)
   (define (one x)
@@ -535,9 +542,10 @@
 ;;
 ;; If @var{composition} is @code{#t}, @var{cols/subs} is passed directly to
 ;; @code{make-SELECT/COLS-tree}.  Otherwise, @var{composition} is a keyword,
-;; one of #:union, #:intersection or #:except, and @var{cols/subs} is a list
-;; of sublists taken as arguments to @code{parse+make-SELECT-tree} (called
-;; recursively), and finally combined by @var{composition}.
+;; one of @code{#:union}, @code{#:intersection} or @code{#:except}, and
+;; @var{cols/subs} is a list of sublists taken as arguments to
+;; @code{parse+make-SELECT-tree} (called recursively), and finally combined by
+;; @var{composition}.
 ;;
 ;; @var{tail} is passed directly to @code{parse+make-SELECT/tail-tree}.
 ;;

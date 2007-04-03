@@ -230,7 +230,7 @@
 ;; @item @code{#t}, which means all columns (notionally equivalent to "*")
 ;;
 ;; @item a list of column specifications each of which is either a column
-;; name, or has the form @code{(TYPE TITLE EXPR)}, where:
+;; name, or has the form @code{(@var{type} @var{title} @var{expr})}, where:
 ;;
 ;; @itemize
 ;; @item @var{expr} is a prefix-style expression to compute for the column
@@ -328,21 +328,24 @@
 
 ;;; dispatch
 
-;; Return a closure that manages a table specified by DB-SPEC TABLE-NAME DEFS.
+;; Return a closure that manages a table specified by
+;; @var{db-spec} @var{table-name} @var{defs}.
 ;;
-;; DB-SPEC can either be a string simply naming the database to use, a string
-;; comprised of space-separated @code{var=val} pairs, an empty string, or an
-;; already existing connection.  @ref{Database Connections}.  TABLE-NAME is a
-;; string naming the table to be managed.
+;; @var{db-spec} can either be a string simply naming the database to use, a
+;; string comprised of space-separated @code{var=val} pairs, an empty string,
+;; or an already existing connection.  @ref{Database Connections}.
 ;;
-;; DEFS is an alist of column definitions of the form (NAME TYPE [OPTION
-;; ...]), with NAME and TYPE symbols and each OPTION a string.  The old format
-;; w/o options: `(NAME . TYPE)' is recognized also, but deprecated; support
+;; @var{table-name} is a string naming the table to be managed.
+;;
+;; @var{defs} is an alist of column definitions of the form
+;; @code{(@var{name} @var{type} [@var{option}@dots{}])},
+;; with @var{name} and @var{type} symbols and each @var{option} a string.
+;; An old format w/o options is recognized also, but deprecated; support
 ;; for it will go away in a future release.
 ;;
-;; The closure accepts a single keyword arg CHOICE (symbol ok) and returns
-;; a procedure.  Here are the accepted keywords along w/ the args (if any)
-;; taken by the returned procedure.
+;; The closure accepts a single keyword (or symbol) arg @var{choice} and
+;; returns a procedure.  Here are the accepted keywords along w/ the args
+;; (if any) taken by the returned procedure.
 ;;
 ;; @example
 ;;   #:k VAR
@@ -360,20 +363,20 @@
 ;;   #:trace-exec OPORT
 ;; @end example
 ;;
-;; VAR is a keyword: #:table-name, #:col-defs, #:connection.  DATA is one
-;; or more Scheme objects.  COLS is either a list of column names (symbols),
-;; or a single string of comma-delimited column names.  WHERE-CONDITION is a
-;; prefix-style expression or a string.  OUTSPEC is either the result of
-;; `compile-outspec', or a spec
-;; that `compile-outspec' can process to produce such a result.
+;; VAR is a keyword: @code{#:table-name}, @code{#:col-defs},
+;; @code{#:connection}.  DATA is one or more Scheme objects.  COLS is either
+;; a list of column names (symbols), or a single string of comma-delimited
+;; column names.  WHERE-CONDITION is a prefix-style expression or a string.
+;; OUTSPEC is either the result of @code{compile-outspec}, or a spec that
+;; @code{compile-outspec} can process to produce such a result.
 ;;
 ;; REST-CLAUSES are zero or more strings.  RES is a tuples result, as
-;; returned by `pg-exec' (assuming no error occurred).  OPORT specifies an
-;; output port to write the `pg-exec' command to immediately prior to
-;; executing it, or @code{#f} to disable tracing.
+;; returned by @code{pg-exec} (assuming no error occurred).  OPORT specifies
+;; an output port to write the @code{pg-exec} command to immediately prior
+;; to executing it, or @code{#f} to disable tracing.
 ;;
-;; The starred (*) procedures return whatever `pg-exec' returns for that type
-;; of procedure.
+;; The starred (*) procedures return whatever @code{pg-exec} returns for
+;; that type of procedure.
 ;;
 (define (pgtable-manager db-spec table-name defs)
   (or (and (pair? defs) (not (null? defs)))
