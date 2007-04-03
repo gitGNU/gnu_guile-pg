@@ -366,14 +366,14 @@
 ;; VAR is a keyword: @code{#:table-name}, @code{#:col-defs},
 ;; @code{#:connection}.  DATA is one or more Scheme objects.  COLS is either
 ;; a list of column names (symbols), or a single string of comma-delimited
-;; column names.  WHERE-CONDITION is a prefix-style expression or a string.
+;; column names.  WHERE-CONDITION is a prefix-style expression.
 ;; OUTSPEC is either the result of @code{compile-outspec}, or a spec that
 ;; @code{compile-outspec} can process to produce such a result.
 ;;
-;; REST-CLAUSES are zero or more strings.  RES is a tuples result, as
-;; returned by @code{pg-exec} (assuming no error occurred).  OPORT specifies
-;; an output port to write the @code{pg-exec} command to immediately prior
-;; to executing it, or @code{#f} to disable tracing.
+;; REST-CLAUSES are zero or more prefix expressions.  RES is a tuples result,
+;; as returned by @code{pg-exec} (assuming no error occurred).  OPORT
+;; specifies an output port to write the @code{pg-exec} command to immediately
+;; prior to executing it, or @code{#f} to disable tracing.
 ;;
 ;; The starred (*) procedures return whatever @code{pg-exec} returns for
 ;; that type of procedure.
