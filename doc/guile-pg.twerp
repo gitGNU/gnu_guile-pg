@@ -1763,4 +1763,8 @@ These errors, on the other hand, are not handled by that mechanism.
 
 @printindex er
 
+@c ---------------------------------------------------------------------------
+@c ---------------------------------------------------------------------------
+@summarycontents
+@contents
 @bye
