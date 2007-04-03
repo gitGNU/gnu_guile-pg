@@ -22,8 +22,8 @@ Welcome!
 	and Guile 1.4.1.107, but you may find that it works with other
 	combinations.  If so, please let us know the good news.  (You
 	can do this by changing to the test/ subdirectory and typing
-	"./show-platform && ./show-platform -m".  The "-m" means "mail
-	results to good-news-guile-pg at glug dot org".)
+	"./show-platform && ./show-platform -m".  The "-m" mails the
+	results to the Guile-PG maintainer.)
 
 
 Building and Installing Guile-PG
@@ -164,7 +164,7 @@ What Goes Where
 Reporting Bugs
 ==============
 
-	Please report bugs to bug-guile-pg@glug.org.  Include Guile-PG
+	Please report bugs to Thien-Thi Nguyen.  Include Guile-PG
 	version, the output of the show-platform script, and the log
 	file of the test that failed (all in subdir "test").
 
@@ -172,7 +172,7 @@ Reporting Bugs
 	failed): The sourceforge folks don't want to update their site
 	to point to the new Guile-PG homepage:
 
-	    http://www.glug.org/people/ttn/software/guile-pg/
+	    http://www.gnuvola.org/software/guile-pg/
 
 	But if there are enough links to the new page, perhaps the
 	relevancy of sourceforge's obstinance will decline over time.
