@@ -404,7 +404,7 @@ The string is a stark data structure and everywhere
 it is passed there is much duplication of process.
 It is a perfect vehicle for hiding information.
 @flushright
-			--- Alan Perlis
+--- Alan Perlis
 @end flushright
 @end quotation
 
@@ -453,7 +453,8 @@ Here is an example of how to work within these restrictions:
 
 (define (parameterized-square n)
   (pg-exec-params C (sel "$1::integer * $1::integer")
-                  (vector (number->string n))))
+                  (vector (number->string n)
+                          (number->string n))))
 
 (define (single result)
   (pg-getvalue result 0 0))
