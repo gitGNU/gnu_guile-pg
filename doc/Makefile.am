@@ -48,6 +48,7 @@ doc-index-prep:
 
 .twerp.texi:
 	guile-tools twerp2texi		\
+	  --scheme-implied		\
 	  -I $(top_builddir)/.doc-index	\
 	  -d .deps/$*.Ptexi		\
 	  -o $(srcdir)/$*.texi		\
