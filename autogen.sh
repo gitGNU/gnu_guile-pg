@@ -15,6 +15,7 @@ test x"$1" = x--libtoolize && libtoolize --force
 test -f ltmain.sh || libtoolize --force
 
 fresh_guile_m4="`guile-config info datadir`/aclocal/guile.m4"
+cd build-aux
 test -f $fresh_guile_m4 || fresh_guile_m4="guile.m4.snap"
 ln -sf $fresh_guile_m4 guile.m4
 diff -i guile.m4.snap guile.m4 > TMP 2>&1
@@ -22,8 +23,10 @@ if [ -s TMP ] ; then
     echo "WARNING: guile.m4.snap out of date, diff follows:"
     cat TMP
 fi
+rm -f TMP
+cd ..
 
-aclocal -I . --output=- | sed '$rbuild-aux/aclocal-suffix' > aclocal.m4
+aclocal -I build-aux --output=- | sed '$rbuild-aux/aclocal-suffix' > aclocal.m4
 
 autoheader
 autoconf
