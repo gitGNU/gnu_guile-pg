@@ -60,8 +60,8 @@ exec ${GUILE-guile} -s $0 "$@" # -*- scheme -*-
                  (set! col (1- (- len)))
                  (newline)))
           (display str)
-          (display #\space)
-          (loop (+ col 1 len) (cdr ls)))))
+          (display "   ")
+          (loop (+ col 3 len) (cdr ls)))))
   (fln "@end example"))
 
 ;; do it!
