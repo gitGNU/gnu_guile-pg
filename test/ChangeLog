@@ -1,3 +1,22 @@
+2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* show-platform (recip): Update.
+
+2007-03-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* guile-pg-abstraction-scm-tests.scm
+	(test:query-oid/type-name): New test.
+	(main): Update expected-count and call new test.
+
+2007-03-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* guile-pg-abstraction-scm-tests.scm (test-m2): Use symbolic
+	WHERE clause for tests "m2 delete-rows" and "m2 update-col".
+
+2007-01-29  Thien-Thi Nguyen  <ttn@ambire>
+
+	* guile-pg-lo-tests.scm (test:lo-seek): Use `open-output-file'.
+
 2006-04-05  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (test:asynchronous-retrieval):

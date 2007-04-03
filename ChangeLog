@@ -1,3 +1,109 @@
+2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* configure.in (AC_INIT): Bump version to "0.31" for release.
+
+2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* doc/mkinc (pp-ls): Output three spaces between list elements.
+
+2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* doc/guile-pg.twerp: Add @summarycontents and @contents.
+
+2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* doc/Makefile.am (.twerp.texi): Specify `--scheme-implied'.
+
+2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* doc/guile-pg.twerp (Parameters): Fix bug in example.
+
+2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* acinclude.m4: Move from here...
+	* build-aux/guile-pg.m4: ...to here.
+	* guile.m4.snap: Move from here...
+	* build-aux/guile.m4.snap: ...to here.
+	* autogen.sh: Update reference to guile.m4.snap.
+	For aclocal, look in build-aux for m4 files.
+
+2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* aclocal-suffix: Move from this dir...
+	* build-aux/aclocal-suffix: to here.
+	* autogen.sh: Update aclocal-suffix ref.
+
+2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* doc/guile-pg.twerp: Suppress indentation only for INFO.
+	Add many @noindent directives.
+
+2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* libpostgres.c
+	* scm/postgres-col-defs.scm
+	* scm/postgres-meta.scm
+	* scm/postgres-qcons.scm
+	* scm/postgres-resdisp.scm
+	* scm/postgres-resx.scm
+	* scm/postgres-table.scm
+	* scm/postgres-types.scm:
+	Doc munging: Put @code{} around #t, #f and keywords.
+
+2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* configure.in (AC_CONFIG_SRCDIR): Remove.
+	(AC_CONFIG_AUX_DIR): New; specify subdir `build-aux'.
+
+2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* scm/postgres-table.scm (pgtable-manager):
+	No longer take #:table-name, #defs or #pgdb as CHOICE.
+
+2007-03-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* scm/postgres-table.scm (put, get): Delete proc aliases.
+	(ohints): New object property.
+	(select-proc, pgtable-manager): Use `ohints'.
+
+	* scm/postgres-types.scm (put, get): Delete proc aliases.
+	(o/t): New object property.
+	(oid-type-name-cache): Use `o/t'.
+	Also, don't refresh if FRESH? is specified #f.
+
+	* doc/guile-pg.twerp (Database Connections): Update example.
+
+2007-03-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* configure.in (AC_INIT): Add bug-report address.
+
+2007-03-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* libpostgres.h (PG_DEFINE): Delete macro.
+	* libpostgres.c, libpostgres_lo.c: Use `GH_DEFPROC'.
+
+2007-03-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* scm/postgres-table.scm (delete-rows-proc make-cmd):
+	No longer accept string for WHERE-CONDITION.
+	(update-col-proc make-cmd): Likewise.
+	(compile-outspec munge): Signal error on string EXPR.
+	(select-proc): No longer special-case
+	strings for OUTSPEC or REST-CLAUSES.
+
+	* scm/postgres-qcons.scm (make-SELECT/COLS-tree): Use `expr' directly.
+	Also, no longer special-case string X; instead, let it signal error.
+	(make-SELECT/COLS-tree expr-nostring): Delete internal proc.
+
+2007-01-29  Thien-Thi Nguyen  <ttn@ambire>
+
+	* bugtest/testlobseek.scm
+	* bugtest/testloseek.scm
+	* bugtest/testwrite.scm: Use `open-output-file'.
+
+	* doc/guile-pg.twerp (Miscellaneous):
+	Use `open-output-file' in example.
+
 2006-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* doc/guile-pg.twerp (Top): Include relinfo.texi.
