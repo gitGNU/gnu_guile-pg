@@ -341,13 +341,8 @@
 ;; for it will go away in a future release.
 ;;
 ;; The closure accepts a single keyword arg CHOICE (symbol ok) and returns
-;; the associated variable or procedure.  The keywords #:table-name, #:defs
-;; and #:pgdb return constant values (the last being a connection object).
-;;
-;; @emph{NOTE}: Support for #:table-name, #:defs and #:pgdb WILL BE REMOVED
-;; after 2006-09-30; DO NOT rely on them.  (Use `#:k' instead.)
-;;
-;; Other keywords return a procedure:
+;; a procedure.  Here are the accepted keywords along w/ the args (if any)
+;; taken by the returned procedure.
 ;;
 ;; @example
 ;;   #:k VAR
@@ -446,9 +441,6 @@
                    ((#:table-name) table-name)
                    ((#:col-defs) defs)
                    (else (error "bad var:" var)))))
-        ((#:table-name) table-name)
-        ((#:defs) defs)
-        ((#:pgdb) conn)
         ((#:drop) drop)
         ((#:create) create)
         ((#:insert-values) insert-values)
