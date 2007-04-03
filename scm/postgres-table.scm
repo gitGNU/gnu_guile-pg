@@ -348,35 +348,54 @@
 ;; (if any) taken by the returned procedure.
 ;;
 ;; @example
-;;   #:k VAR
+;;   #:k @var{var}
 ;; * #:drop
 ;; * #:create
-;; * #:insert-values [DATA ...]
-;; * #:insert-col-values COLS [DATA ...]
-;; * #:insert-alist ALIST
-;; * #:delete-rows WHERE-CONDITION
-;; * #:update-col COLS DATA WHERE-CONDITION
-;; * #:update-col-alist ALIST WHERE-CONDITION
-;; * #:select OUTSPEC [REST-CLAUSES ...]
-;;   #:tuples-result->object-alist RES
-;;   #:tuples-result->alists RES
-;;   #:trace-exec OPORT
+;; * #:insert-values [@var{data} ...]
+;; * #:insert-col-values @var{cols} [@var{data} ...]
+;; * #:insert-alist @var{alist}
+;; * #:delete-rows @var{where-condition}
+;; * #:update-col @var{cols} @var{data} @var{where-condition}
+;; * #:update-col-alist @var{alist} @var{where-condition}
+;; * #:select @var{outspec} [@var{rest-clauses} ...]
+;;   #:tuples-result->object-alist @var{res}
+;;   #:tuples-result->alists @var{res}
+;;   #:trace-exec @var{oport}
 ;; @end example
 ;;
-;; VAR is a keyword: @code{#:table-name}, @code{#:col-defs},
-;; @code{#:connection}.  DATA is one or more Scheme objects.  COLS is either
-;; a list of column names (symbols), or a single string of comma-delimited
-;; column names.  WHERE-CONDITION is a prefix-style expression.
-;; OUTSPEC is either the result of @code{compile-outspec}, or a spec that
-;; @code{compile-outspec} can process to produce such a result.
-;;
-;; REST-CLAUSES are zero or more prefix expressions.  RES is a tuples result,
-;; as returned by @code{pg-exec} (assuming no error occurred).  OPORT
-;; specifies an output port to write the @code{pg-exec} command to immediately
-;; prior to executing it, or @code{#f} to disable tracing.
-;;
 ;; The starred (*) procedures return whatever @code{pg-exec} returns for
-;; that type of procedure.
+;; that type of procedure.  Arguments can be:
+;;
+;; @table @var
+;; @item var
+;; A keyword, one of @code{#:table-name}, @code{#:col-defs}, or
+;; @code{#:connection}.
+;;
+;; @item data
+;; One or more Scheme objects.
+;;
+;; @item cols
+;; Either a list of column names (symbols), or a single string
+;; of comma-delimited column names.
+;;
+;; @item where-condition
+;; A prefix-style expression.
+;;
+;; @item outspec
+;; Either the result of @code{compile-outspec}, or a spec
+;; that @code{compile-outspec} can process to produce such a result.
+;;
+;; @item rest-clauses
+;; Zero or more prefix-style expressions.
+;;
+;; @item res
+;; A tuples result, as returned by @code{pg-exec}
+;; (assuming no error occurred).
+;;
+;; @item oport
+;; An output port to write the @code{pg-exec} command to
+;; immediately prior to executing it.  Use @code{#f} to disable tracing.
+;; @end table
 ;;
 (define (pgtable-manager db-spec table-name defs)
   (or (and (pair? defs) (not (null? defs)))
