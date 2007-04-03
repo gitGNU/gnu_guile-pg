@@ -12,11 +12,8 @@ C compiler it's no great problem that you can't build Guile-PG either.
 
 * Quick start
 
- $ CVSROOT=':pserver:anonymous@cvs.glug.org:/home/ttn/cvsroot'
- $ export CVSROOT
- $ cvs login			# type RET (empty password)
- $ cvs co guile-pg
- $ cd guile-pg
+See ANONCVS for anonymous cvs instructions.  Once you have a source tree:
+
  $ sh -x autogen.sh
 
 See autogen.sh comments for which tool versions are recommended to install on
