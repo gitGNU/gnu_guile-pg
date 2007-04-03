@@ -436,7 +436,7 @@ GH_DEFPROC
  (SCM conn),
  "Return the client protocol version for @var{conn}.\n"
  "This (integer) will be 2 prior to PostgreSQL 7.4.\n"
- "If @var{conn} is not a connection object, return #f.")
+ "If @var{conn} is not a connection object, return @code{#f}.")
 {
 #define FUNC_NAME s_pg_protocol_version
   PGconn *dbconn;
@@ -475,14 +475,15 @@ GH_DEFPROC
  "Each associated value is in turn a sub-alist, with\n"
  "the following keys:\n\n"
  "@itemize\n"
- "@item #:envvar\n\n"
- "@item #:compiled\n"
- "@item #:val\n"
- "@item #:label\n"
- "@item #:dispchar (character: @code{#\\*} or @code{#\\D}; or #f)\n"
- "@item #:dispsize (integer)\n"
+ "@item @code{#:envvar}\n\n"
+ "@item @code{#:compiled}\n"
+ "@item @code{#:val}\n"
+ "@item @code{#:label}\n"
+ "@item @code{#:dispchar} (character: @code{#\\*} or @code{#\\D};\n"
+ "or @code{#f})\n"
+ "@item @code{#:dispsize} (integer)\n"
  "@end itemize\n\n"
- "Values are strings or #f, unless noted otherwise.\n"
+ "Values are strings or @code{#f}, unless noted otherwise.\n"
  "A @code{dispchar} of @code{#\\*} means the option should\n"
  "be treated like a password: user dialogs should hide\n"
  "the value; while @code{#\\D} means the option is for\n"
@@ -676,7 +677,7 @@ GH_DEFPROC
 GH_DEFPROC
 (pg_connection_p, "pg-connection?", 1, 0, 0,
  (SCM obj),
- "Return #t iff @var{obj} is a connection object\n"
+ "Return @code{#t} iff @var{obj} is a connection object\n"
  "returned by @code{pg-connectdb}.")
 {
   return xc_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
@@ -844,7 +845,7 @@ GH_DEFPROC
 GH_DEFPROC
 (pg_result_p, "pg-result?", 1, 0, 0,
  (SCM obj),
- "Return #t iff @var{obj} is a result object\n"
+ "Return @code{#t} iff @var{obj} is a result object\n"
  "returned by @code{pg-exec}.")
 {
   return xr_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
@@ -870,27 +871,27 @@ GH_DEFPROC
  "not available for some reason.  The type of the\n"
  "return value depends on @var{fieldcode}:\n\n"
  "@table @code\n"
- "@item #:severity\n"
- "@itemx #:sqlstate\n"
- "@itemx #:message-primary\n"
- "@itemx #:message-detail\n"
- "@itemx #:message-hint\n"
- "@itemx #:context\n"
- "@itemx #:source-file\n"
+ "@item @code{#:severity}\n"
+ "@itemx @code{#:sqlstate}\n"
+ "@itemx @code{#:message-primary}\n"
+ "@itemx @code{#:message-detail}\n"
+ "@itemx @code{#:message-hint}\n"
+ "@itemx @code{#:context}\n"
+ "@itemx @code{#:source-file}\n"
  "A string.  The value for @code{#:message-primary} is\n"
  "typically one line, whereas for @code{#:message-detail},\n"
  "@code{#:message-hint} and @code{#:context}, it may run\n"
  "to multiple lines.  For @code{#:sqlstate}, it is always\n"
  "five characters long.\n"
- "@item #:statement-position\n"
- "@itemx #:source-line\n"
+ "@item @code{#:statement-position}\n"
+ "@itemx @code{#:source-line}\n"
  "An integer.  Statement position counts characters\n"
  "(not bytes), starting from 1.\n"
- "@item #:source-function\n"
+ "@item @code{#:source-function}\n"
  "A symbol.\n"
  "@end table\n\n"
  "If the installation does not support\n"
- "@code{PQPROTOCOLVERSION}, simply return #f.")
+ "@code{PQPROTOCOLVERSION}, simply return @code{#f}.")
 {
 #define FUNC_NAME s_pg_result_error_field
   SCM rv = SCM_BOOL_F;
@@ -1043,7 +1044,7 @@ GH_DEFPROC
  (SCM conn),
  "Return a string containing the password used to\n"
  "authenticate the connection @var{conn}.\n"
- "If the installation does not support @code{PQPASS}, return #f.")
+ "If the installation does not support @code{PQPASS}, return @code{#f}.")
 {
 #ifdef HAVE_PQPASS
 
@@ -1228,7 +1229,7 @@ GH_DEFPROC
  "Return the status (a string) of a parameter for @var{conn}.\n"
  "@var{parm} is a keyword, such as @code{#:client_encoding}.\n"
  "If the installation does not support\n"
- "@code{PQPROTOCOLVERSION}, return #f.")
+ "@code{PQPROTOCOLVERSION}, return @code{#f}.")
 {
 #define FUNC_NAME s_pg_parameter_status
   PGconn *dbconn;
@@ -1341,7 +1342,7 @@ GH_DEFPROC
  "If the @var{result} is that of an SQL @code{INSERT} command,\n"
  "return the integer OID of the inserted tuple, otherwise return\n"
  "@code{#f}.\n"
- "If the installation does not support @code{PQOIDVALUE}, return #f.")
+ "If the installation does not support @code{PQOIDVALUE}, return @code{#f}.")
 {
 #ifdef HAVE_PQOIDVALUE
 
@@ -1646,7 +1647,7 @@ GH_DEFPROC
  "Return @code{#t} if @var{result} contains binary tuple\n"
  "data, @code{#f} otherwise.\n"
  "If the installation does not support @code{PQBINARYTUPLES},\n"
- "return #f.")
+ "return @code{#f}.")
 {
 #ifdef HAVE_PQBINARYTUPLES
 
@@ -1860,7 +1861,7 @@ GH_DEFPROC
  "(possibly zero) indicating how many bytes of data were read.\n"
  "The returned data may contain at most one newline (in the last\n"
  "byte position).\n"
- "Optional arg @var{tickle} non-#f means to do a\n"
+ "Optional arg @var{tickle} non-@code{#f} means to do a\n"
  "\"consume input\" operation prior to the read.")
 {
 #define FUNC_NAME s_pg_getlineasync
@@ -1890,7 +1891,7 @@ GH_DEFPROC
  "backslash, followed by a full-stop.  After this, the\n"
  "@code{pg-endcopy} procedure should be called for this\n"
  "connection before any further @code{pg-exec} call is made.\n"
- "Return #t if successful.")
+ "Return @code{#t} if successful.")
 {
 #define FUNC_NAME s_pg_putline
   PGconn *dbconn;
@@ -1916,7 +1917,7 @@ GH_DEFPROC
  "Resynchronize with the backend process.  This procedure\n"
  "must be called after the last line of a table has been\n"
  "transferred using @code{pg-getline}, @code{pg-getlineasync}\n"
- "or @code{pg-putline}.  Return #t if successful.")
+ "or @code{pg-putline}.  Return @code{#t} if successful.")
 {
 #define FUNC_NAME s_pg_endcopy
   PGconn *dbconn;
@@ -2352,8 +2353,8 @@ GH_DEFPROC
 (pg_set_notice_out_x, "pg-set-notice-out!", 2, 0, 0,
  (SCM conn, SCM out),
  "Set notice output handler of @var{conn} to @var{out}.\n"
- "@var{out} can be #f, which means discard notices;\n"
- "#t, which means send them to the current error port;\n"
+ "@var{out} can be @code{#f}, which means discard notices;\n"
+ "@code{#t}, which means send them to the current error port;\n"
  "an output port to send the notice to; or a procedure that\n"
  "takes one argument, the notice string.  It's usually a good\n"
  "idea to call @code{pg-set-notice-out!} soon after establishing\n"
@@ -2381,12 +2382,12 @@ GH_DEFPROC
 (pg_notifies, "pg-notifies", 1, 1, 0,
  (SCM conn, SCM tickle),
  "Return the next as-yet-unhandled notification\n"
- "from @var{conn}, or #f if there are none available.\n"
+ "from @var{conn}, or @code{#f} if there are none available.\n"
  "The notification is a pair with @sc{car} @var{relname},\n"
  "a string naming the relation containing data; and\n"
  "@sc{cdr} @var{pid}, the integer pid\n"
  "of the backend delivering the notification.\n"
- "Optional arg @var{tickle} non-#f means to do a\n"
+ "Optional arg @var{tickle} non-@code{#f} means to do a\n"
  "\"consume input\" operation prior to the query.")
 {
 #define FUNC_NAME s_pg_notifies
@@ -2443,7 +2444,7 @@ GH_DEFPROC
 (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
  (SCM conn, SCM encoding),
  "Set the client encoding for @var{conn} to @var{encoding}.\n"
- "Return #t if successful, #f otherwise.")
+ "Return @code{#t} if successful, #f otherwise.")
 {
 #define FUNC_NAME s_pg_set_client_encoding_x
   PGconn *dbconn;
@@ -2467,10 +2468,10 @@ GH_DEFPROC
 (pg_set_nonblocking_x, "pg-set-nonblocking!", 2, 0, 0,
  (SCM conn, SCM mode),
  "Set the nonblocking status of @var{conn} to @var{mode}.\n"
- "If @var{mode} is non-#f, set it to nonblocking, otherwise\n"
- "set it to blocking.  Return #t if successful.\n"
+ "If @var{mode} is non-@code{#f}, set it to nonblocking, otherwise\n"
+ "set it to blocking.  Return @code{#t} if successful.\n"
  "If @code{pg-guile-pg-loaded} does not include\n"
- "@code{PQSETNONBLOCKING}, do nothing and return #f.")
+ "@code{PQSETNONBLOCKING}, do nothing and return @code{#f}.")
 {
 #define FUNC_NAME s_pg_set_nonblocking_x
   PGconn *dbconn;
@@ -2490,9 +2491,9 @@ GH_DEFPROC
 GH_DEFPROC
 (pg_is_nonblocking_p, "pg-is-nonblocking?", 1, 0, 0,
  (SCM conn),
- "Return #t if @var{conn} is in nonblocking mode.\n"
+ "Return @code{#t} if @var{conn} is in nonblocking mode.\n"
  "If @code{pg-guile-pg-loaded} does not include\n"
- "@code{PQISNONBLOCKING}, do nothing and return #f.")
+ "@code{PQISNONBLOCKING}, do nothing and return @code{#f}.")
 {
 #define FUNC_NAME s_pg_is_nonblocking_p
   PGconn *dbconn;
@@ -2518,7 +2519,7 @@ GH_DEFPROC
 (pg_send_query, "pg-send-query", 2, 0, 0,
  (SCM conn, SCM query),
  "Send @var{conn} a non-blocking @var{query} (string).\n"
- "Return #t iff successful.  If not successful, error\n"
+ "Return @code{#t} iff successful.  If not successful, error\n"
  "message is retrievable with @code{pg-error-message}.")
 {
 #define FUNC_NAME s_pg_send_query
@@ -2603,7 +2604,7 @@ GH_DEFPROC
 GH_DEFPROC
 (pg_get_result, "pg-get-result", 1, 0, 0,
  (SCM conn),
- "Return a result from @var{conn}, or #f.")
+ "Return a result from @var{conn}, or @code{#f}.")
 {
 #define FUNC_NAME s_pg_send_query
   PGconn *dbconn;
@@ -2625,7 +2626,7 @@ GH_DEFPROC
 GH_DEFPROC
 (pg_consume_input, "pg-consume-input", 1, 0, 0,
  (SCM conn),
- "Consume input from @var{conn}.  Return #t iff successful.")
+ "Consume input from @var{conn}.  Return @code{#t} iff successful.")
 {
 #define FUNC_NAME s_pg_consume_input
   PGconn *dbconn;
@@ -2640,8 +2641,8 @@ GH_DEFPROC
 GH_DEFPROC
 (pg_is_busy_p, "pg-is-busy?", 1, 0, 0,
  (SCM conn),
- "Return #t if there is data waiting for\n"
- "@code{pg-consume-input}, otherwise #f.")
+ "Return @code{#t} if there is data waiting for\n"
+ "@code{pg-consume-input}, otherwise @code{#f}.")
 {
 #define FUNC_NAME s_pg_is_busy_p
   PGconn *dbconn;
@@ -2657,7 +2658,7 @@ GH_DEFPROC
 (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
  (SCM conn),
  "Request a cancellation on @var{conn}.\n"
- "Return #t iff the cancel request was successfully\n"
+ "Return @code{#t} iff the cancel request was successfully\n"
  "dispatched.  If not, @code{pg-error-message}\n"
  "tells why not.  Successful dispatch is no guarantee\n"
  "that the request will have any effect, however.\n"
