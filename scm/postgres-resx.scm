@@ -43,11 +43,11 @@
             result->object-alists
             result->object-rows))
 
-;; Apply @var{proc} to each tuple in @var{result}.  Return #t to indicate
-;; success, or #f if either the tuple count or the field count is zero.
-;; The tuple is the list formed by mapping @code{pg-getvalue} over the fields.
-;; Thus, @var{proc} should take as many arguments as there are columns in
-;; @var{result}.
+;; Apply @var{proc} to each tuple in @var{result}.  Return @code{#t} to
+;; indicate success, or @code{#f} if either the tuple count or the field count
+;; is zero.  The tuple is the list formed by mapping @code{pg-getvalue} over
+;; the fields.  Thus, @var{proc} should take as many arguments as there are
+;; columns in @var{result}.
 ;;
 (define (for-each-tuple proc result)
   (let* ((nfields (pg-nfields result))

@@ -177,7 +177,7 @@
   (set! (--preformatted string) #t)
   string)
 
-;; Return #t if @var{string} is marked as preformatted.
+;; Return @code{#t} if @var{string} is marked as preformatted.
 ;;
 (define (sql-pre? string)
   (--preformatted string))
@@ -270,7 +270,7 @@
 
 ;; Return a tree made by mapping @var{proc} over list @var{ls},
 ;; w/ elements separated by commas.  Optional third arg @var{parens?}
-;; non-#f includes surrounding parentheses.  The rest of the args
+;; non-@code{#f} includes surrounding parentheses.  The rest of the args
 ;; are more lists, whose @sc{car}s are passed as additional args
 ;; to @var{proc}.
 ;;
@@ -468,7 +468,7 @@
 ;; constituent processing done by @code{make-SELECT/COLS-tree}
 ;; and @code{make-FROM-tree} on @var{cols} and @var{froms},
 ;; respectively, prefix a "SELECT" token.  If @var{froms} is
-;; #f, it is omitted.
+;; @code{#f}, it is omitted.
 ;;
 (define (make-SELECT/FROM/COLS-tree froms cols)
   (list #:SELECT
@@ -503,7 +503,7 @@
 ;; and/or @code{OFFSET n}.  @var{n} is an integer.
 ;; @end table
 ;;
-;; If an expression (@var{x} or @var{n}) is #f, omit the associated
+;; If an expression (@var{x} or @var{n}) is @code{#f}, omit the associated
 ;; clause completely from the returned tree.
 ;;
 (define (parse+make-SELECT/tail-tree plist)
@@ -533,7 +533,7 @@
 ;; Return a @dfn{select} tree of @var{composition} for @var{cols/subs}
 ;; and @var{tail}.
 ;;
-;; If @var{composition} is #t, @var{cols/subs} is passed directly to
+;; If @var{composition} is @code{#t}, @var{cols/subs} is passed directly to
 ;; @code{make-SELECT/COLS-tree}.  Otherwise, @var{composition} is a keyword,
 ;; one of #:union, #:intersection or #:except, and @var{cols/subs} is a list
 ;; of sublists taken as arguments to @code{parse+make-SELECT-tree} (called

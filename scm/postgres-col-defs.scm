@@ -77,7 +77,7 @@
 ;; a symbol using only alphanumeric characters and underscore; the type must
 ;; be a symbol.  Optional second arg @var{typecheck} is a procedure that takes
 ;; the type (a symbol) and can do further checks on it.  It should return
-;; non-#f to indicate success.
+;; non-@code{#f} to indicate success.
 ;;
 ;;-sig: (obj [typecheck])
 ;;

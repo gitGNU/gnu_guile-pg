@@ -63,17 +63,17 @@
 ;; Run @var{psql} and return a @dfn{defs} form for db @var{db-name}, table
 ;; @var{table-name}.  @var{psql} can be a string specifying the filename of
 ;; the psql (or psql-workalike) program, a thunk that produces such a string,
-;; or #t, which means use the first "psql" found in the directories named by
-;; the @code{PATH} env var.  @code{defs-from-psql} signals "bad psql" error
-;; otherwise.
+;; or @code{#t}, which means use the first "psql" found in the directories
+;; named by the @code{PATH} env var.  @code{defs-from-psql} signals "bad psql"
+;; error otherwise.
 ;;
 ;; In the returned defs, the column names are exact.  The column types and
 ;; options are only as exact as @var{psql} can produce.  Options are returned
 ;; as a list, each element of which is either a string (possibly with embedded
 ;; spaces), or a sub-list of symbols and/or numbers.  Typically the sub-list,
 ;; if any, will be the first option.  For example, if the column is specified
-;; as @code{amount numeric(9,2) not null}, the returned def is the four-element
-;; list: @code{(amount numeric (9 2) "not null")}.
+;; as @code{amount numeric(9,2) not null}, the returned def is the
+;; four-element list: @code{(amount numeric (9 2) "not null")}.
 ;;
 (define (defs-from-psql psql db-name table-name)
 
@@ -133,11 +133,11 @@
             (reverse! acc))             ; rv
           (loop (next) (cons def acc))))))
 
-;; Check @var{type}, a symbol.  If it not an array variant, return non-#f only
-;; if its type converters are already registered with Guile-PG.  If @var{type}
-;; is an array variant, check the base (non-array) type first, and if needed,
-;; ensure that the array variant type is registered.  Return non-#f if
-;; successful.
+;; Check @var{type}, a symbol.  If it not an array variant, return
+;; non-@code{#f} only if its type converters are already registered with
+;; Guile-PG.  If @var{type} is an array variant, check the base (non-array)
+;; type first, and if needed, ensure that the array variant type is
+;; registered.  Return non-@code{#f} if successful.
 ;;
 (define (check-type/elaborate type)
   (let* ((s (symbol->string type))
@@ -153,8 +153,8 @@
 
 ;; For table @var{table-name}, check @var{types} (list of symbols) with
 ;; @code{check-type/elaborate} and signal error for those types that do not
-;; validate, or return non-#f otherwise.  The @var{table-name} is used only to
-;; form the error message.
+;; validate, or return non-@code{#f} otherwise.  The @var{table-name} is used
+;; only to form the error message.
 ;;
 (define (strictly-check-types/elaborate! table-name types)
   (let ((bad '()))

@@ -72,7 +72,7 @@
 ;; fat-space fat-no-v fat-h-only
 ;; @end example
 ;;
-;; If omitted or #f, the default is to use "-", "|" and "+" for the
+;; If omitted or @code{#f}, the default is to use "-", "|" and "+" for the
 ;; horizontal, vertical and intersection decorations, respectively.
 ;; The rest of the args, @var{flags}, are symbols that configure various
 ;; parts of the output.  Recognized flags:

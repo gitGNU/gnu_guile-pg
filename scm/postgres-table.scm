@@ -227,7 +227,7 @@
 ;; @itemize
 ;; @item a column name (a symbol)
 ;;
-;; @item #t, which means all columns (notionally equivalent to "*")
+;; @item @code{#t}, which means all columns (notionally equivalent to "*")
 ;;
 ;; @item a list of column specifications each of which is either a column
 ;; name, or has the form @code{(TYPE TITLE EXPR)}, where:
@@ -236,10 +236,10 @@
 ;; @item @var{expr} is a prefix-style expression to compute for the column
 ;; (@pxref{Query Construction})
 ;;
-;; @item @var{title} is the title (string) of the column, or #f
+;; @item @var{title} is the title (string) of the column, or @code{#f}
 ;;
 ;; @item @var{type} is a column type (symbol) such as @code{int4},
-;; or #f to mean @code{text}, or #t to mean use the type associated
+;; or @code{#f} to mean @code{text}, or #t to mean use the type associated
 ;; with the column named in @var{expr}, or the pair @code{(#t . name)}
 ;; to mean use the type associated with column @var{name}
 ;; @end itemize
@@ -370,7 +370,7 @@
 ;; REST-CLAUSES are zero or more strings.  RES is a tuples result, as
 ;; returned by `pg-exec' (assuming no error occurred).  OPORT specifies an
 ;; output port to write the `pg-exec' command to immediately prior to
-;; executing it, or #f to disable tracing.
+;; executing it, or @code{#f} to disable tracing.
 ;;
 ;; The starred (*) procedures return whatever `pg-exec' returns for that type
 ;; of procedure.

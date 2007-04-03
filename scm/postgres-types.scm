@@ -62,7 +62,7 @@
 (define o/t (make-object-property))     ; oid/type-name info
 
 ;; Query connection @var{conn} for oid/type-name info, caching results.
-;; Optional arg @var{fresh?} non-#f a (re-)query, updating the cache.
+;; Optional arg @var{fresh?} non-@code{#f} a (re-)query, updating the cache.
 ;; Return a list of oid/type-name (number/string) pairs.
 ;;
 ;;-sig: (conn [fresh?])
@@ -92,7 +92,7 @@
   (map car *db-col-types*))
 
 ;; Return a type-converter object given its @var{type-name}, a symbol.
-;; Return #f if no such t-c object by that name exists.
+;; Return @code{#f} if no such t-c object by that name exists.
 ;;
 (define (dbcoltype-lookup type-name)
   (assq-ref *db-col-types* type-name))
@@ -145,12 +145,11 @@
 (define (read-array-string-proc objectifier)
   (lambda (string) (read-array-string objectifier string)))
 
-;; Register type NAME with DEFAULT, STRINGIFIER and OBJECTIFIER procs.
-;; NAME is a symbol.  DEFAULT is a string to use if the Scheme object is #f.
+;; Register type NAME with DEFAULT, STRINGIFIER and OBJECTIFIER procs.  NAME
+;; is a symbol.  DEFAULT is a string to use if the Scheme object is @code{#f}.
 ;; STRINGIFIER is a proc that takes a Scheme object and returns a string
-;; suitable for use in an "INSERT VALUES" SQL command.
-;; OBJECTIFIER is a proc that takes a string and returns the Scheme object
-;; parsed out of it.
+;; suitable for use in an "INSERT VALUES" SQL command.  OBJECTIFIER is a proc
+;; that takes a string and returns the Scheme object parsed out of it.
 ;;
 ;; Both STRINGIFIER and OBJECTIFIER need not worry about SQL-style
 ;; quoting (using single quotes) and related quote escaping.
