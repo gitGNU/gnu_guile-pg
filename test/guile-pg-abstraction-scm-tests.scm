@@ -274,7 +274,12 @@
                 '((desc "the answer to the big question"
                         "a nice prime"
                         "almost 2^5, eh?")
-                  (n 42 343 31)))))
+                  (n 42 343 31))))
+      (pass-if "m2 result as rows"
+        (equal? ((m2 'tuples-result->rows) res)
+                '(("the answer to the big question" 42)
+                  ("a nice prime" 343)
+                  ("almost 2^5, eh?" 31)))))
 
     (pass-if "m2 final drop"
       (command-ok? (car ((m2 'drop))))))) ; use CAR because `drop' => a list
@@ -295,7 +300,7 @@
                   (+ (length count)
                      (apply + count)))
                 1
-                (+ 6 1 8)))             ; m2
+                (+ 6 1 9)))             ; m2
   (test #t test:query-oid/type-name)
   (test #t test:set!-m)
   (test #t test:m-procs)
