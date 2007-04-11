@@ -1,3 +1,9 @@
+2007-04-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* guile-pg-abstraction-scm-tests.scm (test-m2):
+	Add check for `tuples-result->rows'.
+	(main): Update expected-count.
+
 2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* show-platform (recip): Update.

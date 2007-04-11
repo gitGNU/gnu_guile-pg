@@ -1,6 +1,22 @@
 NEWS for Guile-PG
 
 
+- 0.32 | 2007-04-11
+
+  - New command for `pgtable-manager': #:tuples-result->rows
+
+	This uses `(database postgres-resx) result->object-rows'.
+	For example:
+
+	(define T (pgtable-worker ...))
+	(define R (T #:select ...))
+	(equal? (T #:tuples-result->rows R)
+	        (map (lambda (x)
+	               (map cdr x))
+	             (T #:tuples-result->alists R)))
+	=> #t
+
+
 - 0.31 | 2007-04-03
 
   - Opaque string support removed

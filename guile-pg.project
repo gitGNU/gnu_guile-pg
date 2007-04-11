@@ -2,7 +2,7 @@
  (location (url "http://www.gnuvola.org/software/guile-pg/"))
  (category "Libraries/Database")
  (description "An interface to PostgreSQL from guile.")
- (status "version 0.31 released 2007-04-03")
+ (status "version 0.32 released 2007-04-11")
  (authors (email "Ian Grant" "iang@pobox.com") " and "
 	  (email "Thien-Thi Nguyen" "ttn@gnuvola.org"))
  (maintainer "Thien-Thi Nguyen")
