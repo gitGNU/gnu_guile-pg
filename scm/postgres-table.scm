@@ -61,7 +61,8 @@
                           sql-command<-trees))
   #:use-module ((database postgres-resx)
                 #:select (result->object-alist
-                          result->object-alists))
+                          result->object-alists
+                          result->object-rows))
   #:re-export (sql-pre)
   #:export (pgtable-manager
             pgtable-worker
@@ -360,6 +361,7 @@
 ;; * #:select @var{outspec} [@var{rest-clauses} ...]
 ;;   #:tuples-result->object-alist @var{res}
 ;;   #:tuples-result->alists @var{res}
+;;   #:tuples-result->rows @var{res}
 ;;   #:trace-exec @var{oport}
 ;; @end example
 ;;
@@ -452,6 +454,8 @@
 
     (define tuples-result->alists (res->foo-proc result->object-alists))
 
+    (define tuples-result->rows (res->foo-proc result->object-rows))
+
     ;; rv
     (lambda (choice)
       (case (if (symbol? choice)
@@ -474,6 +478,7 @@
         ((#:select) select)
         ((#:tuples-result->object-alist) tuples-result->object-alist)
         ((#:tuples-result->alists) tuples-result->alists)
+        ((#:tuples-result->rows) tuples-result->rows)
         ((#:trace-exec) (lambda (op)
                           (or (not op)
                               (output-port? op)
