@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 ##
-##   Copyright (C) 2002,2003,2004,2005,2006 Thien-Thi Nguyen
+##   Copyright (C) 2002,2003,2004,2005,2006,2007 Thien-Thi Nguyen
 ##   Portions Copyright (C) 1998,1999,2000 Ian Grant
 ##
 ##   This file is part of Guile-PG.
@@ -36,9 +36,9 @@ postgres_la_SOURCES = libpostgres.c libpostgres_lo.c libpostgres.h \
 postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0 \
 				$(LDFLAGS) $(PQ_LDFLAGS)
 
-noinst_DATA = pre-inst.merged-module-catalog
+noinst_DATA = .module-catalog
 
-pre-inst.merged-module-catalog:
+.module-catalog:
 	if guile-tools | grep -q mkpimmc ; then			\
 	  guile-tools mkpimmc -d $(DEPDIR) $@ "$(srcdir)"	\
 	    -- -d in,lo,o -X '~$$' -X CVS -X doc -X contrib ;	\
