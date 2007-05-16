@@ -35,7 +35,7 @@
 ## GUILE_MODULE_EXPORTS -- check if a module exports a variable
 ## GUILE_MODULE_REQUIRED_EXPORT -- fail if a module doesn't export a variable
 ## GUILE_CHECK_ICE9_OPTARGS -- use (ice-9 optargs) for (ice-9 optargs-kw)?
-## GUILE_MODULE_CATALOG_PREP -- machinery for pre-inst.merged-module-catalog
+## GUILE_MODULE_CATALOG_PREP -- machinery for pre-inst merged module catalog
 ## GUILE_C2X_METHOD -- choose "guile-tools c2x" or "guile-snarf"
 ## GUILE_MODSUP_H -- define HAVE_GUILE_MODSUP_H if it is indeed available
 
@@ -185,7 +185,7 @@ AC_DEFUN([GUILE_LIBSITE_DIR],
 # This is conventionally achieved by wrapping the last expression in
 # @code{exit}.  For example, @code{(foo) (bar) (exit (baz))}.
 #
-# Avoid using the character "#" since that confuses autoconf.  
+# Avoid using the character "#" since that confuses autoconf.
 #
 AC_DEFUN([GUILE_CHECK],
  [AC_REQUIRE([GUILE_PROGS])
@@ -327,9 +327,9 @@ AC_DEFUN([GUILE_CHECK_ICE9_OPTARGS],[
   AC_SUBST($1)
 ])
 
-# GUILE_MODULE_CATALOG_PREP -- machinery for pre-inst.merged-module-catalog
+# GUILE_MODULE_CATALOG_PREP -- machinery for pre-inst merged module catalog
 #
-# Usage: GUILE_MODULE_CATALOG_PREP
+# Usage: GUILE_MODULE_CATALOG_PREP([fragname])
 #
 # Define an AC_CONFIG_COMMAND named @code{module-catalog-prep}.
 # This command runs towards the tail end of a @code{configure} invocation.
@@ -341,8 +341,9 @@ AC_DEFUN([GUILE_CHECK_ICE9_OPTARGS],[
 # This step is skipped if the directory already exists.
 #
 # @item Create a dummy makefile fragment file in the dependencies
-# directory named @file{pre-inst.Pmerged-module-catalog}.
-# This step is skipped if the file already exists.
+# directory named @file{.Pmodule-catalog}.
+# This step is skipped if the file already exists.  Optional
+# arg FRAGNAME specifies another filename for the makefile fragment.
 #
 # @item Append an @code{include} directive to @file{./Makefile}.
 # This step is skipped if the directive has already been appended.
@@ -352,7 +353,7 @@ AC_DEFUN([GUILE_MODULE_CATALOG_PREP],[
   AC_CONFIG_COMMANDS([module-catalog-prep],[
     test x"$DEPDIR" = x && DEPDIR=".deps"
     test -d "$DEPDIR" || mkdir "$DEPDIR"
-    prereq="$DEPDIR/pre-inst.Pmerged-module-catalog"
+    prereq="$DEPDIR/m4_case([$1],[],[.Pmodule-catalog],[$1])"
     test -f "$prereq" || echo '# dummy' > "$prereq"
     grep -q "include $prereq" Makefile || echo "include $prereq" >> Makefile
   ])
