@@ -86,7 +86,7 @@
             ;; database
             db-name
             ;; table
-            "abstraction"
+            "abstrAction"
             ;; defs (historical note: this testing originated w/ an
             ;;                        application that wrapped rsync)
             '((time            timestamp)
@@ -228,7 +228,7 @@
 
 (define (test-m2)
 
-  (let ((m2 (mgr db-name "abstractions_2" '((n int4 "primary key")
+  (let ((m2 (mgr db-name "abstrActions_2" '((n int4 "primary key")
                                             (desc text)))))
 
     (pass-if "m2" (procedure? m2))
