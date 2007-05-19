@@ -1227,25 +1227,18 @@ describing the type.)
 
 @table @code
 
-@item decimal
-@itemx numeric
-@itemx double precision
-Numeric Types (8.1).  Guile-PG provides @code{double} instead of @code{double
-precision}.  Guile supports bignums, so the @code{decimal} and @code{numeric}
-converters can probably be provided w/ a SMOP.
+@item double precision
+Numeric Types (8.1).  Guile-PG provides @code{double} instead of
+@code{double precision}.
 
 @item money
 Monetary Type (8.2).  Since PostgreSQL itself deprecates this type,
 it is unlikely Guile-PG will support it ever.
 
 @item character varying (n)
-@itemx varchar (n)
-@itemx character (n)
 @itemx char (n)
-Character Types (8.3).
-
-@item bytea
-Binary Strings (8.4).
+Character Types (8.3).  Guile-PG provides @code{varchar} instead of
+@code{character varying}, and @var{character} instead of @var{char}.
 
 @item timestamp [ (p) ] with time zone
 @itemx interval [ (p) ]
