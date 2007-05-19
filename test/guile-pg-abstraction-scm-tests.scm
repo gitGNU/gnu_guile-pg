@@ -30,6 +30,12 @@
 (define db-name (or (getenv "PGDATABASE")
                     (error "don't know what database to use")))
 
+(define (mgr . args)
+  (let ((rv (apply pgtable-manager args)))
+    (and rv (procedure? rv) (getenv "DEBUG")
+         ((rv #:trace-exec) *log-file*))
+    rv))
+
 ;; The table manager and some global commands.
 (define m #f)
 (define drop #f)
@@ -76,7 +82,7 @@
 ;;
 (define (test:set!-m)
   (set! m (false-if-exception
-           (pgtable-manager
+           (mgr
             ;; database
             db-name
             ;; table
@@ -222,9 +228,8 @@
 
 (define (test-m2)
 
-  (let ((m2 (pgtable-manager db-name "abstractions_2"
-                             '((n int4 "primary key")
-                               (desc text)))))
+  (let ((m2 (mgr db-name "abstractions_2" '((n int4 "primary key")
+                                            (desc text)))))
 
     (pass-if "m2" (procedure? m2))
 
