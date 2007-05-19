@@ -213,10 +213,10 @@
 (define (double-quote s)
   (string-append "\"" s "\""))
 
-;; non-array (simple) types -- X.Y.Z is from PostgreSQL User's Guide
+;; non-array (simple) types -- X.Y.Z is from PostgreSQL 7.4.17 User's Guide
 
-;; 5.1          -- numeric types
-;; 5.1.1        -- the integer types
+;; 8.1          -- numeric types
+;; 8.1.1        -- the integer types
 
 (define-db-col-type 'smallint "0"
   number->string
@@ -242,8 +242,8 @@
   number->string
   string->number)
 
-;; 5.1.2        -- arbitrary precision numbers
-;; 5.1.3        -- floating-point types
+;; 8.1.2        -- arbitrary precision numbers
+;; 8.1.3        -- floating-point types
 
 (define-db-col-type 'real "0.0"
   number->string
@@ -262,7 +262,7 @@
   number->string
   string->number)
 
-;; 5.1.4        -- the serial types
+;; 8.1.4        -- serial types
 
 (define-db-col-type 'serial "0"
   ;; This is a magic PostgreSQL type that actually causes the backend
@@ -284,8 +284,8 @@
   number->string
   string->number)
 
-;; 5.2          -- monetary type
-;; 5.3          -- character types
+;; 8.2          -- monetary type
+;; 8.3          -- character types
 
 (define-db-col-type 'char "?"
   (lambda (c) (make-string 1 c))
@@ -300,8 +300,8 @@
   (lambda (val) (if (< 63 (string-length val)) (substring val 0 62) val))
   identity)
 
-;; 5.4          -- binary strings
-;; 5.5          -- date/time types
+;; 8.4          -- binary data types
+;; 8.5          -- date/time types
 
 (define-db-col-type 'timestamp "1970-01-01 00:00:00"
   (lambda (time)
@@ -311,11 +311,11 @@
   (lambda (string)
     (car (mktime (car (strptime "%Y-%m-%d %H:%M:%S" string))))))
 
-;; 5.5.1        -- date/time input
-;; 5.5.2        -- date/time output
-;; 5.5.3        -- time zones
-;; 5.5.4        -- internals
-;; 5.6          -- boolean type
+;; 8.5.1        -- date/time input
+;; 8.5.2        -- date/time output
+;; 8.5.3        -- time zones
+;; 8.5.4        -- internals
+;; 8.6          -- boolean type
 
 (define-db-col-type 'boolean "f"
   (lambda (x) (if x "t" "f"))
@@ -325,14 +325,14 @@
   (lambda (x) (if x "t" "f"))
   (lambda (s) (not (string=? "f" s))))
 
-;; 5.7          -- geometric types
-;; 5.7.1        -- point
-;; 5.7.2        -- line segment
-;; 5.7.3        -- box
-;; 5.7.4        -- path
-;; 5.7.5        -- polygon
-;; 5.7.6        -- circle
-;; 5.8          -- network address data types
+;; 8.7          -- geometric types
+;; 8.7.1        -- points
+;; 8.7.2        -- line segments
+;; 8.7.3        -- boxes
+;; 8.7.4        -- paths
+;; 8.7.5        -- polygons
+;; 8.7.6        -- circles
+;; 8.8          -- network address types
 
 (define (n+m-stringifier n+m)           ; n+m is #(NUMBER MASKCOUNT)
   (simple-format #f "~A/~A"
@@ -346,13 +346,13 @@
                 (string->number (substring s (1+ cut))))
         (vector (inet-aton s) 32))))
 
-;; 5.8.1        -- inet
+;; 8.8.1        -- inet
 
 (define-db-col-type 'inet "0.0.0.0"
   n+m-stringifier
   n+m-objectifier)
 
-;; 5.8.2        -- cidr
+;; 8.8.2        -- cidr
 
 (define-db-col-type 'cidr "0.0.0.0"
   n+m-stringifier
@@ -387,10 +387,11 @@
                       acc)
                 (- shift 8))))))
 
-;; 5.8.3        -- inet vs cidr
-;; 5.8.4        -- macaddr
-;; 5.9          -- bit string types
-;; 5.10         -- object identifier types
+;; 8.8.3        -- inet vs cidr
+;; 8.8.4        -- macaddr
+;; 8.9          -- bit string types
+;; 8.10         -- arrays
+;; 8.11         -- object identifier types
 
 (define-db-col-type 'oid "-1"
   number->string
@@ -400,7 +401,7 @@
   identity
   identity)
 
-;; 5.11         -- pseudo-types
+;; 8.12         -- pseudo-types
 
 ;; array variants
 
