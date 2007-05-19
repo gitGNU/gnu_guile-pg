@@ -230,6 +230,10 @@
   number->string
   string->number)
 
+(define-db-col-type 'int "0"
+  number->string
+  string->number)
+
 (define-db-col-type 'int2 "0"
   number->string
   string->number)
@@ -243,6 +247,15 @@
   string->number)
 
 ;; 8.1.2        -- arbitrary precision numbers
+
+(define-db-col-type 'numeric "0"
+  number->string
+  string->number)
+
+(define-db-col-type 'decimal "0"
+  number->string
+  string->number)
+
 ;; 8.1.3        -- floating-point types
 
 (define-db-col-type 'real "0.0"
@@ -287,6 +300,14 @@
 ;; 8.2          -- monetary type
 ;; 8.3          -- character types
 
+(define-db-col-type 'varchar #f
+  identity
+  identity)
+
+(define-db-col-type 'character #f
+  identity
+  identity)
+
 (define-db-col-type 'char "?"
   (lambda (c) (make-string 1 c))
   (lambda (s) (string-ref s 0)))
@@ -301,6 +322,47 @@
   identity)
 
 ;; 8.4          -- binary data types
+
+(define-db-col-type 'bytea #f
+  (lambda (s)
+    (with-output-to-string
+      (lambda ()
+        (define (out! zeroes n)
+          (display "\\\\")
+          (display zeroes)
+          (display (number->string n 8)))
+        (let ((len (string-length s))
+              (c #f) (n #f))
+          (do ((i 0 (1+ i)))
+              ((= len i))
+            (set! c (string-ref s i))
+            (set! n (char->integer c))
+            (cond ((= 39 n)         (out! "0" n)) ; apostrophe
+                  ((= 92 n)         (out! "" n))  ; backslash
+                  ((<= 32 n 126)    (display c))
+                  ((<= 0 n #o7)     (out! "00" n))
+                  ((<= #o10 n #o77) (out! "0" n))
+                  (else             (out! "" n))))))))
+  (lambda (s)
+    (with-output-to-string
+      (lambda ()
+        (let ((len (string-length s))
+              (b #f))
+          (let loop ((i 0))
+            (set! b (string-index s #\\ i))
+            (cond ((not b)
+                   (display (substring s i)))
+                  ((char=? #\\ (string-ref s (1+ b)))
+                   (display (substring s i (1+ b)))
+                   (loop (+ 2 b)))
+                  (else
+                   (display (substring s i b))
+                   (display (integer->char
+                             (string->number
+                              (substring s (1+ b) (+ 4 b))
+                              8)))
+                   (loop (+ 4 b))))))))))
+
 ;; 8.5          -- date/time types
 
 (define-db-col-type 'timestamp "1970-01-01 00:00:00"
