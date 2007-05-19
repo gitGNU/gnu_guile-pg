@@ -289,6 +289,33 @@
     (pass-if "m2 final drop"
       (command-ok? (car ((m2 'drop))))))) ; use CAR because `drop' => a list
 
+(define (test-m3)
+  (let ((all (apply string (map integer->char (iota 256))))
+        (m3 (mgr db-name "abstrActions_3" '((b bytea)))))
+
+    ((m3 #:drop))                       ; no check
+
+    (pass-if "(m3 #:create)"
+      (command-ok? ((m3 #:create))))
+
+    (pass-if "(m3 #:insert-values all)"
+      (command-ok? ((m3 #:insert-values) all)))
+
+    (pass-if "m3 round-trip"
+      (equal? all (let* ((res ((m3 #:select) #t))
+                         (status (pg-result-status res))
+                         (s (and (eq? 'PGRES_TUPLES_OK status)
+                                 (caar ((m3 #:tuples-result->rows) res)))))
+                    (simple-format
+                     *log-file* "m3 round-trip: ~S\n~S ~S\n"
+                     (pg-getvalue res 0 0)
+                     (string-length s)
+                     (map char->integer (string->list s)))
+                    s)))
+
+    ((m3 #:drop))))                     ; no check
+
+
 (define (cleanup!)
   (set! m #f)
   (set! drop #f)
@@ -305,7 +332,8 @@
                   (+ (length count)
                      (apply + count)))
                 1
-                (+ 6 1 9)))             ; m2
+                (+ 6 1 9)               ; m2
+                3))                     ; m3
   (test #t test:query-oid/type-name)
   (test #t test:set!-m)
   (test #t test:m-procs)
@@ -321,6 +349,7 @@
   (mtest:select-files/etc)
   (test #t test:mtest-cleanup)
   (test-m2)
+  (test-m3)
   (cleanup!)
   (test-report))
 
