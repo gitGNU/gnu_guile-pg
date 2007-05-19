@@ -306,7 +306,8 @@
        (cdr obj)))
 
 (define (select-proc beex table-name defs)
-  (let ((froms (list (string->symbol table-name))))
+  (let ((froms (list (string->symbol (with-input-from-string
+                                         table-name read)))))
     (lambda (outspec . rest-clauses)
       (let ((hints #f))
         (define (set-hints!+sel pair)
@@ -417,12 +418,13 @@
                      (else (error "bad db-spec:" db-spec))))
          (trace-exec #f)
          (objectifiers (def:objectifiers defs))
+         (dq-table-name (object->string table-name))
          (pp (lambda (proc-proc)
                (proc-proc (lambda (s)   ; beex (back-end exec)
                             (cond (trace-exec (display s trace-exec)
                                               (newline trace-exec)))
                             (pg-exec conn s))
-                          table-name
+                          dq-table-name
                           defs)))
          (res->foo-proc (lambda (proc)
                           (lambda (res)
