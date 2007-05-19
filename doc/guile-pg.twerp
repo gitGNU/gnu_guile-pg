@@ -1221,7 +1221,7 @@ rough edges to be found in selected cases.  We hope to resolve these issues
 (and thus be able to revise this section significantly) before Guile-PG 1.0 is
 released.
 
-Converters for the following PostgreSQL 7.3.8 types are not provided.
+Converters for the following PostgreSQL 7.4.17 types are not provided.
 (Dot-separated numbers indicate a section in the PostgreSQL User's Guide
 describing the type.)
 
@@ -1230,29 +1230,29 @@ describing the type.)
 @item decimal
 @itemx numeric
 @itemx double precision
-Numeric Types (5.1).  Guile-PG provides @code{double} instead of @code{double
+Numeric Types (8.1).  Guile-PG provides @code{double} instead of @code{double
 precision}.  Guile supports bignums, so the @code{decimal} and @code{numeric}
 converters can probably be provided w/ a SMOP.
 
 @item money
-Monetary Type (5.2).  Since PostgreSQL itself deprecates this type,
+Monetary Type (8.2).  Since PostgreSQL itself deprecates this type,
 it is unlikely Guile-PG will support it ever.
 
 @item character varying (n)
 @itemx varchar (n)
 @itemx character (n)
 @itemx char (n)
-Character Types (5.3).
+Character Types (8.3).
 
 @item bytea
-Binary Strings (5.4).
+Binary Strings (8.4).
 
 @item timestamp [ (p) ] with time zone
 @itemx interval [ (p) ]
 @itemx date
 @itemx time [ (p) ] with time zone
 @itemx time [ (p) ] without time zone
-Date/Time Types (5.5).
+Date/Time Types (8.5).
 
 @item point
 @itemx line
@@ -1261,11 +1261,11 @@ Date/Time Types (5.5).
 @itemx path
 @itemx polygon
 @itemx circle
-Geometric Types (5.7).
+Geometric Types (8.7).
 
 @item bit (n)
 @itemx bit varying (n)
-Bit String Types (5.9).
+Bit String Types (8.9).
 
 @item regproc
 @itemx regprocedure
@@ -1273,7 +1273,7 @@ Bit String Types (5.9).
 @itemx regoperator
 @itemx regclass
 @itemx regtype
-Object Identifier Types (5.10).
+Object Identifier Types (8.11).
 
 @item record
 @itemx any
@@ -1284,7 +1284,7 @@ Object Identifier Types (5.10).
 @itemx cstring
 @itemx internal
 @itemx opaque
-Pseudo-Types (5.11).
+Pseudo-Types (8.12).
 
 @end table
 
