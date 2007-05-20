@@ -1,3 +1,65 @@
+2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* configure.in (AC_INIT): Bump version to "0.33" for release.
+
+2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* doc/Makefile.am (EXTRA_DIST): Add html.
+
+2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* scm/postgres-qcons.scm (any/all-rx): New compiled regexp.
+	(expr add-noise!): Handle `any--OP' and `all--OP'.
+	* doc/guile-pg.twerp (qcons special operators): Document them.
+
+2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* scm/postgres-qcons.scm (expr add-noise!): Handle `between'.
+	* doc/guile-pg.twerp (qcons special operators): Document `between'.
+
+2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* scm/postgres-qcons.scm (expr add-noise!): Handle `in/set'.
+	* doc/guile-pg.twerp (qcons special operators): Document `in/set'.
+
+2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* doc/guile-pg.twerp (Query Construction):
+	Split into subnodes; add menu.
+
+2007-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* scm/postgres-types.scm (int, numeric, decimal)
+	(varchar, character, bytea): New built-in type converters.
+
+	* doc/guile-pg.twerp (Selected Notes About Some Types):
+	Remove `decimal', `numeric', `varchar', `character', `bytea'.
+
+2007-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* doc/guile-pg.twerp (Selected Notes About Some Types):
+	Update section numbers refering to PostgreSQL User's Guide.
+
+2007-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* scm/postgres-table.scm (pgtable-manager): Internal re-org.
+
+2007-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* scm/postgres-table.scm (pgtable-manager): Fix bug:
+	Pass "double-quoted table name" to each proc-proc.
+	(select-proc): Update to name-as-symbol extraction method.
+
+2007-05-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* build-aux/guile.m4.snap: Sync w/ upstream.
+
+2007-05-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* Makefile.am (.module-catalog): Rename target
+	from pre-inst.merged-module-catalog.
+	(noinst_DATA): Update.
+
 2007-04-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* configure.in (AC_INIT): Bump version to "0.32" for release.

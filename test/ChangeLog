@@ -1,3 +1,37 @@
+2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* guile-pg-abstraction-scm-tests.scm (mtest:any/all--OP): New proc.
+	(main): Call it and update expected-count.
+
+2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* guile-pg-abstraction-scm-tests.scm
+	(test-m3 check-1): New internal proc.
+	(test-m3): Add `between' checks.
+	(main): Update expected-count.
+
+2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* guile-pg-abstraction-scm-tests.scm (test-m3): Add `in/set' checks.
+	(main): Update expected-count.
+
+	* abstraction-scm-tests.sh: Explicitly load postgres-qcons.scm.
+
+2007-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* guile-pg-abstraction-scm-tests.scm (test-m3): New proc.
+	(main): Update expected-count and call `mtest-m3'.
+
+2007-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* guile-pg-abstraction-scm-tests.scm:
+	Use "abstrAction" and "abstrActions_2" as table names.
+
+2007-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* guile-pg-abstraction-scm-tests.scm (mgr): New proc.
+	Throughout, use it instead of `pgtable-manager'.
+
 2007-04-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* guile-pg-abstraction-scm-tests.scm (test-m2):

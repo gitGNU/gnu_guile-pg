@@ -1,6 +1,37 @@
 NEWS for Guile-PG
 
 
+- 0.33 | 2007-05-20
+
+  - Bugfix: `pgtable-manager' handles mixed-case table names
+
+	Previously, `pgtable-manager' (and `pgtable-worker') would
+	render the table name in an SQL command to `pg-exec' without
+	quoting.  PostgreSQL would case-smash it, and subsequently not
+	recognize the table, causing an error.  For example:
+
+	(define w (pgtable-worker CONN "oOpAcK" ...))
+	(w #:drop)
+	before: => DROP TABLE oOpAcK; => FATAL (no relation "oopack").
+	   now: => DROP TABLE "oOpAcK"; => OK.
+
+  - New type converters in module (database postgres-types)
+
+	int  decimal  numeric  varchar  character  bytea
+
+  - New support for special constructs in (database postgres-qcons)
+
+	(in/set A B...) => A IN ( B, ... )
+	(between A B C) => ( A BETWEEN B AND C )
+	(any--OP A B)   => ( A OP ANY B )
+	(all--OP A B)   => ( A OP ALL B )
+
+	For the latter two, OP is a comparison operator, e.g `='.
+	Parentheses and commas are added automatically.
+
+  - Tested against PostgreSQL 7.4.17
+
+
 - 0.32 | 2007-04-11
 
   - New command for `pgtable-manager': #:tuples-result->rows
