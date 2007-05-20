@@ -1065,6 +1065,21 @@ where the change from @code{PEXP} to @code{exp} involves a recursive layout
 transform.  Note that the result is identical to using (SQL) suffix
 @code{::TYPE}; the operator @code{::} was actually chosen with this
 mnemonic in mind.
+
+@item (in/set PEXP0 PEXP1...)
+This maps to the SQL expression:
+
+@example
+exp0 IN ( exp1, ... )
+@end example
+
+@noindent
+where the change from each @code{PEXP} to @code{exp} involves a recursive
+layout transform.  Parentheses and comma are added automatically.  The
+name @code{in/set} was chosen to emphasize that this particular usage of
+the SQL keyword @code{IN} is to check for set membership.  (The operator
+@code{in/sel} is reserved for future implementation of @code{IN} as
+sub-select.)
 @end table
 
 A symbol appearing in the operands, or alone without parentheses (i.e., in a
