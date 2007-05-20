@@ -946,6 +946,17 @@ This provides procedures to render @dfn{prefix-style expressions} to SQL
 syntax, essentially by constructing stylized trees (nested lists) and then
 flattening them to a string on output.
 
+@menu
+* Prefix-Style Expressions: qcons intro.
+* Special Operators: qcons special operators.
+* Lookup Tables Extension: qcons extension.
+* Quoting: qcons quoting.
+* Tree Construction: qcons trees.
+* Output: qcons output.
+@end menu
+
+@c ---------------------------------------------------------------------------
+@node qcons intro
 @section Prefix-Style Expressions
 
 To be brutally honest, both SQL and Scheme revolve around structured
@@ -982,7 +993,12 @@ symbol; it is not processed in the same way as each @var{operand}.
 Usually, @var{operator} names an SQL function or operator.  For example,
 the symbol @code{date_trunc} refers to the SQL function by the same name.
 Guile-PG uses lookup tables to determine how to transform the prefix style
-into either infix, postfix, functional or other layouts.  Some operators are
+into either infix, postfix, functional or other layouts.
+
+@node qcons special operators
+@section Special Operators
+
+Some operators are
 handled specially:
 
 @table @code
@@ -1064,6 +1080,8 @@ The documentation for the procedures described in this chapter often uses
 (or list of them), while others take a more complex structure usually
 involving some extra specification composed with a single pexp.
 
+@c ---------------------------------------------------------------------------
+@node qcons extension
 @section Lookup Tables Extension
 
 During tree construction, internal lookup tables control the rendering
@@ -1077,6 +1095,8 @@ value (if any).  There is no @dfn{undeclare} support.
 
 @include qcons-tables.texi
 
+@c ---------------------------------------------------------------------------
+@node qcons quoting
 @section Quoting
 
 Ideally, the tree construction procedures in the following section would
@@ -1092,6 +1112,8 @@ known prosaically as @dfn{quoting}.
 @twerpdoc (sql-unpre)
 @twerpdoc (sql-quote)
 
+@c ---------------------------------------------------------------------------
+@node qcons trees
 @section Tree Construction
 
 This section describes the tree construction procedures, most of which are
@@ -1110,6 +1132,8 @@ the Guile-PG maintainer so that we can refine them nicely for the 1.0 release.
 @twerpdoc (parse+make-SELECT/tail-tree)
 @twerpdoc (parse+make-SELECT-tree)
 
+@c ---------------------------------------------------------------------------
+@node qcons output
 @section Output
 
 To get SQL once the tree is constructed, you have to flatten it.
