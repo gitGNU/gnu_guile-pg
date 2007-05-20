@@ -293,6 +293,12 @@
   (let ((all (apply string (map integer->char (iota 256))))
         (m3 (mgr db-name "abstrActions_3" '((b bytea)))))
 
+    (define (check-1 name expected expr)
+      (sel/check ((m3 #:select) `((#f #f ,expr)))
+                 (pass-if (simple-format #f "~A ~A" name expected)
+                   (and (check-dim 1 1)
+                        (string=? expected (tref 0 0))))))
+
     ((m3 #:drop))                       ; no check
 
     (pass-if "(m3 #:create)"
@@ -313,11 +319,10 @@
                      (map char->integer (string->list s)))
                     s)))
 
-    (sel/check ((m3 #:select) #t #:where '(in/set 0 1 2 3))
-               (pass-if "in/set impossible" (check-dim 0 1)))
-
-    (sel/check ((m3 #:select) #t #:where '(in/set (+ 6 (* 6 6)) 41 42 43))
-               (pass-if "in/set one" (check-dim 1 1)))
+    (check-1 "in/set" "f" '(in/set 0 1 2 3))
+    (check-1 "in/set" "t" '(in/set (+ 6 (* 6 6)) 41 42 43))
+    (check-1 "between" "t" '(between 4 (+ 1 3) (- 5 1)))
+    (check-1 "between" "f" '(between 1 3 5))
 
     ((m3 #:drop))))                     ; no check
 
@@ -339,7 +344,7 @@
                      (apply + count)))
                 1
                 (+ 6 1 9)               ; m2
-                (+ 3 (* 2 2))))         ; m3
+                (+ 3 (* 2 4))))         ; m3
   (test #t test:query-oid/type-name)
   (test #t test:set!-m)
   (test #t test:m-procs)
