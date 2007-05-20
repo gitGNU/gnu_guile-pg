@@ -321,6 +321,9 @@
       ((in/set)
        (list (expr (car rest)) #:IN
              (paren (commasep expr (cdr rest)))))
+      ((between)
+       (paren (expr (car rest)) #:BETWEEN
+              (expr (cadr rest)) #:AND (expr (caddr rest))))
       (else
        (cond ((hashq-ref ==infix-operations op)
               (paren ((list-sep-proc op) expr rest)))
