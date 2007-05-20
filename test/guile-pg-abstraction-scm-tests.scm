@@ -197,6 +197,14 @@
                   (string=? val "{d,e,f}"))))
              (pass-if "etc" (string=? "{3,-4}" (tref 0 1)))))
 
+(define (mtest:any/all--OP)             ; 1 + 2
+  ((m #:insert-col-values) '(files) '("" "d" "dd" "ddd"))
+  (sel/check (select #t #:where '(all--<> "no how no way" files))
+             (pass-if "size" (check-dim 4 9)))
+  (sel/check (select '((#f #f (count *))) #:where '(any--= "d" files))
+             (pass-if "size" (check-dim 1 1))
+             (pass-if "value" (string=? "2" (tref 0 0)))))
+
 (define (test:mtest-cleanup)
   (command-ok? (car (drop))))           ; use CAR because `drop' => a list
 
@@ -339,7 +347,7 @@
   (test-init "abstraction-scm-tests"    ; manularity sucks
              (+ 1
                 6
-                (let ((count (list 5 3 3 2 2 3))) ; multiples
+                (let ((count '(5 3 3 2 2 3 1 2))) ; multiples
                   (+ (length count)
                      (apply + count)))
                 1
@@ -358,6 +366,7 @@
   (mtest:select-count)
   (mtest:select-*-read<>)
   (mtest:select-files/etc)
+  (mtest:any/all--OP)
   (test #t test:mtest-cleanup)
   (test-m2)
   (test-m3)
