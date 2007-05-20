@@ -233,7 +233,7 @@
   (apply simple-format #f s args))
 
 (define (maybe-dq sym)
-    (if (eq? '* sym)
+  (if (eq? '* sym)
       sym
       (let ((s (symbol->string sym)))
         ;; double quote unless table name or array member syntax is
@@ -283,6 +283,8 @@
    (if (and (not (null? opts)) (not (null? (cdr opts))))
        (apply commasep proc ls (cdr opts))
        (commasep proc ls))))
+
+(define any/all-rx (make-regexp "^a(ny)|(ll)--"))
 
 (define (expr tree)
 
@@ -336,6 +338,16 @@
                                          x
                                          (expr x)))
                                    rest))))
+             ((regexp-exec any/all-rx (symbol->string op))
+              => (lambda (m)
+                   ;; FIXME: Debug :-/ and use `match:suffix'.
+                   (let ((s (vector-ref m 0)))
+                     (paren (expr (car rest))
+                            (sql-pre (substring s 5))
+                            (if (char=? #\n (string-ref s 1))
+                                #:ANY
+                                #:ALL)
+                            (paren (cadr rest))))))
              (else
               (list op (paren (commasep expr rest))))))))
 
