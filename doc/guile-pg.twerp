@@ -1075,11 +1075,25 @@ exp0 IN ( exp1, ... )
 
 @noindent
 where the change from each @code{PEXP} to @code{exp} involves a recursive
-layout transform.  Parentheses and comma are added automatically.  The
-name @code{in/set} was chosen to emphasize that this particular usage of
-the SQL keyword @code{IN} is to check for set membership.  (The operator
-@code{in/sel} is reserved for future implementation of @code{IN} as
-sub-select.)
+layout transform.  Parentheses and comma are added automatically.
+For @code{NOT IN}, use @code{(not (set/in ...))}.
+
+The name @code{in/set} was chosen to emphasize that this particular usage
+of the SQL keyword @code{IN} is to check for set membership.  (The
+operator @code{in/sel} is reserved for future implementation of @code{IN}
+as sub-select.)
+
+@item (between PEXP PEXP-LO PEXP-HI)
+This maps to the SQL expression:
+
+@example
+( exp BETWEEN exp-lo AND exp-hi )
+@end example
+
+@noindent
+where the change from each @code{PEXP} to @code{exp} involves a recursive
+layout transform.  Parentheses are added automatically.
+For @code{NOT BETWEEN}, use @code{(not (between ...))}.
 @end table
 
 A symbol appearing in the operands, or alone without parentheses (i.e., in a
