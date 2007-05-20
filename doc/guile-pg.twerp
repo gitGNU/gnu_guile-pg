@@ -1094,6 +1094,30 @@ This maps to the SQL expression:
 where the change from each @code{PEXP} to @code{exp} involves a recursive
 layout transform.  Parentheses are added automatically.
 For @code{NOT BETWEEN}, use @code{(not (between ...))}.
+
+@item  (any--@var{op} PEXP ARRAY-PEXP)
+@itemx (all--@var{op} PEXP ARRAY-PEXP)
+These map to the respective SQL expressions:
+
+@example
+( exp @var{op} ANY array-exp )
+( exp @var{op} ALL array-exp )
+@end example
+
+@noindent
+where @var{op} is a valid comparison operator (e.g., @code{=}),
+and the change from @code{PEXP} and @code{ARRAY-PEXP} to @code{exp} and
+@code{array-exp}, respectively, involves a recursive layout transform.
+Parentheses are added automatically.
+
+The @code{--} syntax was chosen to avoid potential namespace conflicts;
+according the PostgreSQL documentation (section 4.1.3, Operators):
+
+@quotation
+There are a few restrictions on operator names, however: @code{--} and
+@code{/*} cannot appear anywhere in an operator name, since they will be
+taken as the start of a comment.
+@end quotation
 @end table
 
 A symbol appearing in the operands, or alone without parentheses (i.e., in a
