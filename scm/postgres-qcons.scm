@@ -317,6 +317,10 @@
              #:END))
       ((::)
        (list #:CAST (paren (as (expr (cadr rest)) (car rest)))))
+      ;; special constructs
+      ((in/set)
+       (list (expr (car rest)) #:IN
+             (paren (commasep expr (cdr rest)))))
       (else
        (cond ((hashq-ref ==infix-operations op)
               (paren ((list-sep-proc op) expr rest)))
