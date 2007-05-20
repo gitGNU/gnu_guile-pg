@@ -14,6 +14,7 @@ ${GUILE-guile} $debug \
                -l $top_srcdir/scm/postgres-types.scm \
                -l $top_srcdir/scm/postgres-col-defs.scm \
                -l $top_srcdir/scm/postgres-resx.scm \
+               -l $top_srcdir/scm/postgres-qcons.scm \
                -l $top_srcdir/scm/postgres-table.scm \
                -l config.scm \
                -s $srcdir/guile-pg-abstraction-scm-tests.scm
