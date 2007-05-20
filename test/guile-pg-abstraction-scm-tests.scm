@@ -313,6 +313,12 @@
                      (map char->integer (string->list s)))
                     s)))
 
+    (sel/check ((m3 #:select) #t #:where '(in/set 0 1 2 3))
+               (pass-if "in/set impossible" (check-dim 0 1)))
+
+    (sel/check ((m3 #:select) #t #:where '(in/set (+ 6 (* 6 6)) 41 42 43))
+               (pass-if "in/set one" (check-dim 1 1)))
+
     ((m3 #:drop))))                     ; no check
 
 
@@ -333,7 +339,7 @@
                      (apply + count)))
                 1
                 (+ 6 1 9)               ; m2
-                3))                     ; m3
+                (+ 3 (* 2 2))))         ; m3
   (test #t test:query-oid/type-name)
   (test #t test:set!-m)
   (test #t test:m-procs)
