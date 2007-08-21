@@ -27,7 +27,7 @@ EXTRA_DIST = THANKS TODO HACKING ANONCVS \
 
 BUILT_SOURCES = libpostgres.x libpostgres_lo.x
 
-INCLUDES = -I. -I$(srcdir) $(GUILE_CFLAGS) $(PQ_CPPFLAGS)
+AM_CPPFLAGS = -I. -I$(srcdir) $(GUILE_CFLAGS) $(PQ_CPPFLAGS)
 
 ddir = $(GUILE_LIBSITE)/database
 d_LTLIBRARIES = postgres.la
@@ -46,7 +46,7 @@ noinst_DATA = .module-catalog
 
 SUFFIXES = .x .doc
 
-snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS)
+snarfcppopts = $(DEFS) $(AM_CPPFLAGS) $(CPPFLAGS)
 
 .c.x:
 	$(c2x) -o $@ $< $(snarfcppopts) $(CFLAGS)
