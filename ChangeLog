@@ -1,5 +1,9 @@
 2007-08-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	* autogen.sh: Fix typo: Use "diff -u" instead of "diff -i".
+
+2007-08-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	* libpostgres_lo.c (lob_flush): Specify `unsigned char *ptr'.
 	Add typecast when used as arg 3 to `lo_write'.
 	(lob_fill_input): Add typecast for arg 3 of `lo_read'.
