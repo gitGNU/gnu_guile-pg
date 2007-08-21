@@ -18,7 +18,7 @@ fresh_guile_m4="`guile-config info datadir`/aclocal/guile.m4"
 cd build-aux
 test -f $fresh_guile_m4 || fresh_guile_m4="guile.m4.snap"
 ln -sf $fresh_guile_m4 guile.m4
-diff -i guile.m4.snap guile.m4 > TMP 2>&1
+diff -u guile.m4.snap guile.m4 > TMP 2>&1
 if [ -s TMP ] ; then
     echo "WARNING: guile.m4.snap out of date, diff follows:"
     cat TMP
