@@ -9,6 +9,6 @@
  (help-wanted "See TODO file in the distribution.")
  (testers-wanted "Send bug reports to ttn@gnuvola.org")
  (mailing-list "none")
- (license "GPL")
+ (license "GPLv3+")
  (requires "Guile 1.3.4 or 1.4.x and PostgreSQL Version 7.0 or later")
  (keywords "database " "postgres "))

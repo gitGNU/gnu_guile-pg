@@ -1,5 +1,5 @@
 ;;; Copyright (C) 2003-2005 Thien-Thi Nguyen
-;;; This program is provided under the terms of the GNU GPL, version 2.
+;;; This program is provided under the terms of the GNU GPL, version 3.
 ;;; See http://www.fsf.org/copyleft/gpl.html for details.
 
 (define-module (markup)
