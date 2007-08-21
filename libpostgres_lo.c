@@ -336,7 +336,7 @@ lob_flush (SCM port)
   scm_port *pt = SCM_PTAB_ENTRY (port);
   lob_stream *lobp = (lob_stream *) SCM_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
-  char *ptr = pt->write_buf;
+  unsigned char *ptr = pt->write_buf;
   int init_size = pt->write_pos - pt->write_buf;
   int remaining = init_size;
 
@@ -348,7 +348,7 @@ lob_flush (SCM port)
                remaining, ptr, remaining);
 #endif
       SCM_DEFER_INTS;
-      count = lo_write (conn, lobp->alod, ptr, remaining);
+      count = lo_write (conn, lobp->alod, (char *) ptr, remaining);
       SCM_ALLOW_INTS;
 #ifdef DEBUG_TRACE_LO_WRITE
       fprintf (stderr, "returned %d\n", count);
@@ -466,7 +466,7 @@ lob_fill_input (SCM port)
     lob_flush (port);
 
   SCM_DEFER_INTS;
-  ret = lo_read (conn, lobp->alod, pt->read_buf, pt->read_buf_size);
+  ret = lo_read (conn, lobp->alod, (char *) pt->read_buf, pt->read_buf_size);
   SCM_ALLOW_INTS;
 #ifdef DEBUG_LO_READ
   fprintf (stderr, "lob_fill_input: lo_read (%d) returned %d.\n",
