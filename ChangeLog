@@ -1,3 +1,14 @@
+2007-08-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* libpostgres_lo.c (lob_flush): Specify `unsigned char *ptr'.
+	Add typecast when used as arg 3 to `lo_write'.
+	(lob_fill_input): Add typecast for arg 3 of `lo_read'.
+
+2007-08-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* Makefile.am (AM_CPPFLAGS): Rename from $(INCLUDES).
+	(snarfcppopts): Use $(AM_CPPFLAGS).
+
 2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* configure.in (AC_INIT): Bump version to "0.33" for release.
