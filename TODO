@@ -16,8 +16,6 @@
     This will make it easier to port Guile-PG to other versions of Guile
     and even other scheme implementations (long term).
 
-  - Write tests for non-blocking query support.
-
   - Review examples in documentation.
 
   - Scan libpq-fe.h for coverage.
