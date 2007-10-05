@@ -331,7 +331,10 @@ AC_DEFUN([GUILE_CHECK_ICE9_OPTARGS],[
 #
 # Usage: GUILE_MODULE_CATALOG_PREP([fragname])
 #
-# Define an AC_CONFIG_COMMAND named @code{module-catalog-prep}.
+# Define two AC_CONFIG_COMMAND commands to manage the local module catalog.
+#
+# @table @code
+# @item module-catalog-prep
 # This command runs towards the tail end of a @code{configure} invocation.
 # It does these actions:
 #
@@ -349,6 +352,21 @@ AC_DEFUN([GUILE_CHECK_ICE9_OPTARGS],[
 # This step is skipped if the directive has already been appended.
 # @end itemize
 #
+# @item module-catalog-clean-local
+# This command is intended to be run as an action in the Makefile.am
+# target @code{clean-local}.  It re-initializes the dependencies file
+# (ie, @var{FRAGNAME} or @file{.Pmodule-catalog} in the deps dir).
+# You still need to add the module catalog's name to the Makefile.am
+# var @code{CLEANFILES}.  For example:
+#
+# @example
+# # fragment of top-level Makefile.am
+# CLEANFILES = .module-catalog
+# clean-local:
+#         ./config.status module-catalog-clean-local
+# @end example
+# @end table
+#
 AC_DEFUN([GUILE_MODULE_CATALOG_PREP],[
   AC_CONFIG_COMMANDS([module-catalog-prep],[
     test x"$DEPDIR" = x && DEPDIR=".deps"
@@ -356,6 +374,10 @@ AC_DEFUN([GUILE_MODULE_CATALOG_PREP],[
     prereq="$DEPDIR/m4_case([$1],[],[.Pmodule-catalog],[$1])"
     test -f "$prereq" || echo '# dummy' > "$prereq"
     grep -q "include $prereq" Makefile || echo "include $prereq" >> Makefile
+  ])
+  AC_CONFIG_COMMANDS([module-catalog-clean-local],[
+    prereq="$DEPDIR/m4_case([$1],[],[.Pmodule-catalog],[$1])"
+    test -f "$prereq" && echo '# dummy' > "$prereq"
   ])
 ])
 
