@@ -99,6 +99,7 @@ abstractions and convenience procedures.
 * Writing/Reading Data::        Bulk data movement and I/O.
 * Large Objects::               Large-Object support.
 * Miscellaneous::               Everything else starting with "pg-".
+* Not Included::                Functions left out for some reason.
 
 * Query Construction::          Module: (database postgres-qcons).
 * Displaying Results::          Module: (database postgres-resdisp).
@@ -926,6 +927,114 @@ opens the required file and starts/stops the trace.
            (close-port port)
            (pg-untrace conn)))))
 @end lisp
+
+@c ---------------------------------------------------------------------------
+@node    Not Included
+@chapter Not Included
+
+This chapter lists @code{libpq} interface elements that are @emph{not}
+provided by module @code{(database postgres)} and explains why they are
+omitted.
+
+@deffn {C Macro} PQsetdb
+PostgreSQL documentation says:
+@quotation
+It is provided for backward compatibility with very old programs.
+@end quotation
+
+Since no one has asked for it in Guile-PG, we
+assume no such programs exist.
+@end deffn
+
+@deffn {C Function} PQconnectStart
+@deffnx {C Function} PQconnectPoll
+@deffnx {C Function} PQresetStart
+@deffnx {C Function} PQresetPoll
+Laziness, pure and simple.
+@end deffn
+
+@deffn {C Function} PQfinish
+Guile-PG calls this automatically when a connection object (from
+@code{pg-connectdb}) is garbage collected.  To ensure its calling
+try something like:
+
+@lisp
+(set! CONN #f)
+(gc) (gc) (gc)
+@end lisp
+
+Admittedly this is a little awkward (and failure to call @code{PQfinish}
+normally results in a logfile entry ``unexpected EOF on client connection''),
+so perhaps Guile-PG will expose @code{PQfinish} in a future release, after
+all.
+@end deffn
+
+@deffn {C Function} PQstatus
+More laziness.  Since we have @code{pg-reset}, we have the proper mechanism
+for dealing with @code{PQstatus} values other than @code{CONNECTION_OK}.
+@end deffn
+
+@deffn {C Function} PQsocket
+Unlikely to be useful.
+@end deffn
+
+@deffn {C Function} PQgetssl
+We'll get to SSL support one of these days.
+@end deffn
+
+@deffn {C Function} PQresStatus
+Probably to be added RSN.
+@end deffn
+
+@deffn {C Function} PQclear
+@deffnx {C Function} PQmakeEmptyPGresult
+@deffnx {C Function} PQcmdStatus
+Unlikely to be useful.
+@end deffn
+
+@deffn {C Function} PQoidStatus
+PosgreSQL documentation says:
+@quotation
+This function is deprecated in favor of PQoidValue.
+It is not thread-safe.
+@end quotation
+@end deffn
+
+@deffn {C Function} PQescapeStringConn
+@deffnx {C Function} PQescapeString
+@deffnx {C Function} PQescapeByteaConn
+@deffnx {C Function} PQescapeBytea
+@deffnx {C Function} PQunescapeBytea
+Probably to be added RSN.
+@end deffn
+
+@deffn {C Function} PQfreemem
+Internal (I think).
+@end deffn
+
+@deffn {C Function} PQflush
+Probably to be added RSN.
+@end deffn
+
+@deffn {C Function} PQfn
+PostgreSQL documentation says:
+@quotation
+Tip: This interface is somewhat obsolete, as one may achieve similar
+performance and greater functionality by setting up a prepared statement
+to define the function call.  Then, executing the statement with binary
+transmission of parameters and results substitutes for a fast-path
+function call.
+@end quotation
+@end deffn
+
+@deffn {C Function} PQputnbytes
+This is in the section ``Obsolete Functions for COPY''.
+@end deffn
+
+@deffn {C Function} PQsetNoticeReceiver
+@deffnx {C Function} PQsetNoticeProcessor
+We provide the schemified interface @code{pg-set-notice-out!}.
+@end deffn
 
 @c ---------------------------------------------------------------------------
 @node    Query Construction
