@@ -6,24 +6,26 @@ Welcome!
 
 	The low-level module `(database postgres)' provides an almost
 	one-to-one correspondence with the PostgreSQL "libpq" C library
-	interface.  Other higher-level modules, typically named
-	`(database postgres-FOO)', provide abstractions and convenience
-	procedures.
+	interface.  The other modules build on it to provide abstractions
+	and convenience procedures:
 
-	This is alpha code (pre 1.0 release).  It has bugs, and the
-	interfaces may change from version to version.
+	  (database postgres-qcons)     -- Query Construction
+	  (database postgres-resdisp)   -- Displaying Results
+	  (database postgres-types)     -- Types Conversion
+	  (database postgres-col-defs)  -- Column Definitions
+	  (database postgres-resx)      -- Result Transforms
+	  (database postgres-table)     -- Single-Table Abstraction
+	  (database postgres-meta)      -- Introspection
+	  (database postgres-gxrepl)    -- Easy Interaction
+
+	This is alpha code (pre 1.0 release), tested with Guile 1.4.1.112
+	and PostgreSQL 7.4.18.  It may have bugs, and the interfaces may
+	change from version to version.
 
 	To build Guile-PG you need to have installed both the PostgreSQL
 	frontend library libpq, and a version of Guile that can load
 	binary module (a b c) from file a/b/c.so or a/b/c/libc.la under
 	`%load-path'.
-
-	This version of Guile-PG has been tested with PostgreSQL 7.4.16
-	and Guile 1.4.1.107, but you may find that it works with other
-	combinations.  If so, please let us know the good news.  (You
-	can do this by changing to the test/ subdirectory and typing
-	"./show-platform && ./show-platform -m".  The "-m" mails the
-	results to the Guile-PG maintainer.)
 
 
 Building and Installing Guile-PG
