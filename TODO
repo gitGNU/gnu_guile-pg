@@ -18,7 +18,7 @@
 
   - Review examples in documentation.
 
-  - Scan libpq-fe.h for coverage.
+  + Scan libpq-fe.h (actually, documentation) for coverage.
 
 
 - Eventually
