@@ -733,9 +733,7 @@
 (define test:close
   (add-test #t
     (lambda ()
-      (write-line *C*)
       (pg-finish *C*)
-      (write-line *C*)
       (pg-finish *C*)                   ; expect: no error
       #t)))
 
