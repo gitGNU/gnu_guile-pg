@@ -239,10 +239,11 @@ All sessions with a PostgreSQL database require a connection to be opened with
 you don't need to specify them.  Default values are also useful in creating a
 connection dialog (user-interface element).
 
-Guile-PG displays connection objects in the following format:
+Guile-PG displays connection objects in one of the following formats:
 
 @example
-#<PG-CONN:N:DB:HOST:PORT:OPTIONS>
+#<PG-CONN:N:DB:HOST:PORT:OPTIONS>   ; open
+#<PG-CONN:N:->                      ; closed
 @end example
 
 @noindent
@@ -271,6 +272,14 @@ PostgreSQL.
          (eq? 'PGRES_TUPLES_OK (pg-result-status result))
          (string->number (pg-getvalue result 0 0)))))
 @end lisp
+
+Use @code{pg-finish} to close an open connection.  Although this is not
+strictly necessary (Guile-PG arranges for unreferenced connection
+objects to be properly closed when they are garbage collected), failure
+to do so before the process exits normally results in a (server side)
+logfile entry ``unexpected EOF on client connection''.
+
+@twerpdoc (pg-finish)
 
 PostgreSQL 7.4 and later support the concept of @dfn{protocol version}.
 @xref{Miscellaneous}, for another way to find installation metainfo.
@@ -951,22 +960,6 @@ assume no such programs exist.
 @deffnx {C Function} PQresetStart
 @deffnx {C Function} PQresetPoll
 Laziness, pure and simple.
-@end deffn
-
-@deffn {C Function} PQfinish
-Guile-PG calls this automatically when a connection object (from
-@code{pg-connectdb}) is garbage collected.  To ensure its calling
-try something like:
-
-@lisp
-(set! CONN #f)
-(gc) (gc) (gc)
-@end lisp
-
-Admittedly this is a little awkward (and failure to call @code{PQfinish}
-normally results in a logfile entry ``unexpected EOF on client connection''),
-so perhaps Guile-PG will expose @code{PQfinish} in a future release, after
-all.
 @end deffn
 
 @deffn {C Function} PQstatus
