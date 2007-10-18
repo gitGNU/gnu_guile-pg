@@ -1006,10 +1006,6 @@ Probably to be added RSN.
 Internal (I think).
 @end deffn
 
-@deffn {C Function} PQflush
-Probably to be added RSN.
-@end deffn
-
 @deffn {C Function} PQfn
 PostgreSQL documentation says:
 @quotation
