@@ -8,6 +8,15 @@
 # - GNU Automake 1.9.6
 # - (Unofficial) Guile 1.4.1.112
 
+######################################################################
+# Local.
+
+for f in sofix sofix.m4 ; do
+    g=../.common/$f
+    test -f $g || { echo ERROR: No such file: $g ; exit 1 ; }
+    ( cd build-aux ; ln -sf ../$g $f )
+done
+
 #############################################################################
 # Autotools (except automake)
 
