@@ -7,8 +7,8 @@ export top_builddir
 top_srcdir=@top_srcdir@
 export top_srcdir
 
-GUILE_MERGED_MODULE_CATALOG=$top_builddir/pre-inst.merged-module-catalog
-export GUILE_MERGED_MODULE_CATALOG
+GUILE_LOAD_PATH=$top_builddir
+export GUILE_LOAD_PATH
 
 exec @GUILE@ "$@"
 
