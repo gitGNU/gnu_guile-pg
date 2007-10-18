@@ -135,21 +135,27 @@ int
 xc_display (SCM exp, SCM port, scm_print_state *pstate)
 {
   xc_t *xc = xc_unbox (exp);
-  char *dbstr = PQdb (xc->dbconn);
-  char *hoststr = PQhost (xc->dbconn);
-  char *portstr = PQport (xc->dbconn);
-  char *optionsstr = PQoptions (xc->dbconn);
-
-  /* A port without a host is misleading.  */
-  if (! hoststr)
-    portstr = NULL;
 
   scm_puts ("#<PG-CONN:", port);
   scm_intprint (xc->count, 10, port); scm_putc (':', port);
-  scm_puts (IFNULL (dbstr, "?"), port); scm_putc (':', port);
-  scm_puts (IFNULL (hoststr, ""), port); scm_putc (':', port);
-  scm_puts (IFNULL (portstr, ""), port); scm_putc (':', port);
-  scm_puts (IFNULL (optionsstr, ""), port);
+  if (! xc->dbconn)
+    scm_putc ('-', port);
+  else
+    {
+      char *dbstr = PQdb (xc->dbconn);
+      char *hoststr = PQhost (xc->dbconn);
+      char *portstr = PQport (xc->dbconn);
+      char *optionsstr = PQoptions (xc->dbconn);
+
+      /* A port without a host is misleading.  */
+      if (! hoststr)
+        portstr = NULL;
+
+      scm_puts (IFNULL (dbstr, "?"), port); scm_putc (':', port);
+      scm_puts (IFNULL (hoststr, ""), port); scm_putc (':', port);
+      scm_puts (IFNULL (portstr, ""), port); scm_putc (':', port);
+      scm_puts (IFNULL (optionsstr, ""), port);
+    }
   scm_puts (">", port);
 
   return 1;
@@ -681,6 +687,27 @@ GH_DEFPROC
  "returned by @code{pg-connectdb}.")
 {
   return xc_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
+}
+
+GH_DEFPROC
+(pg_finish, "pg-finish", 1, 0, 0,
+ (SCM conn),
+ "Close the connection @var{conn} with the backend.")
+{
+#define FUNC_NAME s_pg_finish
+  xc_t *xc;
+
+  ASSERT_CONNECTION (1, conn);
+
+  xc = xc_unbox (conn);
+  if (xc->dbconn)
+    {
+      PQfinish (xc->dbconn);
+      xc->dbconn = NULL;
+    }
+
+  return SCM_UNSPECIFIED;
+#undef FUNC_NAME
 }
 
 GH_DEFPROC
