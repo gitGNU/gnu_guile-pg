@@ -2710,6 +2710,21 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
+GH_DEFPROC
+(pg_flush, "pg-flush", 1, 0, 0,
+ (SCM conn),
+ "Flush output for connection @var{conn}.\n"
+ "Return 0 (zero) if successful (or if the send queue is empty),\n"
+ "-1 if flushing failed for some reason, or 1 if not all data was\n"
+ "sent (only possible for a non-blocking connection).")
+{
+#define FUNC_NAME s_pg_flush
+  ASSERT_CONNECTION (1, conn);
+
+  return gh_int2scm (PQflush (xc_unbox (conn)->dbconn));
+#undef FUNC_NAME
+}
+
 
 /*
  * installation features
