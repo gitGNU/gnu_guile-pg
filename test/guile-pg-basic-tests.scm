@@ -678,6 +678,13 @@
            (pg-putline *C* (format #f "~A.~A\n" i i)))
          (pg-putline *C* "\\.\n")
          (pg-endcopy *C*))
+       ;; Flush until we're sure everything is sent.
+       (let loop ((rv (pg-flush *C*)))
+         (case rv
+           ((-1) #f)
+           ((0) #t)
+           ((1) (begin (sleep 1) (loop (pg-flush *C*))))
+           (else #f)))
        ;; Perhaps usage protocol does not absolutely require this check, but
        ;; removing it causes the subsequent `pg-send-query' to return #f, with
        ;; error message "another command is already in progress".
