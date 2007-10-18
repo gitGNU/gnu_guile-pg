@@ -533,6 +533,7 @@ query altogether.
 @twerpdoc (pg-consume-input)
 @twerpdoc (pg-is-busy?)
 @twerpdoc (pg-request-cancel)
+@twerpdoc (pg-flush)
 
 @c ---------------------------------------------------------------------------
 @node    Processing Results
