@@ -50,15 +50,6 @@
     streams interface so that (pg:stream-cdr) and (pg:stream-car) return
     tuples.
 
-  - Add a (pg:quote-sql-string-literal) procedure.
-
-    This should take an arbitrary scheme string and return it suitably quoted
-    so that it can appear safely inside single quotes in an sql statement. I
-    think this should be written in C so that it's fast. To write it we need
-    to make a careful examination of what characters are special in sql
-    string-literals. These include, but may not be limited to: backslash,
-    single quote, carriage return, linefeed, tab.
-
   - Keep an eye out for methodology to replace --with-libpq*
 
   - Clean up port type-hackery in libpostgres_lo.c.
