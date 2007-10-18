@@ -730,9 +730,18 @@
                                           "cancellation"
                                           reason))))))))))
 
+(define test:close
+  (add-test #t
+    (lambda ()
+      (write-line *C*)
+      (pg-finish *C*)
+      (write-line *C*)
+      (pg-finish *C*)                   ; expect: no error
+      #t)))
+
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 55)
+  (test-init "basic-tests" 56)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:protocol-version/bad-connection
@@ -787,7 +796,8 @@
          test:is-nonblocking?           ; must be after test:set-nonblocking!
          test:send-query-param-variants
          test:asynchronous-retrieval
-         test:request-cancel)
+         test:request-cancel
+         test:close)
   (set! *C* #f)
   (test-report))
 
