@@ -1,6 +1,29 @@
 NEWS for Guile-PG
 
 
+- 0.34 | NOT YET RELEASED
+
+  - License now GPLv3+ (see COPYING)
+
+  - Installation cleanup
+
+	If the host Guile supports module catalogs, the configure script
+	arranges for "make install" to delete the .la file and symlinks,
+	and do `chmod -x' on the compiled module (.so file).
+
+  - New (database postgres) procs
+    - pg-finish
+    - pg-flush
+
+  - New chapter in manual: Not Included
+
+	This chapter lists libpq interface elements that are NOT
+	provided by module (database postgres) and explains why they
+	are omitted.
+
+  - Tested against PostgreSQL 7.4.18
+
+
 - 0.33 | 2007-05-20
 
   - Bugfix: `pgtable-manager' handles mixed-case table names

@@ -1,3 +1,40 @@
+2007-10-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* doc/guile-pg.twerp: Force break between
+	"Copyright" and "Portions Copyright" lines.
+
+2007-10-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* libpostgres.c (pg_flush): New GH_DEFPROC.
+	* doc/guile-pg.twerp (Not Included): Remove @deffn `PQflush'.
+	(Asynchronous Retrieval): Add @twerpdoc for `pg-flush'.
+
+2007-10-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* autogen.sh: Prepare symlinks in build-aux: sofix, sofix.m4.
+	* configure.in (SET_SOFIXFLAGS): New macro call.
+	* Makefile.am (install-data-hook): Use $(srcdir)/build-aux/sofix.
+
+2007-10-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* libpostgres.c (xc_display): Handle closed connections.
+	(pg_finish): New GH_DEFPROC.
+
+	* doc/guile-pg.twerp (Database Connections):
+	Document external rep for closed connections.
+	Also add blurb and @twerpdoc for `pg-finish'.
+	(Not Included): Remove @deffn `PQfinish'.
+
+2007-10-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* wily-guile.in (GUILE_MERGED_MODULE_CATALOG): Delete var.
+	(GUILE_LOAD_PATH): New var, exported.
+
+2007-10-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* doc/guile-pg.twerp (Top): Add "Not Included" to menu.
+	(Not Included): New node/chapter.
+
 2007-08-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* autogen.sh: Fix typo: Use "diff -u" instead of "diff -i".

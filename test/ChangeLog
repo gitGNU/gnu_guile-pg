@@ -1,3 +1,13 @@
+2007-10-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* guile-pg-basic-tests.scm (test:asynchronous-retrieval):
+	After sending loop using `pg-flush' until all sent.
+
+2007-10-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* guile-pg-basic-tests.scm (test:close): New test proc.
+	(main): Use new test proc; update expected-pass number.
+
 2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* guile-pg-abstraction-scm-tests.scm (mtest:any/all--OP): New proc.
