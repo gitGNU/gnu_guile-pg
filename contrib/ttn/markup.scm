@@ -80,7 +80,7 @@
                   #:where (key-match-pexp keys)
                   #:order-by '((< seq)))))
         (and (not (= 0 (pg-ntuples res)))
-             (let* ((:: (alref-proc ((m #:tuples-result->object-alist) res))))
+             (let ((:: (alref-proc ((m #:tuples-result->object-alist) res))))
                (map (lambda (raw mtype mdata)
                       (if (string=? "" mtype)
                           raw
