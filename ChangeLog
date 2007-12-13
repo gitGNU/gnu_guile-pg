@@ -1,3 +1,37 @@
+2007-12-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* configure.in (AC_INIT): Bump version to "0.34" for release.
+
+2007-12-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* doc/guile-pg.twerp (Not Included): Downgrade
+	`PQescapeString' and `PQescapeBytea' to "deprecated".
+
+2007-12-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* libpostgres.c (pgrs_t): Delete typedef.
+	(_PGRES): Delete macro.
+	(pgrs): Make into array of `SCM'.
+	(xr_display, init_module): Use `PQresStatus'.
+
+2007-12-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* libpostgres.c (pgrs_t): Remove member `n'.
+	(pgrs): Order entries to match libpq-fe.h order.
+	(pgrs_count): Delete var.
+	(xr_display, pg_result_status): Clamp status value;
+	use it to index into `pgrs' directly.
+	(init_module): Use `sizeof (pgrs) / sizeof (pgrs_t)' directly.
+
+2007-12-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* doc/guile-pg.twerp (Not Included):
+	Downgrade `PQresStatus' to "unuseful".
+
+2007-11-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* contrib/ttn/markup.scm (markup-table-manager ->tree): Use `let'.
+
 2007-10-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* doc/guile-pg.twerp: Force break between
