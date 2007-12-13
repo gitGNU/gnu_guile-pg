@@ -23,6 +23,7 @@
 SUBDIRS = scm test doc
 
 EXTRA_DIST = THANKS TODO HACKING \
+		build-aux/sofix \
 		modsup.h contrib autogen.sh
 
 BUILT_SOURCES = libpostgres.x libpostgres_lo.x
