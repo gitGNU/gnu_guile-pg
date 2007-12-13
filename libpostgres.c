@@ -77,13 +77,13 @@ typedef struct _smob_tag {
 
 static smob_tag pg_conn_tag, pg_result_tag;
 
-typedef struct _pgrs { ExecStatusType n; char *s; SCM sym; } pgrs_t;
+typedef struct _pgrs { char *s; SCM sym; } pgrs_t;
 
-#define _PGRES(s) { s, #s, SCM_BOOL_F } /* `sym' field set below */
+#define _PGRES(s) { #s, SCM_BOOL_F } /* `sym' field set below */
 static pgrs_t pgrs[] = {
-  _PGRES (PGRES_TUPLES_OK),
   _PGRES (PGRES_EMPTY_QUERY),
   _PGRES (PGRES_COMMAND_OK),
+  _PGRES (PGRES_TUPLES_OK),
   _PGRES (PGRES_COPY_OUT),
   _PGRES (PGRES_COPY_IN),
   _PGRES (PGRES_BAD_RESPONSE),
@@ -91,8 +91,6 @@ static pgrs_t pgrs[] = {
   _PGRES (PGRES_FATAL_ERROR)
 };
 #undef _PGRES
-
-static int pgrs_count = sizeof (pgrs) / sizeof (pgrs_t);
 
 
 /*
@@ -241,7 +239,6 @@ xr_display (SCM exp, SCM port, scm_print_state *pstate)
   ExecStatusType status;
   int ntuples = 0;
   int nfields = 0;
-  int pgrs_index;
 
   SCM_DEFER_INTS;
   status = PQresultStatus (xr->result);
@@ -252,13 +249,12 @@ xr_display (SCM exp, SCM port, scm_print_state *pstate)
     }
   SCM_ALLOW_INTS;
 
-  for (pgrs_index = 0; pgrs_index < pgrs_count; pgrs_index++)
-    if (status == pgrs[pgrs_index].n)
-      break;
+  if (PGRES_FATAL_ERROR < status)
+    status = PGRES_FATAL_ERROR;
 
   scm_puts ("#<PG-RESULT:", port);
   scm_intprint (xr->count, 10, port); scm_putc (':', port);
-  scm_puts (pgrs[pgrs_index].s + 6, port); scm_putc (':', port);
+  scm_puts (pgrs[status].s + 6, port); scm_putc (':', port);
   scm_intprint (ntuples, 10, port); scm_putc (':', port);
   scm_intprint (nfields, 10, port);
   scm_putc ('>', port);
@@ -1285,7 +1281,6 @@ GH_DEFPROC
 #define FUNC_NAME s_pg_result_status
   xr_t *xr; PGresult *res;
   int result_status;
-  int pgrs_index;
 
   VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
 
@@ -1293,13 +1288,10 @@ GH_DEFPROC
   result_status = PQresultStatus (res);
   SCM_ALLOW_INTS;
 
-  for (pgrs_index = 0; pgrs_index < pgrs_count; pgrs_index++)
-    if (result_status == pgrs[pgrs_index].n)
-      return pgrs[pgrs_index].sym;
+  if (PGRES_FATAL_ERROR < result_status)
+    result_status = PGRES_FATAL_ERROR;
 
-  /* FIXME: Although we should never get here, be slackful for now.  */
-  /* abort(); */
-  return gh_int2scm (result_status);
+  return pgrs[result_status].sym;
 #undef FUNC_NAME
 }
 
@@ -2845,7 +2837,7 @@ init_module (void)
 
   {
     int i;
-    for (i = 0; i < pgrs_count; i++)
+    for (i = 0; i < sizeof (pgrs) / sizeof (pgrs_t); i++)
       pgrs[i].sym = scm_protect_object (gh_car (scm_sysintern0 (pgrs[i].s)));
   }
 
