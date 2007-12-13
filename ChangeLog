@@ -5,6 +5,7 @@
 2007-12-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* Makefile.am (EXTRA_DIST): Remove ANONCVS.
+	Add build-aux/sofix.
 
 2007-12-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
