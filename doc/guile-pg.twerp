@@ -992,11 +992,15 @@ It is not thread-safe.
 @end deffn
 
 @deffn {C Function} PQescapeStringConn
-@deffnx {C Function} PQescapeString
 @deffnx {C Function} PQescapeByteaConn
-@deffnx {C Function} PQescapeBytea
 @deffnx {C Function} PQunescapeBytea
 Probably to be added RSN.
+@end deffn
+
+@deffn {C Function} PQescapeString
+@deffnx {C Function} PQescapeBytea
+Deprecated in favor of @code{PQescapeStringConn}
+and @code{PQescapeByteaConn}, respectively.
 @end deffn
 
 @deffn {C Function} PQfreemem
