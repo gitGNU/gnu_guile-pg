@@ -977,10 +977,7 @@ We'll get to SSL support one of these days.
 @end deffn
 
 @deffn {C Function} PQresStatus
-Probably to be added RSN.
-@end deffn
-
-@deffn {C Function} PQclear
+@deffnx {C Function} PQclear
 @deffnx {C Function} PQmakeEmptyPGresult
 @deffnx {C Function} PQcmdStatus
 Unlikely to be useful.
