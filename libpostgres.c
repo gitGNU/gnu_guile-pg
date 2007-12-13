@@ -77,20 +77,7 @@ typedef struct _smob_tag {
 
 static smob_tag pg_conn_tag, pg_result_tag;
 
-typedef struct _pgrs { char *s; SCM sym; } pgrs_t;
-
-#define _PGRES(s) { #s, SCM_BOOL_F } /* `sym' field set below */
-static pgrs_t pgrs[] = {
-  _PGRES (PGRES_EMPTY_QUERY),
-  _PGRES (PGRES_COMMAND_OK),
-  _PGRES (PGRES_TUPLES_OK),
-  _PGRES (PGRES_COPY_OUT),
-  _PGRES (PGRES_COPY_IN),
-  _PGRES (PGRES_BAD_RESPONSE),
-  _PGRES (PGRES_NONFATAL_ERROR),
-  _PGRES (PGRES_FATAL_ERROR)
-};
-#undef _PGRES
+static SCM pgrs[1 + PGRES_FATAL_ERROR];
 
 
 /*
@@ -254,7 +241,7 @@ xr_display (SCM exp, SCM port, scm_print_state *pstate)
 
   scm_puts ("#<PG-RESULT:", port);
   scm_intprint (xr->count, 10, port); scm_putc (':', port);
-  scm_puts (pgrs[status].s + 6, port); scm_putc (':', port);
+  scm_puts (6 + PQresStatus (status), port); scm_putc (':', port);
   scm_intprint (ntuples, 10, port); scm_putc (':', port);
   scm_intprint (nfields, 10, port);
   scm_putc ('>', port);
@@ -1291,7 +1278,7 @@ GH_DEFPROC
   if (PGRES_FATAL_ERROR < result_status)
     result_status = PGRES_FATAL_ERROR;
 
-  return pgrs[result_status].sym;
+  return pgrs[result_status];
 #undef FUNC_NAME
 }
 
@@ -2837,8 +2824,9 @@ init_module (void)
 
   {
     int i;
-    for (i = 0; i < sizeof (pgrs) / sizeof (pgrs_t); i++)
-      pgrs[i].sym = scm_protect_object (gh_car (scm_sysintern0 (pgrs[i].s)));
+    for (i = 0; i < sizeof (pgrs) / sizeof (SCM); i++)
+      pgrs[i] = scm_protect_object
+        (gh_car (scm_sysintern0 (PQresStatus (i))));
   }
 
   init_libpostgres_lo ();
