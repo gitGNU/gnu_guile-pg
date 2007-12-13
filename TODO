@@ -34,6 +34,7 @@
     The first two are easy to replace, since they are simple wrappers for SQL
     commands "CREATE DATABASE" and "DROP DATABASE".  The third is used in proc
     `defs-from-psql' in (database postgres-meta) and is more challenging.
+    Probably involves mucking around w/ the "information_schema".
 
   - Add to the manual a section giving an overview of using large-objects.
 
