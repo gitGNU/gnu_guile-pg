@@ -22,7 +22,7 @@
 
 SUBDIRS = scm test doc
 
-EXTRA_DIST = THANKS TODO HACKING ANONCVS \
+EXTRA_DIST = THANKS TODO HACKING \
 		modsup.h contrib autogen.sh
 
 BUILT_SOURCES = libpostgres.x libpostgres_lo.x
