@@ -4,6 +4,10 @@
 
 2007-12-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	* Makefile.am (EXTRA_DIST): Remove ANONCVS.
+
+2007-12-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	* doc/guile-pg.twerp (Not Included): Downgrade
 	`PQescapeString' and `PQescapeBytea' to "deprecated".
 
