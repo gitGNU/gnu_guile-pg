@@ -113,7 +113,9 @@
                               (string-append
                                (as-string (car p)) " "
                                (as-string (cdr p))))
-                            fields))))
+                            fields)
+          ;; starting w/ PostgreSQL 8.1, this needs to be explicit.
+          " WITH OIDS")))
 
 ;; Here we define procedures to carry out the tests.
 
