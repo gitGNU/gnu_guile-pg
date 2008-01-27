@@ -1176,7 +1176,7 @@ exp0 IN ( exp1, ... )
 @noindent
 where the change from each @code{PEXP} to @code{exp} involves a recursive
 layout transform.  Parentheses and comma are added automatically.
-For @code{NOT IN}, use @code{(not (set/in ...))}.
+For @code{NOT IN}, use @code{(not (in/set ...))}.
 
 The name @code{in/set} was chosen to emphasize that this particular usage
 of the SQL keyword @code{IN} is to check for set membership.  (The
