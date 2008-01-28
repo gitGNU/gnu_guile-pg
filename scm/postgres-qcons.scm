@@ -561,7 +561,7 @@
 ;;
 ;; If @var{composition} is @code{#t}, @var{cols/subs} is passed directly to
 ;; @code{make-SELECT/COLS-tree}.  Otherwise, @var{composition} is a keyword,
-;; one of @code{#:union}, @code{#:intersection} or @code{#:except}, and
+;; one of @code{#:union}, @code{#:intersect} or @code{#:except}, and
 ;; @var{cols/subs} is a list of sublists taken as arguments to
 ;; @code{parse+make-SELECT-tree} (called recursively), and finally combined by
 ;; @var{composition}.
@@ -579,7 +579,7 @@
   (list (case composition
           ((#t) (list #:SELECT (make-SELECT/COLS-tree cols/subs)))
           ((#:union)        (compose #:UNION))
-          ((#:intersection) (compose #:INTERSECTION))
+          ((#:intersect)    (compose #:INTERSECT))
           ((#:except)       (compose #:EXCEPT))
           (else (error "bad composition:" composition)))
         (parse+make-SELECT/tail-tree tail)))
