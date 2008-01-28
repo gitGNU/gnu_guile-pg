@@ -1,3 +1,24 @@
+2008-01-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* doc/guile-pg.twerp (Not Included): Remove entry for
+	`PQescapeStringConn', `PQescapeByteaConn' and `PQunescapeBytea'.
+
+2008-01-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* libpostgres.c (pg_escape_string_conn, pg_escape_bytea_conn)
+	(pg_unescape_bytea): New GH_DEFPROCs.
+	* doc/guile-pg.twerp (Miscellaneous): Add blurb and @twerpdoc for
+	`pg-escape-string-conn', `pg-escape-bytea-conn' and `pg-unescape-bytea'.
+
+2008-01-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* scm/postgres-qcons.scm (parse+make-SELECT-tree):
+	Fix bug: Spell "INTERSECT" correctly.
+
+2008-01-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* doc/guile-pg.twerp (qcons special operators): Fix typo.
+
 2007-12-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* configure.in (AC_INIT): Bump version to "0.34" for release.
