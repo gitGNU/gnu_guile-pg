@@ -1,5 +1,16 @@
 2008-01-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Replace CVS-isms with Git-isms.
+
+	* .cvsignore: Delete file.
+	* doc/.cvsignore, scm/.cvsignore, test/.cvsignore: Likewise.
+	* Makefile.am (.module-catalog): Ignore ".git", not "CVS".
+	(dist-hook, cvs-state-summary): Delete targets.
+	* autogen.sh, HACKING: Update.
+	* .gitignore: New file.
+
+2008-01-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	* doc/guile-pg.twerp (Not Included): Remove entry for
 	`PQescapeStringConn', `PQescapeByteaConn' and `PQunescapeBytea'.
 
