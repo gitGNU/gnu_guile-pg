@@ -1,6 +1,22 @@
 NEWS for Guile-PG
 
 
+- 0.35 | NOT YET RELEASED
+
+  - Bugfix: composition INTERSECT in `parse+make-SELECT-tree'
+
+	This proc, in module (database postgres-qcons), used to
+	erroneously accept #:intersection and emit "INTERSECTION".
+	Now, it accepts #:intersect and emits "INTERSECT".
+
+  - New (database postgres) procs
+    - pg-escape-string-conn
+    - pg-escape-bytea-conn
+    - pg-unescape-bytea
+
+  - Tested against PostgreSQL 7.4.19
+
+
 - 0.34 | 2007-12-13
 
   - License now GPLv3+ (see COPYING)
