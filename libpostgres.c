@@ -741,6 +741,101 @@ GH_DEFPROC
 
 
 /*
+ * string and bytea escaping
+ */
+
+GH_DEFPROC
+(pg_escape_string_conn, "pg-escape-string-conn", 2, 0, 0,
+ (SCM conn, SCM string),
+ "Return a new string made from doubling every single-quote\n"
+ "char in @var{string}.\n"
+ "The escaping is consistent with the encoding for @var{conn}.\n"
+ "The returned string does not have surrounding single-quote chars.\n"
+ "If there is an error, return @code{#f}.")
+{
+#define FUNC_NAME s_pg_escape_string_conn
+  PGconn *dbconn;
+  char *answer;
+  size_t ilen, olen;
+  int errcode;
+  SCM rv;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+  SCM_ASSERT (SCM_NIMP (string) && SCM_ROSTRINGP (string),
+              string, SCM_ARG2, FUNC_NAME);
+  ROZT_X (string);
+
+  ilen = SCM_ROLENGTH (string);
+  if (! (answer = malloc (1 + 2 * ilen)))
+    scm_syserror (FUNC_NAME);
+
+  olen = PQescapeStringConn (dbconn, answer, ROZT (string), ilen, &errcode);
+  if (errcode)
+    {
+      if (answer)
+        free (answer);
+      return SCM_BOOL_F;
+    }
+  rv = gh_str02scm (answer);
+  free (answer);
+  return rv;
+#undef FUNC_NAME
+}
+
+GH_DEFPROC
+(pg_escape_bytea_conn, "pg-escape-bytea-conn", 2, 0, 0,
+ (SCM conn, SCM bytea),
+ "Return a new string made from doing the ``minimal'' replacement\n"
+ "of byte values with its @code{\\\\ABC} (octal) representation\n"
+ "in @var{bytea} (a string).\n"
+ "The escaping is consistent with the encoding for @var{conn}.\n"
+ "The returned bytea does not have surrounding single-quote chars.\n"
+ "If there is an error, return @code{#f}.")
+{
+#define FUNC_NAME s_pg_escape_bytea_conn
+  PGconn *dbconn;
+  unsigned char *answer;
+  size_t ilen, olen;
+  SCM rv;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+  SCM_ASSERT (SCM_NIMP (bytea) && SCM_ROSTRINGP (bytea),
+              bytea, SCM_ARG2, FUNC_NAME);
+
+  ilen = SCM_ROLENGTH (bytea);
+  if (! (answer = PQescapeByteaConn (dbconn, SCM_ROUCHARS (bytea),
+                                     ilen, &olen)))
+    return SCM_BOOL_F;
+  rv = gh_str2scm ((char *) answer, olen ? olen - 1 : 0);
+  PQfreemem (answer);
+  return rv;
+#undef FUNC_NAME
+}
+
+GH_DEFPROC
+(pg_unescape_bytea, "pg-unescape-bytea", 1, 0, 0,
+ (SCM bytea),
+ "Return a new bytea made from unescaping @var{bytea}.\n"
+ "If there is an error, return @code{#f}.")
+{
+#define FUNC_NAME s_pg_unescape_bytea
+  unsigned char *answer;
+  size_t olen;
+  SCM rv;
+
+  SCM_ASSERT (SCM_NIMP (bytea) && SCM_ROSTRINGP (bytea),
+              bytea, SCM_ARG1, FUNC_NAME);
+
+  if (! (answer = PQunescapeBytea (SCM_ROUCHARS (bytea), &olen)))
+    return SCM_BOOL_F;
+  rv = gh_str2scm ((char *) answer, olen);
+  PQfreemem (answer);
+  return rv;
+#undef FUNC_NAME
+}
+
+
+/*
  * exec and results
  */
 

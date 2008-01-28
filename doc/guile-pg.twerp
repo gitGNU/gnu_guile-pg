@@ -938,6 +938,27 @@ opens the required file and starts/stops the trace.
            (pg-untrace conn)))))
 @end lisp
 
+The next three procedures are for @dfn{escape processing}, changing one
+single-quote char into two single-quote chars, and so forth.  The first two
+are for data to be sent to the server, the third for data received from the
+server.  If there are problems (when they return @code{#f}), you can use
+@code{pg-error-message} to find out what happened.
+
+@twerpdoc (pg-escape-string-conn)
+@twerpdoc (pg-escape-bytea-conn)
+@twerpdoc (pg-unescape-bytea)
+
+For example:
+
+@lisp
+(pg-escape-string-conn CONN "abc'def")
+@result{} "abc''def"
+
+(pg-escape-bytea-conn
+ CONN (string #\342 #\251 #\302 #\375))
+@result{} "\\\\342\\\\251\\\\302\\\\375"
+@end lisp
+
 @c ---------------------------------------------------------------------------
 @node    Not Included
 @chapter Not Included
