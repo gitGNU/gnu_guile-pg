@@ -399,7 +399,7 @@ drop_paramspecs (struct paramspecs *ps)
 
 
 /*
- * everything (except lo support and some async stuff)
+ * meta and connection
  */
 
 static SCM goodies;
@@ -738,6 +738,11 @@ GH_DEFPROC
   return (data);
 #undef FUNC_NAME
 }
+
+
+/*
+ * exec and results
+ */
 
 GH_DEFPROC
 (pg_exec, "pg-exec", 2, 0, 0,
