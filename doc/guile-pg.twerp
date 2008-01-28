@@ -1012,12 +1012,6 @@ It is not thread-safe.
 @end quotation
 @end deffn
 
-@deffn {C Function} PQescapeStringConn
-@deffnx {C Function} PQescapeByteaConn
-@deffnx {C Function} PQunescapeBytea
-Probably to be added RSN.
-@end deffn
-
 @deffn {C Function} PQescapeString
 @deffnx {C Function} PQescapeBytea
 Deprecated in favor of @code{PQescapeStringConn}
