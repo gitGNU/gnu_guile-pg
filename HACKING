@@ -12,16 +12,16 @@ C compiler it's no great problem that you can't build Guile-PG either.
 
 * Quick start
 
-See ANONCVS for anonymous cvs instructions.  Once you have a source tree:
+To get a source tree:
+
+ $ git clone http://www.gnuvola.org/wip/guile-pg.git
+
+Once you have a source tree:
 
  $ sh -x autogen.sh
 
 See autogen.sh comments for which tool versions are recommended to install on
-your system (minimally -- probably later versions work, too).  The autogen.sh
-script also creates file .last-release in the current directory, which you
-can use with "cvs diff" like so:
-
- cvs diff -u -b -B -w -r`cat .last-release`
+your system (minimally -- probably later versions work, too).
 
 To be able to extract (and build) documentation automatically from the source
 you need a Guile that installs "guile-tools twerp2texi", such as those in the

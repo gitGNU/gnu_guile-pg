@@ -42,7 +42,7 @@ noinst_DATA = .module-catalog
 .module-catalog:
 	if guile-tools | grep -q mkpimmc ; then			\
 	  guile-tools mkpimmc -d $(DEPDIR) $@ "$(srcdir)"	\
-	    -- -d in,lo,o -X '~$$' -X CVS -X doc -X contrib ;	\
+	    -- -d in,lo,o -X '~$$' -X '[.]git' -X doc -X contrib ;	\
 	else echo '()' > $@ ; fi
 
 SUFFIXES = .x .doc
@@ -66,9 +66,6 @@ install-data-hook:
 DISTCLEANFILES = *.x *.doc
 
 CLEANFILES = *.x $(noinst_DATA)
-
-dist-hook:
-	rm -rf `find $(distdir)/contrib -name CVS`
 
 if MAINTAINER_MODE
 
@@ -109,14 +106,5 @@ destroy-nonmodule-guile-pg-prior-install:
 	  echo NOTE: modifying $$dir/$$cat ;			\
 	  sed '/database postgres/d' $$cat > TMP ;		\
 	  mv TMP $$cat ; fi
-
-if MAINTAINER_MODE
-
-cvs-state-summary:
-	cd $(top_srcdir) ;			\
-	ttn-do display-cvs-state-summary	\
-	  `find . -name CVS -printf ' %h'`
-
-endif # MAINTAINER_MODE
 
 ## Makefile.am ends here

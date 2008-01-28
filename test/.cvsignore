@@ -1,7 +1,0 @@
-Makefile
-Makefile.in
-config.scm
-*.log
-lo-tests-data-*
-drop.sh
-create.sh
