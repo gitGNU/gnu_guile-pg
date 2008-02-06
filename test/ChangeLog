@@ -1,3 +1,8 @@
+2008-01-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* guile-pg-basic-tests.scm (test:set-notice-out!-1):
+	Check by matching against regexp instead of exact string.
+
 2008-01-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* guile-pg-basic-tests.scm (make-table!): Specify
