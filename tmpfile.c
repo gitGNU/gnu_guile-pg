@@ -1,6 +1,6 @@
 /* tmpfile.c
 
-   Copyright (C) 2003,2004,2005,2006 Thien-Thi Nguyen
+   Copyright (C) 2003,2004,2005,2006,2008 Thien-Thi Nguyen
 
    This file is part of Guile-PG.
 

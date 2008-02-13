@@ -1,6 +1,6 @@
 ;;; postgres-resdisp.scm --- display a query result in various ways
 
-;; Copyright (C) 2005, 2006, 2007 Thien-Thi Nguyen
+;; Copyright (C) 2005,2006,2007,2008 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;
