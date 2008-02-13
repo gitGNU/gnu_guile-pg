@@ -1,7 +1,7 @@
 NEWS for Guile-PG
 
 
-- 0.35 | NOT YET RELEASED
+- 0.35 | 2008-02-13
 
   - Bugfix: composition INTERSECT in `parse+make-SELECT-tree'
 

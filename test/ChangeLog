@@ -1,3 +1,7 @@
+2008-02-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Release: 0.35 (tag: v0.35)
+
 2008-01-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* guile-pg-basic-tests.scm (test:set-notice-out!-1):
