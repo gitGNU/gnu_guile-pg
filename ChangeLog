@@ -1,3 +1,17 @@
+2008-02-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Drop subdirectory "contrib".
+
+	* contrib/Ian.Grant/abstractions.scm: Delete file.
+	* contrib/Ian.Grant: Delete directory.
+	* contrib/ttn/markup.scm: Delete file.
+	* contrib/ttn: Delete directory.
+	* contrib/README: Delete file.
+	* contrib: Delete directory.
+
+	* Makefile.am (EXTRA_DIST): Remove contrib.
+	(.module-catalog): Update ignorance specification.
+
 2008-02-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.35 (tag: v0.35)

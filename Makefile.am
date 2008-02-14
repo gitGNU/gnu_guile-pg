@@ -24,7 +24,7 @@ SUBDIRS = scm test doc
 
 EXTRA_DIST = THANKS TODO HACKING \
 		build-aux/sofix \
-		modsup.h contrib autogen.sh
+		modsup.h autogen.sh
 
 BUILT_SOURCES = libpostgres.x libpostgres_lo.x
 
@@ -42,7 +42,7 @@ noinst_DATA = .module-catalog
 .module-catalog:
 	if guile-tools | grep -q mkpimmc ; then			\
 	  guile-tools mkpimmc -d $(DEPDIR) $@ "$(srcdir)"	\
-	    -- -d in,lo,o -X '~$$' -X '[.]git' -X doc -X contrib ;	\
+	    -- -d in,lo,o -X '~$$' -X '[.]git' -X doc ;		\
 	else echo '()' > $@ ; fi
 
 SUFFIXES = .x .doc
