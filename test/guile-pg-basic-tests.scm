@@ -242,7 +242,7 @@
                   (pg-set-notice-out! *C* port)
                   (cexec "CREATE TABLE unused (ser serial, a int)")))))
         (and (string? n)
-             (string-match
+             (regexp-exec
               ;; The full message begins with:
               ;; "NOTICE:  CREATE TABLE will create implicit sequence "
               ;; and ends differently depending on PostgreSQL version.
@@ -250,7 +250,8 @@
               ;; - 6.x    -- "'~A' for SERIAL column '~A'"
               ;; - 7.4.5  -- "~S for \"serial\" column ~S"
               ;; - 8.1.0  -- "~S for serial column ~S"
-              "^NOTICE.+implicit.+unused_ser_seq.+unused.ser"
+              (make-regexp
+               "^NOTICE.+implicit.+unused_ser_seq.+unused.ser")
               n)
              #t)))))
 

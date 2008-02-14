@@ -1,3 +1,10 @@
+2008-02-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Avoid requiring procs from module (ice-9 regex).
+
+	* guile-pg-basic-tests.scm (test:set-notice-out!-1):
+	Use `regexp-exec' and `make-regexp'.
+
 2008-02-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.35 (tag: v0.35)
