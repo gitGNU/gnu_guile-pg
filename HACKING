@@ -14,10 +14,12 @@ C compiler it's no great problem that you can't build Guile-PG either.
 
 To get a source tree:
 
+ $ git clone http://www.gnuvola.org/wip/.common.git
  $ git clone http://www.gnuvola.org/wip/guile-pg.git
 
-Once you have a source tree:
+Once you have both (.common and guile-pg) trees:
 
+ $ cd guile-pg
  $ sh -x autogen.sh
 
 See autogen.sh comments for which tool versions are recommended to install on

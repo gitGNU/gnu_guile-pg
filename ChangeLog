@@ -1,3 +1,9 @@
+2008-03-03 Thien-Thi Nguyen <ttn@gnuvola.org>
+
+	Release: 0.36 (tag v0.36)
+
+	* configure.in (AC_INIT): Bump version to "0.36" for release.
+
 2008-02-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Drop subdirectory "contrib".

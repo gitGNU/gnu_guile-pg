@@ -1,6 +1,22 @@
 NEWS for Guile-PG
 
 
+- 0.36 | 2008-03-03
+
+  - Test fix: Avoid requiring procs from module (ice-9 regex)
+
+	The test guile-pg-basic-tests.scm used to use `string-match'
+	but now it uses `make-regexp' and `regexp-exec' directly.
+	We call this a fix because some Guile versions do not autoload
+	`string-match'.  However, it is a fix to the test infrastructure
+	and not to the functionality of Guile-PG.
+
+  - Dropped subdir: contrib/
+
+	Some of the ideas in the files under contrib/ have already been
+	incorporated into Guile-PG.  Others were Not So Important.
+
+
 - 0.35 | 2008-02-13
 
   - Bugfix: composition INTERSECT in `parse+make-SELECT-tree'
