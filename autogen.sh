@@ -49,15 +49,8 @@ for script in `find . -name .make-automake-frags` ; do
 done
 
 # Do it.
+ln -sf ../.common/GPLv3 COPYING
 automake --add-missing --force
-
-if grep -q "Version 2" COPYING ; then
-    v3='../.common/GPLv3'
-    if [ -f $v3 ]
-    then ln -sf $v3 COPYING
-    else echo WARNING: COPYING is v2
-    fi
-fi
 
 ######################################################################
 # Header: <guile/modsup.h>
