@@ -1,3 +1,9 @@
+2008-04-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Jam package version in script "show-platform" on "make dist".
+
+	* show-platform (go): For "guile-pg", use placeholder "VERSION".
+
 2008-02-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Avoid requiring procs from module (ice-9 regex).

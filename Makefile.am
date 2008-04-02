@@ -85,6 +85,9 @@ DOTDOCFILES = libpostgres.doc                   \
 
 endif # MAINTAINER_MODE
 
+dist-hook:
+	sed -i 's/VERSION/$(VERSION)/' $(distdir)/test/show-platform
+
 ## bonus target
 destroy-nonmodule-guile-pg-prior-install:
 	dir="$(libdir)/guile-pg" ;				\

@@ -6,7 +6,7 @@ recip='ttn@gnuvola.org'
 
 go ()
 {
-    echo guile-pg: `sed '/^ *VERSION=/!d;s/.*=//' ../configure`
+    echo guile-pg: VERSION
     for opt in m s r ; do echo uname-${opt}: `uname -$opt` ; done
     echo autoconf: `autoconf --version | head -1 | sed -e 's/[^0-9.]*//g'`
     echo automake: `automake --version | head -1 | sed -e 's/[^0-9.]*//g'`

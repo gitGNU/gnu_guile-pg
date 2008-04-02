@@ -1,3 +1,9 @@
+2008-04-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Jam package version in script "show-platform" on "make dist".
+
+	* Makefile.am (dist-hook): New target.
+
 2008-03-03 Thien-Thi Nguyen <ttn@gnuvola.org>
 
 	Release: 0.36 (tag v0.36)
