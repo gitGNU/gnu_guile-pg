@@ -105,15 +105,7 @@ xc_unbox (SCM obj)
 static SCM
 xc_box (xc_t *xc)
 {
-  SCM z;
-
-  SCM_ENTER_A_SECTION;
-  SCM_NEWCELL (z);
-  SCM_SETCDR (z, (SCM) xc);
-  SCM_SETCAR (z, pg_conn_tag.type_tag);
-  SCM_EXIT_A_SECTION;
-
-  return z;
+  SCM_RETURN_NEWSMOB (pg_conn_tag.type_tag, xc);
 }
 
 int
@@ -208,15 +200,7 @@ xr_unbox (SCM obj)
 static SCM
 xr_box (xr_t *xr)
 {
-  SCM z;
-
-  SCM_ENTER_A_SECTION;
-  SCM_NEWCELL (z);
-  SCM_SETCDR (z, (SCM) xr);
-  SCM_SETCAR (z, pg_result_tag.type_tag);
-  SCM_EXIT_A_SECTION;
-
-  return z;
+  SCM_RETURN_NEWSMOB (pg_result_tag.type_tag, xr);
 }
 
 static int
@@ -2168,15 +2152,7 @@ sepo_p (SCM obj)
 static SCM
 sepo_box (PQprintOpt *sepo)
 {
-  SCM z;
-
-  SCM_ENTER_A_SECTION;
-  SCM_NEWCELL (z);
-  SCM_SETCDR (z, (SCM)sepo);
-  SCM_SETCAR (z, sepo_type_tag);
-  SCM_EXIT_A_SECTION;
-
-  return z;
+  SCM_RETURN_NEWSMOB (sepo_type_tag, sepo);
 }
 
 static PQprintOpt *

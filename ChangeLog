@@ -1,3 +1,10 @@
+2008-04-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Small refactoring: Use macro `SCM_RETURN_NEWSMOB'.
+
+	* libpostgres.c (xc_box, xr_box, sepo_box):
+	Use `SCM_RETURN_NEWSMOB'.
+
 2008-04-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Jam package version in script "show-platform" on "make dist".
