@@ -560,16 +560,21 @@
 ;; and @var{tail}.
 ;;
 ;; If @var{composition} is @code{#t}, @var{cols/subs} is passed directly to
-;; @code{make-SELECT/COLS-tree}.  Otherwise, @var{composition} is a keyword,
-;; one of @code{#:union}, @code{#:intersect} or @code{#:except}, and
+;; @code{make-SELECT/COLS-tree}.  Otherwise, it should be one of:
+;;
+;; @lisp
+;; #:union       #:intersect       #:except
+;; #:union-all   #:intersect-all   #:except-all
+;; @end lisp
+;;
 ;; @var{cols/subs} is a list of sublists taken as arguments to
-;; @code{parse+make-SELECT-tree} (called recursively), and finally combined by
-;; @var{composition}.
+;; @code{parse+make-SELECT-tree} (applied recursively to each sublist),
+;; and finally combined by @var{composition}.
 ;;
 ;; @var{tail} is passed directly to @code{parse+make-SELECT/tail-tree}.
 ;;
 (define (parse+make-SELECT-tree composition cols/subs . tail)
-  (define (compose type)
+  (define (compose . type)
     ((if (null? tail)
          identity
          paren)
@@ -579,8 +584,11 @@
   (list (case composition
           ((#t) (list #:SELECT (make-SELECT/COLS-tree cols/subs)))
           ((#:union)        (compose #:UNION))
+          ((#:union-all)    (compose #:UNION #:ALL))
           ((#:intersect)    (compose #:INTERSECT))
+          ((#:intersect-all)(compose #:INTERSECT #:ALL))
           ((#:except)       (compose #:EXCEPT))
+          ((#:except-all)   (compose #:EXCEPT #:ALL))
           (else (error "bad composition:" composition)))
         (parse+make-SELECT/tail-tree tail)))
 
