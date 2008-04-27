@@ -1,6 +1,6 @@
 ## Some -*-autoconf-*- macros for working with Guile.
 ##
-## Copyright (C) 2002, 2003, 2004, 2005, 2007 Thien-Thi Nguyen
+## Copyright (C) 2002, 2003, 2004, 2005, 2007, 2008 Thien-Thi Nguyen
 ## Copyright (C) 1998, 2001 Free Software Foundation, Inc.
 ##
 ## This file is part of GUILE
@@ -36,6 +36,7 @@
 ## GUILE_MODULE_REQUIRED_EXPORT -- fail if a module doesn't export a variable
 ## GUILE_CHECK_ICE9_OPTARGS -- use (ice-9 optargs) for (ice-9 optargs-kw)?
 ## GUILE_MODULE_CATALOG_PREP -- machinery for pre-inst merged module catalog
+## GUILE_TOOLS_PROG -- find absolute filename of a guile-tools program
 ## GUILE_C2X_METHOD -- choose "guile-tools c2x" or "guile-snarf"
 ## GUILE_MODSUP_H -- define HAVE_GUILE_MODSUP_H if it is indeed available
 
@@ -381,24 +382,42 @@ AC_DEFUN([GUILE_MODULE_CATALOG_PREP],[
   ])
 ])
 
+# GUILE_TOOLS_PROG -- find absolute filename of a guile-tools program
+#
+# Usage: GUILE_TOOLS_PROG(var,program,[notfound])
+#
+# Set shell variable @var{var} to be the absolute filename of the
+# guile-tools @var{program} if it exists, or to ":" otherwise.
+# Optional third arg @var{notfound} is the value to use instead of ":".
+#
+# Mark the variable for substitution, as by @code{AC_SUBST}.
+#
+AC_DEFUN([GUILE_TOOLS_PROG],[
+  AC_REQUIRE([GUILE_PROGS])dnl
+  AC_MSG_CHECKING([for "guile-tools $2"])
+  $1=no
+  if $GUILE_TOOLS -p PROGRAM >/dev/null 2>&1 ; then
+    $1=`$GUILE_TOOLS -p $2`
+  elif $GUILE_TOOLS | grep -q $2 ; then
+    $1=`$GUILE_TOOLS --help | $SED '/.*cripts dir: /!d;s///'`/$2
+  fi
+  AC_MSG_RESULT([$$1])
+  test "$$1" = no && $1=m4_case([$3],[],[:],[$3])
+  AC_SUBST($1)
+])
+
 # GUILE_C2X_METHOD -- choose "guile-tools c2x" or "guile-snarf"
 #
 # Usage: GUILE_C2X_METHOD(var)
 #
-# Set shell variable @var{var} to be either "guile-tools c2x"
+# Set shell variable @var{var} to be either the
+# absolute filename of the "guile-tools c2x" program,
 # or "guile-snarf", preferring the former if it is available.
 #
 # Mark the variable for substitution, as by @code{AC_SUBST}.
 #
 AC_DEFUN([GUILE_C2X_METHOD],[
-  AC_MSG_CHECKING([c2x method])
-  if guile-tools | grep -q c2x ; then
-    $1="guile-tools c2x"
-  else
-    $1="guile-snarf"
-  fi
-  AC_MSG_RESULT([$$1])
-  AC_SUBST($1)
+  GUILE_TOOLS_PROG([$1],[c2x],[guile-snarf])
 ])
 
 # GUILE_MODSUP_H -- define HAVE_GUILE_MODSUP_H if it is indeed available
