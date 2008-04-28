@@ -34,6 +34,7 @@
                           write-line))
   #:use-module ((database postgres)
                 #:select (pg-connection?
+                          pg-finish
                           pg-get-db
                           pg-exec
                           pg-result?
@@ -442,6 +443,7 @@ specified by \",fix\".  Keywords without related expressions are ignored."
      ;; do it!
      (repl -read -eval -print)))
 
+  (pg-finish conn)
   (set! conn #f)
   (gc)
   (if #f #f))

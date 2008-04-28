@@ -1,3 +1,11 @@
+2008-04-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Make gxrepl close connection when done.
+
+	* scm/postgres-gxrepl.scm: From module (database postgres),
+	select also `pg-finish'.
+	(gxrepl): Do `pg-finish' prior to gc.
+
 2008-04-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Make qcons able to produce "{UNION,INTERSECT,EXCEPT} ALL".
