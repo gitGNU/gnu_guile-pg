@@ -1,0 +1,17 @@
+#!/bin/sh
+# runtest --- run "@GUILE@" w/ proper test environment
+
+srcdir="@srcdir@"
+export srcdir
+
+GUILE_LOAD_PATH="$top_builddir:$GUILE_LOAD_PATH"
+export GUILE_LOAD_PATH
+
+PGDATABASE='guile_pg_test'
+export PGDATABASE
+
+test x"$DEBUG" = x || dopt=--debug
+
+exec @GUILE@ $dopt -l "$srcdir/testing.scm" -s $1
+
+# runtest ends here

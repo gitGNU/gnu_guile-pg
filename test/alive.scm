@@ -1,6 +1,6 @@
-;;; config.scm
+;;; alive.scm
 
-;; Copyright (C) 2002,2003,2004,2005,2006,2008 Thien-Thi Nguyen
+;; Copyright (C) 2008 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;
@@ -18,14 +18,13 @@
 ;; along with Guile-PG; if not, write to the Free Software Foundation,
 ;; Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-;;; Commentary:
+(or (not *all-tests*)
+    (begin (display "Bad env.")
+           (newline)
+           (exit #f)))
 
-;; This file holds configure-substituted definitions.  We don't need to
-;; accomodate general ${FOO} expansion (a la Bourne shell) since those
-;; particular constructs are presently not used in testing.
+(use-modules (database postgres))
 
-;;; Code:
+(exit #t)
 
-(define *srcdir* "@srcdir@")
-
-;;; config.scm ends here
+;;; alive.scm ends here

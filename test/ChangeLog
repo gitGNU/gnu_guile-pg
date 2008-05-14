@@ -1,5 +1,32 @@
 2008-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Revamp "make check".
+
+	* testing.scm (drop!, create!, manually-load): New procs.
+	* alive.scm: New file.
+	* basic.scm: New file.
+	* large.scm: New file.
+	* types-table.scm: New file.
+	* alive.sh: Delete file; incorporate into alive.scm.
+	* basic-tests.sh: Delete file; incorporate into basic.scm.
+	* guile-pg-basic-tests.scm: Likewise.
+	* lo-tests.sh: Delete file; incorporate into large.scm.
+	* guile-pg-lo-tests.scm: Likewise.
+	* abstraction-scm-tests.sh: Delete file;
+	incorporate into types-table.scm.
+	* guile-pg-abstraction-scm-tests.scm: Likewise.
+	* runtest.in: New file.
+	* Makefile.am (abs_top_builddir): Delete var.
+	(TESTS_ENVIRONMENT): Rewrite.
+	(TESTS): Rewrite.
+	(CLEANFILES): Remove basic-tests.log, lo-tests.log,
+	abstraction-scm-tests.log; add $(TESTS:.scm=.log).
+	(EXTRA_DIST): Remove guile-pg-basic-tests.scm,
+	guile-pg-lo-tests.scm, guile-pg-abstraction-scm-tests.scm.
+	* config.scm.in: Delete file.
+
+2008-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	No longer test coverage.
 
 	* coverage.sh, cov: Delete files.

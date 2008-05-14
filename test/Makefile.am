@@ -20,33 +20,17 @@
 ##   write to the Free Software Foundation, Inc., 51 Franklin Street,
 ##   Fifth Floor, Boston, MA  02110-1301  USA
 
-abs_top_builddir = @abs_top_builddir@
+TESTS_ENVIRONMENT = ./runtest
 
-TESTS_ENVIRONMENT =				\
-  PGDATABASE=guile_pg_test			\
-  GUILE=$(abs_top_builddir)/wily-guile		\
-  top_builddir=$(abs_top_builddir)		\
-  top_srcdir=$(top_srcdir)			\
-  srcdir=$(srcdir)				\
-  $(SHELL)
+TESTS = alive.scm basic.scm large.scm types-table.scm
 
-TESTS = alive.sh                                \
-        basic-tests.sh                          \
-        lo-tests.sh                             \
-        abstraction-scm-tests.sh
-
-CLEANFILES = basic-tests.log                    \
-             lo-tests.log                       \
-             abstraction-scm-tests.log          \
+CLEANFILES = $(TESTS:.scm=.log)                 \
              lo-tests-data-1                    \
              lo-tests-data-2                    \
              test-lo-seek.log
 
 EXTRA_DIST = $(TESTS)                           \
              testing.scm                        \
-             guile-pg-basic-tests.scm           \
-             guile-pg-lo-tests.scm              \
-             guile-pg-abstraction-scm-tests.scm \
              show-platform
 
 ## Makefile.am ends here

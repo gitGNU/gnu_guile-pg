@@ -1,6 +1,6 @@
-;;; guile-pg-abstraction-scm-tests.scm
+;;; types-table.scm
 
-;; Copyright (C) 2002,2003,2004,2005,2006,2007,2008 Thien-Thi Nguyen
+;; Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;
@@ -18,9 +18,13 @@
 ;; along with Guile-PG; if not, write to the Free Software Foundation,
 ;; Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-;;; Code:
+(or (not *all-tests*)
+    (begin (display "Bad env.")
+           (newline)
+           (exit #f)))
 
-(load-from-path (in-vicinity *srcdir* "testing.scm"))
+(drop!) (create!)
+(manually-load "types" "col-defs" "resx" "qcons" "table")
 
 (use-modules (database postgres)
              (database postgres-types)
@@ -344,7 +348,8 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "abstraction-scm-tests"    ; manularity sucks
+  (test-init "types-table"
+             ;; manularity sucks
              (+ 1
                 6
                 (let ((count '(5 3 3 2 2 3 1 2))) ; multiples
@@ -371,8 +376,9 @@
   (test-m2)
   (test-m3)
   (cleanup!)
+  (drop!)
   (test-report))
 
 (exit (main))
 
-;;; guile-pg-abstraction-scm-tests.scm ends here
+;;; types-table.scm ends here

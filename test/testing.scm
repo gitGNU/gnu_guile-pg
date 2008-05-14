@@ -179,4 +179,21 @@
 (define (test-one! p) (test (assq-ref *all-tests* p) p))
 (define (test! . ls) (for-each test-one! ls))
 
+
+;;; Common bits
+
+(define (drop!)
+  (system "./drop.sh"))
+
+(define (create!)
+  (or (zero? (system "./create.sh"))
+      (exit #f)))
+
+(define (manually-load . parts)
+  (let ((dir (in-vicinity (getenv "srcdir") "../scm")))
+    (for-each (lambda (part)
+                (load (in-vicinity dir (string-append
+                                        "postgres-" part ".scm"))))
+              parts)))
+
 ;;; testing.scm ends here

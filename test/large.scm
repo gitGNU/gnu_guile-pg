@@ -1,7 +1,7 @@
-;;; guile-pg-lo-tests.scm
+;;; large.scm
 
-;; Copyright (C) 2002,2003,2004,2005,2006,2007,2008 Thien-Thi Nguyen
-;; Portions Copyright (C) 1999,2000 Ian Grant
+;; Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Thien-Thi Nguyen
+;; Portions Copyright (C) 1999, 2000 Ian Grant
 ;;
 ;; This file is part of Guile-PG.
 ;;
@@ -19,7 +19,13 @@
 ;; along with Guile-PG; if not, write to the Free Software Foundation,
 ;; Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-(load-from-path (in-vicinity *srcdir* "testing.scm"))
+(or (not *all-tests*)
+    (begin (display "Bad env.")
+           (newline)
+           (exit #f)))
+
+(drop!) (create!)
+
 (reset-all-tests!)
 
 (use-modules (ice-9 rdelim) (database postgres))
@@ -213,7 +219,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "lo-tests" 13)
+  (test-init "large" 13)
   (test! test:make-connection
          test:make-data
          test:make-table
@@ -229,6 +235,7 @@
          test:lo-unlink)
   (for-each delete-file '("lo-tests-data-1" "lo-tests-data-2"))
   (set! *C* #f)
+  (drop!)
   (test-report))
 
 (exit (main))
@@ -237,4 +244,4 @@
 ;; eval: (put 'add-test 'scheme-indent-function 1)
 ;; End:
 
-;;; guile-pg-lo-tests.scm ends here
+;;; large.scm ends here

@@ -1,7 +1,7 @@
-;;; guile-pg-basic-tests.scm
+;;; basic.scm
 
-;; Copyright (C) 2002,2003,2004,2005,2006,2007,2008 Thien-Thi Nguyen
-;; Portions Copyright (C) 1999,2000 Ian Grant
+;; Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Thien-Thi Nguyen
+;; Portions Copyright (C) 1999, 2000 Ian Grant
 ;;
 ;; This file is part of Guile-PG.
 ;;
@@ -19,7 +19,13 @@
 ;; along with Guile-PG; if not, write to the Free Software Foundation,
 ;; Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-(load-from-path (in-vicinity *srcdir* "testing.scm"))
+(or (not *all-tests*)
+    (begin (display "Bad env.")
+           (newline)
+           (exit #f)))
+
+(drop!) (create!)
+
 (reset-all-tests!)
 
 (use-modules (database postgres))
@@ -748,7 +754,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic-tests" 56)
+  (test-init "basic" 56)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:protocol-version/bad-connection
@@ -806,6 +812,7 @@
          test:request-cancel
          test:close)
   (set! *C* #f)
+  (drop!)
   (test-report))
 
 (exit (main))
@@ -814,4 +821,4 @@
 ;;; eval: (put 'add-test 'scheme-indent-function 1)
 ;;; End:
 
-;;; guile-pg-basic-tests.scm ends here
+;;; basic.scm ends here

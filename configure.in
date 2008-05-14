@@ -143,12 +143,11 @@ AC_CONFIG_FILES([
   scm/Makefile
   doc/Makefile
   test/Makefile
-  test/config.scm
 ])
 
-AC_GUILE_PG_CONFIG_SCRIPT([wily-guile])
 AC_GUILE_PG_CONFIG_SCRIPT([test/drop.sh])
 AC_GUILE_PG_CONFIG_SCRIPT([test/create.sh])
+AC_GUILE_PG_CONFIG_SCRIPT([test/runtest])
 
 AC_CONFIG_COMMANDS([twerp-prep],[
   if echo "$ac_cs_version" | grep -q options.*--enable-maintainer-mode ; then

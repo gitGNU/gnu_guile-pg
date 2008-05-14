@@ -1,3 +1,11 @@
+2008-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Revamp "make check".
+
+	* configure.in (AC_CONFIG_FILES): Remove test/config.scm.
+	(AC_GUILE_PG_CONFIG_SCRIPT): Remove wily-guile; add test/runtest.
+	* wily-guile.in: Delete file.
+
 2008-04-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Make gxrepl close connection when done.
