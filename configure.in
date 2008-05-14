@@ -115,15 +115,6 @@ fi
 CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"
 
-AC_CHECK_PROGS([DROPDB], [dropdb destroydb], [no],)
-if test "$DROPDB" = no ; then
-   AC_MSG_WARN([could not find dropdb or destroydb; "make check" will fail])
-fi
-AC_CHECK_PROGS([CREATEDB], [createdb], [no])
-if test "$CREATEDB" = no ; then
-   AC_MSG_WARN([could not find createdb; "make check" will fail])
-fi
-
 ##----------------------------------------------------------------------------
 ## Etc
 
@@ -145,8 +136,6 @@ AC_CONFIG_FILES([
   test/Makefile
 ])
 
-AC_GUILE_PG_CONFIG_SCRIPT([test/drop.sh])
-AC_GUILE_PG_CONFIG_SCRIPT([test/create.sh])
 AC_GUILE_PG_CONFIG_SCRIPT([test/runtest])
 
 AC_CONFIG_COMMANDS([twerp-prep],[

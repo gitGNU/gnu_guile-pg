@@ -1,5 +1,18 @@
 2008-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Avoid dropdb(1) and createdb(1); use SQL commands directly.
+
+	* testing.scm (fs): New proc.
+	(drop!, create!): Rewrite procs.
+	* basic.scm: Move `drop!' and `create!' calls after `use-modules'.
+	* large.scm: Likewise.
+	* types-table.scm: Likewise.
+	* meta.scm: Likewise.
+	* drop.sh.in: Delete file.
+	* create.sh.in: Likewise.
+
+2008-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Add standard introspection support to (database postgres-meta).
 
 	* meta.scm: New file.

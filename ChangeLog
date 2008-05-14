@@ -1,5 +1,11 @@
 2008-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Avoid dropdb(1) and createdb(1); use SQL commands directly.
+
+	* configure.in (DROPDB, CREATEDB): Delete AC_CHECK_PROGS vars.
+
+2008-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Add standard introspection support to (database postgres-meta).
 
 	* scm/postgres-meta.scm: From module (database postgres-types),

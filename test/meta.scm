@@ -23,10 +23,10 @@
             (newline)
             (exit #f)))
 
-(drop!) (create!)
 (manually-load "types" "col-defs" "resx" "qcons" "table" "meta")
-
 (use-modules (database postgres) (database postgres-meta))
+
+(drop!) (create!)
 
 (define N-EXPECTED 39)                  ; maintain me
 

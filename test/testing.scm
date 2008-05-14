@@ -182,12 +182,41 @@
 
 ;;; Common bits
 
+(define (fs s . args)
+  (apply simple-format #f s args))
+
 (define (drop!)
-  (system "./drop.sh"))
+  (let* ((dbname (or (getenv "PGDATABASE")
+                     (error "Env var PGDATABASE not set.")))
+         (conn (pg-connectdb "dbname=template1"))
+         (res (pg-exec conn (fs "DROP DATABASE ~A;" dbname))))
+    (cond ((getenv "DEBUG")
+           (display "INFO: drop! ")
+           (display (if (eq? 'PGRES_COMMAND_OK (pg-result-status res))
+                        "ok"
+                        (fs "(ignored) ~A"
+                            (pg-result-error-message res))))
+           (newline)))
+    (pg-finish conn)
+    ;; Sometimes PostgreSQL doesn't finish the drop.
+    ;; We give it a chance to do so w/ this kludge.
+    (sleep 1)
+    #t))
 
 (define (create!)
-  (or (zero? (system "./create.sh"))
-      (exit #f)))
+  (let* ((dbname (or (getenv "PGDATABASE")
+                     (error "Env var PGDATABASE not set.")))
+         (conn (pg-connectdb "dbname=template1"))
+         (res (pg-exec conn (fs "CREATE DATABASE ~A;" dbname)))
+         (ok? (eq? 'PGRES_COMMAND_OK (pg-result-status res))))
+    (cond ((getenv "DEBUG")
+           (display "INFO: create! ")
+           (display (if ok? "ok" (pg-result-error-message res)))
+           (newline)))
+    (pg-finish conn)
+    (cond ((not ok?)
+           (display "ERROR: create! failed. Giving up.\n")
+           (exit #f)))))
 
 (define (manually-load . parts)
   (let ((dir (in-vicinity (getenv "srcdir") "../scm")))

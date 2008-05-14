@@ -24,11 +24,11 @@
            (newline)
            (exit #f)))
 
-(drop!) (create!)
-
 (reset-all-tests!)
 
 (use-modules (database postgres))
+
+(drop!) (create!)
 
 ;; We use one connection for all the tests.
 

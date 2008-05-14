@@ -23,13 +23,13 @@
            (newline)
            (exit #f)))
 
-(drop!) (create!)
 (manually-load "types" "col-defs" "resx" "qcons" "table")
-
 (use-modules (database postgres)
              (database postgres-types)
              (database postgres-table)
              (ice-9 common-list))
+
+(drop!) (create!)
 
 (define db-name (or (getenv "PGDATABASE")
                     (error "don't know what database to use")))
