@@ -31,7 +31,6 @@ TESTS_ENVIRONMENT =				\
   $(SHELL)
 
 TESTS = alive.sh                                \
-	coverage.sh				\
         basic-tests.sh                          \
         lo-tests.sh                             \
         abstraction-scm-tests.sh
@@ -48,11 +47,6 @@ EXTRA_DIST = $(TESTS)                           \
              guile-pg-basic-tests.scm           \
              guile-pg-lo-tests.scm              \
              guile-pg-abstraction-scm-tests.scm \
-             show-platform                      \
-             cov
-
-dist-hook:
-	if [ -x $(srcdir)/cov ] ; then \
-	  ( cd $(srcdir) && ./cov ) > $(distdir)/test.coverage ; fi
+             show-platform
 
 ## Makefile.am ends here
