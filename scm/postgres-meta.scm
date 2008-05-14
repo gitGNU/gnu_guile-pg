@@ -43,6 +43,7 @@
                           parse+make-SELECT-tree))
   #:use-module ((database postgres-types)
                 #:select (dbcoltype-lookup
+                          define-db-col-type
                           define-db-col-type-array-variant))
   #:use-module ((database postgres-resx)
                 #:select (result-field->object-list))
@@ -51,7 +52,9 @@
                           compile-outspec))
   #:autoload (srfi srfi-13) (string-trim-both)
   #:autoload (ice-9 popen) (open-input-pipe)
-  #:export (defs-from-psql
+  #:export (information-schema-names
+            information-schema-coldefs
+            defs-from-psql
             check-type/elaborate
             strictly-check-types/elaborate!
             infer-defs
@@ -59,6 +62,512 @@
 
 (define (fs s . args)
   (apply simple-format #f s args))
+
+;;;---------------------------------------------------------------------------
+;;; Information schema bootstrap
+;;;
+;;; Underscores are ugly and we would like more than anything for them to be
+;;; replaced by hyphens.  Unfortunately, that would require both forward- and
+;;; backward-translation in many places outside Guile-PG's control, ie, in
+;;; user code and in PostgreSQL internal code.  Sigh.
+
+(define-db-col-type 'cardinal_number "0"
+  number->string
+  string->number)
+
+(define-db-col-type 'character_data ""
+  identity
+  identity)
+
+(define-db-col-type 'sql_identifier ""
+  identity
+  identity)
+
+';;;UNUSED?
+(define-db-col-type 'time_stamp "1970-01-01 00:00:00"
+  (lambda (time)
+    (cond ((string? time) time)
+          ((number? time) (strftime "%Y-%m-%d %H:%M:%S" (localtime time)))
+          (else (error "bad timestamp-type input:" time))))
+  (lambda (string)
+    (car (mktime (car (strptime "%Y-%m-%d %H:%M:%S" string))))))
+
+(define INFSCH-DEFS
+  ;; ((name coldef ...) ...)
+  ;; where each coldef is either (NAME TYPE), or
+  ;; NAME, to be interpreted as (NAME sql_identifier).
+  '(("information_schema_catalog_name"
+     catalog_name)
+    ("applicable_roles"
+     grantee
+     role_name
+     (is_grantable character_data))
+    ("check_constraints"
+     constraint_catalog
+     constraint_schema
+     constraint_name
+     (check_clause character_data))
+    ("column_domain_usage"
+     domain_catalog
+     domain_schema
+     domain_name
+     table_catalog
+     table_schema
+     table_name
+     column_name)
+    ("column_privileges"
+     grantor
+     grantee
+     table_catalog
+     table_schema
+     table_name
+     column_name
+     (privilege_type character_data)
+     (is_grantable character_data))
+    ("column_udt_usage"
+     udt_catalog
+     udt_schema
+     udt_name
+     table_catalog
+     table_schema
+     table_name
+     column_name)
+    ("columns"
+     table_catalog
+     table_schema
+     table_name
+     column_name
+     (ordinal_position cardinal_number)
+     (column_default character_data)
+     (is_nullable character_data)
+     (data_type character_data)
+     (character_maximum_length cardinal_number)
+     (character_octet_length cardinal_number)
+     (numeric_precision cardinal_number)
+     (numeric_precision_radix cardinal_number)
+     (numeric_scale cardinal_number)
+     (datetime_precision cardinal_number)
+     (interval_type character_data)
+     (interval_precision character_data)
+     character_set_catalog
+     character_set_schema
+     character_set_name
+     collation_catalog
+     collation_schema
+     collation_name
+     domain_catalog
+     domain_schema
+     domain_name
+     udt_catalog
+     udt_schema
+     udt_name
+     scope_catalog
+     scope_schema
+     scope_name
+     (maximum_cardinality cardinal_number)
+     dtd_identifier
+     (is_self_referencing character_data))
+    ("constraint_column_usage"
+     table_catalog
+     table_schema
+     table_name
+     column_name
+     constraint_catalog
+     constraint_schema
+     constraint_name)
+    ("constraint_table_usage"
+     table_catalog
+     table_schema
+     table_name
+     constraint_catalog
+     constraint_schema
+     constraint_name)
+    ("data_type_privileges"
+     object_catalog
+     object_schema
+     object_name
+     (object_type character_data)
+     dtd_identifier)
+    ("domain_constraints"
+     constraint_catalog
+     constraint_schema
+     constraint_name
+     domain_catalog
+     domain_schema
+     domain_name
+     (is_deferrable character_data)
+     (initially_deferred character_data))
+    ("domain_udt_usage"
+     udt_catalog
+     udt_schema
+     udt_name
+     domain_catalog
+     domain_schema
+     domain_name)
+    ("domains"
+     domain_catalog
+     domain_schema
+     domain_name
+     (data_type character_data)
+     (character_maximum_length cardinal_number)
+     (character_octet_length cardinal_number)
+     character_set_catalog
+     character_set_schema
+     character_set_name
+     collation_catalog
+     collation_schema
+     collation_name
+     (numeric_precision cardinal_number)
+     (numeric_precision_radix cardinal_number)
+     (numeric_scale cardinal_number)
+     (datetime_precision cardinal_number)
+     (interval_type character_data)
+     (interval_precision character_data)
+     (domain_default character_data)
+     udt_catalog
+     udt_schema
+     udt_name
+     scope_catalog
+     scope_schema
+     scope_name
+     (maximum_cardinality cardinal_number)
+     dtd_identifier)
+    ("element_types"
+     object_catalog
+     object_schema
+     object_name
+     (object_type character_data)
+     array_type_identifier
+     (data_type character_data)
+     (character_maximum_length cardinal_number)
+     (character_octet_length cardinal_number)
+     character_set_catalog
+     character_set_schema
+     character_set_name
+     collation_catalog
+     collation_schema
+     collation_name
+     (numeric_precision cardinal_number)
+     (numeric_precision_radix cardinal_number)
+     (numeric_scale cardinal_number)
+     (datetime_precision cardinal_number)
+     (interval_type character_data)
+     (interval_precision character_data)
+     (domain_default character_data)
+     udt_catalog
+     udt_schema
+     udt_name
+     scope_catalog
+     scope_schema
+     scope_name
+     (maximum_cardinality cardinal_number)
+     dtd_identifier)
+    ("enabled_roles"
+     role_name)
+    ("key_column_usage"
+     constraint_catalog
+     constraint_schema
+     constraint_name
+     table_catalog
+     table_schema
+     table_name
+     column_name
+     (ordinal_position cardinal_number))
+    ("parameters"
+     specific_catalog
+     specific_schema
+     specific_name
+     (ordinal_position cardinal_number)
+     (parameter_mode character_data)
+     (is_result character_data)
+     (as_locator character_data)
+     parameter_name
+     (data_type character_data)
+     (character_maximum_length cardinal_number)
+     (character_octet_length cardinal_number)
+     character_set_catalog
+     character_set_schema
+     character_set_name
+     collation_catalog
+     collation_schema
+     collation_name
+     (numeric_precision cardinal_number)
+     (numeric_precision_radix cardinal_number)
+     (numeric_scale cardinal_number)
+     (datetime_precision cardinal_number)
+     (interval_type character_data)
+     (interval_precision character_data)
+     udt_catalog
+     udt_schema
+     udt_name
+     scope_catalog
+     scope_schema
+     scope_name
+     (maximum_cardinality cardinal_number)
+     dtd_identifier)
+    ("referential_constraints"
+     constraint_catalog
+     constraint_schema
+     constraint_name
+     unique_constraint_catalog
+     unique_constraint_schema
+     unique_constraint_name
+     (match_option character_data)
+     (update_rule character_data)
+     (delete_rule character_data))
+    ("role_column_grants"
+     grantor
+     grantee
+     table_catalog
+     table_schema
+     table_name
+     column_name
+     (privilege_type character_data)
+     (is_grantable character_data))
+    ("role_routine_grants"
+     grantor
+     grantee
+     specific_catalog
+     specific_schema
+     specific_name
+     routine_catalog
+     routine_schema
+     routine_name
+     (privilege_type character_data)
+     (is_grantable character_data))
+    ("role_table_grants"
+     grantor
+     grantee
+     table_catalog
+     table_schema
+     table_name
+     (privilege_type character_data)
+     (is_grantable character_data))
+    ("role_usage_grants"
+     grantor
+     grantee
+     object_catalog
+     object_schema
+     object_name
+     (object_type character_data)
+     (privilege_type character_data)
+     (is_grantable character_data))
+    ("routine_privileges"
+     grantor
+     grantee
+     specific_catalog
+     specific_schema
+     specific_name
+     routine_catalog
+     routine_schema
+     routine_name
+     (privilege_type character_data)
+     (is_grantable character_data))
+    ("routines"
+     specific_catalog
+     specific_schema
+     specific_name
+     routine_catalog
+     routine_schema
+     routine_name
+     (routine_type character_data)
+     module_catalog
+     module_schema
+     module_name
+     udt_catalog
+     udt_schema
+     udt_name
+     (data_type character_data)
+     (character_maximum_length cardinal_number)
+     (character_octet_length cardinal_number)
+     character_set_catalog
+     character_set_schema
+     character_set_name
+     collation_catalog
+     collation_schema
+     collation_name
+     (numeric_precision_radix cardinal_number)
+     (numeric_scale cardinal_number)
+     (datetime_precision cardinal_number)
+     (interval_type character_data)
+     (interval_precision character_data)
+     type_udt_catalog
+     type_udt_schema
+     type_udt_name
+     scope_catalog
+     scope_schema
+     scope_name
+     (maximum_cardinality cardinal_number)
+     dtd_identifier
+     (routine_body character_data)
+     (routine_definition character_data)
+     (external_name character_data)
+     (external_language character_data)
+     (parameter_style character_data)
+     (is_deterministic character_data)
+     (sql_data_access character_data)
+     (is_null_call character_data)
+     (sql_path character_data)
+     (schema_level_routine character_data)
+     (max_dynamic_result_sets cardinal_number)
+     (is_user_defined_cast character_data)
+     (is_implicitly_invocable character_data)
+     (security_type character_data)
+     to_sql_specific_catalog
+     to_sql_specific_schema
+     to_sql_specific_name
+     (as_locator character_data))
+    ("schemata"
+     catalog_name
+     schema_name
+     schema_owner
+     default_character_set_catalog
+     default_character_set_schema
+     default_character_set_name
+     (sql_path character_data))
+    ("sql_features"
+     (feature_id character_data)
+     (feature_name character_data)
+     (sub_feature_id character_data)
+     (sub_feature_name character_data)
+     (is_supported character_data)
+     (is_verified_by character_data)
+     (comments character_data))
+    ("sql_implementation_info"
+     (implementation_info_id character_data)
+     (implementation_info_name character_data)
+     (integer_value cardinal_number)
+     (character_value character_data)
+     (comments character_data))
+    ("sql_languages"
+     (sql_language_source character_data)
+     (sql_language_year character_data)
+     (sql_language_conformance character_data)
+     (sql_language_integrity character_data)
+     (sql_language_implementation character_data)
+     (sql_language_binding_style character_data)
+     (sql_language_programming_language character_data))
+    ("sql_packages"
+     (feature_id character_data)
+     (feature_name character_data)
+     (is_supported character_data)
+     (is_verified_by character_data)
+     (comments character_data))
+    ("sql_sizing"
+     (sizing_id cardinal_number)
+     (sizing_name character_data)
+     (supported_value cardinal_number)
+     (comments character_data))
+    ("sql_sizing_profiles"
+     (sizing_id cardinal_number)
+     (sizing_name character_data)
+     (profile_id character_data)
+     (required_value character_data)
+     (comments character_data))
+    ("table_constraints"
+     constraint_catalog
+     constraint_schema
+     constraint_name
+     table_catalog
+     table_schema
+     table_name
+     (constraint_type character_data)
+     (is_deferrable character_data)
+     (initially_deferred character_data))
+    ("table_privileges"
+     grantor
+     grantee
+     table_catalog
+     table_schema
+     table_name
+     (privilege_type character_data)
+     (is_grantable character_data)
+     (with_hiearchy character_data))
+    ("tables"
+     table_catalog
+     table_schema
+     table_name
+     (table_type character_data)
+     self_referencing_column_name
+     (reference_generation character_data)
+     user_defined_type_catalog
+     user_defined_type_schema
+     user_defined_type_name)
+    ("triggers"
+     trigger_catalog
+     trigger_schema
+     trigger_name
+     (event_manipulation character_data)
+     event_object_catalog
+     event_object_schema
+     event_object_table
+     (action_order cardinal_number)
+     (action_condition character_data)
+     (action_statement character_data)
+     (action_orientation character_data)
+     (condition_timing character_data)
+     condition_reference_old_table
+     condition_reference_new_table)
+    ("usage_privileges"
+     grantor
+     grantee
+     object_catalog
+     object_schema
+     object_name
+     (object_type character_data)
+     (privilege_type character_data)
+     (is_grantable character_data))
+    ("view_column_usage"
+     view_catalog
+     view_schema
+     view_name
+     table_catalog
+     table_schema
+     table_name
+     column_name)
+    ("view_table_usage"
+     view_catalog
+     view_schema
+     view_name
+     table_catalog
+     table_schema
+     table_name)
+    ("views"
+     view_catalog
+     view_schema
+     view_name
+     (view_definition character_data)
+     (check_option character_data)
+     (is_updatable character_data)
+     (is_insertable_into character_data))))
+
+;; Return a list of information schema view names (each a string).
+;; Optional arg @var{full?}, non-@code{#f} means to prefix each
+;; name with @samp{information_schema.} (note trailing dot).
+;;
+;;-sig: ([full?])
+;;
+(define (information-schema-names . full?)
+  (map (if (and (not (null? full?))
+                (car full?))
+           (lambda (ent)
+             (string-append "information_schema." (car ent)))
+           car)
+       INFSCH-DEFS))
+
+;; Return the column definitions for view @var{name}.
+;;
+(define (information-schema-coldefs name)
+  (and=> (assoc-ref INFSCH-DEFS name)
+         (lambda (v)
+           (map (lambda (cdef)
+                  (if (symbol? cdef)
+                      (list cdef 'sql_identifier)
+                      cdef))
+                v))))
+
+;;;---------------------------------------------------------------------------
+;;; Everything else
 
 ;; Run @var{psql} and return a @dfn{defs} form for db @var{db-name}, table
 ;; @var{table-name}.  @var{psql} can be a string specifying the filename of

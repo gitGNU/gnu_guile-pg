@@ -1830,6 +1830,52 @@ To get started, load the @code{postgres-meta} module:
 (use-modules (database postgres-meta))
 @end lisp
 
+Guile-PG supports standard as well as funky introspection.
+
+@menu
+* Standard Introspection::      Playing with the @code{information schema}.
+* Funky Introspection::         Implementation-specific peerings.
+@end menu
+
+@c ---------------------------------------------------------------------------
+@node    Standard Introspection
+@section Standard Introspection
+
+The PostgreSQL documentation says:
+
+@quotation
+The @dfn{information schema} consists of a set of views that contain
+information about the objects defined in the current database.  The
+information schema is defined in the SQL standard and can therefore be
+expected to be portable and remain stable---unlike the system catalogs,
+which are specific to PostgreSQL and are modelled after implementation
+concerns.  The information schema views do not, however, contain
+information about PostgreSQL-specific features; to inquire about those
+you need to query the system catalogs or other PostgreSQL-specific
+views.
+@end quotation
+
+This section describes Guile-PG support for querying the information schema.
+For PostgreSQL-specific features, @xref{Funky Introspection}.
+
+@twerpdoc (information-schema-names)
+@twerpdoc (information-schema-coldefs)
+
+To see everything about everything, for example, you can try:
+
+@example
+(define (spew name)
+  (pg-print (pg-exec CONN (simple-format
+                           #f "SELECT * FROM ~A;"
+                           name))))
+
+(for-each spew (information-schema-names #t))
+@end example
+
+@c ---------------------------------------------------------------------------
+@node    Funky Introspection
+@section Funky Introspection
+
 @noindent
 The column definitions of an existing table can be discovered to some extent
 by the @code{defs-from-psql}, @code{infer-defs} and @code{describe-table!}

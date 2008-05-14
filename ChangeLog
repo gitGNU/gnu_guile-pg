@@ -1,5 +1,21 @@
 2008-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Add standard introspection support to (database postgres-meta).
+
+	* scm/postgres-meta.scm: From module (database postgres-types),
+	select also `define-db-col-type'.
+	(cardinal_number): New column type specification.
+	(character_data, sql_identifier): Likewise.
+	(INFSCH-DEFS): New data structure: alist of information schema coldefs.
+	(information-schema-names): New proc, exported.
+	(information-schema-coldefs): Likewise.
+
+	* doc/guile-pg.twerp (Standard Introspection): New node/section.
+	(Funky Introspection): Likewise.
+	(Introspection): Add menu for new sections.
+
+2008-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Revamp "make check".
 
 	* configure.in (AC_CONFIG_FILES): Remove test/config.scm.
