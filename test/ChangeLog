@@ -1,3 +1,10 @@
+2008-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Clean up test environment GUILE_LOAD_PATH value.
+
+	* runtest.in (GUILE_LOAD_PATH): Use @abs_top_builddir@;
+	eliminate trailing colon in value.
+
 2008-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Avoid dropdb(1) and createdb(1); use SQL commands directly.
