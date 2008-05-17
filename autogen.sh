@@ -3,7 +3,7 @@
 #
 # Bootstrap the development environment.  Optional arg "--libtoolize" means
 # also run "libtoolize --force".  The distribution was made w/ these tools:
-# - GNU Libtool 1.5.24 (1.1220.2.455 2007/06/24 02:13:29)
+# - GNU Libtool 2.2.2
 # - GNU Autoconf 2.61
 # - GNU Automake 1.9.6
 # - (Unofficial) Guile 1.4.1.112
@@ -21,7 +21,7 @@ done
 # Autotools (except automake)
 
 test x"$1" = x--libtoolize && libtoolize --force
-test -f ltmain.sh || libtoolize --force
+test -r build-aux/ltmain.sh || libtoolize --force
 
 fresh_guile_m4="`guile-config info datadir`/aclocal/guile.m4"
 cd build-aux
@@ -35,7 +35,7 @@ fi
 rm -f TMP
 cd ..
 
-aclocal -I build-aux --output=- | sed '$rbuild-aux/aclocal-suffix' > aclocal.m4
+aclocal -I build-aux --install
 
 autoheader
 autoconf

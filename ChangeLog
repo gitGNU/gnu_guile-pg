@@ -1,3 +1,14 @@
+2008-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Use GNU Libtool 2.2.2 facilities.
+
+	* configure.in (AC_DISABLE_STATIC): Delete.
+	(AC_LIBTOOL_TAGS, AC_PROG_LIBTOOL): Likewise.
+	(LT_PREREQ, LT_INIT): New macro calls.
+	* build-aux/aclocal-suffix: Delete file.
+	* autogen.sh: Fix bug: Check for ltmain.sh in build-aux/; no longer
+	append build-aux/aclocal-suffix to aclocal.m4; do "aclocal --install".
+
 2008-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Avoid dropdb(1) and createdb(1); use SQL commands directly.

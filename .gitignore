@@ -22,14 +22,18 @@ configure
 libtool
 modsup.h
 stamp-h1
-wily-guile
 
 build-aux/config.guess
 build-aux/config.sub
 build-aux/depcomp
 build-aux/guile.m4
 build-aux/install-sh
+build-aux/libtool.m4
 build-aux/ltmain.sh
+build-aux/ltoptions.m4
+build-aux/ltsugar.m4
+build-aux/ltversion.m4
+build-aux/lt~obsolete.m4
 build-aux/missing
 build-aux/sofix
 build-aux/sofix.m4
