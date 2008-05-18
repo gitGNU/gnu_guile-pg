@@ -239,6 +239,10 @@ xr_mark (SCM obj)
   xr_t *xr = xr_unbox (obj);
 
   GC_PRINT (fprintf (stderr, "marking PG-RESULT %d\n", xr->count));
+  /* Drop reference if no longer live.  */
+  if (! SCM_NFALSEP (xr->conn)
+      && ! xc_unbox (xr->conn)->dbconn)
+    xr->conn = SCM_BOOL_F;
   return xr->conn;
 }
 
@@ -1240,7 +1244,8 @@ GH_DEFPROC
 (pg_get_connection, "pg-get-connection", 1, 0, 0,
  (SCM result),
  "Return the @code{PG_CONN} object representing the connection\n"
- "from which a @var{result} was returned.")
+ "from which a @var{result} was returned, if the connection\n"
+ "is still live.  Otherwise, return @code{#f}.")
 {
 #define FUNC_NAME s_pg_get_connection
   xr_t *xr; PGresult *res;

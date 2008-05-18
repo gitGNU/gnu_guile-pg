@@ -1,3 +1,11 @@
+2008-05-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Make the result object drop reference to the connection, if dead.
+
+	* libpostgres.c (xr_mark): If the connection object's
+	connection is dead, replace the reference to it w/ #f.
+	(pg_get_connection): Update docstring.
+
 2008-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Use GNU Libtool 2.2.2 facilities.
