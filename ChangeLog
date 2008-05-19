@@ -1,5 +1,13 @@
 2008-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Remove doc-coverage support.
+
+	* doc/cov: Delete file.
+	* doc/Makefile.am (EXTRA_DIST): Remove cov.
+	(dist-hook): Delete target.
+
+2008-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Add handling for #:finish to pgtable-manager (and -worker) closure.
 
 	* scm/postgres-table.scm: From module (database postgres),

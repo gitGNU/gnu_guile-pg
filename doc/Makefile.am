@@ -33,11 +33,7 @@ qcons-tables.texi: $(top_srcdir)/scm/postgres-qcons.scm
 
 CLEANFILES = guile-pg.info guile-pg.html
 
-EXTRA_DIST = cov guile-pg.twerp twerp.mk-am-frag mkinc html
-
-dist-hook:
-	if [ -x $(srcdir)/cov ] ; then \
-	  ( cd $(srcdir) && ./cov ) > $(distdir)/doc.coverage ; fi
+EXTRA_DIST = guile-pg.twerp twerp.mk-am-frag mkinc html
 
 if MAINTAINER_MODE
 
