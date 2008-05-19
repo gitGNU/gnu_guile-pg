@@ -35,6 +35,7 @@
   #:use-module ((database postgres)
                 #:select (pg-connection?
                           pg-connectdb
+                          pg-finish
                           pg-exec pg-ntuples pg-nfields
                           pg-fname pg-getvalue))
   #:use-module ((database postgres-types)
@@ -350,20 +351,36 @@
 ;; (if any) taken by the returned procedure.
 ;;
 ;; @example
-;;   #:k @var{var}
+;; @findex drop
 ;; * #:drop
+;; @findex create
 ;; * #:create
+;; @findex insert-values
 ;; * #:insert-values [@var{data} ...]
+;; @findex insert-col-values
 ;; * #:insert-col-values @var{cols} [@var{data} ...]
+;; @findex insert-alist
 ;; * #:insert-alist @var{alist}
+;; @findex delete-rows
 ;; * #:delete-rows @var{where-condition}
+;; @findex update-col
 ;; * #:update-col @var{cols} @var{data} @var{where-condition}
+;; @findex update-col-alist
 ;; * #:update-col-alist @var{alist} @var{where-condition}
+;; @findex select
 ;; * #:select @var{outspec} [@var{rest-clauses} ...]
+;; @findex tuples-result->object-alist
 ;;   #:tuples-result->object-alist @var{res}
+;; @findex tuples-result->alists
 ;;   #:tuples-result->alists @var{res}
+;; @findex tuples-result->rows
 ;;   #:tuples-result->rows @var{res}
+;; @findex trace-exec
 ;;   #:trace-exec @var{oport}
+;; @findex finish
+;;   #:finish
+;; @findex k
+;;   #:k @var{var}
 ;; @end example
 ;;
 ;; The starred (*) procedures return whatever @code{pg-exec} returns for
@@ -399,6 +416,10 @@
 ;; An output port to write the @code{pg-exec} command to
 ;; immediately prior to executing it.  Use @code{#f} to disable tracing.
 ;; @end table
+;;
+;; As a special case, @code{#:finish} closes the (internal) connection
+;; and arranges for all future invocations of the closure to signal a
+;; @samp{dead connection} error.
 ;;
 (define (pgtable-manager db-spec table-name defs)
   (or (and (pair? defs) (not (null? defs)))
@@ -450,8 +471,25 @@
                     (map cdr alist)
                     where-condition))
 
+      (define (die!)
+        (set! tuples-result->rows #f)
+        (set! tuples-result->alists #f)
+        (set! tuples-result->object-alist #f)
+        (set! select #f)
+        (set! update-col #f)
+        (set! delete-rows #f)
+        (set! insert-alist #f)
+        (set! insert-col-values #f)
+        (set! insert-values #f)
+        (set! create #f)
+        (set! drop #f)
+        (set! trace-exec #f)
+        (pg-finish conn)
+        (set! conn #f))
+
       ;; rv
       (lambda (choice)
+        (or conn (error "dead connection"))
         (case (if (symbol? choice)
                   (symbol->keyword choice)
                   choice)
@@ -478,6 +516,7 @@
                                 (output-port? op)
                                 (error "not an output port:" op))
                             (set! trace-exec op)))
+          ((#:finish) die!)
           (else (error "bad choice:" choice)))))))
 
 ;; Take @var{db-spec}, @var{table-name} and @var{defs} (exactly the same as

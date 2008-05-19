@@ -1,3 +1,11 @@
+2008-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Add handling for #:finish to pgtable-manager (and -worker) closure.
+
+	* scm/postgres-table.scm: From module (database postgres),
+	also select `pg-finish'.
+	(pgtable-manager): Handle #:finish; add @findex entries.
+
 2008-05-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Make the result object drop reference to the connection, if dead.
