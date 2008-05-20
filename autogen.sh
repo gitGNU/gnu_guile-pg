@@ -5,7 +5,7 @@
 # also run "libtoolize --force".  The distribution was made w/ these tools:
 # - GNU Libtool 2.2.2
 # - GNU Autoconf 2.61
-# - GNU Automake 1.9.6
+# - GNU Automake 1.10.1
 # - (Unofficial) Guile 1.4.1.112
 
 ######################################################################
@@ -43,14 +43,8 @@ autoconf
 #############################################################################
 # Automake
 
-# Make local automake frags and do other automake prep.
-for script in `find . -name .make-automake-frags` ; do
-    ( cd `dirname $script` ; ./.make-automake-frags )
-done
-
-# Do it.
-ln -sf ../.common/GPLv3 COPYING
-automake --add-missing --force
+( cd doc ; ./.make-automake-frags )
+automake --add-missing --force -Wall
 
 ######################################################################
 # Header: <guile/modsup.h>

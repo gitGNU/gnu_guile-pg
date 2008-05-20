@@ -20,11 +20,10 @@
 ##   write to the Free Software Foundation, Inc., 51 Franklin Street,
 ##   Fifth Floor, Boston, MA  02110-1301  USA
 
-AUTOMAKE_OPTIONS = foreign
-
-guile_postgres_sources = 			\
+ddir = $(GUILE_LIBSITE)/database
+dist_d_DATA =					\
   postgres-resdisp.scm				\
-  postgres-types.scm 				\
+  postgres-types.scm				\
   postgres-col-defs.scm				\
   postgres-resx.scm				\
   postgres-qcons.scm				\
@@ -32,24 +31,16 @@ guile_postgres_sources = 			\
   postgres-table.scm				\
   postgres-meta.scm
 
-ddir = $(GUILE_LIBSITE)/database
-d_DATA = $(guile_postgres_sources)
-
-ETAGS_ARGS = $(subpkgdata_DATA)
-
-EXTRA_DIST = $(guile_postgres_sources)
-
 retired = $(GUILE_SITE)/database
 
 install-data-hook:
-	if [ -f $(retired)/postgres.scm ] ; then \
-	  rm -f $(retired)/postgres.scm ; fi
-	for f in $(guile_postgres_sources) ; do	\
-	  if [ -f $(retired)/$$f ] ; then	\
-	    rm -f $(retired)/$$f ; fi ; done
-	if [ -d $(retired) -a "`ls $(retired) 2>/dev/null`" = "" ] ; then \
-	  rmdir $(retired) ; fi
-	if guile-tools | grep -q make-module-catalog ; then \
-	   guile-tools make-module-catalog $(GUILE_SITE) ; fi
+	if [ -d "$(retired)" ] ; then					\
+	  cd "$(retired)" ;						\
+	  rm -f postgres.scm $(dist_d_DATA) ;				\
+	  if [ "`ls 2>/dev/null`" = "" ] ; then				\
+	    cd .. ; rmdir "$(retired)" ; fi ;				\
+	  if $(GUILE_TOOLS) | grep -q make-module-catalog ; then	\
+	    $(GUILE_TOOLS) make-module-catalog "$(GUILE_SITE)" ; fi ;	\
+	fi
 
 ## Makefile.am ends here

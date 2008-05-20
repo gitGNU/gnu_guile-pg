@@ -40,8 +40,8 @@ postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0 \
 noinst_DATA = .module-catalog
 
 .module-catalog:
-	if guile-tools | grep -q mkpimmc ; then			\
-	  guile-tools mkpimmc -d $(DEPDIR) $@ "$(srcdir)"	\
+	if $(GUILE_TOOLS) | grep -q mkpimmc ; then		\
+	  $(GUILE_TOOLS) mkpimmc -d $(DEPDIR) $@ "$(srcdir)"	\
 	    -- -d in,lo,o -X '~$$' -X '[.]git' -X doc ;		\
 	else echo '()' > $@ ; fi
 
@@ -52,16 +52,16 @@ snarfcppopts = $(DEFS) $(AM_CPPFLAGS) $(CPPFLAGS)
 .c.x:
 	$(c2x) -o $@ $< $(snarfcppopts) $(CFLAGS)
 .c.doc:
-	guile-tools c2doc -o $@ $< -- $(snarfcppopts)
+	$(GUILE_TOOLS) c2doc -o $@ $< -- $(snarfcppopts)
 .scm.doc:
-	guile-tools doc-snarf -D -o $@ $<
+	$(GUILE_TOOLS) doc-snarf -D -o $@ $<
 
 install-data-hook:
 	rm -f $(ddir)/postgres-sup.*
 	$(srcdir)/build-aux/sofix $(SOFIXFLAGS) \
 	  $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
-	if guile-tools | grep -q make-module-catalog ; then \
-	   guile-tools make-module-catalog $(GUILE_LIBSITE) ; fi
+	if $(GUILE_TOOLS) | grep -q make-module-catalog ; then \
+	  $(GUILE_TOOLS) make-module-catalog "$(GUILE_LIBSITE)" ; fi
 
 DISTCLEANFILES = *.x *.doc
 
@@ -81,7 +81,7 @@ DOTDOCFILES = libpostgres.doc                   \
               scm/postgres-meta.doc
 
 .doc-index: $(DOTDOCFILES)
-	guile-tools make-twerp2texi-index -o $@ $(DOTDOCFILES)
+	$(GUILE_TOOLS) make-twerp2texi-index -o $@ $(DOTDOCFILES)
 
 endif # MAINTAINER_MODE
 

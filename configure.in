@@ -22,7 +22,7 @@ dnl  Boston, MA  02110-1301  USA
 
 AC_INIT([Guile-PG],[0.36],[ttn@gnuvola.org])
 AC_CONFIG_AUX_DIR([build-aux])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([1.10.1 -Wall])
 
 AM_CONFIG_HEADER(config.h)
 

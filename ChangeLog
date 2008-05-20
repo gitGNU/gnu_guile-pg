@@ -1,3 +1,18 @@
+2008-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Use GNU Automake 1.10.1 facilities.
+
+	* scm/Makefile.am (AUTOMAKE_OPTIONS): Delete var.
+	(guile_postgres_sources, d_DATA, ETAGS_ARGS, EXTRA_DIST): Likewise.
+	(dist_d_DATA): New var.
+	(install-data-hook): Rewrite target.
+	* doc/Makefile.am (.twerp.texi): Use $(GUILE_TOOLS).
+	* Makefile.am (.module-catalog): Use $(GUILE_TOOLS).
+	(.c.doc, .scm.doc, install-data-hook, .doc-index): Likewise.
+	* configure.in (AM_INIT_AUTOMAKE): Use one-arg form.
+	* autogen.sh: Simplify invocation of doc/.make-automake-frags.
+	Call automake with option `-Wall'.
+
 2008-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Remove doc-coverage support.
