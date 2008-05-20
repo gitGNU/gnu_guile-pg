@@ -1,3 +1,20 @@
+2008-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	For "make check", drop result/connection object references when done.
+
+	* testing.scm (d/c): New proc.
+	(drop!): Use `d/c'.
+	(create!): Delete proc.
+	(fresh!): New proc.
+	* basic.scm: Use `fresh!'.
+	* large.scm: Use `fresh!'
+	(main): Use `pg-finish'.
+	* types-table.scm: Use `fresh!'.
+	(test-m2): Do `(m2 'finish)'.
+	(test-m3): Do `(m3 #:finish)'.
+	(cleanup!): Do `(m #:finish)'.
+	* meta.scm: Use `fresh!'; reset `RES' and `CONN'.
+
 2008-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Clean up test environment GUILE_LOAD_PATH value.

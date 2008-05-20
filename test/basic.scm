@@ -28,7 +28,7 @@
 
 (use-modules (database postgres))
 
-(drop!) (create!)
+(fresh!)
 
 ;; We use one connection for all the tests.
 

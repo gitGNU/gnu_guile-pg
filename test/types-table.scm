@@ -29,7 +29,7 @@
              (database postgres-table)
              (ice-9 common-list))
 
-(drop!) (create!)
+(fresh!)
 
 (define db-name (or (getenv "PGDATABASE")
                     (error "don't know what database to use")))
@@ -299,7 +299,8 @@
                   ("almost 2^5, eh?" 31)))))
 
     (pass-if "m2 final drop"
-      (command-ok? (car ((m2 'drop))))))) ; use CAR because `drop' => a list
+      (command-ok? (car ((m2 'drop)))))   ; use CAR because `drop' => a list
+    ((m2 'finish))))                      ; no check
 
 (define (test-m3)
   (let ((all (apply string (map integer->char (iota 256))))
@@ -336,10 +337,12 @@
     (check-1 "between" "t" '(between 4 (+ 1 3) (- 5 1)))
     (check-1 "between" "f" '(between 1 3 5))
 
-    ((m3 #:drop))))                     ; no check
+    ((m3 #:drop))                       ; no check
+    ((m3 #:finish))))                   ; no check
 
 
 (define (cleanup!)
+  ((m #:finish))
   (set! m #f)
   (set! drop #f)
   (set! create #f)

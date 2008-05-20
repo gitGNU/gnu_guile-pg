@@ -28,7 +28,7 @@
 
 (use-modules (ice-9 rdelim) (database postgres))
 
-(drop!) (create!)
+(fresh!)
 
 ;; We use one connection for all the tests.
 
@@ -234,6 +234,7 @@
          test:lo-tell
          test:lo-unlink)
   (for-each delete-file '("lo-tests-data-1" "lo-tests-data-2"))
+  (pg-finish *C*)
   (set! *C* #f)
   (drop!)
   (test-report))

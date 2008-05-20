@@ -26,7 +26,7 @@
 (manually-load "types" "col-defs" "resx" "qcons" "table" "meta")
 (use-modules (database postgres) (database postgres-meta))
 
-(drop!) (create!)
+(fresh!)
 
 (define N-EXPECTED 39)                  ; maintain me
 
@@ -52,7 +52,9 @@
                 (eq? 'PGRES_TUPLES_OK (pg-result-status RES))
                 (= N-EXPECTED (pg-ntuples RES))))
 
+(set! RES #f)
 (pg-finish CONN)
+(set! CONN #f)
 
 (drop!)
 
