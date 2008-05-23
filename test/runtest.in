@@ -1,8 +1,9 @@
 #!/bin/sh
 # runtest --- run "@GUILE@" w/ proper test environment
 
-srcdir="@srcdir@"
-export srcdir
+ts="@abs_top_srcdir@"
+tscm=`cd "$ts/scm" ; pwd`
+export tscm
 
 GUILE_LOAD_PATH=`echo "@abs_top_builddir@:$GUILE_LOAD_PATH" | sed 's/:$//'`
 export GUILE_LOAD_PATH
@@ -12,6 +13,6 @@ export PGDATABASE
 
 test x"$DEBUG" = x || dopt=--debug
 
-exec @GUILE@ $dopt -l "$srcdir/testing.scm" -s $1
+exec @GUILE@ $dopt -l "$ts/test/testing.scm" -s $1
 
 # runtest ends here

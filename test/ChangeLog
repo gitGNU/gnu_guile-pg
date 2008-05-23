@@ -1,3 +1,12 @@
+2008-05-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Use absolute dir name to locate test/*.scm.
+
+	* runtest.in (srcdir): Delete var.
+	(ts): New var; use in `exec' invocation.
+	(tscm): New var, exported.
+	* testing.scm (manually-load): Use env var `tscm'.
+
 2008-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	For "make check", drop result/connection object references when done.

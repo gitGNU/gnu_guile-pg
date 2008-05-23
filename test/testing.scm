@@ -218,7 +218,7 @@
               (exit #f))))
 
 (define (manually-load . parts)
-  (let ((dir (in-vicinity (getenv "srcdir") "../scm")))
+  (let ((dir (getenv "tscm")))
     (for-each (lambda (part)
                 (load (in-vicinity dir (string-append
                                         "postgres-" part ".scm"))))
