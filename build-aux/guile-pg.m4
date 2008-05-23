@@ -43,7 +43,7 @@ AC_DEFUN([PQ_FLAGS],[
                               [arrange to use "-R" when linking libpq]))
   AC_ARG_WITH([libpq], AC_HELP_STRING([--with-libpq=DIR],
    [look for libpq headers in DIR/include and libpq.a in DIR/lib
-    @<:@default=/usr/local@:>@; see also --with-libpq-includes and
+    @<:@default=$prefix@:>@; see also --with-libpq-includes and
     --with-libpq-lib below]),
    [AC_MSG_CHECKING([$withval/include/libpq-fe.h exists])
     if test ! -f "$withval/include/libpq-fe.h" ; then
@@ -68,10 +68,14 @@ AC_DEFUN([PQ_FLAGS],[
          AC_ERROR([$withval/libpq-fe.h does not exist.])
        fi
        PQ_CPPFLAGS="-I$withval"],[
+       saved_CPPFLAGS="$CPPFLAGS"
+       CPPFLAGS="-I$prefix/include"
        AC_CHECK_HEADERS(libpq-fe.h)
+       CPPFLAGS="$saved_CPPFLAGS"
        if test ! "$ac_cv_header_libpq_fe_h" = yes ; then
          AC_ERROR([Cannot find libpq-fe.h; try "--with-libpq-includes=DIR"])
        fi
+       PQ_CPPFLAGS="-I$prefix/include"
     ])
     AC_ARG_WITH([libpq-lib], AC_HELP_STRING([--with-libpq-lib=DIR],
                                [look for libpq libraries in DIR]),[
@@ -83,11 +87,14 @@ AC_DEFUN([PQ_FLAGS],[
          AC_MSG_RESULT(yes)
        fi
        PQ_LDFLAGS="-L$withval -lpq"],[
+       saved_LDFLAGS="$LDFLAGS"
+       LDFLAGS="-L$prefix/lib"
        AC_CHECK_LIB(pq,PQsetdbLogin)
+       LDFLAGS="$saved_LDFLAGS"
        if test ! "$ac_cv_lib_pq_PQsetdbLogin" = yes ; then
          AC_ERROR([Cannot find libpq; try "--with-libpq-lib=DIR"])
        fi
-       PQ_LDFLAGS="-lpq"
+       PQ_LDFLAGS="-L$prefix/lib -lpq"
     ])
   ])
   AC_CHECK_LIB(crypt, crypt)

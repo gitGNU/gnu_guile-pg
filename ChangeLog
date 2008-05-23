@@ -1,3 +1,10 @@
+2008-05-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Look for PostgreSQL headers/libs under $prefix by default.
+
+	* build-aux/guile-pg.m4 (PQ_FLAGS): Look under $prefix/include
+	and $prefix/lib for PostgreSQL headers and libs, respectively.
+
 2008-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Use GNU Automake 1.10.1 facilities.

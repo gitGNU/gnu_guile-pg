@@ -46,6 +46,11 @@ Building and Installing Guile-PG
 Configuration
 -------------
 
+	Normally, the configure script looks in $prefix/include and
+	$prefix/lib for PostgreSQL headers and libraries, under the
+	assumption that everything (Guile-PG, Guile and PostgreSQL)
+	is to be installed there.
+
 	If the ./configure script failed because it couldn't find
 	libpq or the libpq headers then you can use the --with-libpq
 	option to direct configure to the appropriate directory.  E.g.,
