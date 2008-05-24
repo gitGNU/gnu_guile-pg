@@ -32,17 +32,7 @@ you need a Guile that installs "guile-tools twerp2texi", such as those in the
 * Testing
 
 Please add test cases to the tests in the test/ directory, and run 'make check'
-to test them.  Use script "cov" to see what new tests need to be written.
-
-The `dist' and `distcheck' targets are supremely useful.  To use distcheck
-though you need to make sure that the shared libguile is on the load path
-because distcheck runs the tests.  If libguile.so is on the load path anyway
-then this is no problem, but if it's not you can use the loader's load path
-environment variable.  On Linux, SunOS etc you can say:
-
-       LD_LIBRARY_PATH=/opt/guile/lib make distcheck
-
-Of course the PostgreSQL server must be running when you do this.
+to test them.  See runtest.in and testing.scm in that directory for details.
 
 * Portability
 

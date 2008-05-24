@@ -4,9 +4,9 @@
 # Bootstrap the development environment.  Optional arg "--libtoolize" means
 # also run "libtoolize --force".  The distribution was made w/ these tools:
 # - GNU Libtool 2.2.2
-# - GNU Autoconf 2.61
+# - GNU Autoconf 2.62
 # - GNU Automake 1.10.1
-# - (Unofficial) Guile 1.4.1.112
+# - (Unofficial) Guile 1.4.1.117
 
 ######################################################################
 # Local.

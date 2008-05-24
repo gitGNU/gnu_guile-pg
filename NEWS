@@ -1,6 +1,109 @@
 NEWS for Guile-PG
 
 
+- 0.37 | 2008-05-24
+
+  - Configuration change: search $prefix for PostgreSQL headers/libs
+
+	Previously, the configure script would look in the "normal"
+	system directories (e.g., /usr/include and /usr/lib) for
+	PostgreSQL headers and libraries, by default.  Now, it looks
+	under $prefix/include and $prefix/lib, respectively.
+
+	This means that the common (for ttn) case where all three packages
+	(Guile, PostgreSQL, Guile-PG) are installed under the same prefix
+	(e.g., ~/local) requires one less command-line option to the
+	configure script.  In any case, `--with-libpq' and friends are
+	still available for specifying dirs directly (see README).
+
+  - Change to pg-get-connection
+
+	This proc now returns #f if its arg's connection is no longer live.
+	You should probably avoid it altogether; see following NEWS item.
+
+  - Planned modesty
+
+	Currently, Guile-PG exposes some accounting (implementation) details
+	that it shouldn't.  These are the "serial number" of connection and
+	result objects, and the link between a result object the connection
+	object where it originated.  These details WILL BE REMOVED after
+	2008-10-01; do NOT rely on them.  Practically speaking, this means
+	`pg-get-connection' will be deleted and the external representation
+	for the objects will drop the "N" field:
+
+	until 2008-10-01:   #<PG-CONN:N:...>   and   #<PG-RESULT:N:...>
+	after 2008-10-01:   #<PG-CONN:...>     and   #<PG-RESULT:...>
+
+	To achieve `pg-get-connection' functionality, in most cases, it's
+	enough to simply save the connection object used to make the request
+	in the first place.
+
+	;; migration strategy: use connection object directly
+	(define RES (pg-exec CONN ...))
+
+	(eq? (pg-get-connection RES) CONN)
+	=> #t
+
+	In other cases, probably the next best solution is to define an
+	object property for the association.
+
+	;; migration strategy: define/maintain/consult object property
+	(define res-conns (make-object-property))
+
+	(define (conn-saving-exec conn query)
+	  (let ((res (pg-exec conn query)))
+	    (set! (res-conns res) conn)
+	    res))
+
+	(define RES (conn-saving-exec CONN ...))
+
+	(eq? (pg-get-connection RES) (res-conns RES))
+	=> #t
+
+  - Tests issue SQL commands directly to CREATE and DROP the test database
+
+	Previously "make check" required the commands createdb(1) and
+        dropdb(1) (or destroydb(1) for older PostgreSQL versions) to be
+        installed on the system.  Now, the test infrastructure uses Guile-PG
+        module (database postgres) to connect to "template1" and issues SQL
+	commands "CREATE DATABASE" and "DROP DATABASE" directly.
+
+	[ttn musing ...] This change unfortunately does not remove a long-
+        standing unexplained phenomenon: although the procs for doing the
+        create/drop (now) take care to `pg-finish' the connection to
+        template1 (see test/testing.scm, last page), it seems PostgreSQL
+        does not synchronously "finish" internally using template1.  This
+        explains the (previously one `sleep' and now) two `usleep' calls,
+        which ideally would not be necessary.  Perhaps after the planned
+        modesty occurs (see above), things will be more deterministic?
+
+  - New (database postgres-meta) proc: information-schema-names
+  - New (database postgres-meta) proc: information-schema-coldefs
+
+	These procs describe Guile-PG's "standard introspection" support,
+	as specified in the PostgreSQL 7.4.19 documentation (chapter 32,
+	"The Information Schema").
+
+	Additionally, loading the module defines type converters for
+	`cardinal_number', `character_data' and `sql_identifier'.  The
+	`time_stamp' type converter does not seem to be used and is not
+	provided.
+
+  - New pgtable-manager (and -worker) command: #:finish
+
+	This closes the (internal) connection and arranges for all future
+	invocations of the closure to signal a "dead connection" error.
+
+  - Proc `gxrepl' closes connection when done
+
+  - New support for #:FOO-all combiners in `parse+make-SELECT-tree'
+
+	This (database postgres-qcons) proc now supports #:union-all,
+	#:intersect-all and #:except-all, as combiners.
+
+  - Maintenance uses autoconf 2.62, automake 1.10.1, libtool 2.2.2
+
+
 - 0.36 | 2008-03-03
 
   - Test fix: Avoid requiring procs from module (ice-9 regex)

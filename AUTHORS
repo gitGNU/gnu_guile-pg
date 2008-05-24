@@ -13,8 +13,8 @@ Thien-Thi Nguyen <ttn@gnu.org> wrote:
   doc/
       guile-pg.twerp
   test/
-      show-platform    alive.sh    coverage.sh    config.scm.in
-      abstraction-scm-tests.sh    guile-pg-abstraction-scm-tests.scm
+      alive.scm   basic.scm   large.scm   meta.scm
+      runtest.in   show-platform   testing.scm   types-table.scm
 and modified:
     everything else.
 
@@ -28,8 +28,8 @@ Ian Grant <Ian.Grant@cl.cam.ac.uk> wrote:
   doc/
       guile-pg.texi
   test/
-      basic-tests.sh            guile-pg-basic-tests.scm
-      lo-tests.sh               guile-pg-lo-tests.scm
+      basic.scm (originally guile-pg-basic-tests.scm)
+      large.scm (originally guile-pg-lo-tests.scm)
 
 
 Per Bothner wrote:

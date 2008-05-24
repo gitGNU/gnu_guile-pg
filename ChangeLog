@@ -1,3 +1,9 @@
+2008-05-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Release: 0.37 (tag v0.37)
+
+	* configure.in (AC_INIT): Bump version to "0.37" for release.
+
 2008-05-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Look for PostgreSQL headers/libs under $prefix by default.
