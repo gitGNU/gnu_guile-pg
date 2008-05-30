@@ -63,19 +63,19 @@ NEWS for Guile-PG
   - Tests issue SQL commands directly to CREATE and DROP the test database
 
 	Previously "make check" required the commands createdb(1) and
-        dropdb(1) (or destroydb(1) for older PostgreSQL versions) to be
-        installed on the system.  Now, the test infrastructure uses Guile-PG
-        module (database postgres) to connect to "template1" and issues SQL
+	dropdb(1) (or destroydb(1) for older PostgreSQL versions) to be
+	installed on the system.  Now, the test infrastructure uses Guile-PG
+	module (database postgres) to connect to "template1" and issues SQL
 	commands "CREATE DATABASE" and "DROP DATABASE" directly.
 
 	[ttn musing ...] This change unfortunately does not remove a long-
-        standing unexplained phenomenon: although the procs for doing the
-        create/drop (now) take care to `pg-finish' the connection to
-        template1 (see test/testing.scm, last page), it seems PostgreSQL
-        does not synchronously "finish" internally using template1.  This
-        explains the (previously one `sleep' and now) two `usleep' calls,
-        which ideally would not be necessary.  Perhaps after the planned
-        modesty occurs (see above), things will be more deterministic?
+	standing unexplained phenomenon: although the procs for doing the
+	create/drop (now) take care to `pg-finish' the connection to
+	template1 (see test/testing.scm, last page), it seems PostgreSQL
+	does not synchronously "finish" internally using template1.  This
+	explains the (previously one `sleep' and now) two `usleep' calls,
+	which ideally would not be necessary.  Perhaps after the planned
+	modesty occurs (see above), things will be more deterministic?
 
   - New (database postgres-meta) proc: information-schema-names
   - New (database postgres-meta) proc: information-schema-coldefs
