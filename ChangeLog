@@ -1,3 +1,13 @@
+2008-07-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Conditionalize `pg_encoding_to_char' decl; make its retval `const'.
+
+	Reported by Hans Ruschinski <hans.ruschinski@gmail.com>.
+
+	* configure.in (pg_encoding_to_char): New AC_CHECK_DECLS.
+	* libpostgres.c (pg_encoding_to_char): Add `const' to retval
+	of this decl; surround w/ `#if !HAVE_DECL_PG_ENCODING_TO_CHAR'.
+
 2008-05-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.37 (tag v0.37)

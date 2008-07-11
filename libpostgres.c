@@ -2507,10 +2507,21 @@ GH_DEFPROC
 
 /* Client encoding.  */
 
-/* Hmmm, `pg_encoding_to_char' is not in the headers.  However, it is
-   mentioned in the Multibyte Support chapter (section 7.2.2 -- Setting
-   the Encoding), and seems to work w/ PostgreSQL 7.3.8.  */
-extern char * pg_encoding_to_char (int encoding);
+/* Hmmm, `pg_encoding_to_char' is mentioned in the PostgreSQL documentation,
+   Chapter "Localization", Section "Character Set Support", but is not in
+   libpq-fe.h (at least, as of PostgreSQL 7.4.21).
+
+   We add a `const' since apparently sometime between PostgreSQL 7.4.21 and
+   8.2.9 the actual (installed-header) prototype changed to include `const'
+   even though the suggested (documented) one doesn't.  Sigh.
+
+   The whole thing is wrapped in a preprocessor conditional to handle the
+   possibility that some future PostgreSQL release will include a proper
+   prototype in their installed headers, and detectable at configure-time.
+   (Sigh^2!)  */
+#if !HAVE_DECL_PG_ENCODING_TO_CHAR
+extern const char * pg_encoding_to_char (int encoding);
+#endif
 
 GH_DEFPROC
 (pg_client_encoding, "pg-client-encoding", 1, 0, 0,

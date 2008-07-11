@@ -111,6 +111,8 @@ if test "x$pg_ac_need_invalidoid" = xtrue ; then
   AC_MSG_ERROR([cannot find declaration for InvalidOid])
 fi
 
+AC_CHECK_DECLS([pg_encoding_to_char])
+
 CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"
 
