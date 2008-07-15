@@ -1,5 +1,14 @@
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Use `unsigned long int' instead of struct `smob_tag'.
+
+	* libpostgres.c (smob_tag): Delete `typedef struct'.
+	(pg_conn_tag, pg_result_tag): Use `unsigned long int'.
+	(xc_p, xc_box, xr_p, xr_box, init_module): Update references
+	to `pg_conn_tag' and `pg_result_tag' to use them directly.
+
+2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Don't keep track of `count' for smob/connection/result objects.
 
 	* libpostgres.h (xc_t): Delete member `count'.

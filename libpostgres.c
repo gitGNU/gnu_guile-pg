@@ -70,11 +70,7 @@
 static SCM strip_newlines (char *str);
 void scm_init_database_postgres_module (void);
 
-typedef struct _smob_tag {
-  long  type_tag; /* type tag */
-} smob_tag;
-
-static smob_tag pg_conn_tag, pg_result_tag;
+static unsigned long int pg_conn_tag, pg_result_tag;
 
 static SCM pgrs[1 + PGRES_FATAL_ERROR];
 
@@ -85,7 +81,7 @@ static SCM pgrs[1 + PGRES_FATAL_ERROR];
 int
 xc_p (SCM obj)
 {
-  return SCM_SMOB_PREDICATE (pg_conn_tag.type_tag, obj);
+  return SCM_SMOB_PREDICATE (pg_conn_tag, obj);
 }
 
 xc_t *
@@ -104,7 +100,7 @@ xc_unbox (SCM obj)
 static SCM
 xc_box (xc_t *xc)
 {
-  SCM_RETURN_NEWSMOB (pg_conn_tag.type_tag, xc);
+  SCM_RETURN_NEWSMOB (pg_conn_tag, xc);
 }
 
 int
@@ -176,7 +172,7 @@ typedef struct  /* extended result */
 static int
 xr_p (SCM obj)
 {
-  return SCM_SMOB_PREDICATE (pg_result_tag.type_tag, obj);
+  return SCM_SMOB_PREDICATE (pg_result_tag, obj);
 }
 
 static xr_t *
@@ -197,7 +193,7 @@ xr_unbox (SCM obj)
 static SCM
 xr_box (xr_t *xr)
 {
-  SCM_RETURN_NEWSMOB (pg_result_tag.type_tag, xr);
+  SCM_RETURN_NEWSMOB (pg_result_tag, xr);
 }
 
 static int
@@ -2837,14 +2833,14 @@ init_module (void)
   type_rec.free = xc_free;
   type_rec.print = xc_display;
   type_rec.equalp = 0;
-  pg_conn_tag.type_tag = scm_newsmob (&type_rec);
+  pg_conn_tag = scm_newsmob (&type_rec);
 
   /* add new scheme type for results */
   type_rec.mark = xr_mark;
   type_rec.free = xr_free;
   type_rec.print = xr_display;
   type_rec.equalp = 0;
-  pg_result_tag.type_tag = scm_newsmob (&type_rec);
+  pg_result_tag = scm_newsmob (&type_rec);
 
   /* add new scheme type for print options */
   type_rec.mark = sepo_mark;
@@ -2855,15 +2851,15 @@ init_module (void)
 
 #else /* !USE_OLD_SMOB_INTERFACE */
 
-  pg_conn_tag.type_tag = scm_make_smob_type ("PG-CONN", 0);
-  scm_set_smob_mark (pg_conn_tag.type_tag, xc_mark);
-  scm_set_smob_free (pg_conn_tag.type_tag, xc_free);
-  scm_set_smob_print (pg_conn_tag.type_tag, xc_display);
+  pg_conn_tag = scm_make_smob_type ("PG-CONN", 0);
+  scm_set_smob_mark (pg_conn_tag, xc_mark);
+  scm_set_smob_free (pg_conn_tag, xc_free);
+  scm_set_smob_print (pg_conn_tag, xc_display);
 
-  pg_result_tag.type_tag = scm_make_smob_type ("PG-RESULT", 0);
-  scm_set_smob_mark (pg_result_tag.type_tag, xr_mark);
-  scm_set_smob_free (pg_result_tag.type_tag, xr_free);
-  scm_set_smob_print (pg_result_tag.type_tag, xr_display);
+  pg_result_tag = scm_make_smob_type ("PG-RESULT", 0);
+  scm_set_smob_mark (pg_result_tag, xr_mark);
+  scm_set_smob_free (pg_result_tag, xr_free);
+  scm_set_smob_print (pg_result_tag, xr_display);
 
   sepo_type_tag = scm_make_smob_type ("PG-PRINT-OPTION", 0);
   scm_set_smob_mark (sepo_type_tag, sepo_mark);
