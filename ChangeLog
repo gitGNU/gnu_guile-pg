@@ -1,5 +1,12 @@
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Don't keep track of `conn' for result objects.
+
+	* libpostgres.c (xr_t): Delete member `conn'.
+	(xr_mark, make_xr): Update to not bother w/ `xr->conn'.
+
+2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Use `unsigned long int' instead of struct `smob_tag'.
 
 	* libpostgres.c (smob_tag): Delete `typedef struct'.

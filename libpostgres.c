@@ -165,7 +165,6 @@ xc_free (SCM obj)
 
 typedef struct  /* extended result */
 {
-  SCM          conn;          /* Connection */
   PGresult    *result;        /* Postgres result structure */
 } xr_t;
 
@@ -228,14 +227,8 @@ xr_display (SCM exp, SCM port, scm_print_state *pstate)
 static SCM
 xr_mark (SCM obj)
 {
-  xr_t *xr = xr_unbox (obj);
-
-  GC_PRINT (fprintf (stderr, "marking PG-RESULT %p\n", xr));
-  /* Drop reference if no longer live.  */
-  if (! SCM_NFALSEP (xr->conn)
-      && ! xc_unbox (xr->conn)->dbconn)
-    xr->conn = SCM_BOOL_F;
-  return xr->conn;
+  GC_PRINT (fprintf (stderr, "marking PG-RESULT %p\n", xr_unbox (obj)));
+  return SCM_BOOL_F;
 }
 
 static scm_sizet
@@ -273,7 +266,6 @@ make_xr (PGresult *result, SCM conn)
   SCM_DEFER_INTS;
 
   xr->result = result;
-  xr->conn = conn;
   return z;
 }
 
