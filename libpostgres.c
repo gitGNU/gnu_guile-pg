@@ -163,52 +163,44 @@ xc_free (SCM obj)
   return size;
 }
 
-typedef struct  /* extended result */
-{
-  PGresult    *result;        /* Postgres result structure */
-} xr_t;
-
 static int
-xr_p (SCM obj)
+res_p (SCM obj)
 {
   return SCM_SMOB_PREDICATE (pg_result_tag, obj);
 }
 
-static xr_t *
-xr_unbox (SCM obj)
+static PGresult *
+res_unbox (SCM obj)
 {
-  return ((xr_t*) gh_cdr (obj));
+  return ((PGresult*) gh_cdr (obj));
 }
 
-#define RESULT(x)  (xr_unbox (x)->result)
-
-#define VALIDATE_RESULT_UNBOX2(pos,arg,cvar1,cvar2)             \
+#define VALIDATE_RESULT_UNBOX(pos,arg,cvar)                     \
   do {                                                          \
-    SCM_ASSERT (xr_p (arg), arg, SCM_ARG ## pos, FUNC_NAME);    \
-    cvar1 = xr_unbox (arg);                                     \
-    cvar2 = cvar1->result;                                      \
+    SCM_ASSERT (res_p (arg), arg, SCM_ARG ## pos, FUNC_NAME);   \
+    cvar = res_unbox (arg);                                     \
   } while (0)
 
 static SCM
-xr_box (xr_t *xr)
+res_box (PGresult *res)
 {
-  SCM_RETURN_NEWSMOB (pg_result_tag, xr);
+  SCM_RETURN_NEWSMOB (pg_result_tag, res);
 }
 
 static int
-xr_display (SCM exp, SCM port, scm_print_state *pstate)
+res_display (SCM exp, SCM port, scm_print_state *pstate)
 {
-  xr_t *xr = xr_unbox (exp);
+  PGresult *res = res_unbox (exp);
   ExecStatusType status;
   int ntuples = 0;
   int nfields = 0;
 
   SCM_DEFER_INTS;
-  status = PQresultStatus (xr->result);
+  status = PQresultStatus (res);
   if (status == PGRES_TUPLES_OK)
     {
-      ntuples = PQntuples (xr->result);
-      nfields = PQnfields (xr->result);
+      ntuples = PQntuples (res);
+      nfields = PQnfields (res);
     }
   SCM_ALLOW_INTS;
 
@@ -225,47 +217,43 @@ xr_display (SCM exp, SCM port, scm_print_state *pstate)
 }
 
 static SCM
-xr_mark (SCM obj)
+res_mark (SCM obj)
 {
-  GC_PRINT (fprintf (stderr, "marking PG-RESULT %p\n", xr_unbox (obj)));
+  GC_PRINT (fprintf (stderr, "marking PG-RESULT %p\n", res_unbox (obj)));
   return SCM_BOOL_F;
 }
 
 static scm_sizet
-xr_free (SCM obj)
+res_free (SCM obj)
 {
-  xr_t *xr = xr_unbox (obj);
-  scm_sizet size = sizeof (xr_t);
+  PGresult *res = res_unbox (obj);
 
-  GC_PRINT (fprintf (stderr, "sweeping PG-RESULT %p\n", xr));
+  GC_PRINT (fprintf (stderr, "sweeping PG-RESULT %p\n", res));
 
   /* clear the result */
-  if (xr->result)
-    PQclear (xr->result);
-
-  /* free this object itself */
-  free (xr);
+  if (res)
+    PQclear (res);
 
   /* set extension data to NULL */
   SCM_SETCDR (obj, (SCM)NULL);
 
-  return size;
+  return 0;
 }
 
 static SCM
-make_xr (PGresult *result, SCM conn)
+make_res (PGresult *result, SCM conn)
 {
-  xr_t *xr;
+  PGresult *res;
   SCM z;
 
-  /* This looks weird, but they're SCM_DEFERred in xr_box.  */
+  /* This looks weird, but they're SCM_DEFERred in res_box.  */
   SCM_ALLOW_INTS;
-  z = xr_box ((xr_t *)
-              scm_must_malloc (sizeof (xr_t), "PG-RESULT"));
-  xr = xr_unbox (z);
+  z = res_box ((PGresult *)
+               scm_must_malloc (sizeof (PGresult *), "PG-RESULT"));
+  res = res_unbox (z);
   SCM_DEFER_INTS;
 
-  xr->result = result;
+  SCM_SETCDR (z, (SCM)result);
   return z;
 }
 
@@ -835,7 +823,7 @@ GH_DEFPROC
   result = PQexec (dbconn, ROZT (statement));
 
   z = (result
-       ? make_xr (result, conn)
+       ? make_res (result, conn)
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
   return z;
@@ -870,7 +858,7 @@ GH_DEFPROC
                          ps.types, ps.values, ps.lengths, ps.formats,
                          result_format);
   z = (result
-       ? make_xr (result, conn)
+       ? make_res (result, conn)
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
   drop_paramspecs (&ps);
@@ -912,7 +900,7 @@ GH_DEFPROC
                            ps.values, ps.lengths, ps.formats,
                            result_format);
   z = (result
-       ? make_xr (result, conn)
+       ? make_res (result, conn)
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
   drop_paramspecs (&ps);
@@ -928,7 +916,7 @@ GH_DEFPROC
  "Return @code{#t} iff @var{obj} is a result object\n"
  "returned by @code{pg-exec}.")
 {
-  return xr_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
+  return res_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
 SIMPLE_KEYWORD (severity);
@@ -977,11 +965,11 @@ GH_DEFPROC
   SCM rv = SCM_BOOL_F;
 
 #ifdef HAVE_PQPROTOCOLVERSION
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   int fc;
   char *s;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
   SCM_VALIDATE_KEYWORD (2, fieldcode);
 
 #define CHKFC(x,y)                              \
@@ -1035,10 +1023,10 @@ GH_DEFPROC
 #ifdef HAVE_PQRESULTERRORMESSAGE
 
 #define FUNC_NAME s_pg_result_error_message
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   char *msg;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
   msg = PQresultErrorMessage (res);
   return strip_newlines (msg);
 #undef FUNC_NAME
@@ -1062,7 +1050,7 @@ GH_DEFPROC
  "directly).")
 {
 #define FUNC_NAME s_pg_error_message
-  if (xr_p (conn))
+  if (res_p (conn))
     return pg_result_error_message (conn);
 
   {
@@ -1323,10 +1311,10 @@ GH_DEFPROC
  "returned by @code{pg-exec}.")
 {
 #define FUNC_NAME s_pg_result_status
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   int result_status;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
 
   SCM_DEFER_INTS;
   result_status = PQresultStatus (res);
@@ -1345,10 +1333,10 @@ GH_DEFPROC
  "Return the number of tuples in @var{result}.")
 {
 #define FUNC_NAME s_pg_ntuples
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   int ntuples;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
 
   SCM_DEFER_INTS;
   ntuples = PQntuples (res);
@@ -1364,10 +1352,10 @@ GH_DEFPROC
  "Return the number of fields in @var{result}.")
 {
 #define FUNC_NAME s_pg_nfields
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   SCM rv;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
 
   SCM_DEFER_INTS;
   rv = gh_int2scm (PQnfields (res));
@@ -1386,10 +1374,10 @@ GH_DEFPROC
  "etc. which don't affect tuples.")
 {
 #define FUNC_NAME s_pg_cmdtuples
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   const char *cmdtuples;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
 
   SCM_DEFER_INTS;
   cmdtuples = PQcmdTuples (res);
@@ -1410,10 +1398,10 @@ GH_DEFPROC
 #ifdef HAVE_PQOIDVALUE
 
 #define FUNC_NAME s_pg_oid_value
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   Oid oid_value;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
 
   SCM_DEFER_INTS;
   oid_value = PQoidValue (res);
@@ -1440,11 +1428,11 @@ GH_DEFPROC
  "and field names are not case-sensitive.")
 {
 #define FUNC_NAME s_pg_fname
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   int field;
   const char *fname;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
   fname = PQfname (res, field);
   return gh_str02scm (fname);
@@ -1459,10 +1447,10 @@ GH_DEFPROC
  "otherwise.")
 {
 #define FUNC_NAME s_pg_fnumber
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   int fnum;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
   SCM_ASSERT (SCM_NIMP (fname) && SCM_ROSTRINGP (fname), fname,
               SCM_ARG2, FUNC_NAME);
   ROZT_X (fname);
@@ -1483,10 +1471,10 @@ GH_DEFPROC
  "support @code{PQPROTOCOLVERSION}, return @code{#f}.")
 {
 #define FUNC_NAME s_pg_ftable
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   int field;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
 
 #ifndef HAVE_PQPROTOCOLVERSION
@@ -1510,10 +1498,10 @@ GH_DEFPROC
  "@code{PQPROTOCOLVERSION}, return @code{#f}.")
 {
 #define FUNC_NAME s_pg_ftablecol
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   int field;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
 
 #ifndef HAVE_PQPROTOCOLVERSION
@@ -1538,10 +1526,10 @@ GH_DEFPROC
  "return @code{#f}.")
 {
 #define FUNC_NAME s_pg_fformat
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   int field;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
 
 #ifndef HAVE_PQPROTOCOLVERSION
@@ -1567,11 +1555,11 @@ GH_DEFPROC
  "not valid for the given @code{result}.")
 {
 #define FUNC_NAME s_pg_ftype
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   int field;
   int ftype;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
   ftype = PQftype (res, field);
 
@@ -1586,11 +1574,11 @@ GH_DEFPROC
  "or -1 if the field is variable-length.")
 {
 #define FUNC_NAME s_pg_fsize
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   int field;
   int fsize;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
   fsize = PQfsize (res, field);
   return gh_int2scm (fsize);
@@ -1605,7 +1593,7 @@ GH_DEFPROC
  "up to the caller to convert this to the required type.")
 {
 #define FUNC_NAME s_pg_getvalue
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   int maxtuple, tuple;
   int maxfield, field;
   const char *val;
@@ -1614,7 +1602,7 @@ GH_DEFPROC
 #endif
   SCM srv;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
   SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, tuple);
   SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, field);
   SCM_DEFER_INTS;
@@ -1648,13 +1636,13 @@ GH_DEFPROC
  "The size of the datum in bytes.")
 {
 #define FUNC_NAME s_pg_getlength
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   int maxtuple, tuple;
   int maxfield, field;
   int len;
   SCM ret;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
   SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, tuple);
   SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, field);
   SCM_DEFER_INTS;
@@ -1679,12 +1667,12 @@ GH_DEFPROC
  "@code{#f} otherwise.")
 {
 #define FUNC_NAME s_pg_getisnull
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   int maxtuple, tuple;
   int maxfield, field;
   SCM rv;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
   SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, tuple);
   SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, field);
   SCM_DEFER_INTS;
@@ -1715,10 +1703,10 @@ GH_DEFPROC
 #ifdef HAVE_PQBINARYTUPLES
 
 #define FUNC_NAME s_pg_binary_tuples
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   SCM rv;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
 
   SCM_DEFER_INTS;
   if (PQbinaryTuples (res))
@@ -1747,11 +1735,11 @@ GH_DEFPROC
 #ifdef HAVE_PQFMOD
 
 #define FUNC_NAME s_pg_fmod
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   int field;
   int fmod;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
   fmod = PQfmod (res, field);
   return gh_int2scm (fmod);
@@ -2353,11 +2341,11 @@ GH_DEFPROC
  "specifies various parameters of the output format.")
 {
 #define FUNC_NAME s_pg_print
-  xr_t *xr; PGresult *res;
+  PGresult *res;
   FILE *fout;
   int redir_p;
 
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
+  VALIDATE_RESULT_UNBOX (1, result, res);
   options = ((options == SCM_UNDEFINED)
              ? pg_make_print_options (SCM_EOL)
              : options);
@@ -2682,7 +2670,7 @@ GH_DEFPROC
   SCM_DEFER_INTS;
   result = PQgetResult (dbconn);
   z = (result
-       ? make_xr (result, conn)
+       ? make_res (result, conn)
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
   return z;
@@ -2828,9 +2816,9 @@ init_module (void)
   pg_conn_tag = scm_newsmob (&type_rec);
 
   /* add new scheme type for results */
-  type_rec.mark = xr_mark;
-  type_rec.free = xr_free;
-  type_rec.print = xr_display;
+  type_rec.mark = res_mark;
+  type_rec.free = res_free;
+  type_rec.print = res_display;
   type_rec.equalp = 0;
   pg_result_tag = scm_newsmob (&type_rec);
 
@@ -2849,9 +2837,9 @@ init_module (void)
   scm_set_smob_print (pg_conn_tag, xc_display);
 
   pg_result_tag = scm_make_smob_type ("PG-RESULT", 0);
-  scm_set_smob_mark (pg_result_tag, xr_mark);
-  scm_set_smob_free (pg_result_tag, xr_free);
-  scm_set_smob_print (pg_result_tag, xr_display);
+  scm_set_smob_mark (pg_result_tag, res_mark);
+  scm_set_smob_free (pg_result_tag, res_free);
+  scm_set_smob_print (pg_result_tag, res_display);
 
   sepo_type_tag = scm_make_smob_type ("PG-PRINT-OPTION", 0);
   scm_set_smob_mark (sepo_type_tag, sepo_mark);

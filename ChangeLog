@@ -1,5 +1,34 @@
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Use `PGresult' directly as result object (no more "extended result").
+
+	* libpostgres.c (xr_t): Delete struct.
+	(res_p): Rename func from `xr_p'.
+	(res_unbox): Rename func from `xr_unbox'; return `PGresult *'.
+	(RESULT): Delete unused macro.
+	(VALIDATE_RESULT_UNBOX): Rename from `VALIDATE_RESULT_UNBOX2';
+	drop second C var from arglist; use `res_unbox'.
+	(res_box): Rename from `xr_box'; take `PGresult *'.
+	(res_display): Rename from `xr_display'; use `res_unbox'.
+	(res_mark): Rename from `xr_mark'; use `res_unbox'.
+	(res_free): Rename from `xr_free'; use `res_unbox'; return 0.
+	(make_res): Rename from `make_xr'; use `res_box'.
+	(pg_exec, pg_exec_params): Use `make_res'.
+	(pg_result_p): Use `res_p'.
+	(pg_result_error_field): Use `VALIDATE_RESULT_UNBOX'.
+	(pg_result_error_message): Likewise.
+	(pg_error_message): Use `res_p'.
+	(pg_result_status): Use `VALIDATE_RESULT_UNBOX'.
+	(pg_ntuples, pg_nfields, pg_cmdtuples, pg_oid_value): Likewise.
+	(pg_fname, pg_fnumber, pg_ftable, pg_ftablecol): Likewise.
+	(pg_fformat, pg_ftype, pg_fsize, pg_getvalue): Likewise.
+	(pg_getlength, pg_getisnull, pg_binary_tuples): Likewise.
+	(pg_fmod, pg_print): Likewise.
+	(pg_get_result): Use `make_res'.
+	(init_module): Use `res_mark', `res_free' and `res_display'.
+
+2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Don't keep track of `conn' for result objects.
 
 	* libpostgres.c (xr_t): Delete member `conn'.
