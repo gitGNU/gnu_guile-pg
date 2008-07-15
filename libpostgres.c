@@ -72,7 +72,6 @@ void scm_init_database_postgres_module (void);
 
 typedef struct _smob_tag {
   long  type_tag; /* type tag */
-  int   count;
 } smob_tag;
 
 static smob_tag pg_conn_tag, pg_result_tag;
@@ -142,7 +141,7 @@ xc_mark (SCM obj)
 {
   xc_t *xc = xc_unbox (obj);
 
-  GC_PRINT (fprintf (stderr, "marking PG-CONN %d\n", xc->count));
+  GC_PRINT (fprintf (stderr, "marking PG-CONN %p\n", xc));
   scm_gc_mark (xc->notice);
   return xc->client;
 }
@@ -153,7 +152,7 @@ xc_free (SCM obj)
   xc_t *xc = xc_unbox (obj);
   scm_sizet size = sizeof (xc_t);
 
-  GC_PRINT (fprintf (stderr, "sweeping PG-CONN %d\n", xc->count));
+  GC_PRINT (fprintf (stderr, "sweeping PG-CONN %p\n", xc));
 
   /* close connection to postgres */
   if (xc->dbconn)
@@ -171,7 +170,6 @@ xc_free (SCM obj)
 typedef struct  /* extended result */
 {
   SCM          conn;          /* Connection */
-  int          count;         /* Which result is this? */
   PGresult    *result;        /* Postgres result structure */
 } xr_t;
 
@@ -236,7 +234,7 @@ xr_mark (SCM obj)
 {
   xr_t *xr = xr_unbox (obj);
 
-  GC_PRINT (fprintf (stderr, "marking PG-RESULT %d\n", xr->count));
+  GC_PRINT (fprintf (stderr, "marking PG-RESULT %p\n", xr));
   /* Drop reference if no longer live.  */
   if (! SCM_NFALSEP (xr->conn)
       && ! xc_unbox (xr->conn)->dbconn)
@@ -250,7 +248,7 @@ xr_free (SCM obj)
   xr_t *xr = xr_unbox (obj);
   scm_sizet size = sizeof (xr_t);
 
-  GC_PRINT (fprintf (stderr, "sweeping PG-RESULT %d\n", xr->count));
+  GC_PRINT (fprintf (stderr, "sweeping PG-RESULT %p\n", xr));
 
   /* clear the result */
   if (xr->result)
@@ -279,7 +277,6 @@ make_xr (PGresult *result, SCM conn)
   SCM_DEFER_INTS;
 
   xr->result = result;
-  xr->count = ++pg_result_tag.count;
   xr->conn = conn;
   return z;
 }
@@ -637,7 +634,6 @@ GH_DEFPROC
   xc = xc_unbox (z);
 
   xc->dbconn = dbconn;
-  xc->count = ++pg_conn_tag.count;
   xc->client = SCM_BOOL_F;
   xc->notice = SCM_BOOL_T;
   xc->fptrace = (FILE *) NULL;

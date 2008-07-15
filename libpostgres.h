@@ -28,7 +28,6 @@ typedef struct
 {
   SCM          notice;        /* port to send notices to */
   SCM          client;
-  int          count;         /* which dbconn is this? */
   PGconn      *dbconn;        /* Postgres data structure */
   FILE        *fptrace;       /* The current trace stream */
 } xc_t;

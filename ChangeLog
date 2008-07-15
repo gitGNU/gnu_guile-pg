@@ -1,5 +1,17 @@
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Don't keep track of `count' for smob/connection/result objects.
+
+	* libpostgres.h (xc_t): Delete member `count'.
+	* libpostgres.c (smob_tag): Delete member `count'.
+	(xc_mark, xc_free): For GC_PRINT, display `xc' directly.
+	(xr_t): Delete member `count'.
+	(xr_mark, xr_free): For GC_PRINT, display `xr' directly.
+	(make_xr): Don't maintain `count' for result object.
+	(pg_connectdb): Likewise, for connection object.
+
+2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Remove serial number from connection and result external reps.
 
 	* libpostgres.c (xc_display): Don't output `xc->count' and colon.
