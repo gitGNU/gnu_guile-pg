@@ -20,7 +20,7 @@
 ##   write to the Free Software Foundation, Inc., 51 Franklin Street,
 ##   Fifth Floor, Boston, MA  02110-1301  USA
 
-SUBDIRS = src scm test doc
+SUBDIRS = src test doc
 
 EXTRA_DIST = THANKS TODO HACKING \
 		build-aux/sofix \
@@ -34,33 +34,11 @@ noinst_DATA = .module-catalog
 	    -- -d in,lo,o -X '~$$' -X '[.]git' -X doc ;		\
 	else echo '()' > $@ ; fi
 
-SUFFIXES = .doc
-
-.scm.doc:
-	$(GUILE_TOOLS) doc-snarf -D -o $@ $<
-
 install-data-hook:
 	if $(GUILE_TOOLS) | grep -q make-module-catalog ; then \
 	  $(GUILE_TOOLS) make-module-catalog "$(GUILE_LIBSITE)" ; fi
 
 CLEANFILES = $(noinst_DATA)
-
-if MAINTAINER_MODE
-
-DOTDOCFILES = src/libpq.doc                     \
-              scm/postgres-resdisp.doc          \
-              scm/postgres-types.doc            \
-              scm/postgres-col-defs.doc         \
-              scm/postgres-resx.doc             \
-              scm/postgres-qcons.doc            \
-              scm/postgres-gxrepl.doc           \
-              scm/postgres-table.doc            \
-              scm/postgres-meta.doc
-
-.doc-index: $(DOTDOCFILES)
-	$(GUILE_TOOLS) make-twerp2texi-index -o $@ $(DOTDOCFILES)
-
-endif # MAINTAINER_MODE
 
 dist-hook:
 	sed -i 's/VERSION/$(VERSION)/' $(distdir)/test/show-platform

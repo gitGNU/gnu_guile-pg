@@ -28,7 +28,7 @@ relinfo.texi: $(top_srcdir)/configure
 	@echo "This manual documents $(PACKAGE_STRING)" > $@
 	@echo "(released `date +%Y-%m-%d -r $<`)." >> $@
 
-qcons-tables.texi: $(top_srcdir)/scm/postgres-qcons.scm
+qcons-tables.texi: $(top_srcdir)/src/postgres-qcons.scm
 	$(srcdir)/mkinc $< > $@
 
 CLEANFILES = guile-pg.info guile-pg.html
@@ -37,15 +37,10 @@ EXTRA_DIST = guile-pg.twerp twerp.mk-am-frag mkinc html
 
 if MAINTAINER_MODE
 
-BUILT_SOURCES = doc-index-prep
-
-doc-index-prep:
-	( cd .. ; $(MAKE) .doc-index )
-
 .twerp.texi:
 	$(GUILE_TOOLS) twerp2texi	\
 	  --scheme-implied		\
-	  -I $(top_builddir)/.doc-index	\
+	  -I ../src/.doc-index		\
 	  -d .deps/$*.Ptexi		\
 	  -o $(srcdir)/$*.texi		\
 	  $<

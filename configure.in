@@ -133,7 +133,6 @@ esac
 AC_CONFIG_FILES([
   Makefile
   src/Makefile
-  scm/Makefile
   doc/Makefile
   test/Makefile
 ])

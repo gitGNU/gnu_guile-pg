@@ -1,8 +1,5 @@
-*.doc
 .deps
-.doc-index
-.last-release
-.ttn.*
+.module-catalog
 COPYING
 INSTALL
 Makefile
@@ -37,6 +34,8 @@ doc/.deps
 doc/Makefile
 doc/Makefile.in
 doc/guile-pg.texi
+doc/qcons-tables.texi
+doc/relinfo.texi
 
 scm/*.doc
 scm/Makefile
@@ -63,3 +62,4 @@ test/config.scm
 test/create.sh
 test/drop.sh
 test/lo-tests-data-*
+test/runtest

@@ -26,7 +26,7 @@ exec ${GUILE-guile} -s $0 "$@" # -*- scheme -*-
 ;; Usage: mkinc QCONS
 ;;
 ;; Write to stdout a texinfo fragment comprising some built-in lookup
-;; tables in QCONS, typically `$(top_srcdir)/scm/postgres-qcons.scm'.
+;; tables in QCONS, typically `$(top_srcdir)/src/postgres-qcons.scm'.
 ;; Render each as a small blurb followed by a texinfo example block.
 
 ;;; Code:

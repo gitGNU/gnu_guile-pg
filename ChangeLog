@@ -1,5 +1,32 @@
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Move Scheme code into src/.
+
+	* scm/postgres-col-defs.scm: Move to src/.
+	* scm/postgres-gxrepl.scm: Likewise.
+	* scm/postgres-meta.scm: Likewise.
+	* scm/postgres-qcons.scm: Likewise.
+	* scm/postgres-resdisp.scm: Likewise.
+	* scm/postgres-resx.scm: Likewise.
+	* scm/postgres-table.scm: Likewise.
+	* scm/postgres-types.scm: Likewise.
+
+	* doc/Makefile.am (BUILT_SOURCES) [MAINTAINER_MODE]: Delete var.
+	(doc-index-prep) [MAINTAINER_MODE]: Delete target.
+	(qcons-tables.texi): Update location of postgres-qcons.scm.
+	(.twerp.texi): Update location of .doc-index.
+
+	* scm/Makefile.am: Delete file.
+	* scm/: Delete dir.
+	* Makefile.am (SUBDIRS): Remove scm.
+	(SUFFIXES): Delete var.
+	(.scm.doc): Delete pattern rule.
+	(DOTDOCFILES) [MAINTAINER_MODE]: Delete var.
+	(.doc-index) [MAINTAINER_MODE]: Delete target.
+	* configure.in (AC_CONFIG_FILES): Remove scm/Makefile.
+
+2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Move C code into src/.
 
 	* bcruft.h: Move to src/.

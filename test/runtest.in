@@ -2,7 +2,7 @@
 # runtest --- run "@GUILE@" w/ proper test environment
 
 ts="@abs_top_srcdir@"
-tscm=`cd "$ts/scm" ; pwd`
+tscm=`cd "$ts/src" ; pwd`
 export tscm
 
 GUILE_LOAD_PATH=`echo "@abs_top_builddir@:$GUILE_LOAD_PATH" | sed 's/:$//'`

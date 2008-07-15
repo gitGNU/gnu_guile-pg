@@ -1,5 +1,26 @@
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Move Scheme code into src/.
+
+	* postgres-col-defs.scm: Move from ../scm/.
+	* postgres-gxrepl.scm: Likewise.
+	* postgres-meta.scm: Likewise.
+	* postgres-qcons.scm: Likewise.
+	* postgres-resdisp.scm: Likewise.
+	* postgres-resx.scm: Likewise.
+	* postgres-table.scm: Likewise.
+	* postgres-types.scm: Likewise.
+	* Makefile.am (dotdocfiles): New var.
+	(BUILT_SOURCES): Remove libpq.doc; add $(dotdocfiles).
+	(dist_d_DATA): New var.
+	(.scm.doc): New pattern rule.
+	(.doc-index) [MAINTAINER_MODE]: New target.
+	(noinst_DATA) [MAINTAINER_MODE]: New var.
+	(retired): New variable.
+	(install-data-hook): Add check/cleanup for $(retired) files.
+
+2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Move C code into src/.
 
 	* bcruft.h: Move from parent dir.

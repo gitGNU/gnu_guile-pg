@@ -1,5 +1,11 @@
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Move Scheme code into src/.
+
+	* runtest.in (tscm): Use "$ts/src".
+
+2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Remove `pg-get-connection'.
 
 	* basic.scm (test:get-connection): Pass unconditionally.
