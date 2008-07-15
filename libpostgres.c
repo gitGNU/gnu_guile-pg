@@ -114,7 +114,6 @@ xc_display (SCM exp, SCM port, scm_print_state *pstate)
   xc_t *xc = xc_unbox (exp);
 
   scm_puts ("#<PG-CONN:", port);
-  scm_intprint (xc->count, 10, port); scm_putc (':', port);
   if (! xc->dbconn)
     scm_putc ('-', port);
   else
@@ -224,7 +223,6 @@ xr_display (SCM exp, SCM port, scm_print_state *pstate)
     status = PGRES_FATAL_ERROR;
 
   scm_puts ("#<PG-RESULT:", port);
-  scm_intprint (xr->count, 10, port); scm_putc (':', port);
   scm_puts (6 + PQresStatus (status), port); scm_putc (':', port);
   scm_intprint (ntuples, 10, port); scm_putc (':', port);
   scm_intprint (nfields, 10, port);
