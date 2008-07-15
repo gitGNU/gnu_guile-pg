@@ -1,3 +1,13 @@
+2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Remove `pg-get-connection'.
+
+	* libpostgres.c (pg_get_connection): Delete GH_DEFPROC.
+	* doc/guile-pg.twerp (Types Conversion): Define `CONN' in
+	example, instead of using `pg-get-connection' on a result.
+	(Processing Results): Likewise.  Also,
+	remove @twerpdoc for `pg-get-connection'.
+
 2008-07-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Conditionalize `pg_encoding_to_char' decl; make its retval `const'.

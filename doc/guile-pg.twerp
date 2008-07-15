@@ -628,8 +628,6 @@ The procedure could be called as follows
 (insert-one-record conn "people" "('Warbucks', 'Oliver')")
 @end lisp
 
-@twerpdoc (pg-get-connection)
-
 @twerpdoc (pg-binary-tuples?)
 
 @erindex Invalid field number
@@ -724,9 +722,11 @@ a type of connection which, when opened, issued the query to retrieve the
 then be associated with each connection using @code{pg-set-client-data!}.
 
 @lisp
+(define CONN (pg-connectdb ...))
+
 (define (field-type-name result fnum)
   (let ((result (pg-exec
-                 (pg-get-connection result)
+                 CONN
                  (format #f "SELECT typname FROM pg_type WHERE oid = ~A"
                          (pg-ftype result fnum)))))
     (or (and result
@@ -1350,8 +1350,10 @@ query on the @code{pg_type} (internal) table.  Here is a more efficient
 implementation:
 
 @lisp
+(define CONN (pg-connectdb ...))
+
 (define (pg-ftype-name result fnum)
-  (assq-ref (oid-type-name-cache (pg-get-connection result))
+  (assq-ref (oid-type-name-cache CONN)
             (pg-ftype result fnum)))
 @end lisp
 

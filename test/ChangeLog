@@ -1,3 +1,9 @@
+2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Remove `pg-get-connection'.
+
+	* basic.scm (test:get-connection): Pass unconditionally.
+
 2008-05-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Use absolute dir name to locate test/*.scm.

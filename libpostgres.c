@@ -1241,20 +1241,6 @@ GH_DEFPROC
 }
 
 GH_DEFPROC
-(pg_get_connection, "pg-get-connection", 1, 0, 0,
- (SCM result),
- "Return the @code{PG_CONN} object representing the connection\n"
- "from which a @var{result} was returned, if the connection\n"
- "is still live.  Otherwise, return @code{#f}.")
-{
-#define FUNC_NAME s_pg_get_connection
-  xr_t *xr; PGresult *res;
-  VALIDATE_RESULT_UNBOX2 (1, result, xr, res);
-  return (xr->conn);
-#undef FUNC_NAME
-}
-
-GH_DEFPROC
 (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
  (SCM conn),
  "Return an integer which is the the PID of the backend\n"

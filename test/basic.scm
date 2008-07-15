@@ -377,11 +377,11 @@
              (ftype-names res))))))
 
 (define test:get-connection
-  (add-test #t
+  (add-test 'defunct
     (lambda ()
-      (let ((res (cexec "SELECT * FROM test WHERE col1 = 1")))
-        (and (tuples-ok? res)
-             (eq? *C* (pg-get-connection res)))))))
+      ;; Although `pg-get-connection' was removed for the "more modesty"
+      ;; release (pre-announced in Guile-PG 0.37), we leave this test here.
+      'defunct)))
 
 (define test:ntuples
   (add-test #t
