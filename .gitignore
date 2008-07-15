@@ -1,11 +1,7 @@
 *.doc
-*.la
-*.lo
-*.x
 .deps
 .doc-index
 .last-release
-.libs
 .ttn.*
 COPYING
 INSTALL
@@ -14,14 +10,10 @@ Makefile.in
 aclocal.m4
 autom4te.cache
 config.cache
-config.h
-config.h.in
 config.log
 config.status
 configure
 libtool
-modsup.h
-stamp-h1
 
 build-aux/config.guess
 build-aux/config.sub
@@ -49,6 +41,20 @@ doc/guile-pg.texi
 scm/*.doc
 scm/Makefile
 scm/Makefile.in
+
+src/*.doc
+src/*.la
+src/*.lo
+src/*.x
+src/.deps
+src/.doc-index
+src/.libs
+src/Makefile
+src/Makefile.in
+src/config.h
+src/config.h.in
+src/modsup.h
+src/stamp-h1
 
 test/*.log
 test/Makefile

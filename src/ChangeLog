@@ -1,0 +1,12 @@
+2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Move C code into src/.
+
+	* bcruft.h: Move from parent dir.
+	* fcruft.h: Likewise.
+	* modsup.h.snap: Likewise.
+	* tmpfile.h: Likewise.
+	* tmpfile.c: Likewise.
+	* libpq.c: New file, from integrating ../libpostgres.h,
+	../libpostgres.c and ../libpostgres_lo.c.
+	* Makefile.am: New file.

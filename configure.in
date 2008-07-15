@@ -24,7 +24,7 @@ AC_INIT([Guile-PG],[0.37],[ttn@gnuvola.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([1.10.1 -Wall])
 
-AM_CONFIG_HEADER(config.h)
+AM_CONFIG_HEADER([src/config.h])
 
 AM_MAINTAINER_MODE
 
@@ -132,6 +132,7 @@ esac
 
 AC_CONFIG_FILES([
   Makefile
+  src/Makefile
   scm/Makefile
   doc/Makefile
   test/Makefile

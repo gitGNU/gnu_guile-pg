@@ -20,22 +20,11 @@
 ##   write to the Free Software Foundation, Inc., 51 Franklin Street,
 ##   Fifth Floor, Boston, MA  02110-1301  USA
 
-SUBDIRS = scm test doc
+SUBDIRS = src scm test doc
 
 EXTRA_DIST = THANKS TODO HACKING \
 		build-aux/sofix \
-		modsup.h autogen.sh
-
-BUILT_SOURCES = libpostgres.x libpostgres_lo.x
-
-AM_CPPFLAGS = -I. -I$(srcdir) $(GUILE_CFLAGS) $(PQ_CPPFLAGS)
-
-ddir = $(GUILE_LIBSITE)/database
-d_LTLIBRARIES = postgres.la
-postgres_la_SOURCES = libpostgres.c libpostgres_lo.c libpostgres.h \
-				tmpfile.c bcruft.h fcruft.h
-postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0 \
-				$(LDFLAGS) $(PQ_LDFLAGS)
+		autogen.sh
 
 noinst_DATA = .module-catalog
 
@@ -45,33 +34,21 @@ noinst_DATA = .module-catalog
 	    -- -d in,lo,o -X '~$$' -X '[.]git' -X doc ;		\
 	else echo '()' > $@ ; fi
 
-SUFFIXES = .x .doc
+SUFFIXES = .doc
 
-snarfcppopts = $(DEFS) $(AM_CPPFLAGS) $(CPPFLAGS)
-
-.c.x:
-	$(c2x) -o $@ $< $(snarfcppopts) $(CFLAGS)
-.c.doc:
-	$(GUILE_TOOLS) c2doc -o $@ $< -- $(snarfcppopts)
 .scm.doc:
 	$(GUILE_TOOLS) doc-snarf -D -o $@ $<
 
 install-data-hook:
-	rm -f $(ddir)/postgres-sup.*
-	$(srcdir)/build-aux/sofix $(SOFIXFLAGS) \
-	  $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
 	if $(GUILE_TOOLS) | grep -q make-module-catalog ; then \
 	  $(GUILE_TOOLS) make-module-catalog "$(GUILE_LIBSITE)" ; fi
 
-DISTCLEANFILES = *.x *.doc
-
-CLEANFILES = *.x $(noinst_DATA)
+CLEANFILES = $(noinst_DATA)
 
 if MAINTAINER_MODE
 
-DOTDOCFILES = libpostgres.doc                   \
-              libpostgres_lo.doc                \
-              scm/postgres-resdisp.doc	        \
+DOTDOCFILES = src/libpq.doc                     \
+              scm/postgres-resdisp.doc          \
               scm/postgres-types.doc            \
               scm/postgres-col-defs.doc         \
               scm/postgres-resx.doc             \

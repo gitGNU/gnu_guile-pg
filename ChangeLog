@@ -1,5 +1,34 @@
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Move C code into src/.
+
+	* bcruft.h: Move to src/.
+	* fcruft.c: Likewise.
+	* modsup.h.snap: Likewise.
+	* tmpfile.h: Likewise.
+	* tmpfile.c: Likewise.
+	* libpostgres.h: Integrate into src/libpq.c.
+	* libpostgres.c: Likewise.
+	* libpostgres_lo.c: Likewise.
+	* Makefile.am (SUBDIRS): Add src.
+	(EXTRA_DIST): Remove modsup.h.
+	(BUILT_SOURCES, AM_CPPFLAGS, ddir, d_LTLIBRARIES): Delete vars.
+	(postgres_la_SOURCES, postgres_la_LDFLAGS): Likewise.
+	(SUFFIXES): Remove .x.
+	(snarfcppopts): Delete var.
+	(.c.x): Delete pattern rule.
+	(.c.doc): Likewise.
+	(install-data-hook): No longer clean up $(ddir) or do sofixing.
+	(DISTCLEANFILES): Delete var.
+	(CLEANFILES): Remove *.x.
+	(DOTDOCFILES): Add src/libpq.doc; remove
+	libpostgres.doc and libpostgres_lo.doc.
+	* configure.in (AM_CONFIG_HEADER): Put header in src/.
+	(AC_CONFIG_FILES): Add src/Makefile.
+	* autogen.sh: Create modsup.h symlink in src/.
+
+2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Use `PGresult' directly as result object (no more "extended result").
 
 	* libpostgres.c (xr_t): Delete struct.
