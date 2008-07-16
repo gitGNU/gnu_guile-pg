@@ -48,6 +48,9 @@ GUILE_FLAGS
 GUILE_SITE_DIR
 GUILE_LIBSITE_DIR
 
+GUILE_TOOLS_PROG([mkpimmc],[mkpimmc])
+GUILE_TOOLS_PROG([mkmodcat],[make-module-catalog])
+
 saved_CPPFLAGS="$CPPFLAGS"	# restoration below
 saved_LDFLAGS="$LDFLAGS"
 CPPFLAGS="$GUILE_CFLAGS $CPPFLAGS"

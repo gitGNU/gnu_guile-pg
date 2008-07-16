@@ -76,13 +76,12 @@ install-data-hook:
 	rm -f $(ddir)/postgres-sup.*
 	$(top_srcdir)/build-aux/sofix $(SOFIXFLAGS) \
 	  $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
-	if [ -d "$(retired)" ] ; then					\
-	  cd "$(retired)" ;						\
-	  rm -f postgres.scm $(dist_d_DATA) ;				\
-	  if [ "`ls 2>/dev/null`" = "" ] ; then				\
-	    cd .. ; rmdir "$(retired)" ; fi ;				\
-	  if $(GUILE_TOOLS) | grep -q make-module-catalog ; then	\
-	    $(GUILE_TOOLS) make-module-catalog "$(GUILE_SITE)" ; fi ;	\
+	if [ -d "$(retired)" ] ; then		\
+	  cd "$(retired)" ;			\
+	  rm -f postgres.scm $(dist_d_DATA) ;	\
+	  if [ "`ls 2>/dev/null`" = "" ] ; then	\
+	    cd .. ; rmdir "$(retired)" ; fi ;	\
+	  $(mkmodcat) "$(GUILE_SITE)" ;		\
 	fi
 
 EXTRA_DIST = modsup.h

@@ -28,14 +28,11 @@ EXTRA_DIST = THANKS TODO HACKING \
 noinst_DATA = .module-catalog
 
 .module-catalog:
-	if $(GUILE_TOOLS) | grep -q mkpimmc ; then		\
-	  $(GUILE_TOOLS) mkpimmc -d $(DEPDIR) $@ "$(srcdir)"	\
-	    -- -d in,lo,o -X '~$$' -X '[.]git' -X doc ;		\
-	else echo '()' > $@ ; fi
+	$(mkpimmc) -d $(DEPDIR) $@ "$(srcdir)"	\
+	    -- -d in,lo,o -X '~$$' -X '[.]git' -X doc
 
 install-data-hook:
-	if $(GUILE_TOOLS) | grep -q make-module-catalog ; then \
-	  $(GUILE_TOOLS) make-module-catalog "$(GUILE_LIBSITE)" ; fi
+	$(mkmodcat) "$(GUILE_LIBSITE)"
 
 CLEANFILES = $(noinst_DATA)
 

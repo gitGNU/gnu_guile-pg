@@ -1,5 +1,14 @@
 2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Use guile.m4 facilities from Guile 1.4.1.118.
+
+	* configure.in (mkpimmc): New GUILE_TOOLS_PROG.
+	(mkmodcat): Likewise.
+	* Makefile.am (.module-catalog): Use $(mkpimmc).
+	(install-data-hook): Use $(mkmodcat).
+
+2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Sync guile.m4.snap with upstream.
 
 	* build-aux/guile.m4.snap: Sync w/ Guile 1.4.1.118.
