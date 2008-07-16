@@ -97,12 +97,17 @@ AC_DEFUN([GUILE_PROGS],
 #
 AC_DEFUN([GUILE_FLAGS],
  [AC_REQUIRE([GUILE_PROGS])dnl
-  AC_MSG_CHECKING([libguile compile flags])
-  GUILE_CFLAGS="`$GUILE_CONFIG compile`"
-  AC_MSG_RESULT([$GUILE_CFLAGS])
-  AC_MSG_CHECKING([libguile link flags])
-  GUILE_LDFLAGS="`$GUILE_CONFIG link`"
-  AC_MSG_RESULT([$GUILE_LDFLAGS])
+
+  AC_CACHE_CHECK([libguile compile flags],
+    [guile_cv_compile_flags],
+    [guile_cv_compile_flags="`$GUILE_CONFIG compile`"])
+  GUILE_CFLAGS="$guile_cv_compile_flags"
+
+  AC_CACHE_CHECK([libguile link flags],
+    [guile_cv_link_flags],
+    [guile_cv_link_flags="`$GUILE_CONFIG link`"])
+  GUILE_LDFLAGS="$guile_cv_link_flags"
+
   AC_SUBST(GUILE_CFLAGS)
   AC_SUBST(GUILE_LDFLAGS)
  ])
@@ -123,7 +128,7 @@ AC_DEFUN([GUILE_FLAGS],
 #
 AC_DEFUN([GUILE_SITE_DIR],
  [AC_REQUIRE([GUILE_PROGS])dnl
-  AC_MSG_CHECKING(for Guile site directory)
+  AC_CACHE_CHECK([for Guile site directory],[guile_cv_SITE],[
   # Try built-in reprefixing.
   GUILE_SITE=`[$GUILE_CONFIG] re-prefix-info scheme_site_dir 2>/dev/null`
   # If no joy, do it "manually".
@@ -136,7 +141,8 @@ AC_DEFUN([GUILE_SITE_DIR],
   if test x"$GUILE_SITE" = x/site ; then
     GUILE_SITE='${datadir}/guile/site'
   fi
-  AC_MSG_RESULT($GUILE_SITE)
+  guile_cv_SITE="$GUILE_SITE"])
+  GUILE_SITE="$guile_cv_SITE"
   AC_SUBST(GUILE_SITE)
  ])
 
@@ -154,7 +160,7 @@ AC_DEFUN([GUILE_SITE_DIR],
 #
 AC_DEFUN([GUILE_LIBSITE_DIR],
  [AC_REQUIRE([GUILE_PROGS])dnl
-  AC_MSG_CHECKING(for Guile library site directory)
+  AC_CACHE_CHECK([for Guile library site directory],[guile_cv_LIBSITE],[
   # Try built-in reprefixing.
   GUILE_LIBSITE=`[$GUILE_CONFIG] re-prefix-info pkglibdir 2>/dev/null`
   # If no joy, do it "manually".
@@ -167,7 +173,8 @@ AC_DEFUN([GUILE_LIBSITE_DIR],
   if test x"$GUILE_LIBSITE" = x/site ; then
     GUILE_LIBSITE='${libdir}/guile/site'
   fi
-  AC_MSG_RESULT($GUILE_LIBSITE)
+  guile_cv_LIBSITE="$GUILE_LIBSITE"])
+  GUILE_LIBSITE="$guile_cv_LIBSITE"
   AC_SUBST(GUILE_LIBSITE)
  ])
 
@@ -394,14 +401,16 @@ AC_DEFUN([GUILE_MODULE_CATALOG_PREP],[
 #
 AC_DEFUN([GUILE_TOOLS_PROG],[
   AC_REQUIRE([GUILE_PROGS])dnl
-  AC_MSG_CHECKING([for "guile-tools $2"])
-  $1=no
+  AC_CACHE_CHECK([for "guile-tools $2"],[guile_cv_$1],[
+  guile_cv_$1=no
   if $GUILE_TOOLS -p PROGRAM >/dev/null 2>&1 ; then
-    $1=`$GUILE_TOOLS -p $2`
+    guile_cv_$1=`$GUILE_TOOLS -p $2`
   elif $GUILE_TOOLS | grep -q $2 ; then
-    $1=`$GUILE_TOOLS --help | $SED '/.*cripts dir: /!d;s///'`/$2
+    guile_cv_$1=`$GUILE_TOOLS --help | $SED '/.*cripts dir: /!d;s///'`/$2
   fi
-  AC_MSG_RESULT([$$1])
+  if test "$guile_cv_$1" && test -x "$guile_cv_$1" ; then :
+  else guile_cv_$1=no ; fi])
+  $1="$guile_cv_$1"
   test "$$1" = no && $1=m4_case([$3],[],[:],[$3])
   AC_SUBST($1)
 ])
