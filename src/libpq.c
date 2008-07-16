@@ -111,12 +111,6 @@ xc_unbox (SCM obj)
 #define ASSERT_CONNECTION(n,arg) \
   SCM_ASSERT (xc_p (arg), arg, SCM_ARG ## n, FUNC_NAME)
 
-static SCM
-xc_box (xc_t *xc)
-{
-  SCM_RETURN_NEWSMOB (pg_conn_tag, xc);
-}
-
 static int
 xc_display (SCM exp, SCM port, scm_print_state *pstate)
 {
@@ -1296,7 +1290,6 @@ GH_DEFPROC
 {
 #define FUNC_NAME s_pg_connectdb
   xc_t *xc;
-  SCM z;
   PGconn *dbconn;
   ConnStatusType connstat;
   SCM pgerrormsg = SCM_BOOL_F;
@@ -1319,8 +1312,7 @@ GH_DEFPROC
   if (connstat == CONNECTION_BAD)
     scm_misc_error (FUNC_NAME, "~A", SCM_LIST1 (pgerrormsg));
 
-  z = xc_box ((xc_t *) scm_must_malloc (sizeof (xc_t), "PG-CONN"));
-  xc = xc_unbox (z);
+  xc = ((xc_t *) scm_must_malloc (sizeof (xc_t), "PG-CONN"));
 
   xc->dbconn = dbconn;
   xc->client = SCM_BOOL_F;
@@ -1330,7 +1322,7 @@ GH_DEFPROC
   /* Whatever the default was before, we don't care.  */
   PQsetNoticeProcessor (dbconn, &notice_processor, xc);
 
-  return z;
+  SCM_RETURN_NEWSMOB (pg_conn_tag, xc);
 #undef FUNC_NAME
 }
 
@@ -2823,12 +2815,6 @@ sepo_p (SCM obj)
   return SCM_SMOB_PREDICATE (sepo_type_tag, obj);
 }
 
-static SCM
-sepo_box (PQprintOpt *sepo)
-{
-  SCM_RETURN_NEWSMOB (sepo_type_tag, sepo);
-}
-
 static PQprintOpt *
 sepo_unbox (SCM obj)
 {
@@ -3041,7 +3027,7 @@ GH_DEFPROC
         }
     }
 
-  return sepo_box (po);
+  SCM_RETURN_NEWSMOB (sepo_type_tag, po);
 #undef FUNC_NAME
 }
 

@@ -1,5 +1,13 @@
 2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Decruft: Inline single-use *_box funcs.
+
+	* libpq.c (xc_box, sepo_box): Delete funcs.
+	(pg_connectdb): Use `SCM_RETURN_NEWSMOB' directly.
+	(pg_make_print_options): Likewise.
+
+2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Increase abstraction: Use C macros for smob data access.
 
 	* libpq.c (xc_unbox): Use `SCM_SMOB_DATA'.
