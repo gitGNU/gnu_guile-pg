@@ -1,5 +1,12 @@
 2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Increase abstraction: Make `res_box' handle NULL-check.
+
+	* libpq.c (res_box): If given NULL, return Scheme false.
+	(pg_exec, pg_exec_params, pg_exec_prepared, pg_send_query): Update.
+
+2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Decruft: Inline single-use *_box funcs.
 
 	* libpq.c (xc_box, sepo_box): Delete funcs.

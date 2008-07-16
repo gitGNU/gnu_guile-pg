@@ -904,7 +904,10 @@ res_unbox (SCM obj)
 static SCM
 res_box (PGresult *res)
 {
-  SCM_RETURN_NEWSMOB (pg_result_tag, res);
+  if (res)
+    SCM_RETURN_NEWSMOB (pg_result_tag, res);
+  else
+    return SCM_BOOL_F;
 }
 
 static int
@@ -1527,9 +1530,7 @@ GH_DEFPROC
   SCM_DEFER_INTS;
   result = PQexec (dbconn, ROZT (statement));
 
-  z = (result
-       ? res_box (result)
-       : SCM_BOOL_F);
+  z = res_box (result);
   SCM_ALLOW_INTS;
   return z;
 #undef FUNC_NAME
@@ -1562,9 +1563,7 @@ GH_DEFPROC
   result = PQexecParams (dbconn, ROZT (statement), ps.len,
                          ps.types, ps.values, ps.lengths, ps.formats,
                          result_format);
-  z = (result
-       ? res_box (result)
-       : SCM_BOOL_F);
+  z = res_box (result);
   SCM_ALLOW_INTS;
   drop_paramspecs (&ps);
   return z;
@@ -1604,9 +1603,7 @@ GH_DEFPROC
   result = PQexecPrepared (dbconn, ROZT (stname), ps.len,
                            ps.values, ps.lengths, ps.formats,
                            result_format);
-  z = (result
-       ? res_box (result)
-       : SCM_BOOL_F);
+  z = res_box (result);
   SCM_ALLOW_INTS;
   drop_paramspecs (&ps);
   return z;
@@ -3368,9 +3365,7 @@ GH_DEFPROC
 
   SCM_DEFER_INTS;
   result = PQgetResult (dbconn);
-  z = (result
-       ? res_box (result)
-       : SCM_BOOL_F);
+  z = res_box (result);
   SCM_ALLOW_INTS;
   return z;
 #undef FUNC_NAME
