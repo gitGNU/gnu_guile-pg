@@ -207,12 +207,11 @@ typedef struct
 
 #define LOBPORTP(x) (SCM_TYP16 (x) == lobp_tag)
 
-#define OPLOBPORTP(x) \
-  (((0xffff | SCM_OPN) & (int) gh_car (x)) == (lobp_tag | SCM_OPN))
+#define LOBPORT_WITH_FLAGS_P(x,flags) \
+  (LOBPORTP (x) && (SCM_CELL_WORD_0 (x) & (flags)))
 
-#define OPINLOBPORTP(x)                                 \
-  (((0xffff | SCM_OPN | SCM_RDNG) & (int) gh_car (x))   \
-   == (lobp_tag | SCM_OPN | SCM_RDNG))
+#define OPLOBPORTP(x)    (LOBPORT_WITH_FLAGS_P (x, SCM_OPN))
+#define OPINLOBPORTP(x)  (LOBPORT_WITH_FLAGS_P (x, SCM_OPN | SCM_RDNG))
 
 static SCM
 lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *caller)
@@ -232,7 +231,7 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *caller)
   lobp->alod = alod;
   pt = scm_add_to_port_table (port);
   SCM_SETPTAB_ENTRY (port, pt);
-  SCM_SETCAR (port, lobp_tag | modes);
+  SCM_SET_CELL_WORD_0 (port, lobp_tag | modes);
   SCM_SETSTREAM (port, (SCM) lobp);
 
   pt->rw_random = 1;
@@ -267,7 +266,7 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *caller)
     }
   pt->write_end = pt->write_buf + pt->write_buf_size;
 
-  SCM_SETCAR (port, SCM_CELL_WORD_0 (port) & ~SCM_BUF0);
+  SCM_SET_CELL_WORD_0 (port, SCM_CELL_WORD_0 (port) & ~SCM_BUF0);
 
   SCM_ALLOW_INTS;
 

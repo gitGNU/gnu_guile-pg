@@ -1,5 +1,13 @@
 2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Increase abstraction: Use "cell word 0" for lobport access.
+
+	* libpq.c (LOBPORT_WITH_FLAGS_P): New macro.
+	(OPLOBPORTP, OPINLOBPORTP): Use `LOBPORT_WITH_FLAGS_P'.
+	(lob_mklobport): Use `SCM_SET_CELL_WORD_0'.
+
+2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Increase abstraction: Make `res_box' handle NULL-check.
 
 	* libpq.c (res_box): If given NULL, return Scheme false.
