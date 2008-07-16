@@ -966,23 +966,6 @@ res_free (SCM obj)
   return 0;
 }
 
-static SCM
-make_res (PGresult *result, SCM conn)
-{
-  PGresult *res;
-  SCM z;
-
-  /* This looks weird, but they're SCM_DEFERred in res_box.  */
-  SCM_ALLOW_INTS;
-  z = res_box ((PGresult *)
-               scm_must_malloc (sizeof (PGresult *), "PG-RESULT"));
-  res = res_unbox (z);
-  SCM_DEFER_INTS;
-
-  SCM_SETCDR (z, (SCM)result);
-  return z;
-}
-
 
 /*
  * string munging
@@ -1553,7 +1536,7 @@ GH_DEFPROC
   result = PQexec (dbconn, ROZT (statement));
 
   z = (result
-       ? make_res (result, conn)
+       ? res_box (result)
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
   return z;
@@ -1588,7 +1571,7 @@ GH_DEFPROC
                          ps.types, ps.values, ps.lengths, ps.formats,
                          result_format);
   z = (result
-       ? make_res (result, conn)
+       ? res_box (result)
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
   drop_paramspecs (&ps);
@@ -1630,7 +1613,7 @@ GH_DEFPROC
                            ps.values, ps.lengths, ps.formats,
                            result_format);
   z = (result
-       ? make_res (result, conn)
+       ? res_box (result)
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
   drop_paramspecs (&ps);
@@ -3400,7 +3383,7 @@ GH_DEFPROC
   SCM_DEFER_INTS;
   result = PQgetResult (dbconn);
   z = (result
-       ? make_res (result, conn)
+       ? res_box (result)
        : SCM_BOOL_F);
   SCM_ALLOW_INTS;
   return z;
