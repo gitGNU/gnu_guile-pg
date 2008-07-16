@@ -23,8 +23,7 @@
 SUBDIRS = src test doc
 
 EXTRA_DIST = THANKS TODO HACKING \
-		build-aux/sofix \
-		autogen.sh
+		build-aux/sofix
 
 noinst_DATA = .module-catalog
 
