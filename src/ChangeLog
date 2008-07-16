@@ -1,5 +1,14 @@
 2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Increase abstraction: Use C macros for smob data access.
+
+	* libpq.c (xc_unbox): Use `SCM_SMOB_DATA'.
+	(res_unbox, sepo_unbox): Likewise.
+	(xc_free): Use `SCM_SET_SMOB_DATA'.
+	(res_free, sepo_free): Likewise.
+
+2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Decruft: Elide internal function `make_res'.
 
 	* libpq.c (make_res): Delete func;

@@ -105,7 +105,7 @@ xc_p (SCM obj)
 static xc_t *
 xc_unbox (SCM obj)
 {
-  return ((xc_t *) gh_cdr (obj));
+  return ((xc_t *) SCM_SMOB_DATA (obj));
 }
 
 #define ASSERT_CONNECTION(n,arg) \
@@ -176,7 +176,7 @@ xc_free (SCM obj)
   free (xc);
 
   /* set extension data to NULL */
-  SCM_SETCDR (obj, (SCM)NULL);
+  SCM_SET_SMOB_DATA (obj, NULL);
 
   return size;
 }
@@ -898,7 +898,7 @@ res_p (SCM obj)
 static PGresult *
 res_unbox (SCM obj)
 {
-  return ((PGresult*) gh_cdr (obj));
+  return ((PGresult*) SCM_SMOB_DATA (obj));
 }
 
 #define VALIDATE_RESULT_UNBOX(pos,arg,cvar)                     \
@@ -961,7 +961,7 @@ res_free (SCM obj)
     PQclear (res);
 
   /* set extension data to NULL */
-  SCM_SETCDR (obj, (SCM)NULL);
+  SCM_SET_SMOB_DATA (obj, NULL);
 
   return 0;
 }
@@ -2832,7 +2832,7 @@ sepo_box (PQprintOpt *sepo)
 static PQprintOpt *
 sepo_unbox (SCM obj)
 {
-  return ((PQprintOpt *) gh_cdr (obj));
+  return ((PQprintOpt *) SCM_SMOB_DATA (obj));
 }
 
 static SCM
@@ -2880,7 +2880,7 @@ sepo_free (SCM obj)
   free (po);
 
   /* set extension data to NULL */
-  SCM_SETCDR (obj, (SCM)NULL);
+  SCM_SET_SMOB_DATA (obj, NULL);
 
   return size;
 }
