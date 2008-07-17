@@ -96,7 +96,7 @@ xc_unbox (SCM obj)
   return ((xc_t *) SCM_SMOB_DATA (obj));
 }
 
-#define ASSERT_CONNECTION(n,arg) \
+#define ASSERT_CONNECTION(n,arg)                        \
   SCM_ASSERT (xc_p (arg), arg, SCM_ARG ## n, FUNC_NAME)
 
 static int
@@ -145,19 +145,13 @@ static scm_sizet
 xc_free (SCM obj)
 {
   xc_t *xc = xc_unbox (obj);
-  scm_sizet size = sizeof (xc_t);
 
-  /* close connection to postgres */
   if (xc->dbconn)
     PQfinish (xc->dbconn);
-
-  /* free this object itself */
   free (xc);
-
-  /* set extension data to NULL */
   SCM_SET_SMOB_DATA (obj, NULL);
 
-  return size;
+  return sizeof (xc_t);
 }
 
 #define CONN_NOTICE(conn)   (xc_unbox (conn)->notice)
@@ -192,7 +186,7 @@ typedef struct
 
 #define LOBPORTP(x) (SCM_TYP16 (x) == lobp_tag)
 
-#define LOBPORT_WITH_FLAGS_P(x,flags) \
+#define LOBPORT_WITH_FLAGS_P(x,flags)                   \
   (LOBPORTP (x) && (SCM_CELL_WORD_0 (x) & (flags)))
 
 #define OPLOBPORTP(x)    (LOBPORT_WITH_FLAGS_P (x, SCM_OPN))
@@ -455,7 +449,7 @@ GH_DEFPROC
    instead of risking further muck-up.  */
 #ifndef HAVE_SCM_TERMINATING
 # ifdef HAVE_LIBGUILE_TERMINATING
-    extern int terminating;
+extern int terminating;
 #   define scm_terminating terminating
 # endif /* HAVE_LIBGUILE_TERMINATING */
 #endif /* !HAVE_SCM_TERMINATING */
@@ -934,11 +928,8 @@ res_free (SCM obj)
 {
   PGresult *res = res_unbox (obj);
 
-  /* clear the result */
   if (res)
     PQclear (res);
-
-  /* set extension data to NULL */
   SCM_SET_SMOB_DATA (obj, NULL);
 
   return 0;
@@ -1044,7 +1035,7 @@ drop_paramspecs (struct paramspecs *ps)
  * other abstractions
  */
 
-#define VALIDATE_FIELD_NUMBER_COPY(pos,num,res,cvar) \
+#define VALIDATE_FIELD_NUMBER_COPY(pos,num,res,cvar)                    \
   SCM_VALIDATE_INUM_RANGE_COPY (pos, num, 0, PQnfields (res), cvar)
 
 
@@ -1094,7 +1085,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-#define SIMPLE_KEYWORD(name) \
+#define SIMPLE_KEYWORD(name)                    \
   SCM_KEYWORD (kwd_ ## name, # name)
 
 SIMPLE_KEYWORD (envvar);
@@ -2839,8 +2830,6 @@ sepo_free (SCM obj)
 
   size += sizeof (PQprintOpt);
   free (po);
-
-  /* set extension data to NULL */
   SCM_SET_SMOB_DATA (obj, NULL);
 
   return size;
@@ -2959,9 +2948,9 @@ GH_DEFPROC
 
   po = scm_must_malloc (sizeof (PQprintOpt), "PG-PRINT-OPTION");
 
-#define _FLAG_CHECK(m)                                 \
-  (NOT_FALSEP (scm_memq (pg_sym_no_ ## m, flags))      \
-   ? 0 : (NOT_FALSEP (scm_memq (pg_sym_ ## m, flags))  \
+#define _FLAG_CHECK(m)                                  \
+  (NOT_FALSEP (scm_memq (pg_sym_no_ ## m, flags))       \
+   ? 0 : (NOT_FALSEP (scm_memq (pg_sym_ ## m, flags))   \
           ? 1 : default_print_options.m))
 
   po->header   = _FLAG_CHECK (header);
@@ -3429,7 +3418,7 @@ GH_DEFPROC
  * installation features
  */
 
-#define SIMPLE_SYMBOL(s) \
+#define SIMPLE_SYMBOL(s)                        \
   SCM_SYMBOL (pg_sym_ ## s, # s)
 
 #define SYM(s)  (pg_sym_ ## s)
