@@ -1,5 +1,11 @@
 2008-07-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	C optimization: Declare unboxing funcs inline.
+
+	* libpq.c (xc_unbox, res_unbox, sepo_unbox): Declare `inline'.
+
+2008-07-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Decruft: Remove gc- and init-debugging macros.
 
 	* libpq.c (GC_PRINT, INIT_PRINT): Delete macros

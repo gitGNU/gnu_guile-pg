@@ -90,7 +90,7 @@ xc_p (SCM obj)
   return SCM_SMOB_PREDICATE (pg_conn_tag, obj);
 }
 
-static xc_t *
+static inline xc_t *
 xc_unbox (SCM obj)
 {
   return ((xc_t *) SCM_SMOB_DATA (obj));
@@ -873,7 +873,7 @@ res_p (SCM obj)
   return SCM_SMOB_PREDICATE (pg_result_tag, obj);
 }
 
-static PGresult *
+static inline PGresult *
 res_unbox (SCM obj)
 {
   return ((PGresult*) SCM_SMOB_DATA (obj));
@@ -2793,7 +2793,7 @@ sepo_p (SCM obj)
   return SCM_SMOB_PREDICATE (sepo_type_tag, obj);
 }
 
-static PQprintOpt *
+static inline PQprintOpt *
 sepo_unbox (SCM obj)
 {
   return ((PQprintOpt *) SCM_SMOB_DATA (obj));
