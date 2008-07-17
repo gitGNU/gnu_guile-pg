@@ -1,3 +1,13 @@
+2008-07-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Decruft: Remove gc- and init-debugging macros.
+
+	* libpq.c (GC_PRINT, INIT_PRINT): Delete macros
+	and surrounding pre-processor conditionals.
+	(xc_mark, xc_free): Remove `GC_PRINT' call.
+	(res_mark, res_free, sepo_mark, sepo_free): Likewise.
+	(init_module): Remove `INIT_PRINT' call.
+
 2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Increase abstraction: Use "cell word 0" for lobport access.

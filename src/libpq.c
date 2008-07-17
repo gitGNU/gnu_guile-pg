@@ -51,18 +51,6 @@
  * guile abstractions
  */
 
-#ifdef GC_DEBUG
-#define GC_PRINT(x) x
-#else
-#define GC_PRINT(x) (void)0
-#endif
-
-#ifdef INIT_DEBUG
-#define INIT_PRINT(x) x
-#else
-#define INIT_PRINT(x) (void)0
-#endif
-
 #define NOT_FALSEP(x)      (SCM_NFALSEP (x))
 #define EXACTLY_FALSEP(x)  (SCM_FALSEP (x))
 #define EXACTLY_TRUEP(x)   (gh_eq_p ((x), SCM_BOOL_T))
@@ -149,7 +137,6 @@ xc_mark (SCM obj)
 {
   xc_t *xc = xc_unbox (obj);
 
-  GC_PRINT (fprintf (stderr, "marking PG-CONN %p\n", xc));
   scm_gc_mark (xc->notice);
   return xc->client;
 }
@@ -159,8 +146,6 @@ xc_free (SCM obj)
 {
   xc_t *xc = xc_unbox (obj);
   scm_sizet size = sizeof (xc_t);
-
-  GC_PRINT (fprintf (stderr, "sweeping PG-CONN %p\n", xc));
 
   /* close connection to postgres */
   if (xc->dbconn)
@@ -941,7 +926,6 @@ res_display (SCM exp, SCM port, scm_print_state *pstate)
 static SCM
 res_mark (SCM obj)
 {
-  GC_PRINT (fprintf (stderr, "marking PG-RESULT %p\n", res_unbox (obj)));
   return SCM_BOOL_F;
 }
 
@@ -949,8 +933,6 @@ static scm_sizet
 res_free (SCM obj)
 {
   PGresult *res = res_unbox (obj);
-
-  GC_PRINT (fprintf (stderr, "sweeping PG-RESULT %p\n", res));
 
   /* clear the result */
   if (res)
@@ -2820,7 +2802,6 @@ sepo_unbox (SCM obj)
 static SCM
 sepo_mark (SCM obj)
 {
-  GC_PRINT (fprintf (stderr, "marking PG-PRINT-OPTION %p\n", obj));
   return SCM_BOOL_F;
 }
 
@@ -2829,8 +2810,6 @@ sepo_free (SCM obj)
 {
   PQprintOpt *po = sepo_unbox (obj);
   scm_sizet size = 0;
-
-  GC_PRINT (fprintf (stderr, "sweeping PG-PRINT-OPTION %p\n", obj));
 
 #define _FREE_STRING(p)                         \
   do {                                          \
@@ -3495,7 +3474,6 @@ init_module (void)
 #ifdef USE_OLD_SMOB_INTERFACE
   static scm_smobfuns type_rec;
 #endif
-  INIT_PRINT (fprintf (stderr, "entered init_postgres function.\n"));
 
 #ifdef USE_OLD_SMOB_INTERFACE
 
