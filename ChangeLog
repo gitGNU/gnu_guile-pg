@@ -138,7 +138,8 @@
 
 	* libpostgres.c (xc_display): Don't output `xc->count' and colon.
 	(xr_display): Don't output `xr->count' and colon.
-	* doc/guile-pg.twerp (Database Connections, Processing Results):
+	* doc/guile-pg.twerp (Database Connections)
+	(Processing Results, Quick Start, Single-Table Abstraction):
 	Update examples and descriptions to not mention serial numbers.
 
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
