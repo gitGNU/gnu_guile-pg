@@ -23,6 +23,9 @@
            (newline)
            (exit #f)))
 
+(simple-format #t "PGHOST: ~A\n" (or (getenv "PGHOST")
+                                     '(unset)))
+
 (use-modules (database postgres))
 
 (exit #t)
