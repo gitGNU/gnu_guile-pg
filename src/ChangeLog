@@ -1,3 +1,16 @@
+2008-08-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Make `pgtable-manager' faster.
+
+	* postgres-table.scm: From module (ice-9 common-list),
+	select also `pick-mappings'.
+	(fmt): Incorporate into `pgtable-manager'.
+	(symbol->qstring, serial? col-defs, drop-proc, create-proc)
+	(->db-insert-string, clean-defs, pre-insert-into, insert-values-proc)
+	(insert-col-values-cmd, insert-col-values-proc, insert-alist-proc)
+	(delete-rows-proc, update-col-proc, select-proc): Likewise.
+	(pgtable-manager): Compute each column name's "qstring" only once.
+
 2008-07-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	C optimization: Declare unboxing funcs inline.

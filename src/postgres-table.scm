@@ -31,6 +31,7 @@
 (define-module (database postgres-table)
   #:use-module ((ice-9 common-list)
                 #:select (find-if
+                          pick-mappings
                           remove-if))
   #:use-module ((database postgres)
                 #:select (pg-connection?
@@ -72,154 +73,6 @@
 ;;; support
 
 (define ohints (make-object-property))
-
-(define (fmt . args)
-  (apply simple-format #f args))
-
-(define (symbol->qstring symbol)
-  (fmt "~S" (symbol->string symbol)))
-
-(define (serial? def)
-  (eq? 'serial (def:type-name def)))
-
-(define (col-defs defs cols)
-  (map (lambda (col)
-         (or (find-if (lambda (def)
-                        (eq? (def:column-name def) col))
-                      defs)
-             (error "invalid field name:" col)))
-       cols))
-
-;;; drops
-
-(define (drop-proc beex table-name defs)
-  (define cmds
-    (delay (let loop ((ls defs)
-                      (acc (list (sql-command<-trees
-                                  #:DROP #:TABLE table-name))))
-             (if (null? ls)
-                 (reverse! acc)
-                 ;; Also drop associated sequences created by magic
-                 ;; `serial' type.  Apparently, this was not handled
-                 ;; automatically in old PostgreSQL versions.  See
-                 ;; PostgreSQL User Guide, 5.1.4: The Serial Types.
-                 (loop (cdr ls)
-                       (if (serial? (car ls))
-                           (cons (sql-command<-trees
-                                  #:DROP #:SEQUENCE
-                                  (fmt "~A_~A_seq"
-                                       table-name
-                                       (def:column-name (car ls))))
-                                 acc)
-                           acc))))))
-  ;; rv
-  (lambda ()
-    (map beex (force cmds))))
-
-;;; create table
-
-(define (create-proc beex table-name defs)
-  (define cmd
-    (delay (sql-command<-trees
-            #:CREATE #:TABLE table-name
-            (cseptree (lambda (def)
-                        (list (symbol->qstring (def:column-name def))
-                              (symbol->string (def:type-name def))
-                              (def:type-options def)))
-                      defs #t))))
-  ;; rv
-  (lambda ()
-    (beex (force cmd))))
-
-;;; inserts
-
-(define (->db-insert-string db-col-type x)
-  (or (and (sql-pre? x) x)
-      (and (eq? #:NULL x) "NULL")
-      (let ((def (dbcoltype-lookup db-col-type)))
-        (sql-quote (or (false-if-exception ((dbcoltype:stringifier def) x))
-                       (dbcoltype:default def))))))
-
-(define (clean-defs defs)
-  (remove-if serial? defs))
-
-(define (pre-insert-into table-name)
-  (sql<-trees #:INSERT #:INTO table-name))
-
-(define (insert-values-proc beex table-name defs)
-  (define cdefs (delay (clean-defs defs)))
-  (define pre (delay (sql<-trees
-                      (pre-insert-into table-name)
-                      (cseptree (lambda (def)
-                                  (symbol->qstring (def:column-name def)))
-                                (force cdefs)
-                                #t)
-                      #:VALUES)))
-  (define types (delay (map def:type-name (force cdefs))))
-  (define (make-cmd data)
-    (sql-command<-trees
-     (force pre) (cseptree ->db-insert-string (force types) #t
-                           data)))
-  ;; rv
-  (lambda data
-    (beex (make-cmd data))))
-
-(define (insert-col-values-cmd pre defs cols data)
-  (let ((cdefs (clean-defs (col-defs defs cols))))
-    (sql-command<-trees
-     pre (cseptree symbol->qstring cols #t)
-     #:VALUES (cseptree ->db-insert-string (map def:type-name cdefs) #t
-                        data))))
-
-(define (insert-col-values-proc beex table-name defs)
-  (define pre (delay (pre-insert-into table-name)))
-  (define (make-cmd cols data)
-    (insert-col-values-cmd (force pre) defs cols data))
-  ;; rv
-  (lambda (cols . data)
-    (beex (make-cmd cols data))))
-
-(define (insert-alist-proc beex table-name defs)
-  (define pre (delay (pre-insert-into table-name)))
-  (define (make-cmd alist)
-    (insert-col-values-cmd (force pre) defs
-                           (map car alist)        ;;; cols
-                           (map cdr alist)))      ;;; values
-  ;; rv
-  (lambda (alist)
-    (beex (make-cmd alist))))
-
-;;; delete
-
-(define (delete-rows-proc beex table-name ignored-defs)
-  (define pre (delay (sql<-trees #:DELETE #:FROM table-name)))
-  (define (make-cmd where-condition)
-    (sql-command<-trees
-     (force pre)
-     (make-WHERE-tree where-condition)))
-  ;; rv
-  (lambda (where-condition)
-    (beex (make-cmd where-condition))))
-
-;;; update
-
-(define (update-col-proc beex table-name defs)
-  (define pre (delay (sql<-trees #:UPDATE table-name #:SET)))
-  (define (make-cmd cols data where-condition)
-    (sql-command<-trees
-     (force pre)
-     (cseptree (lambda (def val)
-                 (list (symbol->qstring (def:column-name def))
-                       #:=
-                       (->db-insert-string (def:type-name def) val)))
-               (col-defs defs cols)
-               #f data)
-     (make-WHERE-tree where-condition)))
-  ;; rv
-  (lambda (cols data where-condition)
-    (beex (make-cmd cols data where-condition))))
-
-;;; select
 
 ;; Return a @dfn{compiled outspec object} from @var{spec} and @var{defs},
 ;; suitable for passing to the @code{select} choice of @code{pgtable-manager}.
@@ -305,29 +158,6 @@
   (and (pair? obj)
        (eq? compile-outspec (car obj))
        (cdr obj)))
-
-(define (select-proc beex table-name defs)
-  (let ((froms (list (string->symbol (with-input-from-string
-                                         table-name read)))))
-    (lambda (outspec . rest-clauses)
-      (let ((hints #f))
-        (define (set-hints!+sel pair)
-          (set! hints (car pair))
-          (cdr pair))
-        (let* ((cmd (sql-command<-trees
-                     (make-SELECT/FROM/COLS-tree
-                      froms
-                      (cond ((compiled-outspec?-extract outspec)
-                             => set-hints!+sel)
-                            (else
-                             (set-hints!+sel
-                              (cdr (compile-outspec outspec defs))))))
-                     (cond ((null? rest-clauses) '())
-                           (else (parse+make-SELECT/tail-tree
-                                  rest-clauses)))))
-               (res (beex cmd)))
-          (and hints (set! (ohints res) hints))
-          res)))))
 
 ;;; dispatch
 
@@ -422,6 +252,13 @@
 ;; @samp{dead connection} error.
 ;;
 (define (pgtable-manager db-spec table-name defs)
+
+  (define (fmt . args)
+    (apply simple-format #f args))
+
+  (define (symbol->qstring symbol)
+    (object->string (symbol->string symbol)))
+
   (or (and (pair? defs) (not (null? defs)))
       (error "malformed defs:" defs))
   (for-each (lambda (def)
@@ -438,30 +275,146 @@
                             db-spec)))
                      (else (error "bad db-spec:" db-spec))))
          (trace-exec #f)
+         (qstring-colnames (map (lambda (name)
+                                  (cons name (symbol->qstring name)))
+                                (map def:column-name defs)))
          (objectifiers (def:objectifiers defs))
-         (dq-table-name (object->string table-name)))
+         (dq-table-name (object->string table-name))
+         ;; for delete-rows
+         (delete-rows/pre (delay (sql<-trees #:DELETE #:FROM dq-table-name)))
+         ;; for update-col
+         (update-col/pre (delay (sql<-trees #:UPDATE dq-table-name #:SET)))
+         ;; for select
+         (froms (list (string->symbol table-name))))
 
-    (define (beex s)                    ; back-end exec
-      (cond (trace-exec (display s trace-exec)
-                        (newline trace-exec)))
-      (pg-exec conn s))
+    (define (serial? def)
+      (eq? 'serial (def:type-name def)))
 
-    (define (pp proc-proc)
-      (proc-proc beex dq-table-name defs))
+    (define (col-defs defs cols)
+      (map (lambda (col)
+             (or (find-if (lambda (def)
+                            (eq? (def:column-name def) col))
+                          defs)
+                 (error "invalid field name:" col)))
+           cols))
+
+    (define (xt . args)                 ; execute tree
+      (let ((s (apply sql-command<-trees args)))
+        (cond (trace-exec (display s trace-exec)
+                          (newline trace-exec)))
+        (pg-exec conn s)))
 
     (define (res->foo-proc proc)
       (lambda (res)
         (proc res (or (ohints res)
                       objectifiers))))
 
-    (let ((drop (pp drop-proc))
-          (create (pp create-proc))
-          (insert-values (pp insert-values-proc))
-          (insert-col-values (pp insert-col-values-proc))
-          (insert-alist (pp insert-alist-proc))
-          (delete-rows (pp delete-rows-proc))
-          (update-col (pp update-col-proc))
-          (select (pp select-proc))
+    ;; inserts
+
+    (define (qstring<-colname def)
+      (assq-ref qstring-colnames (def:column-name def)))
+
+    (define (->db-insert-string db-col-type x)
+      (or (and (sql-pre? x) x)
+          (and (eq? #:NULL x) "NULL")
+          (let* ((def (dbcoltype-lookup db-col-type))
+                 (s (or (false-if-exception ((dbcoltype:stringifier def) x))
+                        (dbcoltype:default def))))
+            (or (string? s) (error "not a string:" s))
+            (sql-pre (sql-quote s)))))
+
+    (define (insert-variant variant)
+
+      (define (clean-defs defs)
+        (remove-if serial? defs))
+
+      (let* ((ii (delay (sql<-trees #:INSERT #:INTO dq-table-name)))
+             ;; Following used only for `do-insert-values'.
+             (cdefs (delay (clean-defs defs)))
+             (pre (delay (sql<-trees
+                          (force ii)
+                          (cseptree qstring<-colname (force cdefs) #t)
+                          #:VALUES)))
+             (types (delay (map def:type-name (force cdefs)))))
+
+        (define (layout-data types data)
+          (cseptree ->db-insert-string types #t data))
+
+        (define (do-insert-values . data)
+          (xt (force pre) (layout-data (force types) data)))
+
+        (define (do-icv cols data)
+          (xt (force ii) (cseptree symbol->qstring cols #t)
+              #:VALUES (layout-data (map def:type-name
+                                         (clean-defs (col-defs defs cols)))
+                                    data)))
+
+        (define (do-insert-col-values cols . data)
+          (do-icv cols data))
+
+        (define (do-insert-alist alist)
+          (do-icv (map car alist)       ; cols
+                  (map cdr alist)))     ; values
+
+        (case variant
+          ((#:values)     do-insert-values)
+          ((#:col-values) do-insert-col-values)
+          ((#:alist)      do-insert-alist))))
+
+    ;; bundle it all up
+
+    (define (drop)
+      (map (lambda (x)
+             (xt #:DROP x))
+           `((#:TABLE ,dq-table-name)
+             ;; Also drop associated sequences created by magic `serial'
+             ;; type.  Apparently, this was not handled automatically in
+             ;; old PostgreSQL versions.  See PostgreSQL User Guide: The
+             ;; Serial Types.
+             ,@(pick-mappings
+                (lambda (def)
+                  (and (serial? def)
+                       `(#:SEQUENCE ,(fmt "~A_~A_seq"
+                                          table-name
+                                          (def:column-name def)))))
+                defs))))
+
+    (define (create)
+      (xt #:CREATE #:TABLE dq-table-name
+          (cseptree (lambda (def)
+                      (list (symbol->qstring (def:column-name def))
+                            (symbol->string (def:type-name def))
+                            (def:type-options def)))
+                    defs #t)))
+
+    (define (delete-rows where-condition)
+      (xt (force delete-rows/pre)
+          (make-WHERE-tree where-condition)))
+
+    (define (update-col cols data where-condition)
+      (xt (force update-col/pre)
+          (cseptree (lambda (def val)
+                      (list (qstring<-colname def)
+                            #:=
+                            (->db-insert-string (def:type-name def) val)))
+                    (col-defs defs cols)
+                    #f data)
+          (make-WHERE-tree where-condition)))
+
+    (define (select outspec . rest-clauses)
+      (let* ((hint+cols (or (compiled-outspec?-extract outspec)
+                            (compiled-outspec?-extract
+                             (compile-outspec outspec defs))))
+             (res (xt (make-SELECT/FROM/COLS-tree froms (cdr hint+cols))
+                      (cond ((null? rest-clauses) '())
+                            (else (parse+make-SELECT/tail-tree
+                                   rest-clauses))))))
+        (set! (ohints res) (car hint+cols))
+        res))
+
+    (let ((insert-values     (insert-variant #:values))
+          (insert-col-values (insert-variant #:col-values))
+          (insert-alist      (insert-variant #:alist))
           (tuples-result->object-alist (res->foo-proc result->object-alist))
           (tuples-result->alists (res->foo-proc result->object-alists))
           (tuples-result->rows (res->foo-proc result->object-rows)))
@@ -475,14 +428,9 @@
         (set! tuples-result->rows #f)
         (set! tuples-result->alists #f)
         (set! tuples-result->object-alist #f)
-        (set! select #f)
-        (set! update-col #f)
-        (set! delete-rows #f)
         (set! insert-alist #f)
         (set! insert-col-values #f)
         (set! insert-values #f)
-        (set! create #f)
-        (set! drop #f)
         (set! trace-exec #f)
         (pg-finish conn)
         (set! conn #f))
