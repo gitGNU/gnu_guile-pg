@@ -1,5 +1,12 @@
 2008-08-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Debogify: Make `pgtable-manager' INSERTs no longer strip `serial' cols.
+
+	* postgres-table.scm (pgtable-manager insert-variant clean-defs):
+	Delete internal proc; update callers to elide its call.
+
+2008-08-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Make `pgtable-manager' faster.
 
 	* postgres-table.scm: From module (ice-9 common-list),

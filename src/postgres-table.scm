@@ -324,18 +324,13 @@
             (sql-pre (sql-quote s)))))
 
     (define (insert-variant variant)
-
-      (define (clean-defs defs)
-        (remove-if serial? defs))
-
       (let* ((ii (delay (sql<-trees #:INSERT #:INTO dq-table-name)))
              ;; Following used only for `do-insert-values'.
-             (cdefs (delay (clean-defs defs)))
              (pre (delay (sql<-trees
                           (force ii)
-                          (cseptree qstring<-colname (force cdefs) #t)
+                          (cseptree qstring<-colname defs #t)
                           #:VALUES)))
-             (types (delay (map def:type-name (force cdefs)))))
+             (types (delay (map def:type-name defs))))
 
         (define (layout-data types data)
           (cseptree ->db-insert-string types #t data))
@@ -346,7 +341,7 @@
         (define (do-icv cols data)
           (xt (force ii) (cseptree symbol->qstring cols #t)
               #:VALUES (layout-data (map def:type-name
-                                         (clean-defs (col-defs defs cols)))
+                                         (col-defs defs cols))
                                     data)))
 
         (define (do-insert-col-values cols . data)
