@@ -1,3 +1,19 @@
+2008-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Make `pgtable-manager' INSERT commands faster.
+
+	* postgres-table.scm (pgtable-manager):
+	compute number of columns and type names once.
+	(pgtable-manager serial?): Incorporate intneral proc into unique caller.
+	(pgtable-manager qstring<-colname): Likewise.
+	(pgtable-manager insert-variant): Delete internal proc.
+	(pgtable-manager do-insert): New internal proc.
+	(pgtable-manager insert-values): Likewise.
+	(pgtable-manager insert-col-values): Likewise.
+	(pgtable-manager insert-alist): Likewise.
+	(pgtable-manager die!): No longer treat `insert-alist',
+	`insert-col-values' and `insert-values' dynamically.
+
 2008-08-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Debogify: Make `pgtable-manager' INSERTs no longer strip `serial' cols.

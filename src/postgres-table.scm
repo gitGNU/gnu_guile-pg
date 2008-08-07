@@ -280,15 +280,16 @@
                                 (map def:column-name defs)))
          (objectifiers (def:objectifiers defs))
          (dq-table-name (object->string table-name))
+         ;; for do-insert
+         (ncols (length defs))
+         (typenames (map def:type-name defs))
+         (insert/pre (delay (sql<-trees #:INSERT #:INTO dq-table-name)))
          ;; for delete-rows
          (delete-rows/pre (delay (sql<-trees #:DELETE #:FROM dq-table-name)))
          ;; for update-col
          (update-col/pre (delay (sql<-trees #:UPDATE dq-table-name #:SET)))
          ;; for select
          (froms (list (string->symbol table-name))))
-
-    (define (serial? def)
-      (eq? 'serial (def:type-name def)))
 
     (define (col-defs defs cols)
       (map (lambda (col)
@@ -309,11 +310,6 @@
         (proc res (or (ohints res)
                       objectifiers))))
 
-    ;; inserts
-
-    (define (qstring<-colname def)
-      (assq-ref qstring-colnames (def:column-name def)))
-
     (define (->db-insert-string db-col-type x)
       (or (and (sql-pre? x) x)
           (and (eq? #:NULL x) "NULL")
@@ -323,38 +319,17 @@
             (or (string? s) (error "not a string:" s))
             (sql-pre (sql-quote s)))))
 
-    (define (insert-variant variant)
-      (let* ((ii (delay (sql<-trees #:INSERT #:INTO dq-table-name)))
-             ;; Following used only for `do-insert-values'.
-             (pre (delay (sql<-trees
-                          (force ii)
-                          (cseptree qstring<-colname defs #t)
-                          #:VALUES)))
-             (types (delay (map def:type-name defs))))
-
-        (define (layout-data types data)
-          (cseptree ->db-insert-string types #t data))
-
-        (define (do-insert-values . data)
-          (xt (force pre) (layout-data (force types) data)))
-
-        (define (do-icv cols data)
-          (xt (force ii) (cseptree symbol->qstring cols #t)
-              #:VALUES (layout-data (map def:type-name
-                                         (col-defs defs cols))
-                                    data)))
-
-        (define (do-insert-col-values cols . data)
-          (do-icv cols data))
-
-        (define (do-insert-alist alist)
-          (do-icv (map car alist)       ; cols
-                  (map cdr alist)))     ; values
-
-        (case variant
-          ((#:values)     do-insert-values)
-          ((#:col-values) do-insert-col-values)
-          ((#:alist)      do-insert-alist))))
+    (define (do-insert cols data)
+      (xt (force insert/pre)
+          (if cols
+              (cseptree symbol->qstring cols #t)
+              '())
+          #:VALUES
+          (cseptree ->db-insert-string
+                    (if cols
+                        (map def:type-name (col-defs defs cols))
+                        typenames)
+                    #t data)))
 
     ;; bundle it all up
 
@@ -368,7 +343,7 @@
              ;; Serial Types.
              ,@(pick-mappings
                 (lambda (def)
-                  (and (serial? def)
+                  (and (eq? 'serial (def:type-name def))
                        `(#:SEQUENCE ,(fmt "~A_~A_seq"
                                           table-name
                                           (def:column-name def)))))
@@ -382,6 +357,16 @@
                             (def:type-options def)))
                     defs #t)))
 
+    (define (insert-values . data)
+      (do-insert #f data))
+
+    (define (insert-col-values cols . data)
+      (do-insert cols data))
+
+    (define (insert-alist alist)
+      (do-insert (map car alist)        ; cols
+                 (map cdr alist)))      ; values
+
     (define (delete-rows where-condition)
       (xt (force delete-rows/pre)
           (make-WHERE-tree where-condition)))
@@ -389,7 +374,7 @@
     (define (update-col cols data where-condition)
       (xt (force update-col/pre)
           (cseptree (lambda (def val)
-                      (list (qstring<-colname def)
+                      (list (assq-ref qstring-colnames (def:column-name def))
                             #:=
                             (->db-insert-string (def:type-name def) val)))
                     (col-defs defs cols)
@@ -407,10 +392,7 @@
         (set! (ohints res) (car hint+cols))
         res))
 
-    (let ((insert-values     (insert-variant #:values))
-          (insert-col-values (insert-variant #:col-values))
-          (insert-alist      (insert-variant #:alist))
-          (tuples-result->object-alist (res->foo-proc result->object-alist))
+    (let ((tuples-result->object-alist (res->foo-proc result->object-alist))
           (tuples-result->alists (res->foo-proc result->object-alists))
           (tuples-result->rows (res->foo-proc result->object-rows)))
 
@@ -423,9 +405,6 @@
         (set! tuples-result->rows #f)
         (set! tuples-result->alists #f)
         (set! tuples-result->object-alist #f)
-        (set! insert-alist #f)
-        (set! insert-col-values #f)
-        (set! insert-values #f)
         (set! trace-exec #f)
         (pg-finish conn)
         (set! conn #f))
