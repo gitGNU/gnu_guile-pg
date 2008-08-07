@@ -1,5 +1,13 @@
 2008-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	For `pgtable-manager', validate INSERT column counts.
+
+	* postgres-table (pgtable-manager check-col-count): New proc.
+	(pgtable-manager insert-values): Use `check-col-count'.
+	(pgtable-manager insert-col-values): Likewise.
+
+2008-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Make `pgtable-manager' INSERT commands faster.
 
 	* postgres-table.scm (pgtable-manager):

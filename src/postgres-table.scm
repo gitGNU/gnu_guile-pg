@@ -310,6 +310,11 @@
         (proc res (or (ohints res)
                       objectifiers))))
 
+    (define (check-col-count who exp got)
+      (or (= exp got)
+          (error (fmt "column count mismatch for ~A ~A: expected ~A, got ~A"
+                      who dq-table-name exp got))))
+
     (define (->db-insert-string db-col-type x)
       (or (and (sql-pre? x) x)
           (and (eq? #:NULL x) "NULL")
@@ -358,9 +363,11 @@
                     defs #t)))
 
     (define (insert-values . data)
+      (check-col-count #:insert-values ncols (length data))
       (do-insert #f data))
 
     (define (insert-col-values cols . data)
+      (check-col-count #:insert-col-values (length cols) (length data))
       (do-insert cols data))
 
     (define (insert-alist alist)
