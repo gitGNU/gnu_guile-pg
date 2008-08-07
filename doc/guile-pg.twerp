@@ -1669,8 +1669,15 @@ The rest of the procedures in this chapter combine conversion of the raw
 result strings to Scheme objects, with different collection methods.
 @xref{Types Conversion}.  (For access to the unconverted result strings, use
 the procedure @code{identity} as the @dfn{objectifier}, which in effect does
-no conversion at all.)  The examples are based upon a result object that can
-briefly described as:
+no conversion at all.)
+
+The degenerate collection method is no collection at all!  (A common idiom is
+to @code{SELECT EXPR;} to get a result consisting of one row and one column.)
+
+@twerpdoc (object<-result)
+
+For other collection methods, we include examples to clarify.
+The examples are based upon a result object that can briefly described as:
 
 @itemize
 @item two tuples each with two fields

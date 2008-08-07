@@ -38,6 +38,7 @@
                           pg-getvalue
                           pg-fname))
   #:export (for-each-tuple
+            object<-result
             result-field->object-list
             result->object-alist
             result->object-alists
@@ -59,6 +60,11 @@
            (apply proc (map (lambda (fn)
                               (pg-getvalue result tn fn))
                             field-range))))))
+
+;; Return @var{result} tuple 0 field 0, converted using @var{objectifier}.
+;;
+(define (object<-result result objectifier)
+  (objectifier (pg-getvalue result 0 0)))
 
 ;; For @var{result} field number @var{fn}, map @var{objectifier}.
 ;; Return a list whose length is the number of tuples in @var{result}.

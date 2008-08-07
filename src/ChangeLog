@@ -1,5 +1,11 @@
 2008-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	New (database postgres-resx) proc: object<-result
+
+	* postgres-resx.scm (object<-result): New proc, exported.
+
+2008-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Hide `compile-outspec' implementation details.
 
 	* postgres-table.scm (compiled-outspec?): New object property.
