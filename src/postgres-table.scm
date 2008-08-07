@@ -72,6 +72,7 @@
 
 ;;; support
 
+(define compiled-outspec? (make-object-property))
 (define ohints (make-object-property))
 
 ;; Return a @dfn{compiled outspec object} from @var{spec} and @var{defs},
@@ -147,17 +148,16 @@
             (else
              (bad-select-part x))))
 
-    (let ((s (map munge (cond ((eq? #t spec) (map def:column-name defs))
-                              ((pair? spec) spec)
-                              (else (list spec))))))
-      ;; rv, a "compiled outspec"
-      (cons compile-outspec
-            (cons (reverse! objectifiers) s)))))
+    (let* ((s (map munge (cond ((eq? #t spec) (map def:column-name defs))
+                               ((pair? spec) spec)
+                               (else (list spec)))))
+           ;; a "compiled outspec"
+           (rv (cons (reverse! objectifiers) s)))
+      (set! (compiled-outspec? rv) #t)
+      rv)))
 
 (define (compiled-outspec?-extract obj)
-  (and (pair? obj)
-       (eq? compile-outspec (car obj))
-       (cdr obj)))
+  (and (compiled-outspec? obj) obj))
 
 ;;; dispatch
 

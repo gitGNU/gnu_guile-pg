@@ -1,5 +1,14 @@
 2008-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Hide `compile-outspec' implementation details.
+
+	* postgres-table.scm (compiled-outspec?): New object property.
+	(compile-outspec): Replace `(cons compiled-outspec RV)'
+	marking with setting of property `compile-outspec?'.
+	(compiled-outspec?-extract): Rewrite.
+
+2008-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	For `pgtable-manager', validate INSERT column counts.
 
 	* postgres-table (pgtable-manager check-col-count): New proc.
