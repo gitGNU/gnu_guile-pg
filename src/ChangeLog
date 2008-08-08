@@ -1,3 +1,14 @@
+2008-08-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Support "E-prefixing" for `pgtable-manager' SQL quoting.
+
+	* postgres-table.scm: From module (database postgres),
+	also select `pg-result-status'.
+	(pgtable-manager): Don't use `sql-quote' directly; instead, init
+	at closure-creation time the SQL-quoting procedure that wraps
+	`sql-quote' to a variant that does "E-prefixing" if the supported
+	by the backend.
+
 2008-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	New (database postgres-resx) proc: object<-result
