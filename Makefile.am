@@ -37,7 +37,8 @@ install-data-hook:
 CLEANFILES = $(noinst_DATA)
 
 dist-hook:
-	sed -i 's/VERSION/$(VERSION)/' $(distdir)/test/show-platform
+	sed -i 's/RECIP/$(PACKAGE_BUGREPORT)/;s/VERSION/$(VERSION)/' \
+	  $(distdir)/test/show-platform
 
 ## bonus target
 destroy-nonmodule-guile-pg-prior-install:

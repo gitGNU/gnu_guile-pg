@@ -2,20 +2,19 @@
 # usage: show-platform      # display "uname -a" and "tool: version" info
 #        show-platform -m   # also mail info to ttn
 
-recip='ttn@gnuvola.org'
+recip='RECIP'
 
 go ()
 {
     echo guile-pg: VERSION
     for opt in m s r ; do echo uname-${opt}: `uname -$opt` ; done
-    echo autoconf: `autoconf --version | head -1 | sed -e 's/[^0-9.]*//g'`
-    echo automake: `automake --version | head -1 | sed -e 's/[^0-9.]*//g'`
-    echo libtool: `libtool --version | sed 's/([^)]*)//g;s/^[^0-9]*//;1!d'`
+    echo autoconf: `autoconf --version | sed -e 's/[^0-9.]*//g;1q'`
+    echo automake: `automake --version | sed -e 's/[^0-9.]*//g;1q'`
+    echo libtool: `libtool --version | sed 's/([^)]*)//g;s/^[^0-9]*//;1q'`
     echo gcc: `gcc --version`
     echo cc: `cc --version`
-    echo psql: `psql --version | head -1 | sed -e 's/[^0-9.]*//g'`
+    echo psql: `psql --version | sed -e 's/[^0-9.]*//g;1q'`
     echo guile: `guile-config info guileversion`
-    echo libguile: `guile-config info libguileinterface`
 }
 
 gosexp ()

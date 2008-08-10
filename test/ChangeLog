@@ -1,3 +1,10 @@
+2008-08-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Tighten up "show-platform" a bit.
+
+	* show-platform (recip): Use `RECIP'.
+	(go): Avoid head(1).  Also, don't report libguile version.
+
 2008-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Display env var PGHOST for aliveness testing.
