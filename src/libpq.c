@@ -1478,6 +1478,12 @@ GH_DEFPROC
  * exec and results
  */
 
+/* At this time, we use `RESFMT_TEXT' exclusively.  TODO: Figure out what
+   higher layers need to do/know to be able to handle both text and binary,
+   then make it dynamic.  */
+#define RESFMT_TEXT    0
+#define RESFMT_BINARY  1
+
 GH_DEFPROC
 (pg_exec, "pg-exec", 2, 0, 0,
  (SCM conn, SCM statement),
@@ -1526,16 +1532,14 @@ GH_DEFPROC
   PGconn *dbconn;
   PGresult *result;
   struct paramspecs ps;
-  int result_format;
 
   VALIDATE_PARAM_RELATED_ARGS (statement);
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
-  result_format = 0;                    /* text */
   SCM_DEFER_INTS;
   result = PQexecParams (dbconn, ROZT (statement), ps.len,
                          ps.types, ps.values, ps.lengths, ps.formats,
-                         result_format);
+                         RESFMT_TEXT);
   z = res_box (result);
   SCM_ALLOW_INTS;
   drop_paramspecs (&ps);
@@ -1566,16 +1570,14 @@ GH_DEFPROC
   PGconn *dbconn;
   PGresult *result;
   struct paramspecs ps;
-  int result_format;
 
   VALIDATE_PARAM_RELATED_ARGS (stname);
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
-  result_format = 0;                    /* text */
   SCM_DEFER_INTS;
   result = PQexecPrepared (dbconn, ROZT (stname), ps.len,
                            ps.values, ps.lengths, ps.formats,
-                           result_format);
+                           RESFMT_TEXT);
   z = res_box (result);
   SCM_ALLOW_INTS;
   drop_paramspecs (&ps);
@@ -3268,16 +3270,15 @@ GH_DEFPROC
 
   PGconn *dbconn;
   struct paramspecs ps;
-  int result, result_format;
+  int result;
 
   VALIDATE_PARAM_RELATED_ARGS (query);
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
-  result_format = 0;                    /* text */
   SCM_DEFER_INTS;
   result = PQsendQueryParams (dbconn, ROZT (query), ps.len,
                               ps.types, ps.values, ps.lengths, ps.formats,
-                              result_format);
+                              RESFMT_TEXT);
   SCM_ALLOW_INTS;
   drop_paramspecs (&ps);
   return result ? SCM_BOOL_T : SCM_BOOL_F;
@@ -3301,16 +3302,15 @@ GH_DEFPROC
 
   PGconn *dbconn;
   struct paramspecs ps;
-  int result, result_format;
+  int result;
 
   VALIDATE_PARAM_RELATED_ARGS (stname);
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
-  result_format = 0;                    /* text */
   SCM_DEFER_INTS;
   result = PQsendQueryPrepared (dbconn, ROZT (stname), ps.len,
                                 ps.values, ps.lengths, ps.formats,
-                                result_format);
+                                RESFMT_TEXT);
   SCM_ALLOW_INTS;
   drop_paramspecs (&ps);
   return result ? SCM_BOOL_T : SCM_BOOL_F;

@@ -1,5 +1,13 @@
 2008-08-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Increase abstraction: Define C macros to specify "result format".
+
+	* libpq.c (RESFMT_TEXT, RESFMT_BINARY): New value macros.
+	(pg_exec_params, pg_exec_prepared, pg_send_query_params)
+	(pg_send_query_prepared): Use `RESFMT_TEXT'.
+
+2008-08-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	C optimization: Declare smob-predicate funcs inline.
 
 	* libpq.c (xc_p, res_p, sepo_p): Declare `inline'.
