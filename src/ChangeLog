@@ -1,3 +1,9 @@
+2008-08-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	C optimization: Declare smob-predicate funcs inline.
+
+	* libpq.c (xc_p, res_p, sepo_p): Declare `inline'.
+
 2008-08-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Support "E-prefixing" for `pgtable-manager' SQL quoting.

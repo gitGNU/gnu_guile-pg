@@ -84,7 +84,7 @@ typedef struct
   FILE        *fptrace;       /* The current trace stream */
 } xc_t;
 
-static int
+static inline int
 xc_p (SCM obj)
 {
   return SCM_SMOB_PREDICATE (pg_conn_tag, obj);
@@ -861,7 +861,7 @@ lob_printpt (SCM exp, SCM port, scm_print_state *pstate)
 
 static unsigned long int pg_result_tag;
 
-static int
+static inline int
 res_p (SCM obj)
 {
   return SCM_SMOB_PREDICATE (pg_result_tag, obj);
@@ -2778,7 +2778,7 @@ GH_DEFPROC
 
 static long sepo_type_tag;
 
-static int
+static inline int
 sepo_p (SCM obj)
 {
   return SCM_SMOB_PREDICATE (sepo_type_tag, obj);
