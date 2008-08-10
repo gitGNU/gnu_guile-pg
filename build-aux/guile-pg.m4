@@ -98,10 +98,6 @@ AC_DEFUN([PQ_FLAGS],[
        PQ_LDFLAGS="-L$prefix/lib -lpq"
     ])
   ])
-  AC_CHECK_LIB(crypt, crypt)
-  if test "$ac_cv_lib_crypt" = yes ; then
-    PQ_LDFLAGS="$PQ_LDFLAGS -lcrypt"
-  fi
   # add rpath to link flags if requested by --enable-pq-rpath;
   # note: the regexp passed to sed relies on a trailing space,
   # which means that removing "-lpq" from PQ_LDFLAGS will break it
