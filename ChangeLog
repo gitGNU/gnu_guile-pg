@@ -1,3 +1,18 @@
+2008-08-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Drop support for PostgreSQL 7.3.x and earlier.
+
+	* build-aux/guile-pg.m4 (PQ_FLAGS): No longer check
+	for `PQsetdbLogin' in libpq.  Instead, check for
+	`PQprotocolVersion'.  Update error message.
+	* configure.in: No longer check for `PQconnectdb' in libpq.
+	No longer check for `InvalidOID' decl in libpq-fe.h.
+	(INVALIDOID_HEADER): Delete this AC_DEFINE.
+	(PQfmod, PQbinaryTuples, PQbackendPID)
+	(PQresultErrorMessage, PQpass, PQputnbytes)
+	(PQoidValue, PQsetnonblocking, PQisnonblocking)
+	(PQprotocolVersion, PQfreemem): No longer AC_CHECK_FUNCS these.
+
 2008-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	New (database postgres-resx) proc: object<-result

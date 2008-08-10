@@ -35,9 +35,6 @@
 #include <guile/gh.h>
 #include <libpq-fe.h>
 #include <libpq/libpq-fs.h>
-#ifdef INVALIDOID_HEADER                /* PostgreSQL folks <- slack */
-#include INVALIDOID_HEADER
-#endif
 
 #if __STDC_VERSION__ < 199901L
 # if __GNUC__ >= 2
@@ -961,18 +958,6 @@ strip_newlines (char *str)
  * common parameter handling
  */
 
-#ifndef HAVE_PQPROTOCOLVERSION
-
-static char nosupp[] = "unsupported procedure";
-
-#define SORRYNOSUPPORT()  (scm_misc_error (FUNC_NAME, nosupp, SCM_EOL))
-
-static char noparams[] = "param variant unsupported";
-
-#define SORRYNOPARAMS()  (scm_misc_error (FUNC_NAME, noparams, SCM_EOL))
-
-#else /* HAVE_PQPROTOCOLVERSION */
-
 struct paramspecs
 {
   int          len;
@@ -1029,8 +1014,6 @@ drop_paramspecs (struct paramspecs *ps)
   if (ps->formats) free (ps->formats);
 }
 
-#endif /* HAVE_PQPROTOCOLVERSION */
-
 
 /*
  * other abstractions
@@ -1078,9 +1061,7 @@ GH_DEFPROC
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
-#ifdef HAVE_PQPROTOCOLVERSION
   v = PQprotocolVersion (dbconn);
-#endif
 
   return (0 == v ? SCM_BOOL_F : gh_int2scm (v));
 #undef FUNC_NAME
@@ -1522,12 +1503,6 @@ GH_DEFPROC
  "parameterized string, and @var{parms} is a parameter-vector.")
 {
 #define FUNC_NAME s_pg_exec_params
-#ifndef HAVE_PQPROTOCOLVERSION
-
-  return SORRYNOPARAMS ();
-
-#else /* HAVE_PQPROTOCOLVERSION */
-
   SCM z;
   PGconn *dbconn;
   PGresult *result;
@@ -1544,8 +1519,6 @@ GH_DEFPROC
   SCM_ALLOW_INTS;
   drop_paramspecs (&ps);
   return z;
-
-#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -1559,13 +1532,6 @@ GH_DEFPROC
  "@var{parms} is a parameter-vector.")
 {
 #define FUNC_NAME s_pg_exec_prepared
-
-#ifndef HAVE_PQPROTOCOLVERSION
-
-  return SORRYNOPARAMS ();
-
-#else /* HAVE_PQPROTOCOLVERSION */
-
   SCM z;
   PGconn *dbconn;
   PGresult *result;
@@ -1582,8 +1548,6 @@ GH_DEFPROC
   SCM_ALLOW_INTS;
   drop_paramspecs (&ps);
   return z;
-
-#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -1634,14 +1598,10 @@ GH_DEFPROC
  "(not bytes), starting from 1.\n"
  "@item #:source-function\n"
  "A symbol.\n"
- "@end table\n\n"
- "If the installation does not support\n"
- "@code{PQPROTOCOLVERSION}, simply return @code{#f}.")
+ "@end table")
 {
 #define FUNC_NAME s_pg_result_error_field
   SCM rv = SCM_BOOL_F;
-
-#ifdef HAVE_PQPROTOCOLVERSION
   PGresult *res;
   int fc;
   char *s;
@@ -1682,8 +1642,6 @@ GH_DEFPROC
         }
     }
 
-#endif /* HAVE_PQPROTOCOLVERSION */
-
   return rv;
 #undef FUNC_NAME
 }
@@ -1697,8 +1655,6 @@ GH_DEFPROC
  "@code{PQRESULTERRORMESSAGE}, return the empty string.\n"
  "The returned string has no trailing newlines.")
 {
-#ifdef HAVE_PQRESULTERRORMESSAGE
-
 #define FUNC_NAME s_pg_result_error_message
   PGresult *res;
   char *msg;
@@ -1707,12 +1663,6 @@ GH_DEFPROC
   msg = PQresultErrorMessage (res);
   return strip_newlines (msg);
 #undef FUNC_NAME
-
-#else /* !HAVE_PQRESULTERRORMESSAGE */
-
-  return gh_str2scm ("", 0);
-
-#endif /* !HAVE_PQRESULTERRORMESSAGE */
 }
 
 GH_DEFPROC
@@ -1788,11 +1738,8 @@ GH_DEFPROC
 (pg_get_pass, "pg-get-pass", 1, 0, 0,
  (SCM conn),
  "Return a string containing the password used to\n"
- "authenticate the connection @var{conn}.\n"
- "If the installation does not support @code{PQPASS}, return @code{#f}.")
+ "authenticate the connection @var{conn}.")
 {
-#ifdef HAVE_PQPASS
-
 #define FUNC_NAME s_pg_get_pass
   PGconn *dbconn;
   const char *rv;
@@ -1804,12 +1751,6 @@ GH_DEFPROC
 
   return gh_str02scm (rv);
 #undef FUNC_NAME
-
-#else  /* !HAVE_PQPASS */
-
-  return SCM_BOOL_F;
-
-#endif /* !HAVE_PQPASS */
 }
 
 GH_DEFPROC
@@ -1891,12 +1832,8 @@ GH_DEFPROC
 (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
  (SCM conn),
  "Return an integer which is the the PID of the backend\n"
- "process for @var{conn}.\n"
- "If the installation does not support @code{PQBACKENDPID},\n"
- "return -1.")
+ "process for @var{conn}.")
 {
-#ifdef HAVE_PQBACKENDPID
-
 #define FUNC_NAME s_pg_backend_pid
   PGconn *dbconn;
   int pid;
@@ -1908,12 +1845,6 @@ GH_DEFPROC
 
   return gh_int2scm (pid);
 #undef FUNC_NAME
-
-#else /* !HAVE_PQBACKENDPID */
-
-  return gh_int2scm (-1);
-
-#endif /* !HAVE_PQBACKENDPID */
 }
 
 SIMPLE_KEYWORD (idle);
@@ -1930,16 +1861,13 @@ GH_DEFPROC
  "@code{#:active} (command in progress),\n"
  "@code{#:intrans} (idle, within transaction block),\n"
  "@code{#:inerror} (idle, within failed transaction),\n"
- "@code{#:unknown} (cannot determine status).\n\n"
- "If the installation does not support\n"
- "@code{PQPROTOCOLVERSION}, return @code{#:unknown}.")
+ "@code{#:unknown} (cannot determine status).")
 {
 #define FUNC_NAME s_pg_transaction_status
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
-#ifdef HAVE_PQPROTOCOLVERSION
   switch (PQtransactionStatus (dbconn))
     {
     case PQTRANS_IDLE:    return KWD (idle);
@@ -1949,9 +1877,6 @@ GH_DEFPROC
     case PQTRANS_UNKNOWN:
     default:              return KWD (unknown);
     }
-#else /* not HAVE_PQPROTOCOLVERSION */
-  return KWD (unknown);
-#endif /* not HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -1959,9 +1884,7 @@ GH_DEFPROC
 (pg_parameter_status, "pg-parameter-status", 2, 0, 0,
  (SCM conn, SCM parm),
  "Return the status (a string) of a parameter for @var{conn}.\n"
- "@var{parm} is a keyword, such as @code{#:client_encoding}.\n"
- "If the installation does not support\n"
- "@code{PQPROTOCOLVERSION}, return @code{#f}.")
+ "@var{parm} is a keyword, such as @code{#:client_encoding}.")
 {
 #define FUNC_NAME s_pg_parameter_status
   PGconn *dbconn;
@@ -1970,12 +1893,10 @@ GH_DEFPROC
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_KEYWORD (2, parm);
 
-#ifdef HAVE_PQPROTOCOLVERSION
   parm = SCM_KEYWORDSYM (parm);
   ROZT_X (parm);
   /* Offset by one to skip the symbol name's initial hyphen.  */
   cstatus = PQparameterStatus (dbconn, 1 + ROZT (parm));
-#endif
 
   return (cstatus ? gh_str02scm (cstatus) : SCM_BOOL_F);
 #undef FUNC_NAME
@@ -2069,11 +1990,8 @@ GH_DEFPROC
  (SCM result),
  "If the @var{result} is that of an SQL @code{INSERT} command,\n"
  "return the integer OID of the inserted tuple, otherwise return\n"
- "@code{#f}.\n"
- "If the installation does not support @code{PQOIDVALUE}, return @code{#f}.")
+ "@code{#f}.")
 {
-#ifdef HAVE_PQOIDVALUE
-
 #define FUNC_NAME s_pg_oid_value
   PGresult *res;
   Oid oid_value;
@@ -2089,12 +2007,6 @@ GH_DEFPROC
 
   return gh_int2scm (oid_value);
 #undef FUNC_NAME
-
-#else /* !HAVE_PQOIDVALUE */
-
-  return SCM_BOOL_F;
-
-#endif /* !HAVE_PQOIDVALUE */
 }
 
 GH_DEFPROC
@@ -2144,8 +2056,7 @@ GH_DEFPROC
 (pg_ftable, "pg-ftable", 2, 0, 0,
  (SCM result, SCM num),
  "Return the OID of the table from which the field @var{num}\n"
- "was fetched in @var{result}.  If the installation does not\n"
- "support @code{PQPROTOCOLVERSION}, return @code{#f}.")
+ "was fetched in @var{result}.")
 {
 #define FUNC_NAME s_pg_ftable
   PGresult *res;
@@ -2154,15 +2065,7 @@ GH_DEFPROC
   VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
 
-#ifndef HAVE_PQPROTOCOLVERSION
-
-  return SCM_BOOL_F;
-
-#else /* HAVE_PQPROTOCOLVERSION */
-
   return gh_ulong2scm (PQftable (res, field));
-
-#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -2171,8 +2074,7 @@ GH_DEFPROC
  (SCM result, SCM num),
  "Return the column number (within its table) of the column\n"
  "making up field @var{num} of @var{result}.  Column numbers\n"
- "start at 0.  If the installation does not support\n"
- "@code{PQPROTOCOLVERSION}, return @code{#f}.")
+ "start at 0.")
 {
 #define FUNC_NAME s_pg_ftablecol
   PGresult *res;
@@ -2181,15 +2083,7 @@ GH_DEFPROC
   VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
 
-#ifndef HAVE_PQPROTOCOLVERSION
-
-  return SCM_BOOL_F;
-
-#else /* HAVE_PQPROTOCOLVERSION */
-
   return gh_ulong2scm (PQftablecol (res, field));
-
-#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -2198,9 +2092,7 @@ GH_DEFPROC
  (SCM result, SCM num),
  "Return the format code indicating the format of field\n"
  "@var{num} of @var{result}.  Zero (0) indicates textual\n"
- "data representation; while one (1) indicates binary.  If\n"
- "the installation does not support @code{PQPROTOCOLVERSION},\n"
- "return @code{#f}.")
+ "data representation; while one (1) indicates binary.")
 {
 #define FUNC_NAME s_pg_fformat
   PGresult *res;
@@ -2209,15 +2101,7 @@ GH_DEFPROC
   VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
 
-#ifndef HAVE_PQPROTOCOLVERSION
-
-  return SCM_BOOL_F;
-
-#else /* HAVE_PQPROTOCOLVERSION */
-
   return gh_ulong2scm (PQfformat (res, field));
-
-#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -2274,9 +2158,7 @@ GH_DEFPROC
   int maxtuple, tuple;
   int maxfield, field;
   const char *val;
-#ifdef HAVE_PQBINARYTUPLES
   int isbinary, veclen = 0;
-#endif
   SCM srv;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
@@ -2290,17 +2172,13 @@ GH_DEFPROC
   SCM_ASSERT (field < maxfield, sfield, SCM_OUTOFRANGE, FUNC_NAME);
   SCM_DEFER_INTS;
   val = PQgetvalue (res, tuple, field);
-#ifdef HAVE_PQBINARYTUPLES
   if ((isbinary = PQbinaryTuples (res)) != 0)
     veclen = PQgetlength (res, tuple, field);
-#endif
   SCM_ALLOW_INTS;
 
-#ifdef HAVE_PQBINARYTUPLES
   if (isbinary)
     srv = gh_str2scm (val, veclen);
   else
-#endif
     srv = gh_str02scm (val);
 
   return srv;
@@ -2373,12 +2251,8 @@ GH_DEFPROC
 (pg_binary_tuples, "pg-binary-tuples?", 1, 0, 0,
  (SCM result),
  "Return @code{#t} if @var{result} contains binary tuple\n"
- "data, @code{#f} otherwise.\n"
- "If the installation does not support @code{PQBINARYTUPLES},\n"
- "return @code{#f}.")
+ "data, @code{#f} otherwise.")
 {
-#ifdef HAVE_PQBINARYTUPLES
-
 #define FUNC_NAME s_pg_binary_tuples
   PGresult *res;
   SCM rv;
@@ -2394,23 +2268,14 @@ GH_DEFPROC
 
   return rv;
 #undef FUNC_NAME
-
-#else /* !HAVE_PQBINARYTUPLES */
-
-  return SCM_BOOL_F;
-
-#endif /* !HAVE_PQBINARYTUPLES */
 }
 
 GH_DEFPROC
 (pg_fmod, "pg-fmod", 2, 0, 0,
  (SCM result, SCM num),
  "Return the integer type-specific modification data for\n"
- "the given field (field number @var{num}) of @var{result}.\n"
- "If the installation does not support @code{PQFMOD}, return -1.")
+ "the given field (field number @var{num}) of @var{result}.")
 {
-#ifdef HAVE_PQFMOD
-
 #define FUNC_NAME s_pg_fmod
   PGresult *res;
   int field;
@@ -2421,12 +2286,6 @@ GH_DEFPROC
   fmod = PQfmod (res, field);
   return gh_int2scm (fmod);
 #undef FUNC_NAME
-
-#else /* !HAVE_PQFMOD */
-
-  return gh_int2scm (-1);
-
-#endif /* !HAVE_PQFMOD */
 }
 
 GH_DEFPROC
@@ -2434,9 +2293,7 @@ GH_DEFPROC
  (SCM conn, SCM data),
  "Send on @var{conn} the @var{data} (a string).\n"
  "Return 1 if ok; 0 if the server is in nonblocking mode\n"
- "and the attempt would block; and -1 if an error occurred. If\n"
- "the installation does not support @code{PQPROTOCOLVERSION},\n"
- "signal @samp{unsupported} error.")
+ "and the attempt would block; and -1 if an error occurred.")
 {
 #define FUNC_NAME s_pg_put_copy_data
   PGconn *dbconn;
@@ -2444,18 +2301,10 @@ GH_DEFPROC
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_STRING (2, data);
 
-#ifndef HAVE_PQPROTOCOLVERSION
-
-  return SORRYNOSUPPORT ();
-
-#else /* HAVE_PQPROTOCOLVERSION */
-
   ROZT_X (data);
   return gh_int2scm (PQputCopyData (dbconn,
                                     ROZT (data),
                                     SCM_ROLENGTH (data)));
-
-#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -2467,9 +2316,7 @@ GH_DEFPROC
  "forces the COPY operation to fail with @var{errmsg} as the\n"
  "error message.\n"
  "Return 1 if ok; 0 if the server is in nonblocking mode\n"
- "and the attempt would block; and -1 if an error occurred. If\n"
- "the installation does not support @code{PQPROTOCOLVERSION},\n"
- "signal @samp{unsupported} error.")
+ "and the attempt would block; and -1 if an error occurred.")
 {
 #define FUNC_NAME s_pg_put_copy_end
   PGconn *dbconn;
@@ -2479,12 +2326,6 @@ GH_DEFPROC
   if (errmsg != SCM_UNDEFINED)
     SCM_VALIDATE_STRING (2, errmsg);
 
-#ifndef HAVE_PQPROTOCOLVERSION
-
-  return SORRYNOSUPPORT ();
-
-#else /* HAVE_PQPROTOCOLVERSION */
-
   if (errmsg != SCM_UNDEFINED)
     {
       ROZT_X (errmsg);
@@ -2492,8 +2333,6 @@ GH_DEFPROC
     }
 
   return gh_int2scm (PQputCopyEnd (dbconn, cerrmsg));
-
-#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -2506,9 +2345,7 @@ GH_DEFPROC
  "Return the number of data bytes in the row (always greater\n"
  "than zero); or zero to mean the COPY is still in progress\n"
  "and no data is yet available; or -1 to mean the COPY is\n"
- "done; or -2 to mean an error occurred.\n"
- "If the installation does not support @code{PQPROTOCOLVERSION},\n"
- "signal @samp{unsupported} error.")
+ "done; or -2 to mean an error occurred.")
 {
 #define FUNC_NAME s_pg_get_copy_data
   PGconn *dbconn;
@@ -2526,12 +2363,6 @@ GH_DEFPROC
         SCM_WTA (SCM_ARG2, port);
     }
 
-#ifndef HAVE_PQPROTOCOLVERSION
-
-  return SORRYNOSUPPORT ();
-
-#else /* HAVE_PQPROTOCOLVERSION */
-
   SCM_DEFER_INTS;
   rv = PQgetCopyData (dbconn, &newbuf, SCM_NFALSEP (asyncp));
   if (0 < rv)
@@ -2546,8 +2377,6 @@ GH_DEFPROC
   PQfreemem (newbuf);
 
   return gh_int2scm (rv);
-
-#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -2628,12 +2457,7 @@ GH_DEFPROC
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_ASSERT (SCM_NIMP (str)&&SCM_ROSTRINGP (str), str, SCM_ARG2, FUNC_NAME);
   SCM_DEFER_INTS;
-#ifdef HAVE_PQPUTNBYTES
   status = PQputnbytes (dbconn, SCM_ROCHARS (str), SCM_ROLENGTH (str));
-#else
-  ROZT_X (str);
-  status = PQputline (dbconn, ROZT (str));
-#endif
   SCM_ALLOW_INTS;
   return (0 == status ? SCM_BOOL_T : SCM_BOOL_F);
 #undef FUNC_NAME
@@ -2670,8 +2494,7 @@ GH_DEFPROC
  "Set the error verbosity for @var{conn} to @var{verbosity}.\n"
  "@var{verbosity} is a keyword, one of: @code{#:terse},\n"
  "@code{#:default} or @code{#:verbose}.  Return the previous\n"
- "verbosity.  If the installation does not support\n"
- "@code{PQPROTOCOLVERSION}, simply return @code{#:default}.")
+ "verbosity.")
 {
 #define FUNC_NAME s_pg_set_error_verbosity
   PGconn *dbconn;
@@ -2679,9 +2502,6 @@ GH_DEFPROC
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_KEYWORD (2, verbosity);
 
-#ifndef HAVE_PQPROTOCOLVERSION
-  return KWD (default);
-#else /* HAVE_PQPROTOCOLVERSION */
   {
     PGVerbosity now = PQERRORS_DEFAULT;
 
@@ -2703,7 +2523,6 @@ GH_DEFPROC
       default:               return SCM_BOOL_F; /* TODO: abort.  */
       }
   }
-#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -3116,11 +2935,7 @@ GH_DEFPROC
     {
       rv = gh_str02scm (n->relname);
       rv = gh_cons (rv, gh_int2scm (n->be_pid));
-#ifndef HAVE_PQFREEMEM
-      PQfreeNotify (n);
-#else /* HAVE_PQFREEMEM */
       PQfreemem (n);
-#endif /* HAVE_PQFREEMEM */
     }
   return rv;
 #undef FUNC_NAME
@@ -3189,44 +3004,32 @@ GH_DEFPROC
  (SCM conn, SCM mode),
  "Set the nonblocking status of @var{conn} to @var{mode}.\n"
  "If @var{mode} is non-@code{#f}, set it to nonblocking, otherwise\n"
- "set it to blocking.  Return @code{#t} if successful.\n"
- "If @code{pg-guile-pg-loaded} does not include\n"
- "@code{PQSETNONBLOCKING}, do nothing and return @code{#f}.")
+ "set it to blocking.  Return @code{#t} if successful.")
 {
 #define FUNC_NAME s_pg_set_nonblocking_x
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
-#ifdef HAVE_PQSETNONBLOCKING
   return (0 == PQsetnonblocking (dbconn, ! EXACTLY_FALSEP (mode))
           ? SCM_BOOL_T
           : SCM_BOOL_F);
-#else
-  return SCM_BOOL_F;
-#endif
 #undef FUNC_NAME
 }
 
 GH_DEFPROC
 (pg_is_nonblocking_p, "pg-is-nonblocking?", 1, 0, 0,
  (SCM conn),
- "Return @code{#t} if @var{conn} is in nonblocking mode.\n"
- "If @code{pg-guile-pg-loaded} does not include\n"
- "@code{PQISNONBLOCKING}, do nothing and return @code{#f}.")
+ "Return @code{#t} if @var{conn} is in nonblocking mode.")
 {
 #define FUNC_NAME s_pg_is_nonblocking_p
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
-#ifdef HAVE_PQISNONBLOCKING
   return (PQisnonblocking (dbconn)
           ? SCM_BOOL_T
           : SCM_BOOL_F);
-#else
-  return SCM_BOOL_F;
-#endif
 #undef FUNC_NAME
 }
 
@@ -3262,12 +3065,6 @@ GH_DEFPROC
  "parameterized string, and @var{parms} is a parameter-vector.")
 {
 #define FUNC_NAME s_pg_send_query_params
-#ifndef HAVE_PQPROTOCOLVERSION
-
-  return SORRYNOPARAMS ();
-
-#else /* HAVE_PQPROTOCOLVERSION */
-
   PGconn *dbconn;
   struct paramspecs ps;
   int result;
@@ -3282,8 +3079,6 @@ GH_DEFPROC
   SCM_ALLOW_INTS;
   drop_paramspecs (&ps);
   return result ? SCM_BOOL_T : SCM_BOOL_F;
-
-#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -3294,12 +3089,6 @@ GH_DEFPROC
  "Also, return @code{#t} if successful.")
 {
 #define FUNC_NAME s_pg_send_query_prepared
-#ifndef HAVE_PQPROTOCOLVERSION
-
-  return SORRYNOPARAMS ();
-
-#else /* HAVE_PQPROTOCOLVERSION */
-
   PGconn *dbconn;
   struct paramspecs ps;
   int result;
@@ -3314,8 +3103,6 @@ GH_DEFPROC
   SCM_ALLOW_INTS;
   drop_paramspecs (&ps);
   return result ? SCM_BOOL_T : SCM_BOOL_F;
-
-#endif /* HAVE_PQPROTOCOLVERSION */
 #undef FUNC_NAME
 }
 
@@ -3424,33 +3211,15 @@ GH_DEFPROC
 
 #define SYM(s)  (pg_sym_ ## s)
 
-#ifdef HAVE_PQPROTOCOLVERSION
 SIMPLE_SYMBOL (PQPROTOCOLVERSION);
-#endif
-#ifdef HAVE_PQRESULTERRORMESSAGE
 SIMPLE_SYMBOL (PQRESULTERRORMESSAGE);
-#endif
-#ifdef HAVE_PQPASS
 SIMPLE_SYMBOL (PQPASS);
-#endif
-#ifdef HAVE_PQBACKENDPID
 SIMPLE_SYMBOL (PQBACKENDPID);
-#endif
-#ifdef HAVE_PQOIDVALUE
 SIMPLE_SYMBOL (PQOIDVALUE);
-#endif
-#ifdef HAVE_PQBINARYTUPLES
 SIMPLE_SYMBOL (PQBINARYTUPLES);
-#endif
-#ifdef HAVE_PQFMOD
 SIMPLE_SYMBOL (PQFMOD);
-#endif
-#ifdef HAVE_PQSETNONBLOCKING
 SIMPLE_SYMBOL (PQSETNONBLOCKING);
-#endif
-#ifdef HAVE_PQISNONBLOCKING
 SIMPLE_SYMBOL (PQISNONBLOCKING);
-#endif
 
 
 /*
@@ -3551,33 +3320,15 @@ init_module (void)
 
 #define PUSH(x)  goodies = gh_cons (SYM (x), goodies)
 
-#ifdef HAVE_PQPROTOCOLVERSION
   PUSH (PQPROTOCOLVERSION);
-#endif
-#ifdef HAVE_PQRESULTERRORMESSAGE
   PUSH (PQRESULTERRORMESSAGE);
-#endif
-#ifdef HAVE_PQPASS
   PUSH (PQPASS);
-#endif
-#ifdef HAVE_PQBACKENDPID
   PUSH (PQBACKENDPID);
-#endif
-#ifdef HAVE_PQOIDVALUE
   PUSH (PQOIDVALUE);
-#endif
-#ifdef HAVE_PQBINARYTUPLES
   PUSH (PQBINARYTUPLES);
-#endif
-#ifdef HAVE_PQFMOD
   PUSH (PQFMOD);
-#endif
-#ifdef HAVE_PQSETNONBLOCKING
   PUSH (PQSETNONBLOCKING);
-#endif
-#ifdef HAVE_PQISNONBLOCKING
   PUSH (PQISNONBLOCKING);
-#endif
 
   goodies = scm_protect_object (goodies);
 }

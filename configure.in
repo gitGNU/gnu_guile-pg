@@ -83,37 +83,6 @@ saved_LDFLAGS="$LDFLAGS"
 CPPFLAGS="$PQ_CPPFLAGS $CPPFLAGS"
 LDFLAGS="$PQ_LDFLAGS $LDFLAGS"
 
-AC_CHECK_LIB(pq, PQconnectdb, ,[
-  AC_MSG_NOTICE(CPPFLAGS: $CPPFLAGS)
-  AC_MSG_NOTICE(LDFLAGS: $LDFLAGS)
-  AC_MSG_ERROR([cannot find libpq on the system])
-])
-dnl In this check, PQprotocolVersion begins the "Protocol 3.0" functions.
-AC_CHECK_FUNCS([ \
-  PQfmod PQbinaryTuples PQbackendPID \
-  PQresultErrorMessage PQpass PQputnbytes \
-  PQoidValue PQsetnonblocking PQisnonblocking \
-  PQprotocolVersion PQfreemem \
-])
-
-AC_CHECK_DECL([InvalidOid],,
-              [pg_ac_need_invalidoid=true],
-              [[#include "libpq-fe.h"]])
-
-if test x"$pg_ac_need_invalidoid" = xtrue ; then
-  AC_CHECK_DECL([InvalidOid],[
-    pg_ac_need_invalidoid=false
-    AC_DEFINE(INVALIDOID_HEADER, ["postgresql/postgres.h"],
-              [Header that declares InvalidOid if not libpq-fe.h.])
-    ],,[[#include "postgresql/postgres.h"]])
-fi
-
-## Add other locations to check here.
-
-if test "x$pg_ac_need_invalidoid" = xtrue ; then
-  AC_MSG_ERROR([cannot find declaration for InvalidOid])
-fi
-
 AC_CHECK_DECLS([pg_encoding_to_char])
 
 CPPFLAGS="$saved_CPPFLAGS"

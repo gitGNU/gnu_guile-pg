@@ -89,10 +89,11 @@ AC_DEFUN([PQ_FLAGS],[
        PQ_LDFLAGS="-L$withval -lpq"],[
        saved_LDFLAGS="$LDFLAGS"
        LDFLAGS="-L$prefix/lib"
-       AC_CHECK_LIB(pq,PQsetdbLogin)
+       AC_CHECK_LIB([pq],[PQprotocolVersion])
        LDFLAGS="$saved_LDFLAGS"
-       if test ! "$ac_cv_lib_pq_PQsetdbLogin" = yes ; then
-         AC_ERROR([Cannot find libpq; try "--with-libpq-lib=DIR"])
+       if test ! "$ac_cv_lib_pq_PQprotocolVersion" = yes ; then
+         AC_ERROR([Cannot find libpq that supports Protocol 3.0 or later;
+                   try "--with-libpq-lib=DIR"])
        fi
        PQ_LDFLAGS="-L$prefix/lib -lpq"
     ])

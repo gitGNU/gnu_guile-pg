@@ -1,5 +1,33 @@
 2008-08-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Drop support for PostgreSQL 7.3.x and earlier.
+
+	* libpq.c: Don't bother w/ INVALIDOID_HEADER.
+	Throughout, remove code that does not assume
+	HAVE_PQRESULTERRORMESSAGE, HAVE_PQPASS, HAVE_PQBACKENDPID,
+	HAVE_PQOIDVALUE, HAVE_PQBINARYTUPLES, HAVE_PQFMOD,
+	HAVE_PQPUTNBYTES, HAVE_PQSETNONBLOCKING, HAVE_PQISNONBLOCKING,
+	HAVE_PQPROTOCOLVERSION and HAVE_PQFREEMEM, as well as the
+	corresponding preprocessor macros (which in some cases makes
+	code that does assume those conditions unconditional).
+	Remove if-lacking-feature blurb from docstrings.
+	(nosupp, noparams) [!HAVE_PQPROTOCOLVERSION]: Delete strings.
+	(SORRYNOSUPPORT, SORRYNOPARAMS) [!HAVE_PQPROTOCOLVERSION]: Delete macros.
+	(pg_result_error_message, pg_get_pass, pg_backend_pid)
+	(pg_oid_value, pg_getvalue, pg_binary_tuples, pg_fmod)
+	(pg_putline, pg_set_nonblocking_x, pg_is_nonblocking_p)
+	(pg_protocol_version, pg_exec_params, pg_exec_prepared)
+	(pg_result_error_field, pg_transaction_status, pg_parameter_status)
+	(pg_ftable, pg_ftablecol, pg_fformat, pg_put_copy_data)
+	(pg_put_copy_end, pg_get_copy_data, pg_set_error_verbosity)
+	(pg_notifies, pg_send_query_params, pg_send_query_prepared)
+	(pg_sym_PQRESULTERRORMESSAGE, pg_sym_PQPASS, pg_sym_PQBACKENDPID)
+	(pg_sym_PQOIDVALUE, pg_sym_PQBINARYTUPLES, pg_sym_PQFMOD)
+	(pg_sym_PQSETNONBLOCKING, pg_sym_PQISNONBLOCKING)
+	(pg_sym_PQPROTOCOLVERSION, init_module): Update.
+
+2008-08-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Increase abstraction: Define C macros to specify "result format".
 
 	* libpq.c (RESFMT_TEXT, RESFMT_BINARY): New value macros.
