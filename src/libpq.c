@@ -479,7 +479,7 @@ lob_flush (SCM port)
 #endif
       if (count < remaining)
         {
-          /* error.  assume nothing was written this call, but
+          /* Error.  Assume nothing was written this call, but
              fix up the buffer for any previous successful writes.  */
           int done = init_size - remaining;
 
@@ -497,7 +497,8 @@ lob_flush (SCM port)
           if (! scm_terminating)
             scm_syserror ("lob_flush");
           else
-#endif /* HAVE_LIBGUILE_TERMINATING || HAVE_LIBGUILE_TERMINATING */
+#endif /* defined (HAVE_SCM_TERMINATING) ||
+          defined (HAVE_LIBGUILE_TERMINATING) */
             {
               const char *msg = "Error: could not"
                 " flush large object file descriptor ";
@@ -596,9 +597,8 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-/* fill a port's read-buffer with a single read.
-   returns the first char and moves the read_pos pointer past it.
-   or returns EOF if end of file.  */
+/* Fill a port's read-buffer with a single read.  Return the first char and
+   move the `read_pos' pointer past it, or return EOF if end of file.  */
 static int
 lob_fill_input (SCM port)
 {
@@ -641,7 +641,7 @@ lob_write (SCM port, const void *data, size_t size)
 
   if (pt->write_buf == &pt->shortbuf)
     {
-      /* "unbuffered" port.  */
+      /* This is an "unbuffered" port.  */
       int fdes = SCM_FSTREAM (port)->fdes;
 
       if (write (fdes, data, size) == -1)
@@ -717,7 +717,8 @@ GH_DEFPROC
     return SCM_BOOL_F;
   if (n < gh_scm2int (num))
     {
-      SCM_DEFER_INTS; /* See comment re scm_vector_set_len in libguile/unif.c */
+      /* See comment re scm_vector_set_len in libguile/unif.c.  */
+      SCM_DEFER_INTS;
       scm_vector_set_length_x (str, gh_int2scm (n * gh_scm2int (siz)));
       SCM_ALLOW_INTS;
     }
@@ -1530,7 +1531,7 @@ GH_DEFPROC
   VALIDATE_PARAM_RELATED_ARGS (statement);
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
-  result_format = 0;                    /* string */
+  result_format = 0;                    /* text */
   SCM_DEFER_INTS;
   result = PQexecParams (dbconn, ROZT (statement), ps.len,
                          ps.types, ps.values, ps.lengths, ps.formats,
@@ -1570,7 +1571,7 @@ GH_DEFPROC
   VALIDATE_PARAM_RELATED_ARGS (stname);
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
-  result_format = 0;                    /* string */
+  result_format = 0;                    /* text */
   SCM_DEFER_INTS;
   result = PQexecPrepared (dbconn, ROZT (stname), ps.len,
                            ps.values, ps.lengths, ps.formats,
@@ -2697,7 +2698,7 @@ GH_DEFPROC
       case PQERRORS_TERSE:   return KWD (terse);
       case PQERRORS_DEFAULT: return KWD (default);
       case PQERRORS_VERBOSE: return KWD (verbose);
-      default:               return SCM_BOOL_F; /* hmm, server error */
+      default:               return SCM_BOOL_F; /* TODO: abort.  */
       }
   }
 #endif /* HAVE_PQPROTOCOLVERSION */
@@ -2908,7 +2909,7 @@ GH_DEFPROC
   SCM_ASSERT (SCM_NULLP (spec) || SCM_CONSP (spec),
               spec, SCM_ARG1, FUNC_NAME);
 
-  /* hairy validation/collection: symbols in `flags', pairs in `keys' */
+  /* Hairy validation/collection: symbols in `flags', pairs in `keys'.  */
   check = spec;
   while (SCM_NNULLP (check))
     {
@@ -3272,7 +3273,7 @@ GH_DEFPROC
   VALIDATE_PARAM_RELATED_ARGS (query);
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
-  result_format = 0;                    /* string */
+  result_format = 0;                    /* text */
   SCM_DEFER_INTS;
   result = PQsendQueryParams (dbconn, ROZT (query), ps.len,
                               ps.types, ps.values, ps.lengths, ps.formats,
@@ -3305,7 +3306,7 @@ GH_DEFPROC
   VALIDATE_PARAM_RELATED_ARGS (stname);
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
-  result_format = 0;                    /* string */
+  result_format = 0;                    /* text */
   SCM_DEFER_INTS;
   result = PQsendQueryPrepared (dbconn, ROZT (stname), ps.len,
                                 ps.values, ps.lengths, ps.formats,
