@@ -44,6 +44,12 @@
 # endif
 #endif
 
+#ifdef __GNUC__
+#define UNUSED __attribute__ ((unused))
+#else
+#define UNUSED
+#endif
+
 /*
  * guile abstractions
  */
@@ -97,7 +103,7 @@ xc_unbox (SCM obj)
   SCM_ASSERT (xc_p (arg), arg, SCM_ARG ## n, FUNC_NAME)
 
 static int
-xc_display (SCM exp, SCM port, scm_print_state *pstate)
+xc_display (SCM exp, SCM port, UNUSED scm_print_state *pstate)
 {
   xc_t *xc = xc_unbox (exp);
 
@@ -674,7 +680,7 @@ lob_write (SCM port, const void *data, size_t size)
 
 /* Check whether a port can supply input.  */
 static int
-lob_input_waiting_p (SCM port)
+lob_input_waiting_p (UNUSED SCM port)
 {
   return 1;
 }
@@ -891,7 +897,7 @@ res_box (PGresult *res)
 }
 
 static int
-res_display (SCM exp, SCM port, scm_print_state *pstate)
+res_display (SCM exp, SCM port, UNUSED scm_print_state *pstate)
 {
   PGresult *res = res_unbox (exp);
   ExecStatusType status;
@@ -2650,7 +2656,7 @@ sepo_free (SCM obj)
 }
 
 static int
-sepo_display (SCM sepo, SCM port, scm_print_state *pstate)
+sepo_display (UNUSED SCM sepo, SCM port, UNUSED scm_print_state *pstate)
 {
   scm_puts ("#<PG-PRINT-OPTION>", port);
   return 1;

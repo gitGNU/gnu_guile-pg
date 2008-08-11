@@ -1,5 +1,12 @@
 2008-08-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	GCC annotation: Add __attribute__ ((unused)) for some args.
+
+	* libpq.c (UNUSED): New macro.
+	(xc_display, lob_input_waiting_p, res_display, sepo_display): Use it.
+
+2008-08-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Decruft: Delete degenerate mark functions.
 
 	* libpq.c (res_mark, sepo_mark): Delete funcs.
