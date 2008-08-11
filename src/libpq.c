@@ -919,12 +919,6 @@ res_display (SCM exp, SCM port, scm_print_state *pstate)
   return 1;
 }
 
-static SCM
-res_mark (SCM obj)
-{
-  return SCM_BOOL_F;
-}
-
 static scm_sizet
 res_free (SCM obj)
 {
@@ -2616,12 +2610,6 @@ sepo_unbox (SCM obj)
   return ((PQprintOpt *) SCM_SMOB_DATA (obj));
 }
 
-static SCM
-sepo_mark (SCM obj)
-{
-  return SCM_BOOL_F;
-}
-
 static scm_sizet
 sepo_free (SCM obj)
 {
@@ -3248,14 +3236,12 @@ init_module (void)
   pg_conn_tag = scm_newsmob (&type_rec);
 
   /* add new scheme type for results */
-  type_rec.mark = res_mark;
   type_rec.free = res_free;
   type_rec.print = res_display;
   type_rec.equalp = 0;
   pg_result_tag = scm_newsmob (&type_rec);
 
   /* add new scheme type for print options */
-  type_rec.mark = sepo_mark;
   type_rec.free = sepo_free;
   type_rec.print = sepo_display;
   type_rec.equalp = 0;
@@ -3269,12 +3255,10 @@ init_module (void)
   scm_set_smob_print (pg_conn_tag, xc_display);
 
   pg_result_tag = scm_make_smob_type ("PG-RESULT", 0);
-  scm_set_smob_mark (pg_result_tag, res_mark);
   scm_set_smob_free (pg_result_tag, res_free);
   scm_set_smob_print (pg_result_tag, res_display);
 
   sepo_type_tag = scm_make_smob_type ("PG-PRINT-OPTION", 0);
-  scm_set_smob_mark (sepo_type_tag, sepo_mark);
   scm_set_smob_free (sepo_type_tag, sepo_free);
   scm_set_smob_print (sepo_type_tag, sepo_display);
 

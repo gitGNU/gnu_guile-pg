@@ -1,5 +1,12 @@
 2008-08-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Decruft: Delete degenerate mark functions.
+
+	* libpq.c (res_mark, sepo_mark): Delete funcs.
+	(init_module): Don't specify mark funcs for res and sepo smobs.
+
+2008-08-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Increase abstraction: Use SCM_{MEMORY,MISC}_ERROR and SCM_SYSERROR.
 
 	* libpq.c (lob_mklobport): Use `SCM_MEMORY_ERROR'.
