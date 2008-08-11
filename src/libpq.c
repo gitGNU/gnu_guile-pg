@@ -190,12 +190,11 @@ typedef struct
 #define OPINLOBPORTP(x)  (LOBPORT_WITH_FLAGS_P (x, SCM_OPN | SCM_RDNG))
 
 static SCM
-lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *caller)
+lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *FUNC_NAME)
 {
   SCM port;
   lob_stream *lobp;
   scm_port *pt;
-  const char *s_lob_mklobport = "lob_mklobport";
 
   lobp = (lob_stream *) scm_must_malloc (sizeof (lob_stream), "PG-LO-PORT");
 
@@ -215,7 +214,7 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *caller)
     {
       pt->read_buf = malloc (LOB_BUFLEN);
       if (pt->read_buf == NULL)
-        scm_memory_error (s_lob_mklobport);
+        SCM_MEMORY_ERROR;
       pt->read_pos = pt->read_end = pt->read_buf;
       pt->read_buf_size = LOB_BUFLEN;
     }
@@ -231,7 +230,7 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *caller)
     {
       pt->write_buf = malloc (LOB_BUFLEN);
       if (pt->write_buf == NULL)
-        scm_memory_error (s_lob_mklobport);
+        SCM_MEMORY_ERROR;
       pt->write_pos = pt->write_buf;
       pt->write_buf_size = LOB_BUFLEN;
     }
@@ -284,7 +283,7 @@ GH_DEFPROC
     pg_modes |= INV_WRITE;
 
   if (pg_modes == 0)
-    scm_misc_error (FUNC_NAME, "Invalid mode specification: ~S",
+    SCM_MISC_ERROR ("Invalid mode specification: ~S",
                     scm_listify (modes, SCM_UNDEFINED));
   SCM_DEFER_INTS;
   if ((oid = lo_creat (dbconn, INV_READ | INV_WRITE)) != 0)
@@ -344,7 +343,7 @@ GH_DEFPROC
     pg_modes |= INV_WRITE;
 
   if (pg_modes == 0)
-    scm_misc_error (FUNC_NAME, "Invalid mode specification: ~S",
+    SCM_MISC_ERROR ("Invalid mode specification: ~S",
                     scm_listify (modes, SCM_UNDEFINED));
   SCM_DEFER_INTS;
   alod = lo_open (dbconn, pg_oid, pg_modes);
@@ -439,7 +438,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-/* During lob_flush error, we decide whether to use scm_syserror ("normal"
+/* During lob_flush error, we decide whether to use SCM_SYSERROR ("normal"
    error mechanism) or to write directly to stderr, depending on libguile's
    variable: scm_terminating.  If it's not available in some form (see
    configure.in comments), we arrange to unconditionally write to stderr
@@ -454,6 +453,7 @@ extern int terminating;
 static void
 lob_flush (SCM port)
 {
+  const char *FUNC_NAME = "lob_flush";
   scm_port *pt = SCM_PTAB_ENTRY (port);
   lob_stream *lobp = (lob_stream *) SCM_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
@@ -465,7 +465,7 @@ lob_flush (SCM port)
     {
       int count;
 #ifdef DEBUG_TRACE_LO_WRITE
-      fprintf (stderr, "lob_flush (): lo_write (%.*s, %d) ... ",
+      fprintf (stderr, "%s: lo_write (%.*s, %d) ... ", FUNC_NAME,
                remaining, ptr, remaining);
 #endif
       SCM_DEFER_INTS;
@@ -492,7 +492,7 @@ lob_flush (SCM port)
             }
 #if defined (HAVE_SCM_TERMINATING) || defined (HAVE_LIBGUILE_TERMINATING)
           if (! scm_terminating)
-            scm_syserror ("lob_flush");
+            SCM_SYSERROR;
           else
 #endif /* defined (HAVE_SCM_TERMINATING) ||
           defined (HAVE_LIBGUILE_TERMINATING) */
@@ -517,6 +517,7 @@ lob_flush (SCM port)
 static void
 lob_end_input (SCM port, int offset)
 {
+  const char *FUNC_NAME = "lob_end_input";
   scm_port *pt = SCM_PTAB_ENTRY (port);
   lob_stream *lobp = (lob_stream *) SCM_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
@@ -531,7 +532,7 @@ lob_end_input (SCM port, int offset)
       ret = lo_lseek (conn, lobp->alod, -offset, SEEK_CUR);
       SCM_ALLOW_INTS;
       if (ret == -1)
-        scm_misc_error ("lob_end_input", "Error seeking on lo port ~S",
+        SCM_MISC_ERROR ("Error seeking on lo port ~S",
                         scm_listify (port, SCM_UNDEFINED));
     }
   pt->rw_active = SCM_PORT_NEITHER;
@@ -540,6 +541,7 @@ lob_end_input (SCM port, int offset)
 static off_t
 lob_seek (SCM port, off_t offset, int whence)
 {
+  const char *FUNC_NAME = "lob_seek";
   lob_stream *lobp = (lob_stream *) SCM_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
   off_t ret;
@@ -548,7 +550,7 @@ lob_seek (SCM port, off_t offset, int whence)
   ret = lo_lseek (conn, lobp->alod, offset, whence);
   SCM_ALLOW_INTS;
   if (ret == -1)
-    scm_misc_error ("lob_seek", "Error (~S) seeking on lo port ~S",
+    SCM_MISC_ERROR ("Error (~S) seeking on lo port ~S",
                     scm_listify (gh_int2scm (ret), port, SCM_UNDEFINED));
 
   /* Adjust return value to account for guile port buffering.  */
@@ -599,6 +601,7 @@ GH_DEFPROC
 static int
 lob_fill_input (SCM port)
 {
+  const char *FUNC_NAME = "lob_fill_input";
   scm_port *pt = SCM_PTAB_ENTRY (port);
   lob_stream *lobp = (lob_stream *) SCM_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
@@ -612,21 +615,21 @@ lob_fill_input (SCM port)
   ret = lo_read (conn, lobp->alod, (char *) pt->read_buf, pt->read_buf_size);
   SCM_ALLOW_INTS;
 #ifdef DEBUG_LO_READ
-  fprintf (stderr, "lob_fill_input: lo_read (%d) returned %d.\n",
-           pt->read_buf_size, ret);
+  fprintf (stderr, "%s: lo_read (%d) returned %d.\n",
+           FUNC_NAME, pt->read_buf_size, ret);
 #endif
   if (ret != pt->read_buf_size)
     {
       if (ret == 0)
         return EOF;
       else if (ret < 0)
-        scm_misc_error ("lob_fill_buffer", "Error (~S) reading from lo port ~S",
+        SCM_MISC_ERROR ("Error (~S) reading from lo port ~S",
                         scm_listify (gh_int2scm (ret), port, SCM_UNDEFINED));
     }
   pt->read_pos = pt->read_buf;
   pt->read_end = pt->read_buf + ret;
 #ifdef DEBUG_LO_READ
-  fprintf (stderr, "lob_fill_input: returning %c.\n", * (pt->read_buf));
+  fprintf (stderr, "%s: returning %c.\n", FUNC_NAME, *(pt->read_buf));
 #endif
   return * (pt->read_buf);
 }
@@ -634,6 +637,7 @@ lob_fill_input (SCM port)
 static void
 lob_write (SCM port, const void *data, size_t size)
 {
+  const char *FUNC_NAME = "lob_write";
   scm_port *pt = SCM_PTAB_ENTRY (port);
 
   if (pt->write_buf == &pt->shortbuf)
@@ -642,7 +646,7 @@ lob_write (SCM port, const void *data, size_t size)
       int fdes = SCM_FSTREAM (port)->fdes;
 
       if (write (fdes, data, size) == -1)
-        scm_syserror ("fport_write");
+        SCM_SYSERROR;
     }
   else
     {
@@ -977,7 +981,7 @@ struct paramspecs
 #define VREF(v,i)  (SCM_VELTS (v)[i])
 
 static void
-prep_paramspecs (const char *func_name, struct paramspecs *ps, SCM v)
+prep_paramspecs (const char *FUNC_NAME, struct paramspecs *ps, SCM v)
 {
   int i, len;
   SCM elem;
@@ -992,13 +996,13 @@ prep_paramspecs (const char *func_name, struct paramspecs *ps, SCM v)
     {
       elem = VREF (v, i);
       if (! gh_string_p (elem))
-        scm_misc_error (func_name, "bad parameter-vector element: ~S",
+        SCM_MISC_ERROR ("bad parameter-vector element: ~S",
                         SCM_LIST1 (elem));
     }
   ps->types = NULL;
   ps->values = (const char **) malloc (len * sizeof (char *));
   if (! ps->values)
-    scm_misc_error (func_name, "memory exhausted", SCM_EOL);
+    SCM_MISC_ERROR ("memory exhausted", SCM_EOL);
   for (i = 0; i < len; i++)
     ps->values[i] = ROZT (VREF (v, i));
   ps->lengths = NULL;
@@ -1267,7 +1271,7 @@ GH_DEFPROC
   SCM_ALLOW_INTS;
 
   if (connstat == CONNECTION_BAD)
-    scm_misc_error (FUNC_NAME, "~A", SCM_LIST1 (pgerrormsg));
+    SCM_MISC_ERROR ("~A", SCM_LIST1 (pgerrormsg));
 
   xc = ((xc_t *) scm_must_malloc (sizeof (xc_t), "PG-CONN"));
 
@@ -1387,7 +1391,7 @@ GH_DEFPROC
 
   ilen = SCM_ROLENGTH (string);
   if (! (answer = malloc (1 + 2 * ilen)))
-    scm_syserror (FUNC_NAME);
+    SCM_SYSERROR;
 
   olen = PQescapeStringConn (dbconn, answer, ROZT (string), ilen, &errcode);
   if (errcode)
@@ -2512,7 +2516,7 @@ GH_DEFPROC
     else if (gh_eq_p (verbosity, KWD (verbose)))
       now = PQERRORS_VERBOSE;
     else
-      scm_misc_error (FUNC_NAME, "Invalid verbosity: ~A",
+      SCM_MISC_ERROR ("Invalid verbosity: ~A",
                       SCM_LIST1 (verbosity));
 
     switch (PQsetErrorVerbosity (dbconn, now))
@@ -2549,10 +2553,10 @@ GH_DEFPROC
 
   SCM_SYSCALL (fd = dup (fp->fdes));
   if (fd == -1)
-    scm_syserror (FUNC_NAME);
+    SCM_SYSERROR;
   SCM_SYSCALL (fpout = fdopen (fd, "w"));
   if (fpout == NULL)
-    scm_syserror (FUNC_NAME);
+    SCM_SYSERROR;
 
   SCM_DEFER_INTS;
   PQtrace (dbconn, fpout);
@@ -2587,7 +2591,7 @@ GH_DEFPROC
   CONN_FPTRACE (conn) = (FILE *) NULL;
   SCM_ALLOW_INTS;
   if (ret)
-    scm_syserror (FUNC_NAME);
+    SCM_SYSERROR;
 
   return SCM_UNSPECIFIED;
 #undef FUNC_NAME
@@ -2841,7 +2845,7 @@ GH_DEFPROC
                  != fileno (stdout)));
   fout = (redir_p ? tmpfile () : stdout);
   if (fout == NULL)
-    scm_syserror (FUNC_NAME);
+    SCM_SYSERROR;
 
   scm_force_output (scm_current_output_port ());
   PQprint (fout, res, sepo_unbox (options));
