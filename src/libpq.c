@@ -72,6 +72,13 @@
 
 #define ROZT(x)  (SCM_ROCHARS (x))
 
+/* For some versions of Guile, (make-string (ash 1 24)) => "".
+
+   That is, `make-string' doesn't fail, but lengths past (1- (ash 1 24))
+   overflow an internal limit and silently return an incorrect value.
+   We hardcode this limit here for now.  */
+#define MAX_NEWSTRING_LENGTH ((1 << 24) - 1)
+
 
 /*
  * smob: connection
@@ -693,43 +700,22 @@ GH_DEFPROC
  "@code{#f} if an error occurred.")
 {
 #define FUNC_NAME s_lob_lo_read
-  scm_sizet n;
-  SCM str;
-  int csiz, cnum, len;
-  int done = 0;
+  char *stage, *wp;
+  int csiz, cnum, len, c;
 
   SCM_VALIDATE_INUM_MIN_COPY (1, siz, 0, csiz);
   SCM_VALIDATE_INUM_MIN_COPY (2, num, 0, cnum);
   SCM_ASSERT (SCM_NIMP (port) && OPINLOBPORTP (port),
               port, SCM_ARG3, FUNC_NAME);
 
-  len = csiz * cnum;
-  str = scm_make_string (gh_int2scm (len), SCM_UNDEFINED);
-  for (n = 0 ; n < gh_scm2int (num) && ! done; n++)
-    {
-      scm_sizet m;
-      int c;
-      for (m = 0; m < gh_scm2int (siz); m++)
-        {
-          c = scm_getc (port);
-          if (c == EOF)
-            {
-              done = 1;
-              break;
-            }
-          * (SCM_CHARS (str) + n * gh_scm2int (siz) + m) = c;
-        }
-    }
-  if (n < 0)
+  if (0 > (len = csiz * cnum)
+      || (MAX_NEWSTRING_LENGTH < len)
+      || (! (wp = stage = (char *) malloc (1 + len))))
     return SCM_BOOL_F;
-  if (n < gh_scm2int (num))
-    {
-      /* See comment re scm_vector_set_len in libguile/unif.c.  */
-      SCM_DEFER_INTS;
-      scm_vector_set_length_x (str, gh_int2scm (n * gh_scm2int (siz)));
-      SCM_ALLOW_INTS;
-    }
-  return str;
+  while (len-- && (EOF != (c = scm_getc (port))))
+    *wp++ = c;
+  *wp = '\0';
+  return scm_take_str (stage, wp - stage);
 #undef FUNC_NAME
 }
 

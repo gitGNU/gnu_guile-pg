@@ -1,3 +1,10 @@
+2008-08-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	C optimization: Make `pg-lo-read' faster.
+
+	* libpq.c (MAX_NEWSTRING_LENGTH): New macro.
+	(lob_lo_read): Rewrite.
+
 2008-08-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	GCC annotation: Add __attribute__ ((unused)) for some args.
