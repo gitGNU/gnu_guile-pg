@@ -32,6 +32,7 @@ dotdocfiles = libpq.doc				\
 BUILT_SOURCES = libpq.x $(dotdocfiles)
 
 AM_CPPFLAGS = -I. -I$(srcdir) $(GUILE_CFLAGS) $(PQ_CPPFLAGS)
+AM_CFLAGS = $(AGGRESSIVE_WARNINGS) $(MORE_AGGRESSIVE_WARNINGS)
 
 ddir = $(GUILE_LIBSITE)/database
 

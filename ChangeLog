@@ -1,3 +1,11 @@
+2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Add infrastructure to more easily tweak GCC warnings for "make all".
+
+	* configure.in: When using GCC, don't modify `CFLAGS';
+	instead, set var `AGGRESSIVE_WARNINGS'.  Enable many warnings.
+	(AGGRESSIVE_WARNINGS): New AC_SUBST.
+
 2008-08-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Decruft: Don't check for `crypt' in libcrypt.

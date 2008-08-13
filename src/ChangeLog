@@ -1,5 +1,11 @@
 2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Add infrastructure to more easily tweak GCC warnings for "make all".
+
+	* Makefile.am (AM_CFLAGS): New var.
+
+2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Tweak C code to eliminate some compiler warnings.
 
 	* libpq.c (lob_write): Remove unnecessary cast from `void *'.
