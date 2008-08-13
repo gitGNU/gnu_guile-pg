@@ -1,5 +1,16 @@
 2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Make `pg-print' faster: Add fast path for file ports.
+
+	* libpq.c (pg_print): Rework detection for redirect case
+	to exclude ports w/ an underlying file descriptor (file ports);
+	for those, if the current output-port's has a file descriptor
+	and it is the same as stdout's, use that directly, otherwise
+	`dup' and `fdopen' the current output-port's file descriptor,
+	and `fclose' it afterwards.
+
+2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Assume system provides tmpfile(3).
 
 	* libpq.c [!HAVE_TMPFILE]: Don't #include "tmpfile.h";

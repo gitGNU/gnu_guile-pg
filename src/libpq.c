@@ -2811,7 +2811,8 @@ GH_DEFPROC
 #define FUNC_NAME s_pg_print
   PGresult *res;
   FILE *fout;
-  int redir_p;
+  int fd;
+  SCM curout;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
   options = ((options == SCM_UNDEFINED)
@@ -2819,34 +2820,49 @@ GH_DEFPROC
              : options);
   SCM_ASSERT (sepo_p (options), options, SCM_ARG2, FUNC_NAME);
 
-  redir_p = (! SCM_OPFPORTP (scm_current_output_port ())
-             || (gh_scm2int (scm_fileno (scm_current_output_port ()))
-                 != fileno (stdout)));
-  fout = (redir_p ? tmpfile () : stdout);
-  if (fout == NULL)
-    SCM_SYSERROR;
+  fd = (SCM_OPFPORTP (curout = scm_current_output_port ())
+        ? gh_scm2int (scm_fileno (curout))
+        : -1);
 
-  scm_force_output (scm_current_output_port ());
+  if (0 > fd)
+    fout = tmpfile ();
+  else
+    {
+      scm_force_output (curout);
+      if (fileno (stdout) == fd)
+        fout = stdout;
+      else
+        {
+          SCM_SYSCALL (fd = dup (fd));
+          if (0 > fd)
+            SCM_SYSERROR;
+          SCM_SYSCALL (fout = fdopen (fd, "w"));
+        }
+    }
+
+  if (! fout)
+    SCM_SYSERROR;
   PQprint (fout, res, sepo_unbox (options));
 
-  if (redir_p)
+  if (0 > fd)
     {
       char buf[BUF_LEN];
-      SCM outp = scm_current_output_port ();
       int howmuch = 0;
 
       buf[BUF_LEN - 1] = '\0';          /* elephant */
       fseek (fout, 0, SEEK_SET);
 
       while (BUF_LEN - 1 == (howmuch = fread (buf, 1, BUF_LEN - 1, fout)))
-        scm_display (gh_str02scm (buf), outp);
+        scm_display (gh_str02scm (buf), curout);
       if (feof (fout))
         {
           buf[howmuch] = '\0';
-          scm_display (gh_str02scm (buf), outp);
+          scm_display (gh_str02scm (buf), curout);
         }
-      fclose (fout);
     }
+
+  if (stdout != fout)
+    fclose (fout);
 
   return SCM_UNSPECIFIED;
 #undef FUNC_NAME
