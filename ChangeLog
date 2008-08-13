@@ -1,5 +1,11 @@
 2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Assume system provides tmpfile(3).
+
+	* configure.in (tmpfile): Delete this AC_CHECK_FUNCS.
+
+2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Consolidate Guile API specification.
 
 	* configure.in (AH_BOTTOM): Delete.

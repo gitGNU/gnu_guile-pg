@@ -47,7 +47,7 @@ dist_d_DATA =					\
   postgres-meta.scm
 
 d_LTLIBRARIES = postgres.la
-postgres_la_SOURCES = libpq.c tmpfile.c gi.h
+postgres_la_SOURCES = libpq.c gi.h
 postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0 \
 				$(LDFLAGS) $(PQ_LDFLAGS)
 

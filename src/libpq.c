@@ -27,10 +27,6 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
-#ifndef HAVE_TMPFILE
-#include "tmpfile.h"
-#define tmpfile guile_pg_tmpfile
-#endif
 #include <libpq-fe.h>
 #include <libpq/libpq-fs.h>
 
