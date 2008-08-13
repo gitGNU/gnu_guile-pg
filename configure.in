@@ -62,11 +62,6 @@ AC_GUILE_PG_FCOMPAT
 CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"
 
-AH_BOTTOM([
-#include "bcruft.h"
-#include "fcruft.h"
-])
-
 ##----------------------------------------------------------------------------
 ## PostgreSQL
 

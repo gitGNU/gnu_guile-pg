@@ -1,5 +1,17 @@
 2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Consolidate Guile API specification.
+
+	* bcruft.h: Delete file.
+	* fcruft.h: Delete file.
+	* gi.h: New file.
+	* libpq.c: No longer #include <libguile.h> and <guile/gh.h>.
+	Instead, #include "gi.h".
+	* Makefile.am (postgres_la_SOURCES):
+	Add gi.h; remove bcruft.h and fcruft.h.
+
+2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Add infrastructure to more easily tweak GCC warnings for "make all".
 
 	* Makefile.am (AM_CFLAGS): New var.

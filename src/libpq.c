@@ -31,10 +31,10 @@
 #include "tmpfile.h"
 #define tmpfile guile_pg_tmpfile
 #endif
-#include <libguile.h>
-#include <guile/gh.h>
 #include <libpq-fe.h>
 #include <libpq/libpq-fs.h>
+
+#include "gi.h"                         /* Guile interface */
 
 #if __STDC_VERSION__ < 199901L
 # if __GNUC__ >= 2

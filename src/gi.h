@@ -1,4 +1,4 @@
-/* fcruft.h --- sometimes kids make messes for others to clean up
+/* gi.h
 
    Copyright (C) 2004,2005,2006,2008 Thien-Thi Nguyen
 
@@ -18,11 +18,29 @@
    along with Guile-PG; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA  */
 
-/* It is only w/ great patience that this file exists, and w/o ranting.
+/*
+ * always
+ */
 
-   This file is included in the AH_BOTTOM block (see configure.in).
-   The tests for each HAVE_ symbol are defined in acinclude.m4 under
-   the autoconf macro AC_GUILE_PG_FCOMPAT.  */
+#ifndef _GI_H_
+#define _GI_H_
+
+#include <libguile.h>
+#include <guile/gh.h>
+
+/*
+ * backward (sometimes foresight was incomplete)
+ */
+
+#ifdef HAVE_GUILE_MODSUP_H
+#include <guile/modsup.h>
+#else
+#include "modsup.h"
+#endif
+
+/*
+ * forward (sometimes kids make messes for others to clean up)
+ */
 
 #ifdef HAVE_SCM_GC_PROTECT_OBJECT
 #define scm_protect_object(x)  (scm_gc_protect_object (x))
@@ -32,4 +50,6 @@
 #define SCM_OUTPORTP(x)  (SCM_OUTPUT_PORT_P (x))
 #endif
 
-/* fcruft.h ends here */
+#endif /* _GI_H_ */
+
+/* gi.h ends here */

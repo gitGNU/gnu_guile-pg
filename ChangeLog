@@ -1,5 +1,11 @@
 2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Consolidate Guile API specification.
+
+	* configure.in (AH_BOTTOM): Delete.
+
+2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Add infrastructure to more easily tweak GCC warnings for "make all".
 
 	* configure.in: When using GCC, don't modify `CFLAGS';
