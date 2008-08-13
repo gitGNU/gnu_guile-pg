@@ -663,13 +663,13 @@ lob_write (SCM port, const void *data, size_t size)
     }
   else
     {
-      const char *input = (char *) data;
+      const char *input = data;
       size_t remaining = size;
 
       while (remaining > 0)
         {
-          int space = pt->write_end - pt->write_pos;
-          int write_len = (remaining > space) ? space : remaining;
+          size_t space = pt->write_end - pt->write_pos;
+          size_t write_len = (remaining > space) ? space : remaining;
 
           memcpy (pt->write_pos, input, write_len);
           pt->write_pos += write_len;
@@ -1629,6 +1629,9 @@ GH_DEFPROC
         case PG_DIAG_SOURCE_FUNCTION:
           rv = gh_symbol2scm (ROZT (rv));
           break;
+        default:
+          /* Do nothing; leave result as a string.  */
+          ;
         }
     }
 
@@ -3279,7 +3282,7 @@ init_module (void)
                                 pg_sym_no_expanded)))));
 
   {
-    int i;
+    unsigned int i;
     for (i = 0; i < sizeof (pgrs) / sizeof (SCM); i++)
       pgrs[i] = scm_protect_object
         (gh_car (scm_sysintern0 (PQresStatus (i))));
