@@ -473,16 +473,9 @@ lob_flush (SCM port)
   while (remaining > 0)
     {
       int count;
-#ifdef DEBUG_TRACE_LO_WRITE
-      fprintf (stderr, "%s: lo_write (%.*s, %d) ... ", FUNC_NAME,
-               remaining, ptr, remaining);
-#endif
       SCM_DEFER_INTS;
       count = lo_write (conn, lobp->alod, (char *) ptr, remaining);
       SCM_ALLOW_INTS;
-#ifdef DEBUG_TRACE_LO_WRITE
-      fprintf (stderr, "returned %d\n", count);
-#endif
       if (count < remaining)
         {
           /* Error.  Assume nothing was written this call, but
@@ -623,10 +616,6 @@ lob_fill_input (SCM port)
   SCM_DEFER_INTS;
   ret = lo_read (conn, lobp->alod, (char *) pt->read_buf, pt->read_buf_size);
   SCM_ALLOW_INTS;
-#ifdef DEBUG_LO_READ
-  fprintf (stderr, "%s: lo_read (%d) returned %d.\n",
-           FUNC_NAME, pt->read_buf_size, ret);
-#endif
   if (ret != pt->read_buf_size)
     {
       if (ret == 0)
@@ -637,9 +626,7 @@ lob_fill_input (SCM port)
     }
   pt->read_pos = pt->read_buf;
   pt->read_end = pt->read_buf + ret;
-#ifdef DEBUG_LO_READ
-  fprintf (stderr, "%s: returning %c.\n", FUNC_NAME, *(pt->read_buf));
-#endif
+
   return * (pt->read_buf);
 }
 
@@ -3229,33 +3216,6 @@ static
 void
 init_module (void)
 {
-#ifdef USE_OLD_SMOB_INTERFACE
-  static scm_smobfuns type_rec;
-#endif
-
-#ifdef USE_OLD_SMOB_INTERFACE
-
-  /* add new scheme type for connections */
-  type_rec.mark = xc_mark;
-  type_rec.free = xc_free;
-  type_rec.print = xc_display;
-  type_rec.equalp = 0;
-  pg_conn_tag = scm_newsmob (&type_rec);
-
-  /* add new scheme type for results */
-  type_rec.free = res_free;
-  type_rec.print = res_display;
-  type_rec.equalp = 0;
-  pg_result_tag = scm_newsmob (&type_rec);
-
-  /* add new scheme type for print options */
-  type_rec.free = sepo_free;
-  type_rec.print = sepo_display;
-  type_rec.equalp = 0;
-  sepo_type_tag = scm_newsmob (&type_rec);
-
-#else /* !USE_OLD_SMOB_INTERFACE */
-
   pg_conn_tag = scm_make_smob_type ("PG-CONN", 0);
   scm_set_smob_mark (pg_conn_tag, xc_mark);
   scm_set_smob_free (pg_conn_tag, xc_free);
@@ -3268,8 +3228,6 @@ init_module (void)
   sepo_type_tag = scm_make_smob_type ("PG-PRINT-OPTION", 0);
   scm_set_smob_free (sepo_type_tag, sepo_free);
   scm_set_smob_print (sepo_type_tag, sepo_display);
-
-#endif /* !USE_OLD_SMOB_INTERFACE */
 
 #include "libpq.x"
 
