@@ -1,3 +1,9 @@
+2008-08-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Omit port from connection external rep, if host is a socket dir.
+
+	* libpq.c (xc_display): Omit port if host begins with '/'.
+
 2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Make `pg-print' faster: Add fast path for file ports.

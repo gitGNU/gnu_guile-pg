@@ -124,6 +124,11 @@ xc_display (SCM exp, SCM port, UNUSED scm_print_state *pstate)
       if (! hoststr)
         portstr = NULL;
 
+      /* A host starting with '/' is taken as the directory where the
+         unix-domain socket is found.  In such case, port makes no sense.  */
+      if (hoststr && '/' == hoststr[0])
+        portstr = NULL;
+
 #define IFNULL(x,y) ((x) == NULL ? (y) : (x))
 
       scm_puts (IFNULL (dbstr, "?"), port); scm_putc (':', port);
