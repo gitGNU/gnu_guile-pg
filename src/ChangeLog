@@ -1,3 +1,56 @@
+2008-08-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Hone C internals: Refactor, increase/add abstraction, etc.
+
+	* libpq.c (PROB, NOINTS, INTSOK, GIVENP): New macros.
+	(EXACTLY_FALSEP, EXACTLY_TRUEP): Delete macros.
+	(DEFAULT_FALSE, RETURN_FALSE, RETURN_UNSPECIFIED): New macros.
+	(ASSERT, ASSERT_STRING): New macros.
+	(SYSCALL): Rename macro from `SCM_SYSCALL'.
+	(ROZT_X): Use `gh_str2scm'.
+	(SMOBDATA, PCHAIN, ERROR): New macros.
+	(MEMORY_ERROR, SYSTEM_ERROR, WBPORT): New macros.
+	(xc_unbox): Use `SMOBDATA'.
+	(ASSERT_CONNECTION): Use `ASSERT'.
+	(CONN_CONN): New macro.
+	(xc_name): New static char array (string).
+	(xc_display): Rewrite.
+	(VALIDATE_CONNECTION_UNBOX_DBCONN): Use `ASSERT' and `CONN_CONN'.
+	(LOB_CONN): Use `CONN_CONN'.
+	(LOBPORTP): Use `SCM_NIMP'.
+	(lob_mklobport, lob_lo_creat, lob_lo_open, lob_lo_unlink): Update.
+	(ASSERT_PORT, LOB_STREAM): New macros.
+	(lob_lo_get_connection, lob_lo_get_oid, lob_lo_tell, lob_flush)
+	(lob_end_input, lob_seek, lob_lo_seek, lob_fill_input, lob_write)
+	(lob_lo_read, lob_close, lob_mark, lob_free, lob_lo_import)
+	(lob_lo_export, lob_printpt, res_unbox, res_box): Update.
+	(VALIDATE_RESULT_UNBOX): Use `ASSERT'.
+	(res_name): New static cahr array (string).
+	(res_display): Rewrite.
+	(prep_paramspecs): Use `gh_vector_length'; update; call
+	`free' unconditionally (without checking if its arg is NULL).
+	(pg_protocol_version, pg_conndefaults, notice_processor)
+	(pg_connectdb, pg_connection_p, pg_finish, pg_reset)
+	(pg_set_client_data, pg_escape_string_conn, pg_escape_bytea_conn)
+	(pg_unescape_bytea, pg_exec, pg_exec_params, pg_exec_prepared)
+	(pg_result_p, pg_result_error_field, pg_error_message, pg_get_db)
+	(pg_get_user, pg_get_pass, pg_get_host, pg_get_port, pg_get_tty)
+	(pg_get_options, pg_backend_pid, pg_parameter_status)
+	(pg_result_status, pg_ntuples, pg_nfields, pg_cmdtuples)
+	(pg_oid_value, pg_fnumber): Update.
+	(CHECK_TUPLE_COORDS): New macro.
+	(pg_getvalue, pg_getlength, pg_getisnull, pg_binary_tuples)
+	(pg_put_copy_end, pg_get_copy_data, pg_getline, pg_getlineasync)
+	(pg_putline, pg_endcopy, pg_set_error_verbosity, pg_trace)
+	(pg_untrace, sepo_unbox): Update.
+	(sepo_name): New static byte array (string).
+	(sepo_display): Rewrite.
+	(pg_make_print_options, pg_print, pg_set_notice_out_x, pg_notifies)
+	(pg_set_client_encoding_x, pg_set_nonblocking_x, pg_is_nonblocking_p)
+	(pg_send_query, pg_send_query_params, pg_send_query_prepared)
+	(pg_get_result, pg_consume_input, pg_is_busy_p, pg_request_cancel)
+	(pg_flush, init_module): Update.
+
 2008-08-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Omit port from connection external rep, if host is a socket dir.

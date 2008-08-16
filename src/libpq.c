@@ -46,25 +46,36 @@
 #define UNUSED
 #endif
 
+#define PROB(x)  (0 > (x))
+
 /*
  * guile abstractions
  */
 
-#define NOT_FALSEP(x)      (SCM_NFALSEP (x))
-#define EXACTLY_FALSEP(x)  (SCM_FALSEP (x))
-#define EXACTLY_TRUEP(x)   (gh_eq_p ((x), SCM_BOOL_T))
+#define NOINTS()   SCM_DEFER_INTS
+#define INTSOK()   SCM_ALLOW_INTS
 
-/* We fudge this. I wonder why only libguile sources can access this?  */
-#define SCM_SYSCALL(line) line
+#define GIVENP(x)          (! SCM_UNBNDP (x))
+#define NOT_FALSEP(x)      (SCM_NFALSEP (x))
+
+#define DEFAULT_FALSE(maybe,yes)  ((maybe) ? (yes) : SCM_BOOL_F)
+#define RETURN_FALSE()                        return SCM_BOOL_F
+#define RETURN_UNSPECIFIED()                  return SCM_UNSPECIFIED
+
+#define ASSERT(what,expr,msg)  SCM_ASSERT ((expr), what, msg, FUNC_NAME)
+#define ASSERT_STRING(n,arg)  ASSERT (arg, SCM_STRINGP (arg), SCM_ARG ## n)
+
+/* We fudge this (TODO: Handle EINTR).  */
+#define SYSCALL(line)  line
 
 /* Coerce a string that is to be used in contexts where the extracted C
    string is expected to be zero-terminated and is read-only.  We check
    this condition precisely instead of simply coercing all substrings,
    to avoid waste for those substrings that may in fact already satisfy
    the condition.  Callers should extract w/ ROZT.  */
-#define ROZT_X(x)                                               \
-  if (SCM_ROCHARS (x) [SCM_ROLENGTH (x)] != '\0')               \
-    x = scm_makfromstr (SCM_ROCHARS (x), SCM_ROLENGTH (x), 0)
+#define ROZT_X(x)                                       \
+  if (SCM_ROCHARS (x) [SCM_ROLENGTH (x)])               \
+    x = gh_str2scm (SCM_ROCHARS (x), SCM_ROLENGTH (x))
 
 #define ROZT(x)  (SCM_ROCHARS (x))
 
@@ -74,6 +85,17 @@
    overflow an internal limit and silently return an incorrect value.
    We hardcode this limit here for now.  */
 #define MAX_NEWSTRING_LENGTH ((1 << 24) - 1)
+
+#define SMOBDATA(obj)  ((void *) SCM_SMOB_DATA (obj))
+
+#define PCHAIN(...)  (gh_list (__VA_ARGS__, SCM_UNDEFINED))
+
+#define ERROR(blurb, ...)  SCM_MISC_ERROR (blurb, PCHAIN (__VA_ARGS__))
+#define MEMORY_ERROR()     SCM_MEMORY_ERROR
+#define SYSTEM_ERROR()     SCM_SYSERROR
+
+/* Write a C byte array (pointer + len) to a Scheme port.  */
+#define WBPORT(scmport,cp,clen)  scm_lfwrite (cp, clen, scmport)
 
 
 /*
@@ -99,47 +121,42 @@ xc_p (SCM obj)
 static inline xc_t *
 xc_unbox (SCM obj)
 {
-  return ((xc_t *) SCM_SMOB_DATA (obj));
+  return SMOBDATA (obj);
 }
 
-#define ASSERT_CONNECTION(n,arg)                        \
-  SCM_ASSERT (xc_p (arg), arg, SCM_ARG ## n, FUNC_NAME)
+#define ASSERT_CONNECTION(n,arg)                \
+  ASSERT (arg, xc_p (arg), SCM_ARG ## n)
+
+#define CONN_CONN(conn)  (xc_unbox (conn)->dbconn)
+
+static char xc_name[] = "PG-CONN";
 
 static int
 xc_display (SCM exp, SCM port, UNUSED scm_print_state *pstate)
 {
-  xc_t *xc = xc_unbox (exp);
+  char buf[256];
+  size_t len;
+  PGconn *c = CONN_CONN (exp);
 
-  scm_puts ("#<PG-CONN:", port);
-  if (! xc->dbconn)
-    scm_putc ('-', port);
+  if (! c)
+    len = sprintf (buf, "#<%s:->", xc_name);
   else
     {
-      char *dbstr = PQdb (xc->dbconn);
-      char *hoststr = PQhost (xc->dbconn);
-      char *portstr = PQport (xc->dbconn);
-      char *optionsstr = PQoptions (xc->dbconn);
+      char *host = PQhost (c);
 
-      /* A port without a host is misleading.  */
-      if (! hoststr)
-        portstr = NULL;
-
-      /* A host starting with '/' is taken as the directory where the
-         unix-domain socket is found.  In such case, port makes no sense.  */
-      if (hoststr && '/' == hoststr[0])
-        portstr = NULL;
-
-#define IFNULL(x,y) ((x) == NULL ? (y) : (x))
-
-      scm_puts (IFNULL (dbstr, "?"), port); scm_putc (':', port);
-      scm_puts (IFNULL (hoststr, ""), port); scm_putc (':', port);
-      scm_puts (IFNULL (portstr, ""), port); scm_putc (':', port);
-      scm_puts (IFNULL (optionsstr, ""), port);
-
-#undef IFNULL
+      len = snprintf
+        (buf, 256, "#<%s:%s:%s:%s:%s>",
+         xc_name,
+         PQdb (c),
+         host ? host : "",
+         /* A port without a host is misleading.  Also, a host starting
+            with '/' is taken as the directory where the unix-domain
+            socket is found.  In such case, port makes no sense.  */
+         (host && '/' != host[0]) ? PQport (c) : "",
+         PQoptions (c));
     }
-  scm_puts (">", port);
 
+  WBPORT (port, buf, len);
   return 1;
 }
 
@@ -169,10 +186,10 @@ xc_free (SCM obj)
 #define CONN_CLIENT(conn)   (xc_unbox (conn)->client)
 #define CONN_FPTRACE(conn)  (xc_unbox (conn)->fptrace)
 
-#define VALIDATE_CONNECTION_UNBOX_DBCONN(n,arg,cvar)            \
-  do {                                                          \
-    SCM_ASSERT (xc_p (arg), arg, SCM_ARG ## n, FUNC_NAME);      \
-    cvar = xc_unbox (arg)->dbconn;                              \
+#define VALIDATE_CONNECTION_UNBOX_DBCONN(n,arg,cvar)    \
+  do {                                                  \
+    ASSERT (arg, xc_p (arg), SCM_ARG ## n);             \
+    cvar = CONN_CONN (arg);                             \
   } while (0)
 
 
@@ -193,9 +210,9 @@ typedef struct
   int          alod;              /* A Large-Object Descriptor */
 } lob_stream;
 
-#define LOB_CONN(x) (xc_unbox ((x)->conn)->dbconn)
+#define LOB_CONN(x)  (CONN_CONN ((x)->conn))
 
-#define LOBPORTP(x) (SCM_TYP16 (x) == lobp_tag)
+#define LOBPORTP(x)  (SCM_NIMP (x) && lobp_tag == SCM_TYP16 (x))
 
 #define LOBPORT_WITH_FLAGS_P(x,flags)                   \
   (LOBPORTP (x) && (SCM_CELL_WORD_0 (x) & (flags)))
@@ -214,7 +231,7 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *FUNC_NAME)
 
   SCM_NEWCELL (port);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   lobp->conn = conn;
   lobp->oid = oid;
   lobp->alod = alod;
@@ -226,9 +243,8 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *FUNC_NAME)
   pt->rw_random = 1;
   if (SCM_INPUT_PORT_P (port))
     {
-      pt->read_buf = malloc (LOB_BUFLEN);
-      if (pt->read_buf == NULL)
-        SCM_MEMORY_ERROR;
+      if (! (pt->read_buf = malloc (LOB_BUFLEN)))
+        MEMORY_ERROR ();
       pt->read_pos = pt->read_end = pt->read_buf;
       pt->read_buf_size = LOB_BUFLEN;
     }
@@ -242,9 +258,8 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *FUNC_NAME)
     }
   if (SCM_OUTPUT_PORT_P (port))
     {
-      pt->write_buf = malloc (LOB_BUFLEN);
-      if (pt->write_buf == NULL)
-        SCM_MEMORY_ERROR;
+      if (! (pt->write_buf = malloc (LOB_BUFLEN)))
+        MEMORY_ERROR ();
       pt->write_pos = pt->write_buf;
       pt->write_buf_size = LOB_BUFLEN;
     }
@@ -257,7 +272,7 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *FUNC_NAME)
 
   SCM_SET_CELL_WORD_0 (port, SCM_CELL_WORD_0 (port) & ~SCM_BUF0);
 
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   return port;
 }
@@ -285,8 +300,7 @@ GH_DEFPROC
   int pg_modes = 0;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_ASSERT (SCM_NIMP (modes) && SCM_ROSTRINGP (modes),
-              modes, SCM_ARG2, FUNC_NAME);
+  ASSERT_STRING (2, modes);
   ROZT_X (modes);
 
   mode_bits = scm_mode_bits (ROZT (modes));
@@ -296,24 +310,26 @@ GH_DEFPROC
   if (mode_bits & SCM_WRTNG)
     pg_modes |= INV_WRITE;
 
-  if (pg_modes == 0)
-    SCM_MISC_ERROR ("Invalid mode specification: ~S",
-                    scm_listify (modes, SCM_UNDEFINED));
-  SCM_DEFER_INTS;
-  if ((oid = lo_creat (dbconn, INV_READ | INV_WRITE)) != 0)
-    alod = lo_open (dbconn, oid, pg_modes);
-  SCM_ALLOW_INTS;
+  if (! pg_modes)
+    ERROR ("Invalid mode specification: ~S", modes);
 
-  if (oid <= 0)
-    return SCM_BOOL_F;
+  NOINTS ();
+  oid = lo_creat (dbconn, INV_READ | INV_WRITE);
+  INTSOK ();
+  if (InvalidOid == oid)
+    RETURN_FALSE ();
 
-  if (alod < 0)
+  NOINTS ();
+  alod = lo_open (dbconn, oid, pg_modes);
+  INTSOK ();
+  if (PROB (alod))
     {
-      SCM_DEFER_INTS;
+      NOINTS ();
       (void) lo_unlink (dbconn, oid);
-      SCM_ALLOW_INTS;
-      return SCM_BOOL_F;
+      INTSOK ();
+      RETURN_FALSE ();
     }
+
   return lob_mklobport (conn, oid, alod, mode_bits, FUNC_NAME);
 #undef FUNC_NAME
 }
@@ -345,8 +361,7 @@ GH_DEFPROC
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_ULONG_COPY (2, oid, pg_oid);
-  SCM_ASSERT (SCM_NIMP (modes) && SCM_ROSTRINGP (modes),
-              modes, SCM_ARG3, FUNC_NAME);
+  ASSERT_STRING (3, modes);
   ROZT_X (modes);
 
   mode_bits = scm_mode_bits (ROZT (modes));
@@ -356,26 +371,25 @@ GH_DEFPROC
   if (mode_bits & SCM_WRTNG)
     pg_modes |= INV_WRITE;
 
-  if (pg_modes == 0)
-    SCM_MISC_ERROR ("Invalid mode specification: ~S",
-                    scm_listify (modes, SCM_UNDEFINED));
-  SCM_DEFER_INTS;
+  if (! pg_modes)
+    ERROR ("Invalid mode specification: ~S", modes);
+  NOINTS ();
   alod = lo_open (dbconn, pg_oid, pg_modes);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
-  if (alod < 0)
-    return SCM_BOOL_F;
+  if (PROB (alod))
+    RETURN_FALSE ();
 
   if (strchr (ROZT (modes), 'a'))
     {
-      SCM_DEFER_INTS;
-      if (lo_lseek (dbconn, alod, 0, SEEK_END) < 0)
+      NOINTS ();
+      if (PROB (lo_lseek (dbconn, alod, 0, SEEK_END)))
         {
           (void) lo_close (dbconn, alod);
-          SCM_ALLOW_INTS;
-          return SCM_BOOL_F;
+          INTSOK ();
+          RETURN_FALSE ();
         }
-      SCM_ALLOW_INTS;
+      INTSOK ();
     }
   return lob_mklobport (conn, pg_oid, alod, mode_bits, FUNC_NAME);
 #undef FUNC_NAME
@@ -396,14 +410,17 @@ GH_DEFPROC
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_ULONG_COPY (2, oid, pg_oid);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   ret = lo_unlink (dbconn, pg_oid);
-  SCM_ALLOW_INTS;
-  return (ret < 0
-          ? SCM_BOOL_F
-          : SCM_BOOL_T);
+  INTSOK ();
+  return gh_bool2scm (! PROB (ret));
 #undef FUNC_NAME
 }
+
+#define ASSERT_PORT(n,arg,precisely)            \
+  ASSERT (arg, precisely (arg), SCM_ARG ## n)
+
+#define LOB_STREAM(port)  ((lob_stream *) SCM_STREAM (port))
 
 GH_DEFPROC
 (lob_lo_get_connection, "pg-lo-get-connection", 1, 0, 0,
@@ -413,10 +430,9 @@ GH_DEFPROC
  "@code{pg-lo-creat} or @code{pg-lo-open}.")
 {
 #define FUNC_NAME s_lob_lo_get_connection
-  SCM_ASSERT (SCM_NIMP (port) && OPLOBPORTP (port),
-              port, SCM_ARG1, FUNC_NAME);
+  ASSERT_PORT (1, port, OPLOBPORTP);
 
-  return ((lob_stream *)SCM_STREAM (port))->conn;
+  return LOB_STREAM (port)->conn;
 #undef FUNC_NAME
 }
 
@@ -428,9 +444,8 @@ GH_DEFPROC
  "from @code{pg-lo-creat} or @code{pg-lo-open}.")
 {
 #define FUNC_NAME s_lob_lo_get_oid
-  SCM_ASSERT (SCM_NIMP (port) && LOBPORTP (port),
-              port, SCM_ARG1, FUNC_NAME);
-  return gh_int2scm (((lob_stream *)SCM_STREAM (port))->oid);
+  ASSERT_PORT (1, port, LOBPORTP);
+  return gh_int2scm (LOB_STREAM (port)->oid);
 #undef FUNC_NAME
 }
 
@@ -446,13 +461,13 @@ GH_DEFPROC
  "explain what went wrong.")
 {
 #define FUNC_NAME s_lob_lo_tell
-  SCM_ASSERT (SCM_NIMP (port)&&OPLOBPORTP (port),port,SCM_ARG1,FUNC_NAME);
+  ASSERT_PORT (1, port, OPLOBPORTP);
 
   return scm_seek (port, SCM_INUM0, gh_int2scm (SEEK_CUR));
 #undef FUNC_NAME
 }
 
-/* During lob_flush error, we decide whether to use SCM_SYSERROR ("normal"
+/* During lob_flush error, we decide whether to use SYSTEM_ERROR ("normal"
    error mechanism) or to write directly to stderr, depending on libguile's
    variable: scm_terminating.  If it's not available in some form (see
    configure.in comments), we arrange to unconditionally write to stderr
@@ -469,7 +484,7 @@ lob_flush (SCM port)
 {
   const char *FUNC_NAME = "lob_flush";
   scm_port *pt = SCM_PTAB_ENTRY (port);
-  lob_stream *lobp = (lob_stream *) SCM_STREAM (port);
+  lob_stream *lobp = LOB_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
   unsigned char *ptr = pt->write_buf;
   int init_size = pt->write_pos - pt->write_buf;
@@ -478,9 +493,9 @@ lob_flush (SCM port)
   while (remaining > 0)
     {
       int count;
-      SCM_DEFER_INTS;
+      NOINTS ();
       count = lo_write (conn, lobp->alod, (char *) ptr, remaining);
-      SCM_ALLOW_INTS;
+      INTSOK ();
       if (count < remaining)
         {
           /* Error.  Assume nothing was written this call, but
@@ -499,7 +514,7 @@ lob_flush (SCM port)
             }
 #if defined (HAVE_SCM_TERMINATING) || defined (HAVE_LIBGUILE_TERMINATING)
           if (! scm_terminating)
-            SCM_SYSERROR;
+            SYSTEM_ERROR ();
           else
 #endif /* defined (HAVE_SCM_TERMINATING) ||
           defined (HAVE_LIBGUILE_TERMINATING) */
@@ -526,7 +541,7 @@ lob_end_input (SCM port, int offset)
 {
   const char *FUNC_NAME = "lob_end_input";
   scm_port *pt = SCM_PTAB_ENTRY (port);
-  lob_stream *lobp = (lob_stream *) SCM_STREAM (port);
+  lob_stream *lobp = LOB_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
   int ret;
 
@@ -535,12 +550,11 @@ lob_end_input (SCM port, int offset)
   if (offset > 0)
     {
       pt->read_pos = pt->read_end;
-      SCM_DEFER_INTS;
+      NOINTS ();
       ret = lo_lseek (conn, lobp->alod, -offset, SEEK_CUR);
-      SCM_ALLOW_INTS;
-      if (ret == -1)
-        SCM_MISC_ERROR ("Error seeking on lo port ~S",
-                        scm_listify (port, SCM_UNDEFINED));
+      INTSOK ();
+      if (PROB (ret))
+        ERROR ("Error seeking on lo port ~S", port);
     }
   pt->rw_active = SCM_PORT_NEITHER;
 }
@@ -549,16 +563,15 @@ static off_t
 lob_seek (SCM port, off_t offset, int whence)
 {
   const char *FUNC_NAME = "lob_seek";
-  lob_stream *lobp = (lob_stream *) SCM_STREAM (port);
+  lob_stream *lobp = LOB_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
   off_t ret;
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   ret = lo_lseek (conn, lobp->alod, offset, whence);
-  SCM_ALLOW_INTS;
-  if (ret == -1)
-    SCM_MISC_ERROR ("Error (~S) seeking on lo port ~S",
-                    scm_listify (gh_int2scm (ret), port, SCM_UNDEFINED));
+  INTSOK ();
+  if (PROB (ret))
+    ERROR ("Error (~S) seeking on lo port ~S", gh_int2scm (ret), port);
 
   /* Adjust return value to account for guile port buffering.  */
   if (SEEK_CUR == whence)
@@ -592,8 +605,7 @@ GH_DEFPROC
 {
 #define FUNC_NAME s_lob_lo_seek
   int cwhere, cwhence;
-  SCM_ASSERT (SCM_NIMP (port) && OPLOBPORTP (port),
-              port, SCM_ARG1, FUNC_NAME);
+  ASSERT_PORT (1, port, OPLOBPORTP);
   SCM_VALIDATE_INUM_COPY (2, where, cwhere);
   SCM_VALIDATE_INUM_COPY (3, whence, cwhence);
 
@@ -610,7 +622,7 @@ lob_fill_input (SCM port)
 {
   const char *FUNC_NAME = "lob_fill_input";
   scm_port *pt = SCM_PTAB_ENTRY (port);
-  lob_stream *lobp = (lob_stream *) SCM_STREAM (port);
+  lob_stream *lobp = LOB_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
 
   int ret;
@@ -618,16 +630,15 @@ lob_fill_input (SCM port)
   if (pt->write_pos > pt->write_buf)
     lob_flush (port);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   ret = lo_read (conn, lobp->alod, (char *) pt->read_buf, pt->read_buf_size);
-  SCM_ALLOW_INTS;
+  INTSOK ();
   if (ret != pt->read_buf_size)
     {
-      if (ret == 0)
+      if (! ret)
         return EOF;
-      else if (ret < 0)
-        SCM_MISC_ERROR ("Error (~S) reading from lo port ~S",
-                        scm_listify (gh_int2scm (ret), port, SCM_UNDEFINED));
+      if (PROB (ret))
+        ERROR ("Error (~S) reading from lo port ~S", gh_int2scm (ret), port);
     }
   pt->read_pos = pt->read_buf;
   pt->read_end = pt->read_buf + ret;
@@ -644,10 +655,10 @@ lob_write (SCM port, const void *data, size_t size)
   if (pt->write_buf == &pt->shortbuf)
     {
       /* This is an "unbuffered" port.  */
-      int fdes = SCM_FSTREAM (port)->fdes;
+      int fdes = SCM_FPORT_FDES (port);
 
-      if (write (fdes, data, size) == -1)
-        SCM_SYSERROR;
+      if (PROB (write (fdes, data, size)))
+        SYSTEM_ERROR ();
     }
   else
     {
@@ -693,13 +704,12 @@ GH_DEFPROC
 
   SCM_VALIDATE_INUM_MIN_COPY (1, siz, 0, csiz);
   SCM_VALIDATE_INUM_MIN_COPY (2, num, 0, cnum);
-  SCM_ASSERT (SCM_NIMP (port) && OPINLOBPORTP (port),
-              port, SCM_ARG3, FUNC_NAME);
+  ASSERT_PORT (3, port, OPINLOBPORTP);
 
   if (0 > (len = csiz * cnum)
       || (MAX_NEWSTRING_LENGTH < len)
       || (! (wp = stage = (char *) malloc (1 + len))))
-    return SCM_BOOL_F;
+    RETURN_FALSE ();
   while (len-- && (EOF != (c = scm_getc (port))))
     *wp++ = c;
   *wp = '\0';
@@ -711,43 +721,34 @@ static int
 lob_close (SCM port)
 {
   scm_port *pt = SCM_PTAB_ENTRY (port);
-  lob_stream *lobp = (lob_stream *) SCM_STREAM (port);
+  lob_stream *lobp = LOB_STREAM (port);
   PGconn *dbconn = LOB_CONN (lobp);
   int ret;
 
   lob_flush (port);
-  SCM_DEFER_INTS;
+  NOINTS ();
   ret = lo_close (dbconn, lobp->alod);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   if (pt->read_buf != &pt->shortbuf)
-    scm_must_free (pt->read_buf);
+    free (pt->read_buf);
   if (pt->write_buf != &pt->shortbuf)
-    scm_must_free (pt->write_buf);
+    free (pt->write_buf);
 
-  if (ret != 0)
-    return EOF;
-
-  return 0;
+  return ret ? EOF : 0;
 }
 
 static SCM
 lob_mark (SCM port)
 {
-  lob_stream *lobp;
-
-  if (SCM_OPENP (port))
-    {
-      lobp = (lob_stream *) SCM_STREAM (port);
-      return lobp->conn;
-    }
-  return SCM_BOOL_F;
+  return DEFAULT_FALSE (SCM_OPENP (port),
+                        LOB_STREAM (port)->conn);
 }
 
 static scm_sizet
 lob_free (SCM port)
 {
-  lob_stream *lobp = (lob_stream *) SCM_STREAM (port);
+  lob_stream *lobp = LOB_STREAM (port);
   int ret;
 
   if (SCM_OPENP (port))
@@ -769,21 +770,18 @@ GH_DEFPROC
 {
 #define FUNC_NAME s_lob_lo_import
   PGconn *dbconn;
-  int ret;
+  Oid ret;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename),
-              filename, SCM_ARG2, FUNC_NAME);
+  ASSERT_STRING (2, filename);
   ROZT_X (filename);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   ret = lo_import (dbconn, ROZT (filename));
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
-  if (ret <= 0)
-    return SCM_BOOL_F;
-
-  return gh_int2scm (ret);
+  return DEFAULT_FALSE (InvalidOid != ret,
+                        gh_int2scm (ret));
 #undef FUNC_NAME
 }
 
@@ -804,35 +802,36 @@ GH_DEFPROC
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_ULONG_COPY (2, oid, pg_oid);
-  SCM_ASSERT (SCM_NIMP (filename) && SCM_ROSTRINGP (filename), filename,
-              SCM_ARG3, FUNC_NAME);
+  ASSERT_STRING (3, filename);
   ROZT_X (filename);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   ret = lo_export (dbconn, pg_oid, ROZT (filename));
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
-  if (ret != 1)
-    return SCM_BOOL_F;
-
-  return SCM_BOOL_T;
+  return gh_bool2scm (! PROB (ret));
 #undef FUNC_NAME
 }
 
 static int
 lob_printpt (SCM exp, SCM port, scm_print_state *pstate)
 {
-  scm_puts ("#<PG-LO-PORT:", port);
+  static const char head[] = "#<PG-LO-PORT:";
+  static const char tail[] = ">";
+
+  WBPORT (port, head, sizeof (head) - 1);
   scm_print_port_mode (exp, port);
   if (SCM_OPENP (exp))
     {
-      lob_stream *lobp = (lob_stream *) SCM_STREAM (exp);
+      char buf[32];
+      size_t len;
+      lob_stream *lobp = LOB_STREAM (exp);
 
-      scm_intprint (lobp->alod, 10, port); scm_puts (":", port);
-      scm_intprint (lobp->oid, 10, port); scm_puts (":", port);
+      len = snprintf (buf, 32, "%d:%d:", lobp->alod, lobp->oid);
+      WBPORT (port, buf, len);
       xc_display (lobp->conn, port, pstate);
     }
-  scm_putc ('>', port);
+  WBPORT (port, tail, sizeof (tail) - 1);
   return 1;
 }
 
@@ -852,13 +851,13 @@ res_p (SCM obj)
 static inline PGresult *
 res_unbox (SCM obj)
 {
-  return ((PGresult*) SCM_SMOB_DATA (obj));
+  return SMOBDATA (obj);
 }
 
-#define VALIDATE_RESULT_UNBOX(pos,arg,cvar)                     \
-  do {                                                          \
-    SCM_ASSERT (res_p (arg), arg, SCM_ARG ## pos, FUNC_NAME);   \
-    cvar = res_unbox (arg);                                     \
+#define VALIDATE_RESULT_UNBOX(pos,arg,cvar)     \
+  do {                                          \
+    ASSERT (arg, res_p (arg), SCM_ARG ## pos);  \
+    cvar = res_unbox (arg);                     \
   } while (0)
 
 static SCM
@@ -867,34 +866,31 @@ res_box (PGresult *res)
   if (res)
     SCM_RETURN_NEWSMOB (pg_result_tag, res);
   else
-    return SCM_BOOL_F;
+    RETURN_FALSE ();
 }
+
+static char res_name[] = "PG-RESULT";
 
 static int
 res_display (SCM exp, SCM port, UNUSED scm_print_state *pstate)
 {
+  char buf[64];
+  size_t len = 0;
   PGresult *res = res_unbox (exp);
   ExecStatusType status;
-  int ntuples = 0;
-  int nfields = 0;
 
-  SCM_DEFER_INTS;
-  status = PQresultStatus (res);
-  if (status == PGRES_TUPLES_OK)
-    {
-      ntuples = PQntuples (res);
-      nfields = PQnfields (res);
-    }
-  SCM_ALLOW_INTS;
-
-  if (PGRES_FATAL_ERROR < status)
+  if (PGRES_FATAL_ERROR < (status = PQresultStatus (res)))
     status = PGRES_FATAL_ERROR;
 
-  scm_puts ("#<PG-RESULT:", port);
-  scm_puts (6 + PQresStatus (status), port); scm_putc (':', port);
-  scm_intprint (ntuples, 10, port); scm_putc (':', port);
-  scm_intprint (nfields, 10, port);
-  scm_putc ('>', port);
+  len = sprintf (buf, "#<%s:%s", res_name,
+                 /* Omit common "PGRES_" (sizeof 7) prefix.  */
+                 6 + PQresStatus (status));
+  if (PGRES_TUPLES_OK == status)
+    len += sprintf (buf + len, ":%d:%d",
+                    PQntuples (res),
+                    PQnfields (res));
+  len += sprintf (buf + len, ">");
+  WBPORT (port, buf, len);
 
   return 1;
 }
@@ -965,18 +961,17 @@ prep_paramspecs (const char *FUNC_NAME, struct paramspecs *ps, SCM v)
      procedure programming interface is upward-compatible by design, so we
      can ease into full specification later (by relaxing/extending the
      vector element validation).  */
-  ps->len = len = SCM_LENGTH (v);
+  ps->len = len = gh_vector_length (v);
   for (i = 0; i < len; i++)
     {
       elem = VREF (v, i);
       if (! gh_string_p (elem))
-        SCM_MISC_ERROR ("bad parameter-vector element: ~S",
-                        SCM_LIST1 (elem));
+        ERROR ("bad parameter-vector element: ~S", elem);
     }
   ps->types = NULL;
   ps->values = (const char **) malloc (len * sizeof (char *));
   if (! ps->values)
-    SCM_MISC_ERROR ("memory exhausted", SCM_EOL);
+    MEMORY_ERROR ();
   for (i = 0; i < len; i++)
     ps->values[i] = ROZT (VREF (v, i));
   ps->lengths = NULL;
@@ -986,10 +981,10 @@ prep_paramspecs (const char *FUNC_NAME, struct paramspecs *ps, SCM v)
 static void
 drop_paramspecs (struct paramspecs *ps)
 {
-  if (ps->types)   free (ps->types);
-  if (ps->values)  free (ps->values);
-  if (ps->lengths) free (ps->lengths);
-  if (ps->formats) free (ps->formats);
+  free (ps->types);
+  free (ps->values);
+  free (ps->lengths);
+  free (ps->formats);
 }
 
 
@@ -1035,13 +1030,13 @@ GH_DEFPROC
   int v = 2;
 
   if (! xc_p (conn))
-    return SCM_BOOL_F;
+    RETURN_FALSE ();
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
   v = PQprotocolVersion (dbconn);
 
-  return (0 == v ? SCM_BOOL_F : gh_int2scm (v));
+  return DEFAULT_FALSE (v, gh_int2scm (v));
 #undef FUNC_NAME
 }
 
@@ -1081,46 +1076,28 @@ GH_DEFPROC
  "presenting this option in the first place.")
 {
   PQconninfoOption *opt, *head;
-  SCM tem, pdl, rv = SCM_EOL;
+  SCM rv = SCM_EOL;
 
-#define MAYBEFALSE(field,exp)                                   \
-  ((!opt->field || '\0' == opt->field[0]) ? SCM_BOOL_F : (exp))
-#define PUSH() pdl = gh_cons (tem, pdl)
+#define PAIRM(field,exp) /* maybe */                            \
+    gh_cons (KWD (field),                                       \
+             DEFAULT_FALSE (opt->field && opt->field[0],        \
+                            (exp)))
+#define PAIRX(field,exp) /* unconditional */    \
+    gh_cons (KWD (field), (exp))
+
   for (head = opt = PQconndefaults (); opt && opt->keyword; opt++)
-    {
-      pdl = SCM_EOL;
+    rv = gh_cons
+      (PCHAIN (scm_c_make_keyword (opt->keyword),
+               PAIRX (envvar,   gh_str02scm (opt->envvar)),
+               PAIRM (compiled, gh_str02scm (opt->compiled)),
+               PAIRM (val,      gh_str02scm (opt->val)),
+               PAIRM (label,    gh_str02scm (opt->label)),
+               PAIRM (dispchar, gh_char2scm (opt->dispchar[0])),
+               PAIRX (dispsize, gh_int2scm (opt->dispsize))),
+       rv);
 
-      tem = gh_int2scm (opt->dispsize);
-      tem = gh_cons (KWD (dispsize), tem);
-      PUSH ();
-
-      tem = MAYBEFALSE (dispchar, gh_char2scm (opt->dispchar[0]));
-      tem = gh_cons (KWD (dispchar), tem);
-      PUSH ();
-
-      tem = MAYBEFALSE (label, gh_str02scm (opt->label));
-      tem = gh_cons (KWD (label), tem);
-      PUSH ();
-
-      tem = MAYBEFALSE (val, gh_str02scm (opt->val));
-      tem = gh_cons (KWD (val), tem);
-      PUSH ();
-
-      tem = MAYBEFALSE (compiled, gh_str02scm (opt->compiled));
-      tem = gh_cons (KWD (compiled), tem);
-      PUSH ();
-
-      tem = MAYBEFALSE (envvar, gh_str02scm (opt->envvar));
-      tem = gh_cons (KWD (envvar), tem);
-      PUSH ();
-
-      tem = scm_c_make_keyword (opt->keyword);
-      PUSH ();
-
-      rv = gh_cons (pdl, rv);
-    }
-#undef PUSH
-#undef MAYBEFALSE
+#undef PAIRX
+#undef PAIRM
 
   if (head)
     PQconninfoFree (head);
@@ -1132,24 +1109,21 @@ static void
 notice_processor (void *xc, const char *message)
 {
   SCM out = ((xc_t *) xc)->notice;
-  SCM msg;
 
-  if (EXACTLY_FALSEP (out))
-    return;
-
-  msg = gh_str02scm (message);
-
-  if (EXACTLY_TRUEP (out))
-    out = scm_current_error_port ();
-
-  if (SCM_OUTPORTP (out))
+  if (gh_boolean_p (out))
     {
-      scm_display (msg, out);
-      return;
+      if (NOT_FALSEP (out))
+        out = scm_current_error_port ();
+      else
+        return;
     }
 
-  if (NOT_FALSEP (scm_procedure_p (out)))
-    scm_apply (out, msg, scm_listofnull);
+  if (SCM_OUTPUT_PORT_P (out))
+    WBPORT (out, message, strlen (message));
+  else if (gh_procedure_p (out))
+    gh_apply (out, PCHAIN (gh_str02scm (message)));
+  else
+    abort ();
 }
 
 GH_DEFPROC
@@ -1226,33 +1200,30 @@ GH_DEFPROC
 #define FUNC_NAME s_pg_connectdb
   xc_t *xc;
   PGconn *dbconn;
-  ConnStatusType connstat;
-  SCM pgerrormsg = SCM_BOOL_F;
 
-  SCM_ASSERT (SCM_NIMP (constr) && SCM_ROSTRINGP (constr), constr,
-              SCM_ARG1, FUNC_NAME);
+  ASSERT_STRING (1, constr);
   ROZT_X (constr);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   dbconn = PQconnectdb (ROZT (constr));
 
-  if ((connstat = PQstatus (dbconn)) == CONNECTION_BAD)
+  if (CONNECTION_BAD == PQstatus (dbconn))
     {
       /* Get error message before PQfinish, which zonks dbconn storage.  */
-      pgerrormsg = strip_newlines (PQerrorMessage (dbconn));
+      SCM pgerrormsg = strip_newlines (PQerrorMessage (dbconn));
+
       PQfinish (dbconn);
+      INTSOK ();
+      ERROR ("~A", pgerrormsg);
     }
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
-  if (connstat == CONNECTION_BAD)
-    SCM_MISC_ERROR ("~A", SCM_LIST1 (pgerrormsg));
-
-  xc = ((xc_t *) scm_must_malloc (sizeof (xc_t), "PG-CONN"));
+  xc = ((xc_t *) scm_must_malloc (sizeof (xc_t), xc_name));
 
   xc->dbconn = dbconn;
   xc->client = SCM_BOOL_F;
   xc->notice = SCM_BOOL_T;
-  xc->fptrace = (FILE *) NULL;
+  xc->fptrace = NULL;
 
   /* Whatever the default was before, we don't care.  */
   PQsetNoticeProcessor (dbconn, &notice_processor, xc);
@@ -1267,7 +1238,7 @@ GH_DEFPROC
  "Return @code{#t} iff @var{obj} is a connection object\n"
  "returned by @code{pg-connectdb}.")
 {
-  return xc_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
+  return gh_bool2scm (xc_p (obj));
 }
 
 GH_DEFPROC
@@ -1287,7 +1258,7 @@ GH_DEFPROC
       xc->dbconn = NULL;
     }
 
-  return SCM_UNSPECIFIED;
+  RETURN_UNSPECIFIED ();
 #undef FUNC_NAME
 }
 
@@ -1304,11 +1275,11 @@ GH_DEFPROC
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_DEFER_INTS;
+  NOINTS ();
   PQreset (dbconn);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
-  return SCM_UNSPECIFIED;
+  RETURN_UNSPECIFIED ();
 #undef FUNC_NAME
 }
 
@@ -1330,10 +1301,10 @@ GH_DEFPROC
 {
 #define FUNC_NAME s_pg_set_client_data
   ASSERT_CONNECTION (1, conn);
-  SCM_DEFER_INTS;
+  NOINTS ();
   CONN_CLIENT (conn) = data;
-  SCM_ALLOW_INTS;
-  return (data);
+  INTSOK ();
+  return data;
 #undef FUNC_NAME
 }
 
@@ -1359,22 +1330,16 @@ GH_DEFPROC
   SCM rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_ASSERT (SCM_NIMP (string) && SCM_ROSTRINGP (string),
-              string, SCM_ARG2, FUNC_NAME);
+  ASSERT_STRING (2, string);
   ROZT_X (string);
 
   ilen = SCM_ROLENGTH (string);
   if (! (answer = malloc (1 + 2 * ilen)))
-    SCM_SYSERROR;
+    SYSTEM_ERROR ();
 
   olen = PQescapeStringConn (dbconn, answer, ROZT (string), ilen, &errcode);
-  if (errcode)
-    {
-      if (answer)
-        free (answer);
-      return SCM_BOOL_F;
-    }
-  rv = gh_str02scm (answer);
+  rv = DEFAULT_FALSE (! errcode,
+                      gh_str02scm (answer));
   free (answer);
   return rv;
 #undef FUNC_NAME
@@ -1397,14 +1362,12 @@ GH_DEFPROC
   SCM rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_ASSERT (SCM_NIMP (bytea) && SCM_ROSTRINGP (bytea),
-              bytea, SCM_ARG2, FUNC_NAME);
+  ASSERT_STRING (2, bytea);
 
   ilen = SCM_ROLENGTH (bytea);
-  if (! (answer = PQescapeByteaConn (dbconn, SCM_ROUCHARS (bytea),
-                                     ilen, &olen)))
-    return SCM_BOOL_F;
-  rv = gh_str2scm ((char *) answer, olen ? olen - 1 : 0);
+  rv = DEFAULT_FALSE
+    (answer = PQescapeByteaConn (dbconn, SCM_ROUCHARS (bytea), ilen, &olen),
+     gh_str2scm ((char *) answer, olen ? olen - 1 : 0));
   PQfreemem (answer);
   return rv;
 #undef FUNC_NAME
@@ -1421,12 +1384,11 @@ GH_DEFPROC
   size_t olen;
   SCM rv;
 
-  SCM_ASSERT (SCM_NIMP (bytea) && SCM_ROSTRINGP (bytea),
-              bytea, SCM_ARG1, FUNC_NAME);
+  ASSERT_STRING (1, bytea);
 
-  if (! (answer = PQunescapeBytea (SCM_ROUCHARS (bytea), &olen)))
-    return SCM_BOOL_F;
-  rv = gh_str2scm ((char *) answer, olen);
+  rv = DEFAULT_FALSE
+    (answer = PQunescapeBytea (SCM_ROUCHARS (bytea), &olen),
+     gh_str2scm ((char *) answer, olen));
   PQfreemem (answer);
   return rv;
 #undef FUNC_NAME
@@ -1461,15 +1423,14 @@ GH_DEFPROC
   PGresult *result;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_ASSERT (SCM_NIMP (statement) && SCM_ROSTRINGP (statement),
-              statement, SCM_ARG2, FUNC_NAME);
+  ASSERT_STRING (2, statement);
   ROZT_X (statement);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   result = PQexec (dbconn, ROZT (statement));
 
   z = res_box (result);
-  SCM_ALLOW_INTS;
+  INTSOK ();
   return z;
 #undef FUNC_NAME
 }
@@ -1489,12 +1450,12 @@ GH_DEFPROC
   VALIDATE_PARAM_RELATED_ARGS (statement);
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
-  SCM_DEFER_INTS;
+  NOINTS ();
   result = PQexecParams (dbconn, ROZT (statement), ps.len,
                          ps.types, ps.values, ps.lengths, ps.formats,
                          RESFMT_TEXT);
   z = res_box (result);
-  SCM_ALLOW_INTS;
+  INTSOK ();
   drop_paramspecs (&ps);
   return z;
 #undef FUNC_NAME
@@ -1518,12 +1479,12 @@ GH_DEFPROC
   VALIDATE_PARAM_RELATED_ARGS (stname);
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
-  SCM_DEFER_INTS;
+  NOINTS ();
   result = PQexecPrepared (dbconn, ROZT (stname), ps.len,
                            ps.values, ps.lengths, ps.formats,
                            RESFMT_TEXT);
   z = res_box (result);
-  SCM_ALLOW_INTS;
+  INTSOK ();
   drop_paramspecs (&ps);
   return z;
 #undef FUNC_NAME
@@ -1535,7 +1496,7 @@ GH_DEFPROC
  "Return @code{#t} iff @var{obj} is a result object\n"
  "returned by @code{pg-exec}.")
 {
-  return res_p (obj) ? SCM_BOOL_T : SCM_BOOL_F;
+  return gh_bool2scm (res_p (obj));
 }
 
 SIMPLE_KEYWORD (severity);
@@ -1579,7 +1540,6 @@ GH_DEFPROC
  "@end table")
 {
 #define FUNC_NAME s_pg_result_error_field
-  SCM rv = SCM_BOOL_F;
   PGresult *res;
   int fc;
   char *s;
@@ -1601,29 +1561,29 @@ GH_DEFPROC
   CHKFC (KWD (sourcefile),        PG_DIAG_SOURCE_FILE);
   CHKFC (KWD (sourceline),        PG_DIAG_SOURCE_LINE);
   CHKFC (KWD (sourcefunction),    PG_DIAG_SOURCE_FUNCTION);
-  return rv;
+  RETURN_FALSE ();
 #undef CHKFC
 
  gotfc:
   if ((s = PQresultErrorField (res, fc)))
     {
-      rv = gh_str02scm (s);
+      SCM rv;
+
       switch (fc)
         {
         case PG_DIAG_STATEMENT_POSITION:
         case PG_DIAG_SOURCE_LINE:
-          rv = scm_string_to_number (rv, SCM_MAKINUM (10));
+          rv = gh_eval_str (s);
           break;
         case PG_DIAG_SOURCE_FUNCTION:
-          rv = gh_symbol2scm (ROZT (rv));
+          rv = gh_symbol2scm (s);
           break;
         default:
-          /* Do nothing; leave result as a string.  */
-          ;
+          rv = gh_str02scm (s);
         }
     }
 
-  return rv;
+  RETURN_FALSE ();
 #undef FUNC_NAME
 }
 
@@ -1667,10 +1627,10 @@ GH_DEFPROC
     char *msg;
 
     VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-    SCM_DEFER_INTS;
+    NOINTS ();
     msg = PQerrorMessage (dbconn);
     rv = strip_newlines (msg);
-    SCM_ALLOW_INTS;
+    INTSOK ();
 
     return rv;
   }
@@ -1688,9 +1648,9 @@ GH_DEFPROC
   const char *rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_DEFER_INTS;
+  NOINTS ();
   rv = PQdb (dbconn);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   return gh_str02scm (rv);
 #undef FUNC_NAME
@@ -1707,9 +1667,9 @@ GH_DEFPROC
   const char *rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_DEFER_INTS;
+  NOINTS ();
   rv = PQuser (dbconn);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   return gh_str02scm (rv);
 #undef FUNC_NAME
@@ -1726,9 +1686,9 @@ GH_DEFPROC
   const char *rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_DEFER_INTS;
+  NOINTS ();
   rv = PQpass (dbconn);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   return gh_str02scm (rv);
 #undef FUNC_NAME
@@ -1745,9 +1705,9 @@ GH_DEFPROC
   const char *rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_DEFER_INTS;
+  NOINTS ();
   rv = PQhost (dbconn);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   return gh_str02scm (rv);
 #undef FUNC_NAME
@@ -1764,9 +1724,9 @@ GH_DEFPROC
   const char *rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_DEFER_INTS;
+  NOINTS ();
   rv = PQport (dbconn);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   return gh_str02scm (rv);
 #undef FUNC_NAME
@@ -1783,9 +1743,9 @@ GH_DEFPROC
   const char *rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_DEFER_INTS;
+  NOINTS ();
   rv = PQtty (dbconn);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   return gh_str02scm (rv);
 #undef FUNC_NAME
@@ -1801,9 +1761,9 @@ GH_DEFPROC
   const char *rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_DEFER_INTS;
+  NOINTS ();
   rv = PQoptions (dbconn);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   return gh_str02scm (rv);
 #undef FUNC_NAME
@@ -1820,9 +1780,9 @@ GH_DEFPROC
   int pid;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_DEFER_INTS;
+  NOINTS ();
   pid = PQbackendPID (dbconn);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   return gh_int2scm (pid);
 #undef FUNC_NAME
@@ -1879,7 +1839,7 @@ GH_DEFPROC
   /* Offset by one to skip the symbol name's initial hyphen.  */
   cstatus = PQparameterStatus (dbconn, 1 + ROZT (parm));
 
-  return (cstatus ? gh_str02scm (cstatus) : SCM_BOOL_F);
+  return DEFAULT_FALSE (cstatus, gh_str02scm (cstatus));
 #undef FUNC_NAME
 }
 
@@ -1895,9 +1855,9 @@ GH_DEFPROC
 
   VALIDATE_RESULT_UNBOX (1, result, res);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   result_status = PQresultStatus (res);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   if (PGRES_FATAL_ERROR < result_status)
     result_status = PGRES_FATAL_ERROR;
@@ -1917,9 +1877,9 @@ GH_DEFPROC
 
   VALIDATE_RESULT_UNBOX (1, result, res);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   ntuples = PQntuples (res);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   return gh_int2scm (ntuples);
 #undef FUNC_NAME
@@ -1936,9 +1896,9 @@ GH_DEFPROC
 
   VALIDATE_RESULT_UNBOX (1, result, res);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   rv = gh_int2scm (PQnfields (res));
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   return rv;
 #undef FUNC_NAME
@@ -1958,9 +1918,9 @@ GH_DEFPROC
 
   VALIDATE_RESULT_UNBOX (1, result, res);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   cmdtuples = PQcmdTuples (res);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   return gh_str02scm (cmdtuples);
 #undef FUNC_NAME
@@ -1979,14 +1939,12 @@ GH_DEFPROC
 
   VALIDATE_RESULT_UNBOX (1, result, res);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   oid_value = PQoidValue (res);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
-  if (oid_value == InvalidOid)
-    return SCM_BOOL_F;
-
-  return gh_int2scm (oid_value);
+  return DEFAULT_FALSE (InvalidOid != oid_value,
+                        gh_int2scm (oid_value));
 #undef FUNC_NAME
 }
 
@@ -2021,13 +1979,12 @@ GH_DEFPROC
   int fnum;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
-  SCM_ASSERT (SCM_NIMP (fname) && SCM_ROSTRINGP (fname), fname,
-              SCM_ARG2, FUNC_NAME);
+  ASSERT_STRING (2, fname);
   ROZT_X (fname);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   fnum = PQfnumber (res, ROZT (fname));
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
   return gh_int2scm (fnum);
 #undef FUNC_NAME
@@ -2127,6 +2084,14 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
+/* This is for pg-getvalue, pg-getlength, pg-getisnull.  */
+#define CHECK_TUPLE_COORDS() do                                         \
+    {                                                                   \
+      ASSERT (stuple, ctuple < PQntuples (res), SCM_OUTOFRANGE);        \
+      ASSERT (sfield, cfield < PQnfields (res), SCM_OUTOFRANGE);        \
+    }                                                                   \
+  while (0)
+
 GH_DEFPROC
 (pg_getvalue, "pg-getvalue", 3, 0, 0,
  (SCM result, SCM stuple, SCM sfield),
@@ -2136,33 +2101,23 @@ GH_DEFPROC
 {
 #define FUNC_NAME s_pg_getvalue
   PGresult *res;
-  int maxtuple, tuple;
-  int maxfield, field;
+  int ctuple, cfield;
   const char *val;
-  int isbinary, veclen = 0;
-  SCM srv;
+  SCM rv;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
-  SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, tuple);
-  SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, field);
-  SCM_DEFER_INTS;
-  maxtuple = PQntuples (res);
-  maxfield = PQnfields (res);
-  SCM_ALLOW_INTS;
-  SCM_ASSERT (tuple < maxtuple, stuple, SCM_OUTOFRANGE, FUNC_NAME);
-  SCM_ASSERT (field < maxfield, sfield, SCM_OUTOFRANGE, FUNC_NAME);
-  SCM_DEFER_INTS;
-  val = PQgetvalue (res, tuple, field);
-  if ((isbinary = PQbinaryTuples (res)) != 0)
-    veclen = PQgetlength (res, tuple, field);
-  SCM_ALLOW_INTS;
+  SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, ctuple);
+  SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, cfield);
+  CHECK_TUPLE_COORDS ();
 
-  if (isbinary)
-    srv = gh_str2scm (val, veclen);
-  else
-    srv = gh_str02scm (val);
+  NOINTS ();
+  val = PQgetvalue (res, ctuple, cfield);
+  rv = PQbinaryTuples (res)
+    ? gh_str2scm (val, PQgetlength (res, ctuple, cfield))
+    : gh_str02scm (val);
+  INTSOK ();
 
-  return srv;
+  return rv;
 #undef FUNC_NAME
 }
 
@@ -2173,23 +2128,17 @@ GH_DEFPROC
 {
 #define FUNC_NAME s_pg_getlength
   PGresult *res;
-  int maxtuple, tuple;
-  int maxfield, field;
-  int len;
+  int ctuple, cfield, len;
   SCM ret;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
-  SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, tuple);
-  SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, field);
-  SCM_DEFER_INTS;
-  maxtuple = PQntuples (res);
-  maxfield = PQnfields (res);
-  SCM_ALLOW_INTS;
-  SCM_ASSERT (tuple < maxtuple, stuple, SCM_OUTOFRANGE, FUNC_NAME);
-  SCM_ASSERT (field < maxfield, sfield, SCM_OUTOFRANGE, FUNC_NAME);
-  SCM_DEFER_INTS;
-  len = PQgetlength (res, tuple, field);
-  SCM_ALLOW_INTS;
+  SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, ctuple);
+  SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, cfield);
+  CHECK_TUPLE_COORDS ();
+
+  NOINTS ();
+  len = PQgetlength (res, ctuple, cfield);
+  INTSOK ();
 
   ret = gh_int2scm (len);
   return ret;
@@ -2204,25 +2153,17 @@ GH_DEFPROC
 {
 #define FUNC_NAME s_pg_getisnull
   PGresult *res;
-  int maxtuple, tuple;
-  int maxfield, field;
+  int ctuple, cfield;
   SCM rv;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
-  SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, tuple);
-  SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, field);
-  SCM_DEFER_INTS;
-  maxtuple = PQntuples (res);
-  maxfield = PQnfields (res);
-  SCM_ALLOW_INTS;
-  SCM_ASSERT (tuple < maxtuple, stuple, SCM_OUTOFRANGE, FUNC_NAME);
-  SCM_ASSERT (field < maxfield, sfield, SCM_OUTOFRANGE, FUNC_NAME);
-  SCM_DEFER_INTS;
-  if (PQgetisnull (res, tuple, field))
-    rv = SCM_BOOL_T;
-  else
-    rv = SCM_BOOL_F;
-  SCM_ALLOW_INTS;
+  SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, ctuple);
+  SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, cfield);
+  CHECK_TUPLE_COORDS ();
+
+  NOINTS ();
+  rv = gh_bool2scm (PQgetisnull (res, ctuple, cfield));
+  INTSOK ();
 
   return rv;
 #undef FUNC_NAME
@@ -2240,12 +2181,9 @@ GH_DEFPROC
 
   VALIDATE_RESULT_UNBOX (1, result, res);
 
-  SCM_DEFER_INTS;
-  if (PQbinaryTuples (res))
-    rv = SCM_BOOL_T;
-  else
-    rv = SCM_BOOL_F;
-  SCM_ALLOW_INTS;
+  NOINTS ();
+  rv = gh_bool2scm (PQbinaryTuples (res));
+  INTSOK ();
 
   return rv;
 #undef FUNC_NAME
@@ -2304,11 +2242,9 @@ GH_DEFPROC
   char *cerrmsg = NULL;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  if (errmsg != SCM_UNDEFINED)
-    SCM_VALIDATE_STRING (2, errmsg);
-
-  if (errmsg != SCM_UNDEFINED)
+  if (GIVENP (errmsg))
     {
+      SCM_VALIDATE_STRING (2, errmsg);
       ROZT_X (errmsg);
       cerrmsg = ROZT (errmsg);
     }
@@ -2334,27 +2270,24 @@ GH_DEFPROC
   char *newbuf;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  if (SCM_OUTPORTP (port))
+  if (SCM_OUTPUT_PORT_P (port))
     pwritep = 1;
   else
     {
-      if (gh_pair_p (port))
-        swritep = 1;
-      else
-        SCM_WTA (SCM_ARG2, port);
+      ASSERT (port, gh_pair_p (port), SCM_ARG2);
+      swritep = 1;
     }
 
-  SCM_DEFER_INTS;
-  rv = PQgetCopyData (dbconn, &newbuf, SCM_NFALSEP (asyncp));
+  NOINTS ();
+  rv = PQgetCopyData (dbconn, &newbuf, NOT_FALSEP (asyncp));
   if (0 < rv)
     {
-      SCM s = gh_str2scm (newbuf, rv);
       if (pwritep)
-        scm_display (s, port);
+        WBPORT (port, newbuf, rv);
       if (swritep)
-        scm_set_car_x (port, s);
+        gh_set_car_x (port, gh_str2scm (newbuf, rv));
     }
-  SCM_ALLOW_INTS;
+  INTSOK ();
   PQfreemem (newbuf);
 
   return gh_int2scm (rv);
@@ -2373,20 +2306,19 @@ GH_DEFPROC
   PGconn *dbconn;
   char buf[BUF_LEN];
   int ret = 1;
-  SCM str = SCM_UNDEFINED;
+  SCM box = PCHAIN (SCM_UNSPECIFIED);
+  SCM tp = box;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   while (ret != 0 && ret != EOF)
     {
-      SCM_DEFER_INTS;
+      NOINTS ();
       ret = PQgetline (dbconn, buf, BUF_LEN);
-      SCM_ALLOW_INTS;
-      if (str == SCM_UNDEFINED)
-        str = gh_str02scm (buf);
-      else
-        str = scm_string_append (SCM_LIST2 (str, gh_str02scm (buf)));
+      INTSOK ();
+      gh_set_cdr_x (tp, gh_cons (gh_str02scm (buf), SCM_EOL));
+      tp = gh_cdr (tp);
     }
-  return str;
+  return scm_string_append (gh_cdr (box));
 #undef FUNC_NAME
 }
 
@@ -2406,9 +2338,9 @@ GH_DEFPROC
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_ASSERT (SCM_STRINGP (buf), buf, SCM_ARG2, FUNC_NAME);
+  ASSERT_STRING (2, buf);
 
-  if (tickle != SCM_UNDEFINED && NOT_FALSEP (tickle))
+  if (GIVENP (tickle) && NOT_FALSEP (tickle))
     /* We don't care if there was an error consuming input; caller can use
        `pg_error_message' to find out afterwards, or simply avoid tickling in
        the first place.  */
@@ -2436,11 +2368,11 @@ GH_DEFPROC
   int status;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_ASSERT (SCM_NIMP (str)&&SCM_ROSTRINGP (str), str, SCM_ARG2, FUNC_NAME);
-  SCM_DEFER_INTS;
+  ASSERT_STRING (2, str);
+  NOINTS ();
   status = PQputnbytes (dbconn, SCM_ROCHARS (str), SCM_ROLENGTH (str));
-  SCM_ALLOW_INTS;
-  return (0 == status ? SCM_BOOL_T : SCM_BOOL_F);
+  INTSOK ();
+  return gh_bool2scm (! status);
 #undef FUNC_NAME
 }
 
@@ -2457,11 +2389,11 @@ GH_DEFPROC
   int ret;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_DEFER_INTS;
+  NOINTS ();
   ret = PQendcopy (dbconn);
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
-  return (0 == ret ? SCM_BOOL_T : SCM_BOOL_F);
+  return gh_bool2scm (! ret);
 #undef FUNC_NAME
 }
 
@@ -2493,15 +2425,14 @@ GH_DEFPROC
     else if (gh_eq_p (verbosity, KWD (verbose)))
       now = PQERRORS_VERBOSE;
     else
-      SCM_MISC_ERROR ("Invalid verbosity: ~A",
-                      SCM_LIST1 (verbosity));
+      ERROR ("Invalid verbosity: ~A", verbosity);
 
     switch (PQsetErrorVerbosity (dbconn, now))
       {
       case PQERRORS_TERSE:   return KWD (terse);
       case PQERRORS_DEFAULT: return KWD (default);
       case PQERRORS_VERBOSE: return KWD (verbose);
-      default:               return SCM_BOOL_F; /* TODO: abort.  */
+      default:               RETURN_FALSE (); /* TODO: abort.  */
       }
   }
 #undef FUNC_NAME
@@ -2518,29 +2449,28 @@ GH_DEFPROC
 {
 #define FUNC_NAME s_pg_trace
   PGconn *dbconn;
-  struct scm_fport *fp = SCM_FSTREAM (port);
   int fd;
   FILE *fpout;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_ASSERT (CONN_FPTRACE (conn) == NULL, conn, SCM_ARG1, FUNC_NAME);
+  ASSERT (conn, ! CONN_FPTRACE (conn),
+          "tracing already in progress for connection: ~S");
   port = SCM_COERCE_OUTPORT (port);
-  SCM_ASSERT (SCM_NIMP (port) && SCM_OPOUTFPORTP (port),
-              port, SCM_ARG2, FUNC_NAME);
+  ASSERT_PORT (2, port, SCM_OPOUTFPORTP);
 
-  SCM_SYSCALL (fd = dup (fp->fdes));
-  if (fd == -1)
-    SCM_SYSERROR;
-  SCM_SYSCALL (fpout = fdopen (fd, "w"));
-  if (fpout == NULL)
-    SCM_SYSERROR;
+  SYSCALL (fd = dup (SCM_FPORT_FDES (port)));
+  if (PROB (fd))
+    SYSTEM_ERROR ();
+  SYSCALL (fpout = fdopen (fd, "w"));
+  if (! fpout)
+    SYSTEM_ERROR ();
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   PQtrace (dbconn, fpout);
   CONN_FPTRACE (conn) = fpout;
-  SCM_ALLOW_INTS;
+  INTSOK ();
 
-  return SCM_UNSPECIFIED;
+  RETURN_UNSPECIFIED ();
 #undef FUNC_NAME
 }
 
@@ -2560,17 +2490,17 @@ GH_DEFPROC
     /* We could throw an error here but that's not cool.  An error would be
        warranted in the future, however, if tracing state were to become
        nestable (with fluids, say) -- a relatively unlikely scenario.  */
-    return SCM_UNSPECIFIED;
+    RETURN_UNSPECIFIED ();
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   PQuntrace (dbconn);
-  SCM_SYSCALL (ret = fclose (CONN_FPTRACE (conn)));
-  CONN_FPTRACE (conn) = (FILE *) NULL;
-  SCM_ALLOW_INTS;
+  SYSCALL (ret = fclose (CONN_FPTRACE (conn)));
+  CONN_FPTRACE (conn) = NULL;
+  INTSOK ();
   if (ret)
-    SCM_SYSERROR;
+    SYSTEM_ERROR ();
 
-  return SCM_UNSPECIFIED;
+  RETURN_UNSPECIFIED ();
 #undef FUNC_NAME
 }
 
@@ -2590,7 +2520,7 @@ sepo_p (SCM obj)
 static inline PQprintOpt *
 sepo_unbox (SCM obj)
 {
-  return ((PQprintOpt *) SCM_SMOB_DATA (obj));
+  return SMOBDATA (obj);
 }
 
 static scm_sizet
@@ -2632,10 +2562,18 @@ sepo_free (SCM obj)
   return size;
 }
 
+static char sepo_name[] = "PG-PRINT-OPTION";
+
 static int
 sepo_display (UNUSED SCM sepo, SCM port, UNUSED scm_print_state *pstate)
 {
-  scm_puts ("#<PG-PRINT-OPTION>", port);
+  static char buf[20];
+  static size_t len = 0;
+
+  if (! len)
+    len = snprintf (buf, 20, "#<%s>", sepo_name);
+
+  WBPORT (port, buf, len);
   return 1;
 }
 
@@ -2700,35 +2638,37 @@ GH_DEFPROC
 #define FUNC_NAME s_pg_make_print_options
   PQprintOpt *po;
   int count = 0;                        /* of substnames */
-  SCM check, substnames = SCM_BOOL_F, flags = SCM_EOL, keys = SCM_EOL;
+  SCM check, substnames = SCM_EOL, flags = SCM_EOL, keys = SCM_EOL;
 
-  SCM_ASSERT (SCM_NULLP (spec) || SCM_CONSP (spec),
-              spec, SCM_ARG1, FUNC_NAME);
+  ASSERT (spec, gh_null_p (spec) || gh_pair_p (spec), SCM_ARG1);
 
   /* Hairy validation/collection: symbols in `flags', pairs in `keys'.  */
   check = spec;
-  while (SCM_NNULLP (check))
+  while (! gh_null_p (check))
     {
       SCM head = gh_car (check);
-      if (SCM_SYMBOLP (head))
+
+#define CHECK_HEAD(expr)                        \
+      ASSERT (head, (expr), SCM_ARG1)
+
+      if (gh_symbol_p (head))
         {
-          SCM_ASSERT (NOT_FALSEP (scm_memq (head, valid_print_option_flags)),
-                      head, SCM_ARG1, FUNC_NAME);
+          CHECK_HEAD (NOT_FALSEP (gh_memq (head, valid_print_option_flags)));
           flags = gh_cons (head, flags);
         }
-      else if (SCM_CONSP (head))
+      else if (gh_pair_p (head))
         {
           SCM key = gh_car (head);
           SCM val = gh_cdr (head);
-          SCM_ASSERT (NOT_FALSEP (scm_memq (key, valid_print_option_keys)),
-                      key, SCM_ARG1, FUNC_NAME);
+
+          ASSERT (key, NOT_FALSEP (gh_memq (key, valid_print_option_keys)),
+                  SCM_ARG1);
           if (key == pg_sym_field_names)
             {
-              SCM_ASSERT (SCM_NNULLP (val), head, SCM_ARG1, FUNC_NAME);
-              while (SCM_NNULLP (val))
+              CHECK_HEAD (! gh_null_p (val));
+              while (! gh_null_p (val))
                 {
-                  SCM_ASSERT (SCM_STRINGP (gh_car (val)),
-                              head, SCM_ARG1, FUNC_NAME);
+                  CHECK_HEAD (gh_string_p (gh_car (val)));
                   count++;
                   val = gh_cdr (val);
                 }
@@ -2736,18 +2676,20 @@ GH_DEFPROC
             }
           else
             {
-              SCM_ASSERT (SCM_STRINGP (val), val, SCM_ARG1, FUNC_NAME);
+              ASSERT_STRING (1, val);
               keys = gh_cons (head, keys);
             }
         }
       check = gh_cdr (check);
+
+#undef CHECK_HEAD
     }
 
-  po = scm_must_malloc (sizeof (PQprintOpt), "PG-PRINT-OPTION");
+  po = scm_must_malloc (sizeof (PQprintOpt), sepo_name);
 
 #define _FLAG_CHECK(m)                                  \
-  (NOT_FALSEP (scm_memq (pg_sym_no_ ## m, flags))       \
-   ? 0 : (NOT_FALSEP (scm_memq (pg_sym_ ## m, flags))   \
+  (NOT_FALSEP (gh_memq (pg_sym_no_ ## m, flags))        \
+   ? 0 : (NOT_FALSEP (gh_memq (pg_sym_ ## m, flags))    \
           ? 1 : default_print_options.m))
 
   po->header   = _FLAG_CHECK (header);
@@ -2773,13 +2715,13 @@ GH_DEFPROC
   _STRING_CHECK_SETX (caption, caption);
 #undef _STRING_CHECK_SETX
 
-  if (EXACTLY_FALSEP (substnames))
+  if (gh_null_p (substnames))
     po->fieldName = NULL;
   else
     {
       int i;
       po->fieldName = (char **) scm_must_malloc ((1 + count) * sizeof (char *),
-                                                 "PG-PRINT-OPTION fieldname");
+                                                 sepo_name);
       po->fieldName[count] = NULL;
       for (i = 0; i < count; i++)
         {
@@ -2807,16 +2749,16 @@ GH_DEFPROC
   SCM curout;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
-  options = ((options == SCM_UNDEFINED)
-             ? pg_make_print_options (SCM_EOL)
-             : options);
-  SCM_ASSERT (sepo_p (options), options, SCM_ARG2, FUNC_NAME);
+  options = (GIVENP (options)
+             ? options
+             : pg_make_print_options (SCM_EOL));
+  ASSERT (options, sepo_p (options), SCM_ARG2);
 
   fd = (SCM_OPFPORTP (curout = scm_current_output_port ())
-        ? gh_scm2int (scm_fileno (curout))
+        ? SCM_FPORT_FDES (curout)
         : -1);
 
-  if (0 > fd)
+  if (PROB (fd))
     fout = tmpfile ();
   else
     {
@@ -2825,18 +2767,18 @@ GH_DEFPROC
         fout = stdout;
       else
         {
-          SCM_SYSCALL (fd = dup (fd));
-          if (0 > fd)
-            SCM_SYSERROR;
-          SCM_SYSCALL (fout = fdopen (fd, "w"));
+          SYSCALL (fd = dup (fd));
+          if (PROB (fd))
+            SYSTEM_ERROR ();
+          SYSCALL (fout = fdopen (fd, "w"));
         }
     }
 
   if (! fout)
-    SCM_SYSERROR;
+    SYSTEM_ERROR ();
   PQprint (fout, res, sepo_unbox (options));
 
-  if (0 > fd)
+  if (PROB (fd))
     {
       char buf[BUF_LEN];
       int howmuch = 0;
@@ -2845,18 +2787,18 @@ GH_DEFPROC
       fseek (fout, 0, SEEK_SET);
 
       while (BUF_LEN - 1 == (howmuch = fread (buf, 1, BUF_LEN - 1, fout)))
-        scm_display (gh_str02scm (buf), curout);
+        WBPORT (curout, buf, howmuch);
       if (feof (fout))
         {
           buf[howmuch] = '\0';
-          scm_display (gh_str02scm (buf), curout);
+          WBPORT (curout, buf, howmuch);
         }
     }
 
   if (stdout != fout)
     fclose (fout);
 
-  return SCM_UNSPECIFIED;
+  RETURN_UNSPECIFIED ();
 #undef FUNC_NAME
 }
 
@@ -2881,16 +2823,13 @@ GH_DEFPROC
 {
 #define FUNC_NAME s_pg_set_notice_out_x
   ASSERT_CONNECTION (1, conn);
+  ASSERT (out, (gh_boolean_p (out)
+                || SCM_OUTPUT_PORT_P (out)
+                || gh_procedure_p (out)),
+          SCM_ARG2);
 
-  if (EXACTLY_TRUEP (out) ||
-      EXACTLY_FALSEP (out) ||
-      SCM_OUTPORTP (out) ||
-      NOT_FALSEP (scm_procedure_p (out)))
-    CONN_NOTICE (conn) = out;
-  else
-    SCM_WTA (SCM_ARG2, out);
-
-  return SCM_UNSPECIFIED;
+  CONN_NOTICE (conn) = out;
+  RETURN_UNSPECIFIED ();
 #undef FUNC_NAME
 }
 
@@ -2912,11 +2851,11 @@ GH_DEFPROC
 #define FUNC_NAME s_pg_notifies
   PGconn *dbconn;
   PGnotify *n;
-  SCM rv = SCM_BOOL_F;
+  SCM rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
-  if (tickle != SCM_UNDEFINED && NOT_FALSEP (tickle))
+  if (GIVENP (tickle) && NOT_FALSEP (tickle))
     /* We don't care if there was an error consuming input; caller can use
        `pg_error_message' to find out afterwards, or simply avoid tickling in
        the first place.  */
@@ -2924,11 +2863,11 @@ GH_DEFPROC
   n = PQnotifies (dbconn);
   if (n)
     {
-      rv = gh_str02scm (n->relname);
-      rv = gh_cons (rv, gh_int2scm (n->be_pid));
+      rv = gh_cons (gh_str02scm (n->relname),
+                    gh_int2scm (n->be_pid));
       PQfreemem (n);
     }
-  return rv;
+  return DEFAULT_FALSE (n, rv);
 #undef FUNC_NAME
 }
 
@@ -2976,12 +2915,10 @@ GH_DEFPROC
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_ASSERT (SCM_STRINGP (encoding), encoding, SCM_ARG2, FUNC_NAME);
+  ASSERT_STRING (2, encoding);
   ROZT_X (encoding);
 
-  return (0 == (PQsetClientEncoding (dbconn, ROZT (encoding)))
-          ? SCM_BOOL_T
-          : SCM_BOOL_F);
+  return gh_bool2scm (! PQsetClientEncoding (dbconn, ROZT (encoding)));
 #undef FUNC_NAME
 }
 
@@ -3002,9 +2939,7 @@ GH_DEFPROC
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
-  return (0 == PQsetnonblocking (dbconn, ! EXACTLY_FALSEP (mode))
-          ? SCM_BOOL_T
-          : SCM_BOOL_F);
+  return gh_bool2scm (! PQsetnonblocking (dbconn, NOT_FALSEP (mode)));
 #undef FUNC_NAME
 }
 
@@ -3018,9 +2953,7 @@ GH_DEFPROC
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
-  return (PQisnonblocking (dbconn)
-          ? SCM_BOOL_T
-          : SCM_BOOL_F);
+  return gh_bool2scm (PQisnonblocking (dbconn));
 #undef FUNC_NAME
 }
 
@@ -3040,12 +2973,10 @@ GH_DEFPROC
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_ASSERT (SCM_STRINGP (query), query, SCM_ARG2, FUNC_NAME);
+  ASSERT_STRING (2, query);
   ROZT_X (query);
 
-  return (PQsendQuery (dbconn, ROZT (query))
-          ? SCM_BOOL_T
-          : SCM_BOOL_F);
+  return gh_bool2scm (PQsendQuery (dbconn, ROZT (query)));
 #undef FUNC_NAME
 }
 
@@ -3063,13 +2994,13 @@ GH_DEFPROC
   VALIDATE_PARAM_RELATED_ARGS (query);
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
-  SCM_DEFER_INTS;
+  NOINTS ();
   result = PQsendQueryParams (dbconn, ROZT (query), ps.len,
                               ps.types, ps.values, ps.lengths, ps.formats,
                               RESFMT_TEXT);
-  SCM_ALLOW_INTS;
+  INTSOK ();
   drop_paramspecs (&ps);
-  return result ? SCM_BOOL_T : SCM_BOOL_F;
+  return gh_bool2scm (result);
 #undef FUNC_NAME
 }
 
@@ -3087,13 +3018,13 @@ GH_DEFPROC
   VALIDATE_PARAM_RELATED_ARGS (stname);
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
-  SCM_DEFER_INTS;
+  NOINTS ();
   result = PQsendQueryPrepared (dbconn, ROZT (stname), ps.len,
                                 ps.values, ps.lengths, ps.formats,
                                 RESFMT_TEXT);
-  SCM_ALLOW_INTS;
+  INTSOK ();
   drop_paramspecs (&ps);
-  return result ? SCM_BOOL_T : SCM_BOOL_F;
+  return gh_bool2scm (result);
 #undef FUNC_NAME
 }
 
@@ -3102,17 +3033,17 @@ GH_DEFPROC
  (SCM conn),
  "Return a result from @var{conn}, or @code{#f}.")
 {
-#define FUNC_NAME s_pg_send_query
+#define FUNC_NAME s_pg_get_result
   PGconn *dbconn;
   PGresult *result;
   SCM z;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
-  SCM_DEFER_INTS;
+  NOINTS ();
   result = PQgetResult (dbconn);
   z = res_box (result);
-  SCM_ALLOW_INTS;
+  INTSOK ();
   return z;
 #undef FUNC_NAME
 }
@@ -3126,9 +3057,7 @@ GH_DEFPROC
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  return (PQconsumeInput (dbconn)
-          ? SCM_BOOL_T
-          : SCM_BOOL_F);
+  return gh_bool2scm (PQconsumeInput (dbconn));
 #undef FUNC_NAME
 }
 
@@ -3142,9 +3071,7 @@ GH_DEFPROC
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  return (PQisBusy (dbconn)
-          ? SCM_BOOL_T
-          : SCM_BOOL_F);
+  return gh_bool2scm (PQisBusy (dbconn));
 #undef FUNC_NAME
 }
 
@@ -3167,13 +3094,11 @@ GH_DEFPROC
  "Note that if the current query is part of a transaction,\n"
  "cancellation will abort the whole transaction.")
 {
-#define FUNC_NAME s_pg_is_busy_p
+#define FUNC_NAME s_pg_request_cancel
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  return (PQrequestCancel (dbconn)
-          ? SCM_BOOL_T
-          : SCM_BOOL_F);
+  return gh_bool2scm (PQrequestCancel (dbconn));
 #undef FUNC_NAME
 }
 
@@ -3188,7 +3113,7 @@ GH_DEFPROC
 #define FUNC_NAME s_pg_flush
   ASSERT_CONNECTION (1, conn);
 
-  return gh_int2scm (PQflush (xc_unbox (conn)->dbconn));
+  return gh_int2scm (PQflush (CONN_CONN (conn)));
 #undef FUNC_NAME
 }
 
@@ -3221,46 +3146,51 @@ static
 void
 init_module (void)
 {
-  pg_conn_tag = scm_make_smob_type ("PG-CONN", 0);
-  scm_set_smob_mark (pg_conn_tag, xc_mark);
-  scm_set_smob_free (pg_conn_tag, xc_free);
-  scm_set_smob_print (pg_conn_tag, xc_display);
+#define DEFSMOB(tagvar,name,m,f,p)                              \
+  tagvar = scm_make_smob_type_mfpe (name, 0, m, f, p, NULL)
 
-  pg_result_tag = scm_make_smob_type ("PG-RESULT", 0);
-  scm_set_smob_free (pg_result_tag, res_free);
-  scm_set_smob_print (pg_result_tag, res_display);
+  DEFSMOB (pg_conn_tag, xc_name,
+           xc_mark,
+           xc_free,
+           xc_display);
 
-  sepo_type_tag = scm_make_smob_type ("PG-PRINT-OPTION", 0);
-  scm_set_smob_free (sepo_type_tag, sepo_free);
-  scm_set_smob_print (sepo_type_tag, sepo_display);
+  DEFSMOB (pg_result_tag, res_name,
+           NULL,
+           res_free,
+           res_display);
+
+  DEFSMOB (sepo_type_tag, sepo_name,
+           NULL,
+           sepo_free,
+           sepo_display);
+#undef DEFSMOB
 
 #include "libpq.x"
 
+#define KLIST(...)  GH_STONED (PCHAIN (__VA_ARGS__))
+
   valid_print_option_keys
-    = (scm_protect_object (SCM_LIST4 (pg_sym_field_sep,
-                                      pg_sym_table_opt,
-                                      pg_sym_caption,
-                                      pg_sym_field_names)));
+    = KLIST (pg_sym_field_sep,
+             pg_sym_table_opt,
+             pg_sym_caption,
+             pg_sym_field_names);
 
   valid_print_option_flags
-    = (scm_protect_object
-       (scm_append (SCM_LIST2
-                    (SCM_LIST5 (pg_sym_header,
-                                pg_sym_align,
-                                pg_sym_standard,
-                                pg_sym_html3,
-                                pg_sym_expanded),
-                     SCM_LIST5 (pg_sym_no_header,
-                                pg_sym_no_align,
-                                pg_sym_no_standard,
-                                pg_sym_no_html3,
-                                pg_sym_no_expanded)))));
+    = KLIST (pg_sym_header,
+             pg_sym_align,
+             pg_sym_standard,
+             pg_sym_html3,
+             pg_sym_expanded,
+             pg_sym_no_header,
+             pg_sym_no_align,
+             pg_sym_no_standard,
+             pg_sym_no_html3,
+             pg_sym_no_expanded);
 
   {
     unsigned int i;
     for (i = 0; i < sizeof (pgrs) / sizeof (SCM); i++)
-      pgrs[i] = scm_protect_object
-        (gh_car (scm_sysintern0 (PQresStatus (i))));
+      pgrs[i] = GH_STONED (gh_symbol2scm (PQresStatus (i)));
   }
 
   lobp_tag = scm_make_port_type ("pg-lo-port", lob_fill_input, lob_write);
@@ -3274,21 +3204,18 @@ init_module (void)
   scm_set_port_truncate      (lobp_tag, NULL);
   scm_set_port_input_waiting (lobp_tag, lob_input_waiting_p);
 
-  goodies = SCM_EOL;
+  goodies
+    = KLIST (SYM (PQPROTOCOLVERSION),
+             SYM (PQRESULTERRORMESSAGE),
+             SYM (PQPASS),
+             SYM (PQBACKENDPID),
+             SYM (PQOIDVALUE),
+             SYM (PQBINARYTUPLES),
+             SYM (PQFMOD),
+             SYM (PQSETNONBLOCKING),
+             SYM (PQISNONBLOCKING));
 
-#define PUSH(x)  goodies = gh_cons (SYM (x), goodies)
-
-  PUSH (PQPROTOCOLVERSION);
-  PUSH (PQRESULTERRORMESSAGE);
-  PUSH (PQPASS);
-  PUSH (PQBACKENDPID);
-  PUSH (PQOIDVALUE);
-  PUSH (PQBINARYTUPLES);
-  PUSH (PQFMOD);
-  PUSH (PQSETNONBLOCKING);
-  PUSH (PQISNONBLOCKING);
-
-  goodies = scm_protect_object (goodies);
+#undef KLIST
 }
 
 GH_MODULE_LINK_FUNC ("database postgres"
