@@ -46,10 +46,6 @@
 #define scm_protect_object(x)  (scm_gc_protect_object (x))
 #endif
 
-#ifndef HAVE_SCM_OUTPORTP
-#define SCM_OUTPORTP(x)  (SCM_OUTPUT_PORT_P (x))
-#endif
-
 #endif /* _GI_H_ */
 
 /* gi.h ends here */

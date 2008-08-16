@@ -160,18 +160,6 @@ AC_CHECK_DECL([scm_gc_protect_object],[
    [Define if libguile provides the scm_gc_protect_object function.])
 ],,[#include "libguile.h"])
 
-AC_MSG_CHECKING([if programs using SCM_OUTPORTP can link against libguile])
-AC_LINK_IFELSE([
-#include <libguile.h>
-int main (void) { return SCM_FALSEP (SCM_OUTPORTP (SCM_BOOL_F)); }
-],[
-  AC_MSG_RESULT(yes)
-  AC_DEFINE([HAVE_SCM_OUTPORTP], [1],
-    [Define if programs using SCM_OUTPORTP can link against libguile.])
-],[
-  AC_MSG_RESULT(no)
-])
-
 ])dnl AC_GUILE_PG_FCOMPAT
 
 dnl acinclude.m4 ends here

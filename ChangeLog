@@ -1,3 +1,11 @@
+2008-08-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Remove support for unused SCM_OUTPORTP.
+
+	* build-aux/guile-pg.m4 (AC_GUILE_PG_FCOMPAT):
+	Delete AC_LINK_IFELSE check for `SCM_OUTPORTP'
+	and the related `HAVE_SCM_OUTPORTP' AC_DEFINE.
+
 2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Assume system provides tmpfile(3).

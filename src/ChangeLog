@@ -1,5 +1,12 @@
 2008-08-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Remove support for unused SCM_OUTPORTP.
+
+	* gi.h (SCM_OUTPORTP) [!HAVE_SCM_OUTPORTP]:
+	Delete macro and surrounding #ifndef construct.
+
+2008-08-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Hone C internals: Refactor, increase/add abstraction, etc.
 
 	* libpq.c (PROB, NOINTS, INTSOK, GIVENP): New macros.
