@@ -169,7 +169,7 @@ xc_mark (SCM obj)
   return xc->client;
 }
 
-static scm_sizet
+static size_t
 xc_free (SCM obj)
 {
   xc_t *xc = xc_unbox (obj);
@@ -745,7 +745,7 @@ lob_mark (SCM port)
                         LOB_STREAM (port)->conn);
 }
 
-static scm_sizet
+static size_t
 lob_free (SCM port)
 {
   lob_stream *lobp = LOB_STREAM (port);
@@ -895,7 +895,7 @@ res_display (SCM exp, SCM port, UNUSED scm_print_state *pstate)
   return 1;
 }
 
-static scm_sizet
+static size_t
 res_free (SCM obj)
 {
   PGresult *res = res_unbox (obj);
@@ -2523,11 +2523,11 @@ sepo_unbox (SCM obj)
   return SMOBDATA (obj);
 }
 
-static scm_sizet
+static size_t
 sepo_free (SCM obj)
 {
   PQprintOpt *po = sepo_unbox (obj);
-  scm_sizet size = 0;
+  size_t size = 0;
 
 #define _FREE_STRING(p)                         \
   do {                                          \

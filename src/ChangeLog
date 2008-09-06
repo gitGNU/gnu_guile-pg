@@ -1,3 +1,10 @@
+2008-09-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Use `size_t' instead of `scm_sizet'.
+
+	* libpq.c (xc_free): Change return value type to `size_t'.
+	(res_free, sepo_free): Likewise.
+
 2008-08-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Remove support for unused SCM_OUTPORTP.
