@@ -45,7 +45,7 @@
 
 (define (ok? expected-status)
   (lambda (result)                      ; => #f unless All Goes Well
-    (cond ((and result (string=? "" (pg-result-error-message result))
+    (cond ((and result (string-null? (pg-result-error-message result))
                 (eq? expected-status (pg-result-status result))))
           ((pg-result-error-field result #:sqlstate)
            => (lambda (s)

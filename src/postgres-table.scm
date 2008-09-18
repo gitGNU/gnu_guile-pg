@@ -269,7 +269,7 @@
                       db-spec)
                      ((string? db-spec)
                       (pg-connectdb
-                       (fmt (if (or (string=? "" db-spec)
+                       (fmt (if (or (string-null? db-spec)
                                     (string-index db-spec #\=))
                                 "~A"
                                 "dbname=~A")

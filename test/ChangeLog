@@ -1,3 +1,9 @@
+2008-09-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Use `(string-null? foo)' instead of `(string=? "" foo)'.
+
+	* basic.scm (ok?): Use `string-null?'.
+
 2008-08-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Tighten up "show-platform" a bit.
