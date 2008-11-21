@@ -1,3 +1,10 @@
+2008-11-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Decruft: Don't (pretend) to wrap system calls.
+
+	* libpq.c (SYSCALL): Delete macro.
+	(pg_trace, pg_untrace, pg_print): Update.
+
 2008-09-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Use `(string-null? foo)' instead of `(string=? "" foo)'.

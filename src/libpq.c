@@ -65,9 +65,6 @@
 #define ASSERT(what,expr,msg)  SCM_ASSERT ((expr), what, msg, FUNC_NAME)
 #define ASSERT_STRING(n,arg)  ASSERT (arg, SCM_STRINGP (arg), SCM_ARG ## n)
 
-/* We fudge this (TODO: Handle EINTR).  */
-#define SYSCALL(line)  line
-
 /* Coerce a string that is to be used in contexts where the extracted C
    string is expected to be zero-terminated and is read-only.  We check
    this condition precisely instead of simply coercing all substrings,
@@ -2458,11 +2455,9 @@ GH_DEFPROC
   port = SCM_COERCE_OUTPORT (port);
   ASSERT_PORT (2, port, SCM_OPOUTFPORTP);
 
-  SYSCALL (fd = dup (SCM_FPORT_FDES (port)));
-  if (PROB (fd))
+  if (PROB (fd = dup (SCM_FPORT_FDES (port))))
     SYSTEM_ERROR ();
-  SYSCALL (fpout = fdopen (fd, "w"));
-  if (! fpout)
+  if (! (fpout = fdopen (fd, "w")))
     SYSTEM_ERROR ();
 
   NOINTS ();
@@ -2494,7 +2489,7 @@ GH_DEFPROC
 
   NOINTS ();
   PQuntrace (dbconn);
-  SYSCALL (ret = fclose (CONN_FPTRACE (conn)));
+  ret = fclose (CONN_FPTRACE (conn));
   CONN_FPTRACE (conn) = NULL;
   INTSOK ();
   if (ret)
@@ -2767,10 +2762,9 @@ GH_DEFPROC
         fout = stdout;
       else
         {
-          SYSCALL (fd = dup (fd));
-          if (PROB (fd))
+          if (PROB (fd = dup (fd)))
             SYSTEM_ERROR ();
-          SYSCALL (fout = fdopen (fd, "w"));
+          fout = fdopen (fd, "w");
         }
     }
 
