@@ -1,3 +1,9 @@
+2008-11-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Use `(ftell port)' instead of `(seek port 0 SEEK_CUR)'.
+
+	* libpq.c (lob_lo_tell): Use `scm_ftell'.
+
 2008-11-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Decruft: Don't (pretend) to wrap system calls.

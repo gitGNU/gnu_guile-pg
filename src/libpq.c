@@ -460,7 +460,7 @@ GH_DEFPROC
 #define FUNC_NAME s_lob_lo_tell
   ASSERT_PORT (1, port, OPLOBPORTP);
 
-  return scm_seek (port, SCM_INUM0, gh_int2scm (SEEK_CUR));
+  return scm_ftell (port);
 #undef FUNC_NAME
 }
 
