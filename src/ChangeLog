@@ -1,3 +1,10 @@
+2009-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Decruft: Use 1..7 instead of SCM_ARG1..SCM_ARG7.
+
+	* libpq.c (pg_get_copy_data, pg_make_print_options)
+	(pg_print, pg_set_notice_out_x): Use 1..7 directly.
+
 2008-11-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Use `(ftell port)' instead of `(seek port 0 SEEK_CUR)'.

@@ -2271,7 +2271,7 @@ GH_DEFPROC
     pwritep = 1;
   else
     {
-      ASSERT (port, gh_pair_p (port), SCM_ARG2);
+      ASSERT (port, gh_pair_p (port), 2);
       swritep = 1;
     }
 
@@ -2635,7 +2635,7 @@ GH_DEFPROC
   int count = 0;                        /* of substnames */
   SCM check, substnames = SCM_EOL, flags = SCM_EOL, keys = SCM_EOL;
 
-  ASSERT (spec, gh_null_p (spec) || gh_pair_p (spec), SCM_ARG1);
+  ASSERT (spec, gh_null_p (spec) || gh_pair_p (spec), 1);
 
   /* Hairy validation/collection: symbols in `flags', pairs in `keys'.  */
   check = spec;
@@ -2644,7 +2644,7 @@ GH_DEFPROC
       SCM head = gh_car (check);
 
 #define CHECK_HEAD(expr)                        \
-      ASSERT (head, (expr), SCM_ARG1)
+      ASSERT (head, (expr), 1)
 
       if (gh_symbol_p (head))
         {
@@ -2657,7 +2657,7 @@ GH_DEFPROC
           SCM val = gh_cdr (head);
 
           ASSERT (key, NOT_FALSEP (gh_memq (key, valid_print_option_keys)),
-                  SCM_ARG1);
+                  1);
           if (key == pg_sym_field_names)
             {
               CHECK_HEAD (! gh_null_p (val));
@@ -2747,7 +2747,7 @@ GH_DEFPROC
   options = (GIVENP (options)
              ? options
              : pg_make_print_options (SCM_EOL));
-  ASSERT (options, sepo_p (options), SCM_ARG2);
+  ASSERT (options, sepo_p (options), 2);
 
   fd = (SCM_OPFPORTP (curout = scm_current_output_port ())
         ? SCM_FPORT_FDES (curout)
@@ -2820,7 +2820,7 @@ GH_DEFPROC
   ASSERT (out, (gh_boolean_p (out)
                 || SCM_OUTPUT_PORT_P (out)
                 || gh_procedure_p (out)),
-          SCM_ARG2);
+          2);
 
   CONN_NOTICE (conn) = out;
   RETURN_UNSPECIFIED ();
