@@ -26,6 +26,7 @@
 ;;; Code:
 
 (define-module (database postgres-resdisp)
+  #:export (display-result)
   #:use-module ((database postgres)
                 #:select (pg-result?
                           pg-result-status
@@ -33,8 +34,7 @@
                           pg-nfields
                           pg-fname
                           pg-getlength
-                          pg-getvalue))
-  #:export (display-result))
+                          pg-getvalue)))
 
 (define (decor name)
   (case (if (keyword? name)

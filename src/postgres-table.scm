@@ -29,6 +29,9 @@
 ;;; Code:
 
 (define-module (database postgres-table)
+  #:export (pgtable-manager
+            pgtable-worker
+            compile-outspec)
   #:use-module ((ice-9 common-list)
                 #:select (find-if
                           pick-mappings
@@ -66,10 +69,7 @@
                 #:select (result->object-alist
                           result->object-alists
                           result->object-rows))
-  #:re-export (sql-pre)
-  #:export (pgtable-manager
-            pgtable-worker
-            compile-outspec))
+  #:re-export (sql-pre))
 
 ;;; support
 

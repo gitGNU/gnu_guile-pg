@@ -29,6 +29,7 @@
 ;;; Code:
 
 (define-module (database postgres-gxrepl)
+  #:export (gxrepl)
   #:use-module ((ice-9 rdelim)
                 #:select (read-line
                           write-line))
@@ -47,8 +48,7 @@
   #:use-module ((database postgres-qcons)
                 #:select (parse+make-SELECT-tree
                           sql-command<-trees))
-  #:autoload (ice-9 pretty-print) (pretty-print)
-  #:export (gxrepl))
+  #:autoload (ice-9 pretty-print) (pretty-print))
 
 (define *comma-commands* '())
 

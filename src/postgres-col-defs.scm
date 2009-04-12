@@ -36,16 +36,16 @@
 ;;; Code:
 
 (define-module (database postgres-col-defs)
-  #:use-module ((database postgres-types)
-                #:select (dbcoltype-lookup
-                          dbcoltype:objectifier
-                          dbcoltype:stringifier))
   #:export (column-name
             type-name
             type-options
             validate-def
             objectifiers
-            stringifiers))
+            stringifiers)
+  #:use-module ((database postgres-types)
+                #:select (dbcoltype-lookup
+                          dbcoltype:objectifier
+                          dbcoltype:stringifier)))
 
 ;; Extract column name, a symbol, from @var{def}.
 ;;

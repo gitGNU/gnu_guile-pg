@@ -49,7 +49,6 @@
 ;;; Code:
 
 (define-module (database postgres-types)
-  #:autoload (database postgres) (pg-exec)
   #:export (oid-type-name-cache
             dbcoltypes
             dbcoltype-lookup
@@ -57,7 +56,8 @@
             dbcoltype:default
             dbcoltype:objectifier
             define-db-col-type
-            define-db-col-type-array-variant))
+            define-db-col-type-array-variant)
+  #:autoload (database postgres) (pg-exec))
 
 (define o/t (make-object-property))     ; oid/type-name info
 

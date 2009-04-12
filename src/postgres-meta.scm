@@ -35,6 +35,13 @@
 ;;; Code:
 
 (define-module (database postgres-meta)
+  #:export (information-schema-names
+            information-schema-coldefs
+            defs-from-psql
+            check-type/elaborate
+            strictly-check-types/elaborate!
+            infer-defs
+            describe-table!)
   #:use-module ((database postgres)
                 #:select (pg-exec
                           pg-print))
@@ -51,14 +58,7 @@
                 #:select (pgtable-manager
                           compile-outspec))
   #:autoload (srfi srfi-13) (string-trim-both)
-  #:autoload (ice-9 popen) (open-input-pipe)
-  #:export (information-schema-names
-            information-schema-coldefs
-            defs-from-psql
-            check-type/elaborate
-            strictly-check-types/elaborate!
-            infer-defs
-            describe-table!))
+  #:autoload (ice-9 popen) (open-input-pipe))
 
 (define (fs s . args)
   (apply simple-format #f s args))
