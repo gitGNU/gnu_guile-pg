@@ -1,3 +1,9 @@
+2009-04-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Move table of contents after the title page.
+
+	* doc/guile-pg.twerp: Move @contents; delete @summarycontents.
+
 2008-08-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Remove support for unused SCM_OUTPORTP.
