@@ -1,3 +1,10 @@
+2009-06-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[config] Specify Automake 1.11, Libtool 2.2.6.
+
+	* configure.ac (AM_INIT_AUTOMAKE): Specify "1.11".
+	(LT_PREREQ): Specify "2.2.6".
+
 2009-04-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc] Move table of contents after the title page.
