@@ -1,5 +1,11 @@
 2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[config] Avoid "test -a" in configure.in.
+
+	* configure.in: Use test A && test B, instead of test A -a B.
+
+2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[config] Trim `EXTRA_DIST' in Makefile.am files.
 
 	* Makefile.am (EXTRA_DIST): Delete THANKS.

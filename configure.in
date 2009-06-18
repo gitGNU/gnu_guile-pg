@@ -67,7 +67,7 @@ LDFLAGS="$saved_LDFLAGS"
 ## setting the environment variables PQ_CPPFLAGS and PQ_LDFLAGS.  This is
 ## useful e.g. when running 'Make distcheck', which runs ./configure.
 
-if test "x$PQ_LDFLAGS" = "x" -a "x$PQ_CPPFLAGS" = "x" ; then
+if test "x$PQ_LDFLAGS" = "x" && test "x$PQ_CPPFLAGS" = "x" ; then
 PQ_FLAGS
 fi
 
