@@ -1,5 +1,13 @@
 2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	New (database postgres) proc: pg-mblen
+
+	* doc/guile-pg.twerp (Miscellaneous): Add @twerpdoc for `pg-mblen'.
+	(Not Included): Remove `PQmblen'.
+	* configure.in (AC_CHECK_DECLS): Add check for `pg_char_to_encoding'.
+
+2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Update table of unaddressed interface elements.
 
 	* doc/guile-pg.twerp (Not Included): Add entries for

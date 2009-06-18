@@ -76,7 +76,7 @@ saved_LDFLAGS="$LDFLAGS"
 CPPFLAGS="$PQ_CPPFLAGS $CPPFLAGS"
 LDFLAGS="$PQ_LDFLAGS $LDFLAGS"
 
-AC_CHECK_DECLS([pg_encoding_to_char])
+AC_CHECK_DECLS([pg_encoding_to_char, pg_char_to_encoding])
 
 CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"

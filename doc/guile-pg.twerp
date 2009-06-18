@@ -958,6 +958,10 @@ For example:
 @result{} "\\\\342\\\\251\\\\302\\\\375"
 @end lisp
 
+Lastly, the misc misc procedures!
+
+@twerpdoc (pg-mblen)
+
 @c ---------------------------------------------------------------------------
 @node    Not Included
 @chapter Not Included
@@ -1044,10 +1048,6 @@ We provide the schemified interface @code{pg-set-notice-out!}.
 @deffn {C Function} PQdisplayTuples
 @deffnx {C Function} PQprintTuples
 These ``really old printing routines'' are obsoleted by @code{pg-print}.
-@end deffn
-
-@deffn {C Function} PQmblen
-This will be added Real Soon Now.
 @end deffn
 
 @deffn {C Function} PQenv2encoding

@@ -1,3 +1,10 @@
+2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	New (database postgres) proc: pg-mblen
+
+	* basic.scm (test:mblen): New test proc.
+	(main): Use new test proc; update expected-pass number.
+
 2008-09-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Use `(string-null? foo)' instead of `(string=? "" foo)'.

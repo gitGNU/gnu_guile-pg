@@ -2884,6 +2884,59 @@ GH_DEFPROC
 extern const char * pg_encoding_to_char (int encoding);
 #endif
 
+/* Not mentioned (even in the docs), but the same reasoning applies.
+   (Sigh^3!)  */
+#if !HAVE_DECL_PG_CHAR_TO_ENCODING
+extern int pg_char_to_encoding (const char *name);
+#endif
+
+static SCM encoding_alist;
+
+GH_DEFPROC
+(pg_mblen, "pg-mblen", 2, 1, 0,
+ (SCM encoding, SCM string, SCM start),
+ "Return the number of bytes of the first character in unibyte\n"
+ "@var{string}, which is encoded in @var{encoding} (string or symbol).\n"
+ "Optional third arg @var{start} specifies the byte offset\n"
+ "into @var{string} to use instead of the default (zero).\n\n"
+ "Signal error if @var{encoding} is unknown or if @var{start}\n"
+ "is out of range.  If @var{start} is exactly the length of\n"
+ "@var{string}, return 0 (zero).")
+{
+#define FUNC_NAME s_pg_mblen
+  SCM cell;
+  int cenc;
+  size_t cstart = 0, clen;
+
+  if (gh_string_p (encoding))
+    encoding = gh_symbol2scm (ROZT (encoding));
+  ASSERT (encoding, gh_symbol_p (encoding), 1);
+  cell = gh_assq (encoding, gh_cdr (encoding_alist));
+  if (NOT_FALSEP (cell))
+    cenc = gh_scm2int (gh_cdr (cell));
+  else
+    {
+      if (PROB (cenc = pg_char_to_encoding (ROZT (encoding))))
+        ERROR ("No such encoding: ~A", encoding);
+      cell = gh_cons (encoding, gh_int2scm (cenc));
+      gh_set_cdr_x (encoding_alist, gh_cons (cell, gh_cdr (encoding_alist)));
+    }
+
+  ASSERT_STRING (2, string);
+  clen = SCM_ROLENGTH (string);
+  if (GIVENP (start))
+    {
+      ASSERT (start, gh_exact_p (start), 3);
+      cstart = gh_scm2int (start);
+      if (clen < cstart)
+        ERROR ("String start index out of range: ~A", start);
+    }
+  return gh_int2scm ((clen == cstart)
+                     ? 0
+                     : PQmblen (ROZT (string) + cstart, cenc));
+#undef FUNC_NAME
+}
+
 GH_DEFPROC
 (pg_client_encoding, "pg-client-encoding", 1, 0, 0,
  (SCM conn),
@@ -3180,6 +3233,8 @@ init_module (void)
              pg_sym_no_standard,
              pg_sym_no_html3,
              pg_sym_no_expanded);
+
+  encoding_alist = KLIST (SCM_BOOL_F);
 
   {
     unsigned int i;

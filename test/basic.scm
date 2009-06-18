@@ -202,6 +202,22 @@
                       (and (string=? check new-enc)
                            (string=? enc (pg-client-encoding *C*)))))))))))
 
+(define test:mblen
+  (add-test #t
+    (lambda ()
+      (and (zero? (pg-mblen 'LATIN1 "" 0))
+           (let* ((text "☡ Guile ∘ PostgreSQL ∞")
+                  (len (string-length text)))
+             (let loop ((start 0) (good '(3 1 1 1 1 1 1 1
+                                            3 1 1 1 1 1 1 1 1 1 1 1 1
+                                            3)))
+               (or (= len start)
+                   (let ((x (pg-mblen 'UNICODE text start)))
+                     (and (positive? x)
+                          (not (null? good))
+                          (= x (car good))
+                          (loop (+ start x) (cdr good)))))))))))
+
 (define test:known-bad-command
   (add-test #f
     (lambda ()
@@ -760,7 +776,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic" 56)
+  (test-init "basic" 57)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:protocol-version/bad-connection
@@ -768,6 +784,7 @@
          test:protocol-version
          test:untracing-untraced-connection
          test:various-connection-info
+         test:mblen
          test:known-bad-command
          test:transaction-status
          test:parameter-status
@@ -824,6 +841,7 @@
 (exit (main))
 
 ;;; Local variables:
+;;; coding: utf-8
 ;;; eval: (put 'add-test 'scheme-indent-function 1)
 ;;; End:
 

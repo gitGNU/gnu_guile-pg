@@ -1,3 +1,13 @@
+2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	New (database postgres) proc: pg-mblen
+
+	* libpq.c (pg_char_to_encoding) [!HAVE_DECL_PG_CHAR_TO_ENCODING]:
+	New func decl.
+	(encoding_alist): New static data structure.
+	(pg_mblen): New GH_DEFPROC.
+	(init_module): Init `encoding_alist'.
+
 2009-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Decruft: Use 1..7 instead of SCM_ARG1..SCM_ARG7.
