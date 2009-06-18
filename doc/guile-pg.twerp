@@ -1018,7 +1018,7 @@ and @code{PQescapeByteaConn}, respectively.
 @end deffn
 
 @deffn {C Function} PQfreemem
-Internal (I think).
+Internal.
 @end deffn
 
 @deffn {C Function} PQfn
@@ -1039,6 +1039,30 @@ This is in the section ``Obsolete Functions for COPY''.
 @deffn {C Function} PQsetNoticeReceiver
 @deffnx {C Function} PQsetNoticeProcessor
 We provide the schemified interface @code{pg-set-notice-out!}.
+@end deffn
+
+@deffn {C Function} PQdisplayTuples
+@deffnx {C Function} PQprintTuples
+These ``really old printing routines'' are obsoleted by @code{pg-print}.
+@end deffn
+
+@deffn {C Function} PQmblen
+This will be added Real Soon Now.
+@end deffn
+
+@deffn {C Function} PQenv2encoding
+This function does @code{(getenv "PGCLIENTENCODING")} and returns the
+numeric value of the result, which is not useful, since Guile-PG uses a
+string to describe the client encoding (you can use the value from
+@code{getenv} directly).  For example:
+
+@example
+(and=> (getenv "PGCLIENTENCODING")
+       pg-set-client-encoding!)
+@end example
+
+@noindent
+@xref{Database Connections}.
 @end deffn
 
 @c ---------------------------------------------------------------------------
