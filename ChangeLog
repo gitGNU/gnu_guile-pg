@@ -1,5 +1,13 @@
 2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Zonk HACKING, TODO; nfc.
+
+	* HACKING: Delete file.
+	* TODO: Delete file.
+	* Makefile.am (EXTRA_DIST): Delete HACKING, TODO.
+
+2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	New (database postgres) proc: pg-mblen
 
 	* doc/guile-pg.twerp (Miscellaneous): Add @twerpdoc for `pg-mblen'.

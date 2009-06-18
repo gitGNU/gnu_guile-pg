@@ -22,7 +22,7 @@
 
 SUBDIRS = src test doc
 
-EXTRA_DIST = THANKS TODO HACKING \
+EXTRA_DIST = THANKS \
 		build-aux/sofix
 
 noinst_DATA = .module-catalog
