@@ -33,7 +33,7 @@ qcons-tables.texi: $(top_srcdir)/src/postgres-qcons.scm
 
 CLEANFILES = guile-pg.info guile-pg.html
 
-EXTRA_DIST = guile-pg.twerp twerp.mk-am-frag mkinc html
+EXTRA_DIST = guile-pg.twerp mkinc html
 
 if MAINTAINER_MODE
 

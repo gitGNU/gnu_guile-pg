@@ -1,5 +1,12 @@
 2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[config] Trim `EXTRA_DIST' in Makefile.am files.
+
+	* Makefile.am (EXTRA_DIST): Delete THANKS.
+	* doc/Makefile.am (EXTRA_DIST): Delete twerp.mk-am-frag.
+
+2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Zonk HACKING, TODO; nfc.
 
 	* HACKING: Delete file.
