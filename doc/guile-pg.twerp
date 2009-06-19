@@ -249,7 +249,8 @@ Guile-PG displays connection objects in one of the following formats:
 
 @noindent
 @var{db} is the database name, or @code{?}; @var{host} is the host
-name, empty in the case of unix-domain connections; @var{port} is the TCP port
+name, or socket directory name in the case of unix-domain connections;
+@var{port} is the TCP port
 where the server is listening, empty in the case of unix-domain connections;
 and @var{options} is the same as would be returned by @code{pg-get-options}.
 Everything else appears literally as shown here.  It is very strange to have

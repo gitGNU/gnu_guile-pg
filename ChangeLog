@@ -1,3 +1,10 @@
+2009-06-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Update description of connection object xrep.
+
+	* doc/guile-pg.twerp (Database Connections): For unix-domain
+	connections, mention that "host" is the socket directory name.
+
 2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[config] Avoid "test -a" in configure.in.
