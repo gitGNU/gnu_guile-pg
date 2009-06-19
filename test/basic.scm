@@ -168,6 +168,7 @@
       (let ((new (false-if-exception (pg-connectdb ""))))
         (and (pg-connection? new)
              (begin (set! *C* new)
+                    (simple-format #t "INFO: connection: ~S\n" *C*)
                     #t))))))
 
 (define test:protocol-version
