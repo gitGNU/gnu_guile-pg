@@ -1,3 +1,10 @@
+2009-06-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[t-mgr] Recognize #:DEFAULT as column value.
+
+	* postgres-table.scm (pgtable-manager ->db-insert-string):
+	For #:DEFAULT, return "DEFAULT".
+
 2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	New (database postgres) proc: pg-mblen

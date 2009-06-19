@@ -327,6 +327,7 @@
     (define (->db-insert-string db-col-type x)
       (or (and (sql-pre? x) x)
           (and (eq? #:NULL x) "NULL")
+          (and (eq? #:DEFAULT x) "DEFAULT")
           (let* ((def (dbcoltype-lookup db-col-type))
                  (s (or (false-if-exception ((dbcoltype:stringifier def) x))
                         (dbcoltype:default def))))
