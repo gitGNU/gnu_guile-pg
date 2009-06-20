@@ -1,5 +1,13 @@
 2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[test] Make more robust: Normalize `pg-client-encoding' rv.
+
+	* basic.scm (test:various-connection-info):
+	Add internal proc to normalize encoding names UNICODE to UTF8,
+	ALT to WIN866, WIN to WIN1251, and TCVN to WIN1258.
+
+2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	New (database postgres) proc: pg-server-version
 
 	* basic.scm (test:server-version): New test proc.

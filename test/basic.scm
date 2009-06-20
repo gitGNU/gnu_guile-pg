@@ -187,9 +187,20 @@
 (define test:various-connection-info
   (add-test #t
     (lambda ()
+      ;; Starting with PostgreSQL 8.0, "UTF8" is more correct than "UNICODE".
+      ;; This is not mentioned until the 8.1 release notes, however.  :-/
+      ;; Perhaps this should be moved into `pg-client-encoding' proper.
+      (define (normalized-cenc)
+        (let ((s (pg-client-encoding *C*)))
+          (case (string->symbol s)
+            ((UNICODE) "UTF8")
+            ((ALT) "WIN866")
+            ((WIN) "WIN1251")
+            ((TCVN) "WIN1258")
+            (else s))))
       (let ((host (pg-get-host *C*))
             (pid (pg-backend-pid *C*))
-            (enc (pg-client-encoding *C*)))
+            (enc (normalized-cenc)))
         (and (or (not host)
                  (and (string? host)
                       (not (string-null? host))))
@@ -197,14 +208,14 @@
              (string? enc)
              (not (string-null? enc))
              ;; try something different from the original
-             (let ((new-enc (if (string=? "UNICODE" enc)
+             (let ((new-enc (if (string=? "UTF8" enc)
                                 "SQL_ASCII"
-                                "UNICODE")))
+                                "UTF8")))
                (and (pg-set-client-encoding! *C* new-enc)
-                    (let ((check (pg-client-encoding *C*)))
+                    (let ((check (normalized-cenc)))
                       (pg-set-client-encoding! *C* enc)
                       (and (string=? check new-enc)
-                           (string=? enc (pg-client-encoding *C*)))))))))))
+                           (string=? enc (normalized-cenc)))))))))))
 
 (define test:mblen
   (add-test #t
@@ -216,7 +227,7 @@
                                             3 1 1 1 1 1 1 1 1 1 1 1 1
                                             3)))
                (or (= len start)
-                   (let ((x (pg-mblen 'UNICODE text start)))
+                   (let ((x (pg-mblen 'UTF8 text start)))
                      (and (positive? x)
                           (not (null? good))
                           (= x (car good))
