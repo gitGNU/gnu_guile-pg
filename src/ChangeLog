@@ -1,3 +1,10 @@
+2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[t-mgr int] For column values, allow keywords to stand for themselves.
+
+	* postgres-table.scm (pgtable-manager ->db-insert-string):
+	Pass all keywords through, unchanged.
+
 2009-06-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[t-mgr] Recognize #:DEFAULT as column value.
