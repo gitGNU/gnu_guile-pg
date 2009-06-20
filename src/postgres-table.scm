@@ -40,7 +40,6 @@
                 #:select (pg-connection?
                           pg-connectdb
                           pg-finish
-                          pg-result-status
                           pg-exec pg-ntuples pg-nfields
                           pg-fname pg-getvalue))
   #:use-module ((database postgres-types)
@@ -275,14 +274,6 @@
                                 "dbname=~A")
                             db-spec)))
                      (else (error "bad db-spec:" db-spec))))
-         ;; TODO: zonk sql-quote; make sqlqq dynamic based on
-         ;;       runtime parameter `standard_conforming_strings'.
-         (sqlqq (if (eq? 'PGRES_TUPLES_OK
-                         (pg-result-status
-                          (pg-exec conn "SELECT E'OK';")))
-                    (lambda (s)
-                      (string-append "E" (sql-quote s)))
-                    sql-quote))
          (trace-exec #f)
          (qstring-colnames (map (lambda (name)
                                   (cons name (symbol->qstring name)))
@@ -331,7 +322,7 @@
                  (s (or (false-if-exception ((dbcoltype:stringifier def) x))
                         (dbcoltype:default def))))
             (or (string? s) (error "not a string:" s))
-            (sql-pre (sqlqq s)))))
+            (sql-pre (sql-quote s)))))
 
     (define (do-insert cols data)
       (xt (force insert/pre)
