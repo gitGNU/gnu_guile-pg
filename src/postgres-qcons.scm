@@ -189,20 +189,24 @@
   (set! (--preformatted string) #f)
   string)
 
-;; Return a new string made by preceding each single quote in string
-;; @var{s} with a backslash, and prefixing and suffixing with single quote.
+;; Return a new string made by doubling each single-quote in string
+;; @var{s}, and prefixing and suffixing with single-quote.
 ;; The returned string is marked by @code{sql-pre}.  For example:
 ;;
 ;; @lisp
 ;; (define bef "ab'cd")
 ;; (define aft (sql-quote bef))
-;; aft @result{} "'ab\\'cd'"
+;; aft @result{} "'ab''cd'"
 ;; (map string-length (list bef aft)) @result{} (5 8)
 ;; (map sql-pre? (list bef aft)) @result{} (#f #t)
 ;; @end lisp
 ;;
-;; Note that in the external representation of a Scheme string,
-;; the backslash appears twice (this is normal).
+;; Note that this procedure used to return internal single-quote
+;; characters prefixed with a backslash, which is acceptable by
+;; PostgreSQL (given certain runtime parameter settings), but not
+;; standards conforming.  The current (as of Guile-PG 0.38) behavior
+;; is standards-conforming, upward compatible, and avoids futzing with
+;; the runtime parameters.
 ;;
 (define (sql-quote s)
   (or (string? s) (error "not a string:" s))
@@ -226,7 +230,7 @@
                  (tail (cddr ls)))
             (substring-move! s one two rv put)
             (or (null? tail)
-                (string-set! rv end #\\))
+                (string-set! rv end #\'))
             (loop (1+ end) tail))))))
 
 (define (fs s . args)

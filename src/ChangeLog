@@ -1,5 +1,12 @@
 2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[qcons] Do single-quote escaping via doubling, per SQL standard.
+
+	* postgres-qcons.scm (sql-quote): Escape single-quote
+	by doubling, instead of inserting a backslash prior to, it.
+
+2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[t-mgr int] For column values, allow keywords to stand for themselves.
 
 	* postgres-table.scm (pgtable-manager ->db-insert-string):
