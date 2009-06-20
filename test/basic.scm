@@ -196,7 +196,10 @@
              (integer? pid)
              (string? enc)
              (not (string-null? enc))
-             (let ((new-enc "SQL_ASCII"))
+             ;; try something different from the original
+             (let ((new-enc (if (string=? "UNICODE" enc)
+                                "SQL_ASCII"
+                                "UNICODE")))
                (and (pg-set-client-encoding! *C* new-enc)
                     (let ((check (pg-client-encoding *C*)))
                       (pg-set-client-encoding! *C* enc)

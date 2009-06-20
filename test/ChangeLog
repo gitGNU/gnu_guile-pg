@@ -1,3 +1,10 @@
+2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[test] Improve `pg-set-client-encoding' coverage.
+
+	* basic.scm (test:various-connection-info): Ensure
+	that the new encoding is actually different from the original.
+
 2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	New (database postgres) proc: pg-mblen
