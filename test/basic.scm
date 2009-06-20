@@ -256,6 +256,26 @@
                      #:session_authorization
                      #:DateStyle))))))
 
+(define test:server-version
+  (add-test #t
+    (lambda ()
+      (let ((s (pg-parameter-status *C* #:server_version))
+            (v (pg-server-version *C*)))
+        (format #t "INFO: server version => ~S\n" v)
+        (and s
+             (string? s)
+             (not (string-null? s))
+             v
+             (not (zero? v))
+             (let ((L (string-index s #\.))
+                   (R (string-rindex s #\.)))
+               (define (n<- b e)
+                 (string->number (substring s b e)))
+               (and L R (< L R)
+                    (= v (+ (* 10000 (n<- 0 L))
+                            (*   100 (n<- (1+ L) R))
+                            (*     1 (n<- (1+ R) (string-length s))))))))))))
+
 (define test:set-error-verbosity
   (add-test #:default
     (lambda ()
@@ -780,7 +800,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic" 57)
+  (test-init "basic" 58)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:protocol-version/bad-connection
@@ -792,6 +812,7 @@
          test:known-bad-command
          test:transaction-status
          test:parameter-status
+         test:server-version
          test:set-error-verbosity
          test:set-notice-out!-1
          test:set-client-data

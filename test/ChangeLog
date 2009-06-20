@@ -1,5 +1,12 @@
 2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	New (database postgres) proc: pg-server-version
+
+	* basic.scm (test:server-version): New test proc.
+	(main): Use new test proc; update expected-pass number.
+
+2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[test] Verify length of inserted `bytea' data.
 
 	* types-table.scm (test-m3):

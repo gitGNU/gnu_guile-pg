@@ -1,5 +1,11 @@
 2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	New (database postgres) proc: pg-server-version
+
+	* libpq.c (pg_server_version): New GH_DEFPROC.
+
+2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Revert: Support "E-prefixing" for `pgtable-manager' SQL quoting.
 
 	That is the wrong approach.

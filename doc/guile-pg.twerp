@@ -295,6 +295,8 @@ default, they are sent to the current output port.
 
 @twerpdoc (pg-reset)
 
+@twerpdoc (pg-server-version)
+
 @twerpdoc (pg-get-db)
 
 @twerpdoc (pg-get-user)

@@ -78,6 +78,9 @@ LDFLAGS="$PQ_LDFLAGS $LDFLAGS"
 
 AC_CHECK_DECLS([pg_encoding_to_char, pg_char_to_encoding])
 
+# 8.0
+AC_CHECK_FUNCS([PQserverVersion])
+
 CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"
 

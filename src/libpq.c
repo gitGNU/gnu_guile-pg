@@ -1305,6 +1305,40 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
+GH_DEFPROC
+(pg_server_version, "pg-server-version", 1, 0, 0,
+ (SCM conn),
+ "Return an integer representation of the server version at @var{conn}.\n"
+ "This is basically\n"
+ "@example\n"
+ "(+ (* 10000 @var{major}) (* 100 @var{minor}) @var{micro})\n"
+ "@end example\n"
+ "@noindent\n"
+ "which yields 40725 for PostgreSQL 4.7.25, for example.\n"
+ "Return @code{#f} if @var{conn} is closed.")
+{
+#define FUNC_NAME s_pg_server_version
+  PGconn *dbconn;
+  unsigned int combined = 0;
+
+  VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+#ifndef HAVE_PQSERVERVERSION
+  {
+    const char *sv;
+    int major, minor, micro;
+
+    sv = PQparameterStatus (dbconn, "server_version");
+    sscanf (sv, "%d.%d.%d", &major, &minor, &micro);
+    combined = 10000 * major + 100 * minor + micro;
+  }
+#else /* HAVE_PQSERVERVERSION */
+  combined = PQserverVersion (dbconn);
+#endif /* HAVE_PQSERVERVERSION */
+
+  return DEFAULT_FALSE (combined, gh_int2scm (combined));
+#undef FUNC_NAME
+}
+
 
 /*
  * string and bytea escaping

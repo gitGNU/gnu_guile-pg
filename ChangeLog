@@ -1,3 +1,11 @@
+2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	New (database postgres) proc: pg-server-version
+
+	* doc/guile-pg.twerp (Database Connections):
+	Add @twerpdoc for `pg-server-version'.
+	* configure.in (AC_CHECK_FUNCS): Add PQserverVersion.
+
 2009-06-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc] Update description of connection object xrep.
