@@ -1,5 +1,12 @@
 2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[test] Verify length of inserted `bytea' data.
+
+	* types-table.scm (test-m3):
+	Check `octet_length' of inserted data.
+
+2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[test] Improve `pg-set-client-encoding' coverage.
 
 	* basic.scm (test:various-connection-info): Ensure

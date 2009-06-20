@@ -320,6 +320,10 @@
     (pass-if "(m3 #:insert-values all)"
       (command-ok? ((m3 #:insert-values) all)))
 
+    (check-1 "m3 inserted octet-length"
+             (number->string (string-length all))
+             '(octet_length b))
+
     (pass-if "m3 round-trip"
       (equal? all (let* ((res ((m3 #:select) #t))
                          (status (pg-result-status res))
@@ -359,8 +363,8 @@
                   (+ (length count)
                      (apply + count)))
                 1
-                (+ 6 1 9)               ; m2
-                (+ 3 (* 2 4))))         ; m3
+                (+ 6 1 9)                 ; m2
+                (+ 1 (* 2 1) 2 (* 2 4)))) ; m3
   (test #t test:query-oid/type-name)
   (test #t test:set!-m)
   (test #t test:m-procs)
