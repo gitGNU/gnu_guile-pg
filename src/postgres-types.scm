@@ -215,8 +215,8 @@
 
 ;; non-array (simple) types -- X.Y.Z is from PostgreSQL 7.4.17 User's Guide
 
-;; 8.1          -- numeric types
-;; 8.1.1        -- the integer types
+;; -- numeric types
+;; -- the integer types
 
 (define-db-col-type 'smallint "0"
   number->string
@@ -246,7 +246,7 @@
   number->string
   string->number)
 
-;; 8.1.2        -- arbitrary precision numbers
+;; -- arbitrary precision numbers
 
 (define-db-col-type 'numeric "0"
   number->string
@@ -256,7 +256,7 @@
   number->string
   string->number)
 
-;; 8.1.3        -- floating-point types
+;; -- floating-point types
 
 (define-db-col-type 'real "0.0"
   number->string
@@ -275,7 +275,7 @@
   number->string
   string->number)
 
-;; 8.1.4        -- serial types
+;; -- serial types
 
 (define-db-col-type 'serial "0"
   ;; This is a magic PostgreSQL type that actually causes the backend
@@ -297,8 +297,8 @@
   number->string
   string->number)
 
-;; 8.2          -- monetary type
-;; 8.3          -- character types
+;; -- monetary type
+;; -- character types
 
 (define-db-col-type 'varchar #f
   identity
@@ -321,7 +321,7 @@
   (lambda (val) (if (< 63 (string-length val)) (substring val 0 62) val))
   identity)
 
-;; 8.4          -- binary data types
+;; -- binary data types
 
 (define-db-col-type 'bytea #f
   (lambda (s)
@@ -363,7 +363,7 @@
                               8)))
                    (loop (+ 4 b))))))))))
 
-;; 8.5          -- date/time types
+;; -- date/time types
 
 (define-db-col-type 'timestamp "1970-01-01 00:00:00"
   (lambda (time)
@@ -373,11 +373,11 @@
   (lambda (string)
     (car (mktime (car (strptime "%Y-%m-%d %H:%M:%S" string))))))
 
-;; 8.5.1        -- date/time input
-;; 8.5.2        -- date/time output
-;; 8.5.3        -- time zones
-;; 8.5.4        -- internals
-;; 8.6          -- boolean type
+;; -- date/time input
+;; -- date/time output
+;; -- time zones
+;; -- internals
+;; -- boolean type
 
 (define-db-col-type 'boolean "f"
   (lambda (x) (if x "t" "f"))
@@ -387,14 +387,14 @@
   (lambda (x) (if x "t" "f"))
   (lambda (s) (not (string=? "f" s))))
 
-;; 8.7          -- geometric types
-;; 8.7.1        -- points
-;; 8.7.2        -- line segments
-;; 8.7.3        -- boxes
-;; 8.7.4        -- paths
-;; 8.7.5        -- polygons
-;; 8.7.6        -- circles
-;; 8.8          -- network address types
+;; -- geometric types
+;; -- points
+;; -- line segments
+;; -- boxes
+;; -- paths
+;; -- polygons
+;; -- circles
+;; -- network address types
 
 (define (n+m-stringifier n+m)           ; n+m is #(NUMBER MASKCOUNT)
   (simple-format #f "~A/~A"
@@ -408,13 +408,13 @@
                 (string->number (substring s (1+ cut))))
         (vector (inet-aton s) 32))))
 
-;; 8.8.1        -- inet
+;; -- inet
 
 (define-db-col-type 'inet "0.0.0.0"
   n+m-stringifier
   n+m-objectifier)
 
-;; 8.8.2        -- cidr
+;; -- cidr
 
 (define-db-col-type 'cidr "0.0.0.0"
   n+m-stringifier
@@ -449,11 +449,11 @@
                       acc)
                 (- shift 8))))))
 
-;; 8.8.3        -- inet vs cidr
-;; 8.8.4        -- macaddr
-;; 8.9          -- bit string types
-;; 8.10         -- arrays
-;; 8.11         -- object identifier types
+;; -- inet vs cidr
+;; -- macaddr
+;; -- bit string types
+;; -- arrays
+;; -- object identifier types
 
 (define-db-col-type 'oid "-1"
   number->string
@@ -463,7 +463,7 @@
   identity
   identity)
 
-;; 8.12         -- pseudo-types
+;; -- pseudo-types
 
 ;; array variants
 

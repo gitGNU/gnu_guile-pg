@@ -241,8 +241,4 @@
 
 (exit (main))
 
-;; Local Variables:
-;; eval: (put 'add-test 'scheme-indent-function 1)
-;; End:
-
 ;;; large.scm ends here

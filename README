@@ -1,5 +1,5 @@
-Welcome!
-========
+Welcome! (or "☡ Guile ∘ PostgreSQL ∞")
+======================================
 
 	Guile-PG is a collection of modules for Guile allowing access to
 	the PostgreSQL RDBMS from Scheme programs.
@@ -110,7 +110,7 @@ Testing
 	hanging around afterwards for some reason, you can use the
 	command:
 
-	    dropdb guile_pg_test   # or "destroydb" for old PostgreSQL
+	    dropdb guile_pg_test
 
 	to get rid of it decisively.  To run the tests type:
 

@@ -844,9 +844,4 @@
 
 (exit (main))
 
-;;; Local variables:
-;;; coding: utf-8
-;;; eval: (put 'add-test 'scheme-indent-function 1)
-;;; End:
-
 ;;; basic.scm ends here

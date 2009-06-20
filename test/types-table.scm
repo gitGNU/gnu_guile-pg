@@ -344,7 +344,6 @@
     ((m3 #:drop))                       ; no check
     ((m3 #:finish))))                   ; no check
 
-
 (define (cleanup!)
   ((m #:finish))
   (set! m #f)
