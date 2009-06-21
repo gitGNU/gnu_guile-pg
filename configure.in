@@ -40,6 +40,8 @@ AC_HAVE_HEADERS(string.h stdio.h stdlib.h malloc.h unistd.h)
 ##----------------------------------------------------------------------------
 ## Guile
 
+AC_MSG_NOTICE([checking Guile particulars])
+
 GUILE_PROGS
 GUILE_FLAGS
 
@@ -63,6 +65,8 @@ LDFLAGS="$saved_LDFLAGS"
 ##----------------------------------------------------------------------------
 ## PostgreSQL
 
+AC_MSG_NOTICE([checking PostgreSQL particulars])
+
 ## This little hack allows the tests for libpq etc. to be overridden by
 ## setting the environment variables PQ_CPPFLAGS and PQ_LDFLAGS.  This is
 ## useful e.g. when running 'Make distcheck', which runs ./configure.
@@ -83,6 +87,20 @@ AC_CHECK_FUNCS([PQserverVersion])
 
 CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"
+
+##----------------------------------------------------------------------------
+## Compose CPPFLAGS, LDFLAGS
+
+if test x"$PQ_CPPFLAGS" = x"$GUILE_CFLAGS" ; then
+  CPPFLAGS="$GUILE_CFLAGS"
+else
+  CPPFLAGS="$PQ_CPPFLAGS $GUILE_CFLAGS"
+fi
+LDFLAGS="$PQ_LDFLAGS $GUILE_LDFLAGS"
+
+AC_MSG_NOTICE([NOTE: preprocessor and linker flags (see README if wrong):
+ CPPFLAGS: $CPPFLAGS
+  LDFLAGS: $LDFLAGS])
 
 ##----------------------------------------------------------------------------
 ## Etc

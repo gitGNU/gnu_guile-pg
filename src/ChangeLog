@@ -1,5 +1,13 @@
 2009-06-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[config] Use CPPFLAGS, LDFLAGS directly.
+
+	* Makefile.am (AM_CPPFLAGS): Delete var.
+	(postgres_la_LDFLAGS): Remove $(LDFLAGS), $(PQ_LDFLAGS).
+	(snarfcppopts): Remove $(AM_CPPFLAGS); add $(DEFAULT_INCLUDES).
+
+2009-06-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[C int] Update #include:d files.
 
 	* libpq.c: #include "config.h" instead of <config.h>;

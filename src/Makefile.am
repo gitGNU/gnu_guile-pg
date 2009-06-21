@@ -31,7 +31,6 @@ dotdocfiles = libpq.doc				\
 
 BUILT_SOURCES = libpq.x $(dotdocfiles)
 
-AM_CPPFLAGS = -I. -I$(srcdir) $(GUILE_CFLAGS) $(PQ_CPPFLAGS)
 AM_CFLAGS = $(AGGRESSIVE_WARNINGS) $(MORE_AGGRESSIVE_WARNINGS)
 
 ddir = $(GUILE_LIBSITE)/database
@@ -48,12 +47,11 @@ dist_d_DATA =					\
 
 d_LTLIBRARIES = postgres.la
 postgres_la_SOURCES = libpq.c gi.h
-postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0 \
-				$(LDFLAGS) $(PQ_LDFLAGS)
+postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0
 
 SUFFIXES = .x .doc
 
-snarfcppopts = $(DEFS) $(AM_CPPFLAGS) $(CPPFLAGS)
+snarfcppopts = $(DEFS) $(DEFAULT_INCLUDES) $(CPPFLAGS)
 
 .c.x:
 	$(c2x) -o $@ $< $(snarfcppopts) $(CFLAGS)
