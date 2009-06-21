@@ -1,5 +1,13 @@
 2009-06-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Use automake facilities for building HTML docs.
+
+	* doc/Makefile.am (DISTCLEANFILES): Remove guile-pg.html.
+	(EXTRA_DIST): Remove html; add guile-pg.html.
+	(html): Delete target.
+
+2009-06-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build] Minimize "make -C doc/" work in default case.
 
 	* doc/Makefile.am (CLEANFILES): Delete var.

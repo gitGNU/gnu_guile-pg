@@ -31,9 +31,9 @@ relinfo.texi: $(top_srcdir)/configure
 qcons-tables.texi: $(top_srcdir)/src/postgres-qcons.scm
 	$(srcdir)/mkinc $< > $@
 
-DISTCLEANFILES = guile-pg.info guile-pg.html
+DISTCLEANFILES = guile-pg.info
 
-EXTRA_DIST = guile-pg.twerp mkinc html
+EXTRA_DIST = guile-pg.twerp mkinc guile-pg.html
 
 if MAINTAINER_MODE
 
@@ -46,9 +46,6 @@ if MAINTAINER_MODE
 	  $<
 
 include twerp.mk-am-frag
-
-html: guile-pg.texi
-	$(MAKEINFO) --html $< -o $@
 
 endif # MAINTAINER_MODE
 
