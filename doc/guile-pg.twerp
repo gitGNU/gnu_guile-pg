@@ -172,7 +172,7 @@ The @code{test} object is a @code{PG-CONN} type representing the database
 connection.  Displaying the @code{PG-CONN} object shows that the serial number
 of the connection is 1, that the database name is @code{test} on the default
 host (the hostname field is empty) on port number 5432 and that the default
-options were passed to the backend.  This object is passed to @code{pg-exec}
+options were passed to the back-end.  This object is passed to @code{pg-exec}
 which returns a @code{PG-RESULT} object representing the result of the SQL
 statement executed on the server.  In this case, displaying the @code{PG-RESULT}
 object shows us that the serial number of the result is 2, that the return code
@@ -249,9 +249,9 @@ Guile-PG displays connection objects in one of the following formats:
 
 @noindent
 @var{db} is the database name, or @code{?}; @var{host} is the host
-name, or socket directory name in the case of unix-domain connections;
+name, or socket directory name in the case of Unix-domain connections;
 @var{port} is the TCP port
-where the server is listening, empty in the case of unix-domain connections;
+where the server is listening, empty in the case of Unix-domain connections;
 and @var{options} is the same as would be returned by @code{pg-get-options}.
 Everything else appears literally as shown here.  It is very strange to have
 @var{db} be @code{?}; usually that indicates a bug either in Guile-PG or in
@@ -319,7 +319,7 @@ default, they are sent to the current output port.
 
 @section Client Data
 
-The libpq interface upon which Guile-PG is built supports assocation of
+The libpq interface upon which Guile-PG is built supports association of
 arbitrary data with a connection.  You can use these @dfn{client data}
 procedures or the more general @dfn{object property} procedures in Guile.
 
@@ -368,7 +368,7 @@ using the object property @code{log}.
 
 @section Asynchronous Notifications
 
-The PostgreSQL backend supports @dfn{asynchronous notifications}
+The PostgreSQL back-end supports @dfn{asynchronous notifications}
 with the commands @code{LISTEN} and @code{NOTIFY}.  You can use
 @code{pg-notifies} to query the pending notifications queue
 (@pxref{Asynchronous Retrieval}).
@@ -446,7 +446,7 @@ conventionally named @var{parms}.
 @heading Restrictions
 @erindex bad parameter-vector element
 Guile-PG support for parameters is in its infancy.  All elements of
-@var{parms} @emph{must} be strings otherwise a ``bad parameter-vector
+@var{parms} @strong{must} be strings otherwise a ``bad parameter-vector
 element'' error is signalled.  Relatedly, the @dfn{binary parameters}
 are not supported; only @dfn{text parameters} (strings) are supported
 for now.  Basically, Guile-PG support is a step up from not having
@@ -486,7 +486,7 @@ In the future, it should be possible to specify @code{integer} in
 @section Synchronous Retrieval
 
 This section describes the procedures @code{pg-exec}, @code{pg-exec-params}
-and @code{pg-exec-prepared}.  @xref{Parameters}, for backtround info on the
+and @code{pg-exec-prepared}.  @xref{Parameters}, for background info on the
 latter two.
 
 @twerpdoc (pg-exec)
@@ -509,7 +509,7 @@ this chapter.
 The entire result set is returned at once from a call to to @code{pg-exec}.
 If a @code{SELECT} results in a very large number of tuples then this can be
 a problem because it requires a large amount of memory.  In these cases it is
-better to @code{DECLARE} a cursor over the @code{SELECT} and retrive small
+better to @code{DECLARE} a cursor over the @code{SELECT} and retrieve small
 numbers of rows at a time using @code{FETCH}.  These commands can only be
 issued between @code{BEGIN TRANSACTION/END TRANSACTION} pairs.  See the
 PostgreSQL @code{declare(l)} and @code{fetch(l)} man pages for more details.
@@ -520,7 +520,7 @@ PostgreSQL @code{declare(l)} and @code{fetch(l)} man pages for more details.
 
 Sometimes you don't want to wait idly for @code{pg-exec} to complete --- for
 example, the query is complicated and/or the results are large --- instead
-prefering to do some other computation in the meantime.  In these cases, you
+preferring to do some other computation in the meantime.  In these cases, you
 can interact with the database @dfn{asynchronously}, that is, you register a
 query at one time, and check for its completion at a later time.  In between,
 you can collect partial results and notifications, or decide to cancel the
@@ -597,7 +597,7 @@ using @code{pg-putline}.
 
 @item PGRES_BAD_RESPONSE
 This occurs when the @code{libpq} interface receives an unexpected response
-from the backend.  It indicates a problem with PostgreSQL.
+from the back-end.  It indicates a problem with PostgreSQL.
 
 @item PGRES_NONFATAL_ERROR
 It is not known under which circumstances this result-status is returned.
@@ -683,7 +683,7 @@ called.
 @end lisp
 
 @noindent
-Field values can be extracted from the tuple using @code{assq-ref}, eg:
+Field values can be extracted from the tuple using @code{assq-ref}, e.g.:
 
 @lisp
 (assq-ref (tuple->alist result 0) 'firstname)
@@ -770,7 +770,7 @@ connection before any further calls to @code{pg-exec} on this connection.
 This example defines two functionally identical procedures that can be used
 to retrieve the results of a @code{COPY <table> TO STDOUT} command.  The
 second procedure optionally displays a list of received chunk sizes, if
-passed a third arg.
+passed a third argument.
 
 @lisp
 (define (copy-to-port conn port)
@@ -843,7 +843,7 @@ the @code{PQprint} functionality provided by libpq.
 @heading Note
 All of the operations on large objects must be carried out inside a
 @code{BEGIN TRANSACTION/END TRANSACTION} pair.  Failure to do this
-will result in a loss of synchronisation between the backend and the
+will result in a loss of synchronization between the back-end and the
 @code{libpq} library, resulting in an unusable connection to the
 database, and possible corruption of data.
 
@@ -911,7 +911,7 @@ necessarily belong in the other chapters.
 
 @twerpdoc (pg-guile-pg-loaded)
 
-@erindex Invalid vebosity
+@erindex Invalid verbosity
 @twerpdoc (pg-set-error-verbosity)
 
 @erindex due to @code{dup(3)} failure
@@ -961,7 +961,7 @@ For example:
 @result{} "\\\\342\\\\251\\\\302\\\\375"
 @end lisp
 
-Lastly, the misc misc procedures!
+Lastly, the miscellaneous miscellaneous procedures!
 
 @twerpdoc (pg-mblen)
 
@@ -969,7 +969,7 @@ Lastly, the misc misc procedures!
 @node    Not Included
 @chapter Not Included
 
-This chapter lists @code{libpq} interface elements that are @emph{not}
+This chapter lists @code{libpq} interface elements that are @strong{not}
 provided by module @code{(database postgres)} and explains why they are
 omitted.
 
@@ -1011,7 +1011,7 @@ Unlikely to be useful.
 @end deffn
 
 @deffn {C Function} PQoidStatus
-PosgreSQL documentation says:
+PostgreSQL documentation says:
 @quotation
 This function is deprecated in favor of PQoidValue.
 It is not thread-safe.
@@ -1045,7 +1045,7 @@ This is in the section ``Obsolete Functions for COPY''.
 
 @deffn {C Function} PQsetNoticeReceiver
 @deffnx {C Function} PQsetNoticeProcessor
-We provide the schemified interface @code{pg-set-notice-out!}.
+We provide the schemefied interface @code{pg-set-notice-out!}.
 @end deffn
 
 @deffn {C Function} PQdisplayTuples
@@ -1072,7 +1072,7 @@ string to describe the client encoding (you can use the value from
 @node    Query Construction
 @chapter Query Construction
 
-Constucting a typical SQL @code{SELECT} query (to be passed to @code{pg-exec})
+Constructing a typical SQL @code{SELECT} query (to be passed to @code{pg-exec})
 can be tedious and error prone due to the many string-munging operations
 involved.  Guile-PG provides some procedures to make things a little easier.
 
@@ -1103,7 +1103,7 @@ flattening them to a string on output.
 To be brutally honest, both SQL and Scheme revolve around structured
 expressions (also known as @dfn{sexps}), so ascribing some elevated status to
 the representation that ``supports sexps'' is really not saying much.  In the
-Guile-PG maintainer's humble opinion, the advantage in expressivity of Scheme
+Guile-PG maintainer's humble opinion, the advantage in expressiveness of Scheme
 over SQL is not in the presence or lack of structure, but rather in the
 regularity of the structure.
 
@@ -1122,14 +1122,15 @@ Scheme, per se.  This is the general form of a prefix-style expression:
 (operator [operand ...])
 @end example
 
-In words: An open paren followed by a symbol @var{operator} followed by zero
-or more @var{operand} arguments, each in turn a prefix-style sub-expression,
-followed by the close paren.  Components of these expressions may be symbols,
-keywords, numbers, strings and matching parens.  Unlike Scheme, there is no
-quote, quasiquote, unquote or unquote-splicing, although those facilities can
+In words: An open parenthesis followed by a symbol @var{operator}
+followed by zero or more @var{operand} arguments, each in turn a
+prefix-style sub-expression, followed by the close parenthesis.
+Components of these expressions may be symbols, keywords, numbers,
+strings and matching parentheses.  Unlike Scheme, there is no quote,
+quasiquote, unquote or unquote-splicing, although those facilities can
 (and should) be used in a Scheme program to construct a prefix-style
-expression.  Also unlike Scheme is the requirement that @var{operator} be a
-symbol; it is not processed in the same way as each @var{operand}.
+expression.  Also unlike Scheme is the requirement that @var{operator}
+be a symbol; it is not processed in the same way as each @var{operand}.
 
 Usually, @var{operator} names an SQL function or operator.  For example,
 the symbol @code{date_trunc} refers to the SQL function by the same name.
@@ -1279,7 +1280,7 @@ involving some extra specification composed with a single pexp.
 @section Lookup Tables Extension
 
 During tree construction, internal lookup tables control the rendering
-transformations.  You can add to them using proc @code{qcons-declare!}.
+transformations.  You can add to them using procedure @code{qcons-declare!}.
 
 @twerpdoc (qcons-declare!)
 
@@ -1297,7 +1298,7 @@ Ideally, the tree construction procedures in the following section would
 be powerful enough to do the right thing given a well-formed prefix-style
 expression.  However, sometimes reality intrudes and you need to craft SQL
 directly.  In these cases, it still may be a good idea to use the tree
-construction procs for most of the work and tweak only the small parts that
+construction procedures for most of the work and tweak only the small parts that
 need it.  This selective use of varying expression construction approaches is
 known prosaically as @dfn{quoting}.
 
@@ -1311,8 +1312,8 @@ known prosaically as @dfn{quoting}.
 @section Tree Construction
 
 This section describes the tree construction procedures, most of which are
-still (at this time, 2005-02-24) considered @emph{experimental}.  You should
-take this as an invitation to @emph{experiment} and share your observations w/
+still (at this time, 2005-02-24) considered @strong{experimental}.  You should
+take this as an invitation to @strong{experiment} and share your observations w/
 the Guile-PG maintainer so that we can refine them nicely for the 1.0 release.
 
 @twerpdoc (make-comma-separated-tree)
@@ -1564,17 +1565,18 @@ time zone}.
 @item inet
 @itemx cidr
 Guile has no native type that aggregates the address and the netmask, so
-Guile-PG defines the Scheme @code{inet} or @code{cidr} object to be a vector
-of two elements @code{#(ADDRESS MASKCOUNT)} where @var{address} is a positive
-integer zero through #xffffffff (32 bits) and @var{maskcount} is the number of
-bits in the netmask.  If @var{maskcount} has value 32, that indicates that
-@var{address} is a host address (not a network).
+Guile-PG defines the Scheme @code{inet} or @code{cidr} object to be a
+vector of two elements @code{#(@var{address} @var{maskcount})} where
+@var{address} is a positive integer zero through @code{#xffffffff} (32
+bits) and @var{maskcount} is the number of bits in the netmask.  If
+@var{maskcount} has value 32, that indicates that @var{address} is a
+host address (not a network).
 
 @item inet-host
 NOCREATE.  The @code{inet-host} converter can be used to access data of
 PostgreSQL type @code{inet} or @code{cidr} when all the data values have a
 netmask value of 32.  The Scheme @code{inet-host} object is a positive integer
-zero through #xffffffff (32 bits).
+zero through @code{#xffffffff} (32 bits).
 
 @item aclitem
 EXPERIMENTAL.  Presently used by module @code{(database postgres-meta)}
@@ -1797,7 +1799,7 @@ query and mutation (including create/delete) of a PostgreSQL table; and the
 
 @twerpdoc (pgtable-worker)
 
-The other procedures are useful for succintly codifying queries, and
+The other procedures are useful for succinctly codifying queries, and
 translating the result en mass to Scheme objects.  [NOTE: These will
 definitely migrate to other modules at some point before 1.0 release.]
 
@@ -1844,7 +1846,7 @@ result
 
 Two things to note in this example: (1) Both @code{#:create} and @code{#:drop}
 invocations evaluate the operating thunk directly (double parentheses); and
-(2) The drop returns a list of result values to accomodate the possibility
+(2) The drop returns a list of result values to accommodate the possibility
 (shown here) of a @code{serial} column type, which requires an additional drop
 of the associated PostgreSQL @dfn{sequence} used to implement the expected
 serial behavior.  (As of PostgreSQL 7.x, the sequence name is constructed like
@@ -1956,7 +1958,7 @@ Sometimes you just want to poke around manually, interacting with a database
 connection by typing in exploratory commands, and the external command-line
 program psql(1) does not provide enough insight or customizability (or perhaps
 is not available).  This chapter presents an alternative method for running
-such a repl (read-eval-print loop).
+such a @sc{repl} (read-eval-print loop).
 
 To get started, load the @code{postgres-gxrepl} module:
 
@@ -1971,7 +1973,7 @@ humble plans for this module...
 
 @twerpdoc (gxrepl)
 
-Most comma commands are relatively self-explantory, with guidance from
+Most comma commands are relatively self-explanatory, with guidance from
 @code{,help}.  The rest of this chapter delves into some of the more
 arcane commands.
 
@@ -2006,13 +2008,6 @@ SELECT one AS "latitude", two AS "longitude"
   FROM icbmcoords
  WHERE ((9 < importance) OR (3 > importance));
 @end example
-
-@c ---------------------------------------------------------------------------
-@c ---------------------------------------------------------------------------
-@c + @node       Concept Index
-@c + @unnumbered Concept Index
-@c +
-@c + @printindex cp
 
 @c ---------------------------------------------------------------------------
 @c ---------------------------------------------------------------------------
