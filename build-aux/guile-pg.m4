@@ -1,25 +1,25 @@
-dnl   Some -*-autoconf-*- macros for Guile-PG
-dnl
-dnl   Copyright (C) 2002,2003,2004,2005,2006,2008 Thien-Thi Nguyen
-dnl   Portions Copyright (C) 1998 Ian Grant
-dnl
-dnl   This file is part of Guile-PG.
-dnl
-dnl   Guile-PG is free software; you can redistribute it and/or modify
-dnl   it under the terms of the GNU General Public License as published by
-dnl   the Free Software Foundation; either version 3, or (at your option)
-dnl   any later version.
-dnl
-dnl   Guile-PG is distributed in the hope that it will be useful,
-dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
-dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-dnl   GNU General Public License for more details.
-dnl
-dnl   You should have received a copy of the GNU General Public License
-dnl   along with Guile-PG; see the file COPYING.  If not, write to
-dnl   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-dnl   Boston, MA  02110-1301  USA
-dnl
+# guile-pg.m4 --- some -*-autoconf-*- macros for Guile-PG
+#
+# Copyright (C) 2002,2003,2004,2005,2006,2008 Thien-Thi Nguyen
+# Portions Copyright (C) 1998 Ian Grant
+#
+# This file is part of Guile-PG.
+#
+# Guile-PG is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# Guile-PG is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Guile-PG; see the file COPYING.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA  02110-1301  USA
+##
 
 # PQ_FLAGS --- set flags for compiling and linking with libpq
 #
@@ -162,4 +162,4 @@ AC_CHECK_DECL([scm_gc_protect_object],[
 
 ])dnl AC_GUILE_PG_FCOMPAT
 
-dnl acinclude.m4 ends here
+# guile-pg.m4 ends here
