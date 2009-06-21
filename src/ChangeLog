@@ -1,3 +1,10 @@
+2009-06-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[C int] Update #include:d files.
+
+	* libpq.c: #include "config.h" instead of <config.h>;
+	#include <stdlib.h>.
+
 2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	New (database postgres) proc: pg-server-version
