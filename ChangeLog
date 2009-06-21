@@ -1,5 +1,12 @@
 2009-06-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build] Minimize "make -C doc/" work in default case.
+
+	* doc/Makefile.am (CLEANFILES): Delete var.
+	(DISTCLEANFILES): New var.
+
+2009-06-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[config] Use CPPFLAGS, LDFLAGS directly.
 
 	* configure.in: Add some AC_MSG_NOTICE calls.

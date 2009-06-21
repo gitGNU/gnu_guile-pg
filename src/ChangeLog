@@ -1,5 +1,17 @@
 2009-06-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build] Minimize "make -C doc/" work in default case.
+
+	* Makefile.am (schemefrags, schemestems): New vars.
+	(dotdocfiles): Delete postgres-resdisp.doc, postgres-types.doc,
+	postgres-col-defs.doc, postgres-resx.doc, postgres-qcons.doc,
+	postgres-gxrepl.doc, postgres-table.doc, postgres-meta.doc.
+	(BUILT_SOURCES): Delete $(dotdocfiles).
+	(dist_d_DATA): Use $(schemestems).
+	(BUILT_SOURCES) [MAINTAINER_MODE]: Append $(dotdocfiles).
+
+2009-06-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[config] Use CPPFLAGS, LDFLAGS directly.
 
 	* Makefile.am (AM_CPPFLAGS): Delete var.

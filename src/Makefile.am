@@ -19,31 +19,18 @@
 ##   write to the Free Software Foundation, Inc., 51 Franklin Street,
 ##   Fifth Floor, Boston, MA  02110-1301  USA
 
-dotdocfiles = libpq.doc				\
-              postgres-resdisp.doc		\
-              postgres-types.doc		\
-              postgres-col-defs.doc		\
-              postgres-resx.doc			\
-              postgres-qcons.doc		\
-              postgres-gxrepl.doc		\
-              postgres-table.doc		\
-              postgres-meta.doc
+schemefrags = resdisp types col-defs resx qcons gxrepl table meta
+schemestems = $(schemefrags:%=postgres-%)
 
-BUILT_SOURCES = libpq.x $(dotdocfiles)
+dotdocfiles = libpq.doc
+
+BUILT_SOURCES = libpq.x
 
 AM_CFLAGS = $(AGGRESSIVE_WARNINGS) $(MORE_AGGRESSIVE_WARNINGS)
 
 ddir = $(GUILE_LIBSITE)/database
 
-dist_d_DATA =					\
-  postgres-resdisp.scm				\
-  postgres-types.scm				\
-  postgres-col-defs.scm				\
-  postgres-resx.scm				\
-  postgres-qcons.scm				\
-  postgres-gxrepl.scm				\
-  postgres-table.scm				\
-  postgres-meta.scm
+dist_d_DATA = $(schemestems:=.scm)
 
 d_LTLIBRARIES = postgres.la
 postgres_la_SOURCES = libpq.c gi.h
@@ -61,6 +48,8 @@ snarfcppopts = $(DEFS) $(DEFAULT_INCLUDES) $(CPPFLAGS)
 	$(GUILE_TOOLS) doc-snarf -D -o $@ $<
 
 if MAINTAINER_MODE
+
+BUILT_SOURCES += $(dotdocfiles)
 
 .doc-index: $(dotdocfiles)
 	$(GUILE_TOOLS) make-twerp2texi-index -o $@ $(dotdocfiles)
