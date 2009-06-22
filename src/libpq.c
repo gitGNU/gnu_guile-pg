@@ -1862,21 +1862,33 @@ GH_DEFPROC
 GH_DEFPROC
 (pg_parameter_status, "pg-parameter-status", 2, 0, 0,
  (SCM conn, SCM parm),
- "Return the status (a string) of a parameter for @var{conn}.\n"
- "@var{parm} is a keyword, such as @code{#:client_encoding}.")
+ "Return the status (a string) of @var{parm} for @var{conn},\n"
+ "or @code{#f} if there is no such parameter.\n"
+ "@var{parm} is a symbol, such as @code{client_encoding},\n"
+ "or a keyword, such as @code{#:client_encoding}.\n\n"
+ "@strong{NOTE}: Support for @var{parm} as a keyword\n"
+ "@strong{will be removed} after 2009-12-31; do not rely on it.")
 {
 #define FUNC_NAME s_pg_parameter_status
   PGconn *dbconn;
+  const char *cparm;
   const char *cstatus = NULL;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_VALIDATE_KEYWORD (2, parm);
+  if (NOT_FALSEP (scm_keyword_p (parm)))
+    {
+      parm = SCM_KEYWORDSYM (parm);
+      ROZT_X (parm);
+      /* Offset by one to skip the symbol name's initial hyphen.  */
+      cparm = 1 + ROZT (parm);
+    }
+  else
+    {
+      SCM_VALIDATE_SYMBOL (2, parm);
+      cparm = ROZT (parm);
+    }
 
-  parm = SCM_KEYWORDSYM (parm);
-  ROZT_X (parm);
-  /* Offset by one to skip the symbol name's initial hyphen.  */
-  cstatus = PQparameterStatus (dbconn, 1 + ROZT (parm));
-
+  cstatus = PQparameterStatus (dbconn, cparm);
   return DEFAULT_FALSE (cstatus, gh_str02scm (cstatus));
 #undef FUNC_NAME
 }

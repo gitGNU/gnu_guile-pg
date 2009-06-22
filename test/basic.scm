@@ -261,16 +261,16 @@
                      (let ((v (pg-parameter-status *C* k)))
                        (format #t "INFO: parameter ~S => ~S\n" k v)
                        (string? v)))
-                   '(#:server_version
-                     #:client_encoding
-                     #:is_superuser
-                     #:session_authorization
-                     #:DateStyle))))))
+                   '(server_version
+                     client_encoding
+                     is_superuser
+                     session_authorization
+                     DateStyle))))))
 
 (define test:server-version
   (add-test #t
     (lambda ()
-      (let ((s (pg-parameter-status *C* #:server_version))
+      (let ((s (pg-parameter-status *C* 'server_version))
             (v (pg-server-version *C*)))
         (format #t "INFO: server version => ~S\n" v)
         (and s

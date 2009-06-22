@@ -1,5 +1,11 @@
 2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Make `pg-parameter-status' accept symbol for PARM.
+
+	* libpq.c (pg_parameter_status): Accept symbol as PARM.
+
+2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Mention imminent demise of certain procs.
 
 	* libpq.c (lob_lo_get_connection):

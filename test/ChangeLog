@@ -1,3 +1,10 @@
+2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Make `pg-parameter-status' accept symbol for PARM.
+
+	* basic.scm (test:parameter-status): Use symbols.
+	(test:server-version): Use symbol for `pg-parameter-status' parm.
+
 2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[test] Make more robust: Normalize `pg-client-encoding' rv.
