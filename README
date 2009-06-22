@@ -18,9 +18,9 @@ Welcome! (or "☡ Guile ∘ PostgreSQL ∞")
 	  (database postgres-meta)      -- Introspection
 	  (database postgres-gxrepl)    -- Easy Interaction
 
-	This is alpha code (pre 1.0 release), tested with Guile 1.4.1.112
-	and PostgreSQL 7.4.18.  It may have bugs, and the interfaces may
-	change from version to version.
+	This is alpha code (pre 1.0 release), tested with Guile 1.4.x and
+	PostgreSQL 7.4, 8.0, 8.1, 8.2, 8.3.  It may have bugs, and the
+	interfaces may change from version to version.
 
 	To build Guile-PG you need to have installed both the PostgreSQL
 	frontend library libpq, and a version of Guile that can load

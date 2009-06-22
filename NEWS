@@ -1,6 +1,111 @@
 NEWS for Guile-PG
 
 
+- 0.38 | 2009-06-22
+
+  - Support for PostgreSQL 7.3 and earlier dropped
+
+	Sorry, this was not pre-announced.  Note that the subsequent
+	version, i.e. PostgreSQL 7.4, was released 2003-11-17, over five
+	years ago.
+
+  - Dropped (database postgres) proc: pg-get-connection
+
+	This was pre-announced in 0.37 (2008-05-24) NEWS.
+
+  - External rep no longer includes "serial number"
+    - Connection
+    - Result
+
+	These were pre-announced in 0.37 (2008-05-24) NEWS.
+
+  - Planned retirement
+    - pg-lo-get-connection
+    - pg-get-client-data
+    - pg-set-client-data!
+
+	These (database postgres) procs provide or rely on associations
+	that can better be expressed using normal Scheme facilities such
+	as object properties, hash tables, etc, and thus are deemed a
+	redundant maintenance burden; they WILL BE REMOVED by 2009-12-31.
+
+  - Proc `(database postgres) pg-parameter-status' takes symbol `parm'
+
+	These are equivalent:
+	(pg-parameter-status CONN #:session_authorization)
+	(pg-parameter-status CONN  'session_authorization)
+
+	Note, however, that support for keyword `parm' is a misfeature,
+	and WILL BE REMOVED by 2009-12-31.
+
+  - Proc `(database postgres-qcons) sql-quote' more standards compliant
+
+	Previously, this did single-quote escaping by inserting a
+	backslash character prior to every single-quote.  The result is
+	acceptable by PostgreSQL, but is not standards compliant.  Now,
+	it does the escaping by doubling each single-quote, which is
+	standards compliant and less prone to trigger warnings from the
+	more recent PostgreSQL versions (8.2 and later).
+
+	bef: (sql-quote "a'b") => "'a\\'b'"
+	now: (sql-quote "a'b") => "'a''b'"
+
+  - Changes to `pgtable-manager' (and thus `pgtable-worker')
+
+    - Support for DEFAULT
+
+	You can now use the keyword #:DEFAULT to specify DEFAULT as the
+	value to insert into a table, or to update a column.  Indeed, for
+	column values, any keyword now expands to its name (sans `#:').
+
+    - #:insert-values no longer filters "serial"
+
+	Previously, columns with "serial" type were filtered, so that it
+	was possible to #:insert-values specifying only values for the
+	other columns.  Now, such usage raises a "column count mismatch"
+	error; you must explicitly use #:DEFAULT.  For example, given a
+	table with column types "text", "serial", "text":
+
+	bef: (W #:insert-values "foo" "bar") => ok
+	now: (W #:insert-values "foo" "bar") => error
+	     (W #:insert-values "foo" #:DEFAULT "bar") => ok
+
+	Although technically speaking the new behavior is incompatible,
+	the previous behavior was never documented (secret misfeature),
+	so the impact on your code is likely to be zero (no worries).
+
+  - Connection object xrep omits "port" if "host" is a socket dir
+
+	When the connection is Unix-domain (i.e., the "host" is a string
+	that begins with slash that names a directory), the concept of
+	"port" makes no sense.
+
+  - Manual table-of-contents moved forward
+
+	It used to be (strangely but perhaps following some outdated
+	convention) at the end of the document.
+
+  - New (database postgres) procs
+
+    - pg-mblen
+
+	While we wait for Guile to go multibyte (and stay there), this
+	is a small building-block that eases "mostly ignorant" string
+	processing.
+
+    - pg-server-version
+
+	This returns an integer representation of the server version of
+	a connection, or `#f' if the connection is closed.
+
+  - New (database postgres-resx) proc: object<-result
+
+	This is useful for `SELECT EXPR;' where the result tuple
+	consists of one row and one column.
+
+  - Maintenance uses autoconf 2.63, automake 1.11, libtool 2.2.6
+
+
 - 0.37 | 2008-05-24
 
   - Configuration change: search $prefix for PostgreSQL headers/libs

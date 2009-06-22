@@ -1,5 +1,9 @@
 2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.38 (tag v0.38)
+
+2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Make `pg-parameter-status' accept symbol for PARM.
 
 	* libpq.c (pg_parameter_status): Accept symbol as PARM.

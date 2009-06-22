@@ -1,5 +1,11 @@
 2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.38 (tag v0.38)
+
+	* configure.in (AC_INIT): Bump version to "0.38" for release.
+
+2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Mention imminent demise of certain procs.
 
 	* doc/guile-pg.twerp (Processing Results):
