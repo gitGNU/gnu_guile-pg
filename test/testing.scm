@@ -1,4 +1,4 @@
-;; Copyright (C) 2004,2006,2008 Thien-Thi Nguyen
+;; Copyright (C) 2004, 2006, 2008 Thien-Thi Nguyen
 ;; Copyright (C) 1996, 1997, 1998 Per Bothner.
 ;;
 ;; Usage:
@@ -210,7 +210,7 @@
 
 (define (fresh!)
   (drop!)
-  ;; If PostgreSQL has not yet finished accessing (internally) template1 
+  ;; If PostgreSQL has not yet finished accessing (internally) template1
   ;; (even though it should have), wait a little bit and try again.
   (cond (                       (d/c "CREATE" "TOO-EAGER"))
         ((begin (usleep 100000) (d/c "CREATE" "FATAL")))

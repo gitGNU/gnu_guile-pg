@@ -1,6 +1,6 @@
 ;;; alive.scm
 
-;; Copyright (C) 2008 Thien-Thi Nguyen
+;; Copyright (C) 2008, 2009 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;
