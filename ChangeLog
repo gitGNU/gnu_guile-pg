@@ -1,3 +1,11 @@
+2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Mention imminent demise of certain procs.
+
+	* doc/guile-pg.twerp (Processing Results):
+	Don't mention `pg-set-client-data!'.
+	(Miscellaneous): Use object property in tracing example.
+
 2009-06-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build int] Use automake facilities for building HTML docs.

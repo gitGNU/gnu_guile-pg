@@ -1,3 +1,11 @@
+2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Mention imminent demise of certain procs.
+
+	* libpq.c (lob_lo_get_connection):
+	Add "will be removed" notice to docstring.
+	(pg_get_client_data, pg_set_client_data): Likewise.
+
 2009-06-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build] Minimize "make -C doc/" work in default case.

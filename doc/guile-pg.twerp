@@ -721,7 +721,7 @@ name of a given attribute in a string.
 A more efficient implementation would be to define
 a type of connection which, when opened, issued the query to retrieve the
 @code{pg_type} system table once.  An alist for looking up type names could
-then be associated with each connection using @code{pg-set-client-data!}.
+then be associated with each connection for faster subsequent access.
 
 @lisp
 (define CONN (pg-connectdb ...))
@@ -927,17 +927,19 @@ This example defines a pair of procedures @code{trace-on} and
 opens the required file and starts/stops the trace.
 
 @lisp
+(define trace-port (make-object-property))
+
 (define (trace-on conn filename)
   (let ((port (open-output-file filename)))
-    (pg-set-client-data! conn port)
+    (set! (trace-port conn) port)
     (pg-trace conn port)))
 
 (define (trace-off conn)
-  (let ((port (pg-get-client-data conn)))
-    (and port
-         (begin
+  (and=> (trace-port conn)
+         (lambda (port)
            (close-port port)
-           (pg-untrace conn)))))
+           (set! (trace-port conn) #f)
+           (pg-untrace conn))))
 @end lisp
 
 The next three procedures are for @dfn{escape processing}, changing one

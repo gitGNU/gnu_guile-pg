@@ -423,6 +423,8 @@ GH_DEFPROC
 GH_DEFPROC
 (lob_lo_get_connection, "pg-lo-get-connection", 1, 0, 0,
  (SCM port),
+ "@strong{NOTE}: This proc @strong{will be removed} by\n"
+ "2009-12-31; do not rely on it.\n\n"
  "Return the connection associated with a given large object port.\n"
  "@var{port} must be a large object port returned from\n"
  "@code{pg-lo-creat} or @code{pg-lo-open}.")
@@ -1284,6 +1286,8 @@ GH_DEFPROC
 GH_DEFPROC
 (pg_get_client_data, "pg-get-client-data", 1, 0, 0,
  (SCM conn),
+ "@strong{NOTE}: This proc @strong{will be removed} by\n"
+ "2009-12-31; do not rely on it.\n\n"
  "Return the the client data associated with @var{conn}.")
 {
 #define FUNC_NAME s_pg_get_client_data
@@ -1295,6 +1299,8 @@ GH_DEFPROC
 GH_DEFPROC
 (pg_set_client_data, "pg-set-client-data!", 2, 0, 0,
  (SCM conn, SCM data),
+ "@strong{NOTE}: This proc @strong{will be removed} by\n"
+ "2009-12-31; do not rely on it.\n\n"
  "Associate @var{data} with @var{conn}.")
 {
 #define FUNC_NAME s_pg_set_client_data
