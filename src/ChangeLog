@@ -1,5 +1,11 @@
 2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Drop proc `pg-lo-get-connection'.
+
+	* libpq.c (lob_lo_get_connection): Delete func.
+
+2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[C int] Add cast to silence compiler warning.
 
 	* libpq.c (pg_mblen): Add cast in call to `PQmblen'.

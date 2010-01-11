@@ -421,22 +421,6 @@ GH_DEFPROC
 #define LOB_STREAM(port)  ((lob_stream *) SCM_STREAM (port))
 
 GH_DEFPROC
-(lob_lo_get_connection, "pg-lo-get-connection", 1, 0, 0,
- (SCM port),
- "@strong{NOTE}: This proc @strong{will be removed} by\n"
- "2009-12-31; do not rely on it.\n\n"
- "Return the connection associated with a given large object port.\n"
- "@var{port} must be a large object port returned from\n"
- "@code{pg-lo-creat} or @code{pg-lo-open}.")
-{
-#define FUNC_NAME s_lob_lo_get_connection
-  ASSERT_PORT (1, port, OPLOBPORTP);
-
-  return LOB_STREAM (port)->conn;
-#undef FUNC_NAME
-}
-
-GH_DEFPROC
 (lob_lo_get_oid, "pg-lo-get-oid", 1, 0, 0,
  (SCM port),
  "Return the integer identifier of the object to which a given\n"

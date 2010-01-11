@@ -118,7 +118,6 @@
       (transaction
        (let ((lo-port (pg-lo-open *C* *O* "r")))
          (and lo-port
-              (eq? *C* (pg-lo-get-connection lo-port))
               (equal? (read lo-port) '(testing testing one two three))
               (eof-object? (read lo-port))
               (close-port lo-port)))))))

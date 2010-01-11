@@ -1,3 +1,9 @@
+2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Drop proc `pg-lo-get-connection'.
+
+	* large.scm (test:lo-open-read): Don't call `pg-lo-get-connection'.
+
 2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.38 (tag v0.38)

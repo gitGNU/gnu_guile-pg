@@ -886,8 +886,6 @@ by the time Guile-PG 1.0 is released.
 
 @twerpdoc (pg-lo-unlink)
 
-@twerpdoc (pg-lo-get-connection)
-
 @twerpdoc (pg-lo-get-oid)
 
 @twerpdoc (pg-lo-tell)
