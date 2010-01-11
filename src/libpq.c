@@ -1815,31 +1815,16 @@ GH_DEFPROC
  (SCM conn, SCM parm),
  "Return the status (a string) of @var{parm} for @var{conn},\n"
  "or @code{#f} if there is no such parameter.\n"
- "@var{parm} is a symbol, such as @code{client_encoding},\n"
- "or a keyword, such as @code{#:client_encoding}.\n\n"
- "@strong{NOTE}: Support for @var{parm} as a keyword\n"
- "@strong{will be removed} after 2009-12-31; do not rely on it.")
+ "@var{parm} is a symbol, such as @code{client_encoding}.")
 {
 #define FUNC_NAME s_pg_parameter_status
   PGconn *dbconn;
-  const char *cparm;
   const char *cstatus = NULL;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  if (NOT_FALSEP (scm_keyword_p (parm)))
-    {
-      parm = SCM_KEYWORDSYM (parm);
-      ROZT_X (parm);
-      /* Offset by one to skip the symbol name's initial hyphen.  */
-      cparm = 1 + ROZT (parm);
-    }
-  else
-    {
-      SCM_VALIDATE_SYMBOL (2, parm);
-      cparm = ROZT (parm);
-    }
+  SCM_VALIDATE_SYMBOL (2, parm);
 
-  cstatus = PQparameterStatus (dbconn, cparm);
+  cstatus = PQparameterStatus (dbconn, ROZT (parm));
   return DEFAULT_FALSE (cstatus, gh_str02scm (cstatus));
 #undef FUNC_NAME
 }

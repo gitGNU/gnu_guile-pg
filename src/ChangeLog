@@ -1,5 +1,12 @@
 2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	No longer accept keyword for `pg-parameter-status' PARM arg.
+
+	* libpq.c (pg_parameter_status):
+	No longer accept keyword for PARM arg.
+
+2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Drop procs `pg-set-client-data!', `pg-get-client-data'.
 
 	* libpq.c (xc_t): Delete member `client'.
