@@ -334,15 +334,16 @@
         (and (string? n) (string-null? n))))))
 
 (define test:set-client-data
-  (add-test #t
+  (add-test 'defunct
     (lambda ()
-      (equal? (pg-set-client-data! *C* '(elt1 elt2 elt3))
-              '(elt1 elt2 elt3)))))
+      ;; `pg-set-client-data!' was removed in Guile-PG 0.39.
+      'defunct)))
 
 (define test:get-client-data
-  (add-test #t
+  (add-test 'defunct
     (lambda ()
-      (equal? (pg-get-client-data *C*) '(elt1 elt2 elt3)))))
+      ;; `pg-get-client-data' was removed in Guile-PG 0.39.
+      'defunct)))
 
 (define test:make-table
   (add-test #t

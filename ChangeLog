@@ -1,5 +1,12 @@
 2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Drop procs `pg-set-client-data!', `pg-get-client-data'.
+
+	* doc/guile-pg.twerp (Database Connections): Remove
+	@section "Client Data", including two @twerpdoc entries.
+
+2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Drop proc `pg-lo-get-connection'.
 
 	* doc/guile-pg.twerp (Large Objects):

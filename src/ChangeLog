@@ -1,5 +1,15 @@
 2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Drop procs `pg-set-client-data!', `pg-get-client-data'.
+
+	* libpq.c (xc_t): Delete member `client'.
+	(xc_mark): Update.
+	(CONN_CLIENT): Delete cpp macro.
+	(pg_connectdb): Update.
+	(pg_get_client_data, pg_set_client_data): Delete funcs.
+
+2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Drop proc `pg-lo-get-connection'.
 
 	* libpq.c (lob_lo_get_connection): Delete func.

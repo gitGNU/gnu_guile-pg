@@ -105,7 +105,6 @@ static unsigned long int pg_conn_tag;
 typedef struct
 {
   SCM          notice;        /* port to send notices to */
-  SCM          client;
   PGconn      *dbconn;        /* Postgres data structure */
   FILE        *fptrace;       /* The current trace stream */
 } xc_t;
@@ -163,8 +162,7 @@ xc_mark (SCM obj)
 {
   xc_t *xc = xc_unbox (obj);
 
-  scm_gc_mark (xc->notice);
-  return xc->client;
+  return xc->notice;
 }
 
 static size_t
@@ -181,7 +179,6 @@ xc_free (SCM obj)
 }
 
 #define CONN_NOTICE(conn)   (xc_unbox (conn)->notice)
-#define CONN_CLIENT(conn)   (xc_unbox (conn)->client)
 #define CONN_FPTRACE(conn)  (xc_unbox (conn)->fptrace)
 
 #define VALIDATE_CONNECTION_UNBOX_DBCONN(n,arg,cvar)    \
@@ -1205,7 +1202,6 @@ GH_DEFPROC
   xc = ((xc_t *) scm_must_malloc (sizeof (xc_t), xc_name));
 
   xc->dbconn = dbconn;
-  xc->client = SCM_BOOL_F;
   xc->notice = SCM_BOOL_T;
   xc->fptrace = NULL;
 
@@ -1264,35 +1260,6 @@ GH_DEFPROC
   INTSOK ();
 
   RETURN_UNSPECIFIED ();
-#undef FUNC_NAME
-}
-
-GH_DEFPROC
-(pg_get_client_data, "pg-get-client-data", 1, 0, 0,
- (SCM conn),
- "@strong{NOTE}: This proc @strong{will be removed} by\n"
- "2009-12-31; do not rely on it.\n\n"
- "Return the the client data associated with @var{conn}.")
-{
-#define FUNC_NAME s_pg_get_client_data
-  ASSERT_CONNECTION (1, conn);
-  return CONN_CLIENT (conn);
-#undef FUNC_NAME
-}
-
-GH_DEFPROC
-(pg_set_client_data, "pg-set-client-data!", 2, 0, 0,
- (SCM conn, SCM data),
- "@strong{NOTE}: This proc @strong{will be removed} by\n"
- "2009-12-31; do not rely on it.\n\n"
- "Associate @var{data} with @var{conn}.")
-{
-#define FUNC_NAME s_pg_set_client_data
-  ASSERT_CONNECTION (1, conn);
-  NOINTS ();
-  CONN_CLIENT (conn) = data;
-  INTSOK ();
-  return data;
 #undef FUNC_NAME
 }
 
