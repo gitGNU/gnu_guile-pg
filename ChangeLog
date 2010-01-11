@@ -1,5 +1,11 @@
 2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.39 (tag v0.39)
+
+	* configure.in (AC_INIT): Bump version to "0.39" for release.
+
+2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Drop procs `pg-set-client-data!', `pg-get-client-data'.
 
 	* doc/guile-pg.twerp (Database Connections): Remove

@@ -1,5 +1,9 @@
 2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.39 (tag v0.39)
+
+2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Drop procs `pg-set-client-data!', `pg-get-client-data'.
 
 	* basic.scm (test:set-client-data, test:get-client-data):

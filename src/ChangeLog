@@ -1,5 +1,9 @@
 2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.39 (tag v0.39)
+
+2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	No longer accept keyword for `pg-parameter-status' PARM arg.
 
 	* libpq.c (pg_parameter_status):
