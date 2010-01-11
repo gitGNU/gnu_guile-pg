@@ -2986,7 +2986,7 @@ GH_DEFPROC
     }
   return gh_int2scm ((clen == cstart)
                      ? 0
-                     : PQmblen (ROZT (string) + cstart, cenc));
+                     : PQmblen ((unsigned char *) ROZT (string) + cstart, cenc));
 #undef FUNC_NAME
 }
 

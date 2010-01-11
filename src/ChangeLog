@@ -1,3 +1,9 @@
+2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[C int] Add cast to silence compiler warning.
+
+	* libpq.c (pg_mblen): Add cast in call to `PQmblen'.
+
 2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.38 (tag v0.38)
