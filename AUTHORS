@@ -18,7 +18,7 @@ and modified:
 
 Ian Grant <Ian.Grant@cl.cam.ac.uk> wrote:
   ./
-      configure.in
+      configure.ac (originally named configure.in)
   build-aux/
       guile-pg.m4
   src/

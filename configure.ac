@@ -1,4 +1,4 @@
-dnl configure.in
+dnl configure.ac
 dnl
 dnl Copyright (C) 2002, 2003, 2004, 2005,
 dnl   2006, 2007, 2008, 2009, 2010 Thien-Thi Nguyen
@@ -146,4 +146,4 @@ GUILE_MODULE_CATALOG_PREP
 
 AC_OUTPUT
 
-dnl configure.in ends here
+dnl configure.ac ends here
