@@ -452,7 +452,7 @@ GH_DEFPROC
 /* During lob_flush error, we decide whether to use SYSTEM_ERROR ("normal"
    error mechanism) or to write directly to stderr, depending on libguile's
    variable: scm_terminating.  If it's not available in some form (see
-   configure.in comments), we arrange to unconditionally write to stderr
+   guile-pg.m4 comments), we arrange to unconditionally write to stderr
    instead of risking further muck-up.  */
 #ifndef HAVE_SCM_TERMINATING
 # ifdef HAVE_LIBGUILE_TERMINATING
