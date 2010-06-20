@@ -1,0 +1,43 @@
+HACKING Guile-PG                                                -*- org -*-
+
+This file is both a guide for newcomers and a todo list for oldstayers.
+It lives in the repo but is not included in the distribution.
+
+* 0.40
+*** fully support PostgreSQL 8.x
+*** add UPDATE (as comma-command ‘fup’) to gxrepl
+
+* ongoing (some of which may go into the next release)
+*** comment code (audience: intermediate scheme programmer)
+*** transition maintenance support from ttn-fu to Guile-fu
+***** doc extraction / mogrification
+***** compilation
+***** linking
+*** obsolete "maintainer mode"
+
+* coding standards
+*** C code: indent -nut
+*** indent with emacs (don't like the result? fix emacs!)
+*** (setq indent-tabs-mode nil)
+*** (add-hook 'before-save-hook 'delete-trailing-whitespace)
+*** everything UTF-8
+*** ChangeLog
+***** ttn-style: TITLE LF LF {BLURB LF LF}* BODY
+***** exclude titles suffixed "; nfc." (no functional change)
+
+* copyright update policy
+*** individual files only on change
+*** individual years
+
+* repository branches
+*** no ‘master’ -- do not panic!
+*** a -- "anchor", "asis", "already", "argh-just-leave-me-alone"
+    This branch is for what was already released.  It will never be rebased.
+    Its tip will always have a commit title starting with "Release".
+*** p -- "perhaps", "probably"
+    This branch is where largely-stable changes intended for the next release
+    live.  It's very unlikely to undergo rebase, but not entirely impossible.
+    Guile-PG hackers probably want to start here.
+*** q/TOPIC -- "questionably", "querulously"
+    These are experimental, exploring the particular TOPIC.  They are intended
+    to be ephemeral, undergoing rebase, amendment, and ultimately removal.
