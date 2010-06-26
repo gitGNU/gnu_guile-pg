@@ -31,7 +31,7 @@ exec ${GUILE-guile} -s $0 "$@" # -*- scheme -*-
 
 ;;; Code:
 
-(load-from-path (list-ref (command-line) 1))
+(primitive-load (list-ref (command-line) 1))
 
 (define-module (database postgres-qcons))
 
