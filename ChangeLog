@@ -1,5 +1,11 @@
 2010-06-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Sync snapshot files with Guile 1.4.1.119.
+
+	* build-aux/guile.m4.snap: Sync with Guile 1.4.1.119.
+
+2010-06-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Use ‘primitive-load’, not ‘load-from-path’.
 
 	* doc/mkinc: Use ‘primitive-load’.

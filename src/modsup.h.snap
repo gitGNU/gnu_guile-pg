@@ -1,6 +1,9 @@
 /* modsup.h */
 
-/* Copyright (C) 2003, 2005, 2007 Thien-Thi Nguyen
+#ifndef SCM_MODSUP_H
+#define SCM_MODSUP_H
+
+/* Copyright (C) 2003, 2005, 2007, 2008, 2009 Thien-Thi Nguyen
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,20 +20,15 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
-
+
 /* Usage:
 
+   #include <libguile.h>
    #include <guile/modsup.h>
 
    This provides several macros that support init and doc snarfing of
    Scheme-visible C functions, as well as `scm_register_module_xxx'- and
    `scm_register_needy_module_xxx'-style dynamic linking and init.  */
-
-#include "libguile/__scm.h"
-#include "libguile/snarf.h"
-#include "libguile/dynl.h"
-#include "libguile/strports.h"
-#include "libguile/modules.h"
 
 /*:Declare, define and document a C function callable from Scheme.
 
@@ -68,7 +66,7 @@ void                                                                    \
 scm_init_ ## fname_frag ## _module (void)                               \
 {                                                                       \
   /* Make sure strings(1) finds module name at bol.  */                 \
-  static char modname[] = "\n" module_name;                             \
+  static const char modname[] = "\n" module_name;                       \
   scm_register_module_xxx (1 + modname, module_init_func);              \
 }
 
@@ -95,7 +93,7 @@ void                                                                    \
 scm_init_ ## fname_frag ## _module (void)                               \
 {                                                                       \
   /* Make sure strings(1) finds module name at bol.  */                 \
-  static char modname[] = "\n" module_name;                             \
+  static const char modname[] = "\n" module_name;                       \
   scm_register_needy_module_xxx (1 + modname,                           \
                                  module_init_func,                      \
                                  (char *[]) up);                        \
@@ -112,10 +110,12 @@ scm_init_ ## fname_frag ## _module (void)                               \
    string is saved in a C variable named by prefixing "s_" to @var{cvar}.
    You must use @var{cvar} as the second arg to @code{GH_SELECT_MODULE_VAR}.
 */
-#define GH_USE_MODULE(cvar,fullname) \
-SCM_SNARF_HERE (static char s_ ## cvar[] = fullname "#_#_"; static SCM cvar) \
-SCM_SNARF_INIT (cvar = GH_STONED (scm_resolve_module \
-                                   (scm_read_0str (s_ ## cvar)));)
+#define GH_USE_MODULE(cvar,fullname)                    \
+SCM_SNARF_HERE (static const char s_ ## cvar[] =        \
+                fullname "#_#_"; static SCM cvar)       \
+SCM_SNARF_INIT (cvar = GH_STONED                        \
+                (scm_resolve_module                     \
+                 (scm_read_0str (s_ ## cvar)));)
 
 #ifndef SCM___GH__H
 extern SCM gh_module_lookup (SCM vector, const char *sname);
@@ -130,7 +130,6 @@ extern SCM gh_module_lookup (SCM vector, const char *sname);
 SCM_SNARF_HERE (static SCM cvar) \
 SCM_SNARF_INIT (cvar = GH_STONED (gh_module_lookup (m_cvar, s_name));)
 
-
 #ifndef SCM___GH__H
 extern SCM gh_call0 (SCM proc);
 extern SCM gh_call1 (SCM proc, SCM arg);
@@ -219,5 +218,18 @@ extern SCM gh_call3 (SCM proc, SCM arg1, SCM arg2, SCM arg3);
    GH_UPSTREAM_MODULE_REF_COMMA (m3) \
    GH_UPSTREAM_MODULE_REF_COMMA (m4) \
    NULL }
+
+/*:Declare a static SCM @var{cname}.  For init, set @var{cname} to
+   have the value computed by the expression @var{init} (and make it
+   permanent).  Make that value available to the current module as
+   @code{schemename}, a string.  This is called a @dfn{two-language
+   variable} because the value is accessible directly from both C and
+   Scheme.  */
+#define GH_TWOLANG_VARIABLE(cname, schemename, init)    \
+  SCM_SNARF_HERE (static SCM cname)                     \
+  SCM_SNARF_INIT (cname = scm_permanent_object (init);  \
+                  scm_sysintern (schemename, cname))
+
+#endif /* SCM_MODSUP_H */
 
 /* modsup.h ends here */

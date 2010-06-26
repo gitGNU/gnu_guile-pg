@@ -1,6 +1,6 @@
 ## Some -*-autoconf-*- macros for working with Guile.
 ##
-## Copyright (C) 2002, 2003, 2004, 2005, 2007, 2008 Thien-Thi Nguyen
+## Copyright (C) 2002, 2003, 2004, 2005, 2007, 2008, 2009, 2010 Thien-Thi Nguyen
 ## Copyright (C) 1998, 2001 Free Software Foundation, Inc.
 ##
 ## This file is part of GUILE
@@ -130,13 +130,13 @@ AC_DEFUN([GUILE_SITE_DIR],
  [AC_REQUIRE([GUILE_PROGS])dnl
   AC_CACHE_CHECK([for Guile site directory],[guile_cv_SITE],[
   # Try built-in reprefixing.
-  GUILE_SITE=`[$GUILE_CONFIG] re-prefix-info scheme_site_dir 2>/dev/null`
+  GUILE_SITE=`[$GUILE_CONFIG] re-prefix-info pkgdatadir 2>/dev/null`
   # If no joy, do it "manually".
   if test x"$GUILE_SITE" = x ; then
     GUILE_SITE=`[$GUILE_CONFIG] info prefix`
     GUILE_SITE=`[$GUILE_CONFIG] info pkgdatadir | sed s,$GUILE_SITE,'${prefix}',`
-    GUILE_SITE="$GUILE_SITE/site"
   fi
+  GUILE_SITE="$GUILE_SITE/site"
   # If still no joy, make an educated guess.
   if test x"$GUILE_SITE" = x/site ; then
     GUILE_SITE='${datadir}/guile/site'
@@ -435,9 +435,15 @@ AC_DEFUN([GUILE_C2X_METHOD],[
 #
 # Check for header <guile/modsup.h> using AC_CHECK_HEADERS.
 # If found, define the cpp symbol HAVE_GUILE_MODSUP_H in config.h.
+# This uses @code{AC_CHECK_HEADERS} with the prerequisite (4th arg)
+# of @samp{#include <guile/gh.h>}.
 #
 AC_DEFUN([GUILE_MODSUP_H],[
-  AC_CHECK_HEADERS([guile/modsup.h])
+  AC_REQUIRE([GUILE_PROGS])dnl
+  saved_CPPFLAGS="$CPPFLAGS"
+  CPPFLAGS="$GUILE_CFLAGS"
+  AC_CHECK_HEADERS([guile/modsup.h],[],[],[#include <guile/gh.h>])
+  CPPFLAGS="$saved_CPPFLAGS"
 ])
 
 ## guile.m4 ends here
