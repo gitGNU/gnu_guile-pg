@@ -1,5 +1,11 @@
 2010-06-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[C int] Avoid signed/unsigned comparison.
+
+	* libpq.c (lob_fill_input): Simplify ‘lo_read’ rv handling.
+
+2010-06-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Sync snapshot files with Guile 1.4.1.119.
 
 	* modsup.h.snap: Sync with Guile 1.4.1.119.

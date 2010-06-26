@@ -606,7 +606,6 @@ lob_fill_input (SCM port)
   scm_port *pt = SCM_PTAB_ENTRY (port);
   lob_stream *lobp = LOB_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
-
   int ret;
 
   if (pt->write_pos > pt->write_buf)
@@ -615,13 +614,10 @@ lob_fill_input (SCM port)
   NOINTS ();
   ret = lo_read (conn, lobp->alod, (char *) pt->read_buf, pt->read_buf_size);
   INTSOK ();
-  if (ret != pt->read_buf_size)
-    {
-      if (! ret)
-        return EOF;
-      if (PROB (ret))
-        ERROR ("Error (~S) reading from lo port ~S", gh_int2scm (ret), port);
-    }
+  if (PROB (ret))
+    ERROR ("Error (~S) reading from lo port ~S", gh_int2scm (ret), port);
+  if (pt->read_buf_size && !ret)
+    return EOF;
   pt->read_pos = pt->read_buf;
   pt->read_end = pt->read_buf + ret;
 
