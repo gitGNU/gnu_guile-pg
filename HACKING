@@ -15,6 +15,11 @@ It lives in the repo but is not included in the distribution.
 ***** linking
 *** obsolete "maintainer mode"
 
+* portability
+  | guile version | bootstrap | build | run |
+  |     1.4.1.118 | yes       | yes   | yes |
+  |     1.4.1.119 | yes       | yes   | yes |
+
 * coding standards
 *** C code: indent -nut
 *** indent with emacs (don't like the result? fix emacs!)
