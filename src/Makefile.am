@@ -22,7 +22,7 @@
 schemefrags = resdisp types col-defs resx qcons gxrepl table meta
 schemestems = $(schemefrags:%=postgres-%)
 
-dotdocfiles = libpq.doc
+dotdocfiles = libpq.doc $(schemestems:%=%.doc)
 
 BUILT_SOURCES = libpq.x
 

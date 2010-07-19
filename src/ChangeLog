@@ -1,3 +1,11 @@
+2010-07-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build] Fix bug: Extract documentation from Scheme source.
+
+	Regression introduced 2009-06-21,
+	"Minimize "make -C doc/" work in default case".
+	* Makefile.am (dotdocfiles): Add $(schemestems:%=%.doc).
+
 2010-06-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[C int] Avoid signed/unsigned comparison.
