@@ -1,3 +1,10 @@
+2010-11-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	New (database postgres-qcons) proc: idquote
+
+	* postgres-qcons.scm (idquote): New proc, exported.
+	(maybe-dq): Use ‘idquote’.
+
 2010-07-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build] Fix bug: Extract documentation from Scheme source.

@@ -1,3 +1,9 @@
+2010-11-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	New (database postgres-qcons) proc: idquote
+
+	* doc/guile-pg.twerp (qcons quoting): Add @twerpdoc for ‘idquote’.
+
 2010-06-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Sync snapshot files with Guile 1.4.1.119.

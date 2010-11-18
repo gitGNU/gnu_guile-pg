@@ -47,6 +47,7 @@
             sql-pre?
             sql-unpre
             sql-quote
+            idquote
             make-comma-separated-tree
             make-WHERE-tree
             make-GROUP-BY-tree
@@ -236,18 +237,66 @@
 (define (fs s . args)
   (apply simple-format #f s args))
 
+;; Return the @dfn{quoted identifier} form of @var{id}, a string
+;; or symbol.  The returned string is marked by @code{sql-pre}.
+;; For example:
+;;
+;; @lisp
+;; (define (try x)
+;;   (display (idquote x))
+;;   (newline))
+;;
+;; (try 'abcd)       @print{} "abcd"
+;; (try 'ab.cd)      @print{} "ab"."cd"
+;; (try 'abcd[xyz])  @print{} "abcd"[xyz]
+;; (try 'ab.cd[xyz]) @print{} "ab"."cd"[xyz]
+;; @end lisp
+;;
+;; Note that PostgreSQL case-folding for non-quoted identifiers
+;; is nonstandard.  The PostgreSQL documentation says:
+;;
+;; @quotation
+;; If you want to write portable applications you are advised
+;; to always quote a particular name or never quote it.
+;; @cite{Section 4.1.1, Identifiers and Keywords}
+;; @end quotation
+;;
+;; The qcons module (@pxref{Query Construction}) uses @code{idquote}
+;; internally extensively.
+;;
+(define (idquote id)
+  (sql-pre
+   (let* ((s (if (symbol? id)
+                 (symbol->string id)
+                 id))
+          (ra (string-index s #\[))
+          (dot (string-index s #\.)))
+     (cond
+      ;; Fast path; no complications.
+      ((not (or ra dot))
+       (object->string s))
+      ;; Just dot (ab.cd => "ab"."cd").
+      ((and dot (not ra))
+       (fs "~S.~S"
+           (substring s 0 dot)
+           (substring s (1+ dot))))
+      ;; Just array (abcd[xyz] => "abcd"[xyz]).
+      ((and ra (not dot))
+       (fs "~S~A"
+           (substring s 0 ra)
+           (substring s ra)))
+      ;; Both dot and array (ab.cd[xyz] => "ab"."cd"[xyz]).
+      (#t
+       (fs "~S.~S~A"
+           (substring s 0 dot)
+           (substring s (1+ dot) ra)
+           (substring s (ra))))))))
+
 (define (maybe-dq sym)
+  ;; Hmmm, why not use ‘idquote’ also for this?
   (if (eq? '* sym)
       sym
-      (let ((s (symbol->string sym)))
-        ;; double quote unless table name or array member syntax is
-        ;; included; this is to protect against a column name that
-        ;; happens to be a keyword (e.g., `desc')
-        (if (or (string-index s #\.)
-                (string-index s #\[)
-                (string-index s #\]))
-            sym
-            (sql-pre (fs "~S" s))))))
+      (idquote sym)))
 
 (define (list-sep-proc sep)
   (lambda (proc ls . more-ls)

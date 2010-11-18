@@ -1259,6 +1259,7 @@ known prosaically as @dfn{quoting}.
 @twerpdoc (sql-pre?)
 @twerpdoc (sql-unpre)
 @twerpdoc (sql-quote)
+@twerpdoc (idquote)
 
 @c ---------------------------------------------------------------------------
 @node qcons trees
