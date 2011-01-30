@@ -1,3 +1,10 @@
+2011-01-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Combine PGRES_COPY_{OUT,IN} descriptions; add xref.
+
+	* doc/guile-pg.twerp (Processing Results) <result status table>:
+	Combine ‘PGRES_COPY_OUT’ and ‘PGRES_COPY_IN’; rewrite blurb.
+
 2010-11-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	New (database postgres-qcons) proc: idquote

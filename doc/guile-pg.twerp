@@ -541,12 +541,10 @@ command can be determined by a call to @code{pg-cmdtuples}.
 It is not known under which circumstances this result-status is returned.
 
 @item PGRES_COPY_OUT
-The statement was a @code{COPY <table> TO STDOUT}.  The data can be read using
-@code{pg-getline} or @code{pg-getlineasync}.
-
-@item PGRES_COPY_IN
-The statement was a @code{COPY <table> FROM STDIN}.  The rows should be written
-using @code{pg-putline}.
+@itemx PGRES_COPY_IN
+The statement was a @code{COPY <table> TO STDOUT}
+or @code{COPY <table> FROM STDIN} (respectively).
+@xref{Writing/Reading Data}.
 
 @item PGRES_BAD_RESPONSE
 This occurs when the @code{libpq} interface receives an unexpected response
