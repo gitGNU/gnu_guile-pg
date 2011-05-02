@@ -31,8 +31,6 @@ relinfo.texi: $(top_srcdir)/configure
 qcons-tables.texi: $(top_srcdir)/src/postgres-qcons.scm
 	$(srcdir)/mkinc $< > $@
 
-DISTCLEANFILES = guile-pg.info
-
 EXTRA_DIST = guile-pg.twerp mkinc guile-pg.html
 
 if MAINTAINER_MODE

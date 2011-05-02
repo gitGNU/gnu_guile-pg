@@ -1,3 +1,9 @@
+2011-05-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build doc] Reduce unorthodoxy: Build .info in srcdir.
+
+	* doc/Makefile.am (DISTCLEANFILES): Delete var.
+
 2011-01-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc] Combine PGRES_COPY_{OUT,IN} descriptions; add xref.
