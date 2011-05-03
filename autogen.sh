@@ -18,6 +18,15 @@ for f in sofix sofix.m4 ; do
 done
 
 #############################################################################
+# Guile-BAUX
+
+guile-baux-tool import \
+    tsar \
+    c-tsar \
+    tsin \
+    gbaux-do
+
+#############################################################################
 # Autotools (except automake)
 
 test x"$1" = x--libtoolize && libtoolize --force

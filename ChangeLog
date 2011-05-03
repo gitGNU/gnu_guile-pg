@@ -1,5 +1,11 @@
 2011-05-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build boot] Import Guile-BAUX modules for doc snarfing.
+
+	* autogen.sh: Add command to import Guile-BAUX modules.
+
+2011-05-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build boot] Don't install 3rd-party m4 files.
 
 	* autogen.sh: Don't check guile.m4 for freshness;

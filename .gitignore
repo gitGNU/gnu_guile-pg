@@ -14,6 +14,8 @@
 /build-aux/config.guess
 /build-aux/config.sub
 /build-aux/depcomp
+/build-aux/guile-baux
+/build-aux/guile-baux.state
 /build-aux/guile.m4
 /build-aux/install-sh
 /build-aux/libtool.m4
