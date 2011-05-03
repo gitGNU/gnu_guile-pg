@@ -1,3 +1,17 @@
+2011-05-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build] Use Guile-BAUX for doc snarfing.
+
+	* Makefile.am: include .../common.mk.
+	(dotdocfiles): Delete var.
+	(SUFFIXES): Remove .doc.
+	(.c.doc, .scm.doc): Delete old-style suffix rules.
+	[MAINTAINER_MODE] (BUILT_SOURCES): Remove $(dotdocfiles).
+	[MAINTAINER_MODE] (.doc-index): Delete target.
+	[MAINTAINER_MODE] (noinst_DATA): Remove .doc-index; add all.tsar.
+	[MAINTAINER_MODE] (all.tsar, libpq.tsar, scheme.tsar): New targets.
+	(DISTCLEANFILES): Remove *.doc.
+
 2010-11-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	New (database postgres-qcons) proc: idquote

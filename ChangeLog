@@ -1,5 +1,27 @@
 2011-05-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build] Use Guile-BAUX for doc snarfing.
+
+	* build-aux/common.mk: New file.
+
+	* doc/Makefile.am: include .../common.mk;
+	don't include twerp.mk-am-frag.
+	(guile_pg_TEXINFOS): Add ref.texi.
+	(EXTRA_DIST): Remove guile-pg.twerp; add ref.texh.
+	[MAINTAINER_MODE] (.twerp.texi): Delete old-style suffix rule.
+	[MAINTAINER_MODE] (SUFFIXES, snippets): New vars.
+	[MAINTAINER_MODE] (.texh.texi): New old-style suffix rule.
+	[MAINTAINER_MODE] (ref.texi): New dependency decl.
+	* doc/guile-pg.texi: Rename from guile-pg.twerp.
+	* doc/ref.texh: New file.
+	* doc/.make-automake-frags: Delete file.
+	* doc/.twerp-list: Delete file.
+
+	* autogen.sh: Don't invoke doc/.make-automake-frags.
+	* configure.ac (twerp-prep): Delete AC_CONFIG_COMMANDS.
+
+2011-05-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build boot] Import Guile-BAUX modules for doc snarfing.
 
 	* autogen.sh: Add command to import Guile-BAUX modules.

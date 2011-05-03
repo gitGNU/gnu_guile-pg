@@ -24,7 +24,7 @@ Ian Grant <Ian.Grant@cl.cam.ac.uk> wrote:
   src/
       libpq.c (originally libpostgres.h, libpostgres.c, postgres.scm.in)
   doc/
-      guile-pg.twerp (originally guile-pg.texi)
+      guile-pg.texi
   test/
       basic.scm (originally guile-pg-basic-tests.scm)
       large.scm (originally guile-pg-lo-tests.scm)

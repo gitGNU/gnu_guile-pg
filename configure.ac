@@ -131,17 +131,6 @@ AC_CONFIG_FILES([
 
 AC_GUILE_PG_CONFIG_SCRIPT([test/runtest])
 
-AC_CONFIG_COMMANDS([twerp-prep],[
-  if echo "$ac_cs_version" | grep -q options.*--enable-maintainer-mode ; then
-    if guile-tools | grep -q prep-Ptexi ; then
-      guile-tools prep-Ptexi doc/Makefile `cat $srcdir/doc/.twerp-list`
-    else
-      AC_MSG_WARN([[automatic doc rebuild not supported; you need to]])
-      AC_MSG_WARN([[edit doc/guile-pg.texi manually if source changes]])
-    fi
-  fi
-])
-
 GUILE_MODULE_CATALOG_PREP
 
 AC_OUTPUT

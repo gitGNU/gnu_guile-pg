@@ -21,8 +21,10 @@
 # write to the Free Software Foundation, Inc., 51 Franklin Street,
 # Fifth Floor, Boston, MA  02110-1301  USA
 
+include $(top_srcdir)/build-aux/common.mk
+
 info_TEXINFOS = guile-pg.texi
-guile_pg_TEXINFOS = guile-pg.texi relinfo.texi qcons-tables.texi
+guile_pg_TEXINFOS = guile-pg.texi relinfo.texi ref.texi qcons-tables.texi
 
 relinfo.texi: $(top_srcdir)/configure
 	@echo Creating $@
@@ -32,19 +34,18 @@ relinfo.texi: $(top_srcdir)/configure
 qcons-tables.texi: $(top_srcdir)/src/postgres-qcons.scm
 	$(srcdir)/mkinc $< > $@
 
-EXTRA_DIST = guile-pg.twerp mkinc guile-pg.html
+EXTRA_DIST = ref.texh mkinc guile-pg.html
 
 if MAINTAINER_MODE
 
-.twerp.texi:
-	$(GUILE_TOOLS) twerp2texi	\
-	  --scheme-implied		\
-	  -I ../src/.doc-index		\
-	  -d .deps/$*.Ptexi		\
-	  -o $(srcdir)/$*.texi		\
-	  $<
+SUFFIXES = .texh
 
-include twerp.mk-am-frag
+snippets = ../src/all.tsar
+
+.texh.texi:
+	$(gx) tsin -f $(snippets) -c utf-8 $<
+
+ref.texi: $(snippets)
 
 endif # MAINTAINER_MODE
 

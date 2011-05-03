@@ -19,10 +19,10 @@
 # write to the Free Software Foundation, Inc., 51 Franklin Street,
 # Fifth Floor, Boston, MA  02110-1301  USA
 
+include $(top_srcdir)/build-aux/common.mk
+
 schemefrags = resdisp types col-defs resx qcons gxrepl table meta
 schemestems = $(schemefrags:%=postgres-%)
-
-dotdocfiles = libpq.doc $(schemestems:%=%.doc)
 
 BUILT_SOURCES = libpq.x
 
@@ -36,25 +36,25 @@ d_LTLIBRARIES = postgres.la
 postgres_la_SOURCES = libpq.c gi.h
 postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0
 
-SUFFIXES = .x .doc
+SUFFIXES = .x
 
 snarfcppopts = $(DEFS) $(DEFAULT_INCLUDES) $(CPPFLAGS)
 
 .c.x:
 	$(c2x) -o $@ $< $(snarfcppopts) $(CFLAGS)
-.c.doc:
-	$(GUILE_TOOLS) c2doc -o $@ $< -- $(snarfcppopts)
-.scm.doc:
-	$(GUILE_TOOLS) doc-snarf -D -o $@ $<
 
 if MAINTAINER_MODE
 
-BUILT_SOURCES += $(dotdocfiles)
+noinst_DATA = all.tsar
 
-.doc-index: $(dotdocfiles)
-	$(GUILE_TOOLS) make-twerp2texi-index -o $@ $(dotdocfiles)
+all.tsar: libpq.tsar scheme.tsar
+	$(gx) tsar -f $@ -c utf-8 concat $^
 
-noinst_DATA = .doc-index
+libpq.tsar: libpq.c
+	$(gx) c-tsar -f $@ -c utf-8 update $^ -- $(snarfcppopts)
+
+scheme.tsar: $(schemestems:=.scm)
+	$(gx) tsar -f $@ -c utf-8 update $^
 
 endif # MAINTAINER_MODE
 
@@ -74,7 +74,7 @@ install-data-hook:
 
 EXTRA_DIST = modsup.h
 
-DISTCLEANFILES = *.x *.doc
+DISTCLEANFILES = *.x
 
 CLEANFILES = *.x
 

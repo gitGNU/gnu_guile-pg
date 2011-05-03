@@ -1,237 +1,8 @@
-\input texinfo  @c -*-texinfo-*-
-@c %**start of header
-@setfilename guile-pg.info
-@settitle The (database postgres*) Modules
-@ifinfo
-@paragraphindent 0
-@end ifinfo
-@c %**end of header
-@code{}
-@setchapternewpage odd
-
-@c Error index.
-@defcodeindex er
-
-@dircategory Guile modules
-@direntry
-* Guile-PG: (guile-pg).           Access to PostgreSQL databases from Guile.
-@end direntry
-
-@ifinfo
-This file is the Reference Guide for the (database postgres*) Modules.
-
-Copyright @copyright{} 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-2009, 2010 Thien-Thi Nguyen@*
-Portions Copyright @copyright{} 1998 Ian Grant
-
-Permission is granted to make and distribute verbatim copies of this
-manual provided the copyright notice and this permission notice are
-preserved on all copies.
-
-@ignore
-Permission is granted to process this file through TeX and
-print the results, provided the printed document carries a copying
-permission notice identical to this one except for the removal of this
-paragraph (this paragraph not being relevant to the printed manual).
-
-@end ignore
-Permission is granted to copy and distribute modified versions of this
-manual under the conditions for verbatim copying, provided also that the
-sections entitled ``Copying'' and ``GNU General Public License'' are
-included exactly as in the original, and provided that the entire
-resulting derived work is distributed under the terms of a permission
-notice identical to this one.
-
-Permission is granted to copy and distribute translations of this manual
-into another language, under the above conditions for modified versions,
-except that this permission notice may be stated in a translation
-approved by the Free Software Foundation.
-
-@end ifinfo
-@titlepage
-@sp 10
-@comment The title is printed in a large font.
-@center @titlefont{The (database postgres*) Modules}
-
-@c The following two commands start the copyright page.
-@page
-@vskip 0pt plus 1filll
-Copyright @copyright{} 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-2009, 2010 Thien-Thi Nguyen@*
-Portions Copyright @copyright{} 1998 Ian Grant
-
-     Permission is granted to make and distribute verbatim copies of
-this manual provided the copyright notice and this permission notice are
-preserved on all copies.
-
-     Permission is granted to copy and distribute modified versions of
-this manual under the conditions for verbatim copying, provided also
-that the sections entitled ``Copying'' and ``GNU General Public
-License'' are included exactly as in the original, and provided that the
-entire resulting derived work is distributed under the terms of a
-permission notice identical to this one.
-
-     Permission is granted to copy and distribute translations of this
-manual into another language, under the above conditions for modified
-versions, except that this permission notice may be stated in a
-translation approved by the Free Software Foundation.
-
-@end titlepage
-@contents
-
-@c ---------------------------------------------------------------------------
-@node Top
-@top  The (database postgres*) Modules
-
-Guile-PG is a collection of modules for Guile allowing access to the
-PostgreSQL RDBMS (@url{http://www.postgresql.org}) from Scheme programs.
-
-The low-level module @code{(database postgres)} provides an almost one-to-one
-correspondence with the PostgreSQL @code{libpq} C library interface.  Other
-higher-level modules, typically named @code{(database postgres-FOO)}, provide
-abstractions and convenience procedures.
-
-@include relinfo.texi
-
-@menu
-* Legalities::                  Your rights and freedoms.
-* Quick Start::                 Overview and brief examples.
-
-* Database Connections::        Groundwork for database interaction.
-* Retrieving Data::             Making queries and accessing results.
-* Writing/Reading Data::        Bulk data movement and I/O.
-* Large Objects::               Large-Object support.
-* Miscellaneous::               Everything else starting with "pg-".
-* Not Included::                Functions left out for some reason.
-
-* Query Construction::          Module: (database postgres-qcons).
-* Displaying Results::          Module: (database postgres-resdisp).
-* Types Conversion::            Module: (database postgres-types).
-* Column Definitions::          Module: (database postgres-col-defs).
-* Result Transforms::           Module: (database postgres-resx).
-* Single-Table Abstraction::    Module: (database postgres-table).
-* Introspection::               Module: (database postgres-meta).
-* Easy Interaction::            Module: (database postgres-gxrepl).
-
-* Procedure Index::
-* Error Index::
-@end menu
-
-@c ---------------------------------------------------------------------------
-@node    Legalities
-@chapter Legalities
-
-Guile-PG is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
-
-Guile-PG is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Guile-PG; if not, write to the Free Software Foundation,
-Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
-@c ---------------------------------------------------------------------------
-@node    Quick Start
-@chapter Quick Start
-
-To access a PostgreSQL database from Guile, first load the @code{postgres}
-database module.  This is done using the @code{use-modules} syntax:
-
-@lisp
-(use-modules (database postgres))
-@end lisp
-
-@noindent
-The next step is to make a connection to the database using the
-@code{pg-connectdb} procedure.  Then, having created a valid connection to a
-database server, we can use the @code{pg-exec} procedure to execute
-queries and the other @code{pg-} procedures to retrieve the results of the
-queries.
-
-The following Guile session opens a connection and executes an
-SQL statement on the @code{test} database on the default host (either
-@code{localhost} or the host specified in the @code{PGHOST} environment
-variable.)
-
-@cartouche
-@example
-guile> (use-modules (database postgres))
-guile> (define test (pg-connectdb "dbname=test"))
-guile> test
-#<PG-CONN:test::5432:>
-guile> (define result (pg-exec test "SELECT * FROM PEOPLE"))
-guile> result
-#<PG-RESULT:TUPLES_OK:3:5>
-@end example
-@end cartouche
-
-The @code{test} object is a @code{PG-CONN} type representing the database
-connection.  Displaying the @code{PG-CONN} object shows that the serial number
-of the connection is 1, that the database name is @code{test} on the default
-host (the hostname field is empty) on port number 5432 and that the default
-options were passed to the back-end.  This object is passed to @code{pg-exec}
-which returns a @code{PG-RESULT} object representing the result of the SQL
-statement executed on the server.  In this case, displaying the @code{PG-RESULT}
-object shows us that the serial number of the result is 2, that the return code
-from the database was @code{PGRES_TUPLES_OK} and that we have received 3 tuples
-with 5 fields.
-
-Having obtained a result object from the database we can find out how
-many rows and how many columns are in the result.  We can also find out the
-names of the columns:
-
-@cartouche
-@example
-guile> (pg-ntuples result)
-3
-guile> (pg-nfields result)
-5
-guile> (pg-fname result 0)
-"surname"
-guile> (pg-fname result 1)
-"firstname"
-@end example
-@end cartouche
-
-To retrieve the data from the result we use the @code{pg-getvalue} procedure.
-This takes a result object along with the row and column numbers and returns a
-string containing that value.  @code{pg-getvalue} always returns a string: it
-is up to the caller to convert this to whatever type they require.
-
-@cartouche
-@example
-guile> (pg-getvalue result 0 0)
-"Bitdiddle"
-guile> (pg-getvalue result 0 1)
-"Ben"
-guile> (pg-getvalue result 1 0)
-"Ator"
-guile> (pg-getvalue result 1 1)
-"Eva Lu"
-@end example
-@end cartouche
-
-Guile-PG connections are closed when Guile's garbage collector
-collects the discarded object.  This only happens when the connection itself
-and all of the results of @code{pg-exec} are unreachable.  So to close the
-connection we just rebind the results from that connection and the connection
-symbol itself:
-
-@cartouche
-@example
-guile> (define result '())
-guile> (define test '())
-@end example
-@end cartouche
-
-Typically though the result and connection variables will be @code{let}
-bindings so the connection will usually be closed soon after the body of the
-@code{let} returns.
+@c ref.texh
+@c Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+@c   2009, 2010, 2011 Thien-Thi Nguyen
+@c
+@c This file is provided under the same terms as guile-pg.texi.
 
 @c ---------------------------------------------------------------------------
 @node    Database Connections
@@ -259,10 +30,10 @@ Everything else appears literally as shown here.  It is very strange to have
 @var{db} be @code{?}; usually that indicates a bug either in Guile-PG or in
 PostgreSQL.
 
-@twerpdoc (pg-connection?)
+@tsin i pg-connection?
 @erindex due to bad connection
-@twerpdoc (pg-connectdb)
-@twerpdoc (pg-conndefaults)
+@tsin i pg-connectdb
+@tsin i pg-conndefaults
 
 @heading Example
 @lisp
@@ -282,42 +53,30 @@ objects to be properly closed when they are garbage collected), failure
 to do so before the process exits normally results in a (server side)
 logfile entry ``unexpected EOF on client connection''.
 
-@twerpdoc (pg-finish)
+@tsin i pg-finish
 
 PostgreSQL 7.4 and later support the concept of @dfn{protocol version}.
 @xref{Miscellaneous}, for another way to find installation metainfo.
 
-@twerpdoc (pg-protocol-version)
+@tsin i pg-protocol-version
 
 Notices are messages sent from the back- to the front-end, sometimes prefixed
 with the word @code{NOTICE}, and always followed by a trailing newline.  By
 default, they are sent to the current output port.
 
-@twerpdoc (pg-set-notice-out!)
-
-@twerpdoc (pg-reset)
-
-@twerpdoc (pg-server-version)
-
-@twerpdoc (pg-get-db)
-
-@twerpdoc (pg-get-user)
-
-@twerpdoc (pg-get-pass)
-
-@twerpdoc (pg-get-host)
-
-@twerpdoc (pg-get-port)
-
-@twerpdoc (pg-get-tty)
-
-@twerpdoc (pg-get-options)
-
-@twerpdoc (pg-backend-pid)
-
-@twerpdoc (pg-transaction-status)
-
-@twerpdoc (pg-parameter-status)
+@tsin i pg-set-notice-out!
+@tsin i pg-reset
+@tsin i pg-server-version
+@tsin i pg-get-db
+@tsin i pg-get-user
+@tsin i pg-get-pass
+@tsin i pg-get-host
+@tsin i pg-get-port
+@tsin i pg-get-tty
+@tsin i pg-get-options
+@tsin i pg-backend-pid
+@tsin i pg-transaction-status
+@tsin i pg-parameter-status
 
 @section Asynchronous Notifications
 
@@ -326,20 +85,20 @@ with the commands @code{LISTEN} and @code{NOTIFY}.  You can use
 @code{pg-notifies} to query the pending notifications queue
 (@pxref{Asynchronous Retrieval}).
 
-@twerpdoc (pg-notifies)
+@tsin i pg-notifies
 
 @section Character Encoding
 
 The client's character encoding, represented by a string such as
 "UNICODE", can be queried and set.
 
-@twerpdoc (pg-client-encoding)
-@twerpdoc (pg-set-client-encoding!)
+@tsin i pg-client-encoding
+@tsin i pg-set-client-encoding!
 
 @section Non-Blocking Mode
 
-@twerpdoc (pg-set-nonblocking!)
-@twerpdoc (pg-is-nonblocking?)
+@tsin i pg-set-nonblocking!
+@tsin i pg-is-nonblocking?
 
 @c ---------------------------------------------------------------------------
 @node    Retrieving Data
@@ -442,9 +201,9 @@ This section describes the procedures @code{pg-exec}, @code{pg-exec-params}
 and @code{pg-exec-prepared}.  @xref{Parameters}, for background info on the
 latter two.
 
-@twerpdoc (pg-exec)
-@twerpdoc (pg-exec-params)
-@twerpdoc (pg-exec-prepared)
+@tsin i pg-exec
+@tsin i pg-exec-params
+@tsin i pg-exec-prepared
 
 @heading Example
 This example defines a procedure @code{pg-exec/no-false} which wraps
@@ -482,14 +241,14 @@ query altogether.
 @xref{Parameters}, for background info on @code{pg-send-query-params} and
 @code{pg-send-query-prepared}.
 
-@twerpdoc (pg-send-query)
-@twerpdoc (pg-send-query-params)
-@twerpdoc (pg-send-query-prepared)
-@twerpdoc (pg-get-result)
-@twerpdoc (pg-consume-input)
-@twerpdoc (pg-is-busy?)
-@twerpdoc (pg-request-cancel)
-@twerpdoc (pg-flush)
+@tsin i pg-send-query
+@tsin i pg-send-query-params
+@tsin i pg-send-query-prepared
+@tsin i pg-get-result
+@tsin i pg-consume-input
+@tsin i pg-is-busy?
+@tsin i pg-request-cancel
+@tsin i pg-flush
 
 @c ---------------------------------------------------------------------------
 @node    Processing Results
@@ -512,15 +271,11 @@ redundant); @var{ntuples} and @var{nfields} are integers,
 the same as would be returned by @code{pg-ntuples} and @code{pg-nfields},
 respectively.  Everything else appears literally as shown here.
 
-@twerpdoc (pg-result?)
-
-@twerpdoc (pg-result-error-field)
-
-@twerpdoc (pg-result-error-message)
-
-@twerpdoc (pg-error-message)
-
-@twerpdoc (pg-result-status)
+@tsin i pg-result?
+@tsin i pg-result-error-field
+@tsin i pg-result-error-message
+@tsin i pg-error-message
+@tsin i pg-result-status
 
 @heading Result Status Values
 @table @code
@@ -581,7 +336,7 @@ The procedure could be called as follows
 (insert-one-record conn "people" "('Warbucks', 'Oliver')")
 @end lisp
 
-@twerpdoc (pg-binary-tuples?)
+@tsin i pg-binary-tuples?
 
 @erindex Invalid field number
 The procedures @code{pg-fmod}, @code{pg-ftype}, @code{pg-fname},
@@ -589,27 +344,17 @@ The procedures @code{pg-fmod}, @code{pg-ftype}, @code{pg-fname},
 and @code{pg-fsize} can all throw an @dfn{Argument out of range} error
 if the specified field does not exist in the result.
 
-@twerpdoc (pg-fmod)
-
-@twerpdoc (pg-ntuples)
-
-@twerpdoc (pg-nfields)
-
-@twerpdoc (pg-cmdtuples)
-
-@twerpdoc (pg-oid-value)
-
-@twerpdoc (pg-fname)
-
-@twerpdoc (pg-fnumber)
-
-@twerpdoc (pg-ftable)
-
-@twerpdoc (pg-ftablecol)
-
-@twerpdoc (pg-fformat)
-
-@twerpdoc (pg-getvalue)
+@tsin i pg-fmod
+@tsin i pg-ntuples
+@tsin i pg-nfields
+@tsin i pg-cmdtuples
+@tsin i pg-oid-value
+@tsin i pg-fname
+@tsin i pg-fnumber
+@tsin i pg-ftable
+@tsin i pg-ftablecol
+@tsin i pg-fformat
+@tsin i pg-getvalue
 
 This example defines a procedure @code{tuple->alist} which returns a given
 tuple as an alist, keyed on the field name.  It's not an especially efficient
@@ -661,9 +406,8 @@ The @code{pg-getvalue} procedure throws
 @code{out-of-range} errors if either the @code{tuple} or @code{field-number}
 arguments are out of range.
 
-@twerpdoc (pg-getisnull)
-
-@twerpdoc (pg-ftype)
+@tsin i pg-getisnull
+@tsin i pg-ftype
 
 @heading Example
 This defines a procedure @code{field-type-name} which returns the type
@@ -689,9 +433,8 @@ then be associated with each connection for faster subsequent access.
         "")))
 @end lisp
 
-@twerpdoc (pg-fsize)
-
-@twerpdoc (pg-getlength)
+@tsin i pg-fsize
+@tsin i pg-getlength
 
 @c ---------------------------------------------------------------------------
 @node    Writing/Reading Data
@@ -702,9 +445,9 @@ issuing the @code{COPY <table> FROM STDIN} command.  Also, both send and
 receive (with the @code{COPY <table> TO STDOUT} command) paths can be
 performed asynchronously.  See below for the older (obsolete) interface.
 
-@twerpdoc (pg-put-copy-data)
-@twerpdoc (pg-put-copy-end)
-@twerpdoc (pg-get-copy-data)
+@tsin i pg-put-copy-data
+@tsin i pg-put-copy-end
+@tsin i pg-get-copy-data
 
 @heading Obsolete functions for COPY
 
@@ -714,8 +457,8 @@ marker} is recognized, that means the results from the @code{COPY} command
 have all been read and @code{pg-endcopy} should be called to resynchronize the
 connection before any further calls to @code{pg-exec} on this connection.
 
-@twerpdoc (pg-getline)
-@twerpdoc (pg-getlineasync)
+@tsin i pg-getline
+@tsin i pg-getlineasync
 
 @heading Example
 This example defines two functionally identical procedures that can be used
@@ -753,7 +496,7 @@ It is also an error to call @code{pg-getline} after a terminating line has
 been received, without an intervening @code{COPY} command being issued on
 that connection.
 
-@twerpdoc (pg-putline)
+@tsin i pg-putline
 
 @heading Example
 This example defines a procedure @code{copy-from-port} which can be used
@@ -775,17 +518,17 @@ to supply data to a @code{COPY <table> FROM STDIN} command.
                (loop (read-line port)))))))
 @end lisp
 
-@twerpdoc (pg-endcopy)
+@tsin i pg-endcopy
 
 Although not readily apparent, another form of data copying is @dfn{formatted
 output}, which is supported by Guile-PG via the @code{pg-print} procedure and
 the accompanying @code{pg-make-print-options}.  Together these loosely mimic
 the @code{PQprint} functionality provided by libpq.
 
-@twerpdoc (pg-make-print-options)
+@tsin i pg-make-print-options
 
 @erindex due to @code{tmpfile(3)} failure
-@twerpdoc (pg-print)
+@tsin i pg-print
 
 @c ---------------------------------------------------------------------------
 @node    Large Objects
@@ -829,27 +572,20 @@ Connections}).  Everything else appears literally as shown here (including the
 space in front of @var{alod}, unfortunately).  This format will likely change
 by the time Guile-PG 1.0 is released.
 
-@twerpdoc (pg-lo-creat)
-
-@twerpdoc (pg-lo-open)
-
-@twerpdoc (pg-lo-unlink)
-
-@twerpdoc (pg-lo-get-oid)
-
-@twerpdoc (pg-lo-tell)
-
-@twerpdoc (pg-lo-seek)
+@tsin i pg-lo-creat
+@tsin i pg-lo-open
+@tsin i pg-lo-unlink
+@tsin i pg-lo-get-oid
+@tsin i pg-lo-tell
+@tsin i pg-lo-seek
 
 @heading Note
 It is possible to seek beyond the end of file opened only for reading, in
 which case subsequent reads of the port will return an EOF object.
 
-@twerpdoc (pg-lo-read)
-
-@twerpdoc (pg-lo-import)
-
-@twerpdoc (pg-lo-export)
+@tsin i pg-lo-read
+@tsin i pg-lo-import
+@tsin i pg-lo-export
 
 @c ---------------------------------------------------------------------------
 @node    Miscellaneous
@@ -858,17 +594,17 @@ which case subsequent reads of the port will return an EOF object.
 This chapter describes procedures whose name begins with "pg-" that do not
 necessarily belong in the other chapters.
 
-@twerpdoc (pg-guile-pg-loaded)
+@tsin i pg-guile-pg-loaded
 
 @erindex Invalid verbosity
-@twerpdoc (pg-set-error-verbosity)
+@tsin i pg-set-error-verbosity
 
 @erindex due to @code{dup(3)} failure
 @erindex due to @code{fopen(3)} failure
-@twerpdoc (pg-trace)
+@tsin i pg-trace
 
 @erindex due to @code{fclose(3)} failure
-@twerpdoc (pg-untrace)
+@tsin i pg-untrace
 
 @heading Example
 This example defines a pair of procedures @code{trace-on} and
@@ -897,9 +633,9 @@ are for data to be sent to the server, the third for data received from the
 server.  If there are problems (when they return @code{#f}), you can use
 @code{pg-error-message} to find out what happened.
 
-@twerpdoc (pg-escape-string-conn)
-@twerpdoc (pg-escape-bytea-conn)
-@twerpdoc (pg-unescape-bytea)
+@tsin i pg-escape-string-conn
+@tsin i pg-escape-bytea-conn
+@tsin i pg-unescape-bytea
 
 For example:
 
@@ -914,7 +650,7 @@ For example:
 
 Lastly, the miscellaneous miscellaneous procedures!
 
-@twerpdoc (pg-mblen)
+@tsin i pg-mblen
 
 @c ---------------------------------------------------------------------------
 @node    Not Included
@@ -1233,7 +969,7 @@ involving some extra specification composed with a single pexp.
 During tree construction, internal lookup tables control the rendering
 transformations.  You can add to them using procedure @code{qcons-declare!}.
 
-@twerpdoc (qcons-declare!)
+@tsin i qcons-declare!
 
 The rest of this section presents various lists of built-in declarations.
 Using @code{qcons-declare!} on a built-in symbol overwrites the associated
@@ -1253,11 +989,11 @@ construction procedures for most of the work and tweak only the small parts that
 need it.  This selective use of varying expression construction approaches is
 known prosaically as @dfn{quoting}.
 
-@twerpdoc (sql-pre)
-@twerpdoc (sql-pre?)
-@twerpdoc (sql-unpre)
-@twerpdoc (sql-quote)
-@twerpdoc (idquote)
+@tsin i sql-pre
+@tsin i sql-pre?
+@tsin i sql-unpre
+@tsin i sql-quote
+@tsin i idquote
 
 @c ---------------------------------------------------------------------------
 @node qcons trees
@@ -1268,16 +1004,16 @@ still (at this time, 2005-02-24) considered @strong{experimental}.  You should
 take this as an invitation to @strong{experiment} and share your observations w/
 the Guile-PG maintainer so that we can refine them nicely for the 1.0 release.
 
-@twerpdoc (make-comma-separated-tree)
-@twerpdoc (make-WHERE-tree)
-@twerpdoc (make-GROUP-BY-tree)
-@twerpdoc (make-HAVING-tree)
-@twerpdoc (make-ORDER-BY-tree)
-@twerpdoc (make-SELECT/COLS-tree)
-@twerpdoc (make-FROM-tree)
-@twerpdoc (make-SELECT/FROM/COLS-tree)
-@twerpdoc (parse+make-SELECT/tail-tree)
-@twerpdoc (parse+make-SELECT-tree)
+@tsin i make-comma-separated-tree
+@tsin i make-WHERE-tree
+@tsin i make-GROUP-BY-tree
+@tsin i make-HAVING-tree
+@tsin i make-ORDER-BY-tree
+@tsin i make-SELECT/COLS-tree
+@tsin i make-FROM-tree
+@tsin i make-SELECT/FROM/COLS-tree
+@tsin i parse+make-SELECT/tail-tree
+@tsin i parse+make-SELECT-tree
 
 @c ---------------------------------------------------------------------------
 @node qcons output
@@ -1285,8 +1021,8 @@ the Guile-PG maintainer so that we can refine them nicely for the 1.0 release.
 
 To get SQL once the tree is constructed, you have to flatten it.
 
-@twerpdoc (sql<-trees)
-@twerpdoc (sql-command<-trees)
+@tsin i sql<-trees
+@tsin i sql-command<-trees
 
 @c ---------------------------------------------------------------------------
 @node    Displaying Results
@@ -1302,7 +1038,7 @@ To get started, load the @code{postgres-resdisp} module:
 (use-modules (database postgres-resdisp))
 @end lisp
 
-@twerpdoc (display-result)
+@tsin i display-result
 
 @c ---------------------------------------------------------------------------
 @node    Types Conversion
@@ -1339,7 +1075,7 @@ implementation:
 @noindent
 It uses a bonus procedure in this module:
 
-@twerpdoc (oid-type-name-cache)
+@tsin i oid-type-name-cache
 
 @menu
 * Consulting Existing Type Converters::
@@ -1357,11 +1093,11 @@ the procedure
 @code{dbcoltype-lookup}.  The components of the returned object can be read
 using the @code{dbcoltype:FOO} procedures.
 
-@twerpdoc (dbcoltypes)
-@twerpdoc (dbcoltype-lookup)
-@twerpdoc (dbcoltype:stringifier)
-@twerpdoc (dbcoltype:objectifier)
-@twerpdoc (dbcoltype:default)
+@tsin i dbcoltypes
+@tsin i dbcoltype-lookup
+@tsin i dbcoltype:stringifier
+@tsin i dbcoltype:objectifier
+@tsin i dbcoltype:default
 
 Here is a simple example that uses @code{dbcoltype-lookup} and
 @code{dbcoltype:objectifier} to convert a @code{text[][]} value
@@ -1548,12 +1284,12 @@ opposite direction (the @dfn{stringifier}), and a default string to use if
 none is specified (for example, during an @code{INSERT} operation).  For this,
 use the @code{define-db-col-type} procedure.
 
-@twerpdoc (define-db-col-type)
+@tsin i define-db-col-type
 
 To express conversion of arrays (no matter the dimensionality) of non-array
 types, use the @code{define-db-col-type-array-variant} procedure.
 
-@twerpdoc (define-db-col-type-array-variant)
+@tsin i define-db-col-type-array-variant
 
 @c ---------------------------------------------------------------------------
 @node    Column Definitions
@@ -1614,17 +1350,17 @@ In this example, we use the @code{#:renamer} clause to systematically prefix
 "def:" to the names that the client module would see (resulting in
 @code{def:column-name} and so on).
 
-@twerpdoc (column-name)
-@twerpdoc (type-name)
-@twerpdoc (type-options)
-@twerpdoc (validate-def)
+@tsin i column-name
+@tsin i type-name
+@tsin i type-options
+@tsin i validate-def
 
 There are two more convenience procedures, the first one useful in
 transforming the results of a query into Scheme objects (@pxref{Result
 Transforms}):
 
-@twerpdoc (objectifiers)
-@twerpdoc (stringifiers)
+@tsin i objectifiers
+@tsin i stringifiers
 
 @c ---------------------------------------------------------------------------
 @node    Result Transforms
@@ -1645,7 +1381,7 @@ To get started, load the @code{postgres-resx} module:
 The most basic procedure is @code{for-each-tuple}, useful for quick searches
 on the unconverted result strings.
 
-@twerpdoc (for-each-tuple)
+@tsin i for-each-tuple
 
 The rest of the procedures in this chapter combine conversion of the raw
 result strings to Scheme objects, with different collection methods.
@@ -1656,7 +1392,7 @@ no conversion at all.)
 The degenerate collection method is no collection at all!  (A common idiom is
 to @code{SELECT EXPR;} to get a result consisting of one row and one column.)
 
-@twerpdoc (object<-result)
+@tsin i object<-result
 
 For other collection methods, we include examples to clarify.
 The examples are based upon a result object that can briefly described as:
@@ -1685,7 +1421,7 @@ quoting, but we omit that to reduce clutter.
 The @code{result-field->object-list} procedure is useful for single-column
 queries.
 
-@twerpdoc (result-field->object-list)
+@tsin i result-field->object-list
 
 @heading Example
 @lisp
@@ -1704,9 +1440,9 @@ queries.
 The @code{result->object-FOO} procedures
 have the same signature but return the data in different ways.
 
-@twerpdoc (result->object-alist)
-@twerpdoc (result->object-alists)
-@twerpdoc (result->object-rows)
+@tsin i result->object-alist
+@tsin i result->object-alists
+@tsin i result->object-rows
 
 @heading Example
 @lisp
@@ -1745,17 +1481,15 @@ Basically, the @code{pgtable-manager} procedure encapsulates specification,
 query and mutation (including create/delete) of a PostgreSQL table; and the
 @code{pgtable-worker} procedure encapsulates @code{pgtable-manager}.
 
-@twerpdoc (pgtable-manager)
-
-@twerpdoc (compile-outspec)
-
-@twerpdoc (pgtable-worker)
+@tsin i pgtable-manager
+@tsin i compile-outspec
+@tsin i pgtable-worker
 
 The other procedures are useful for succinctly codifying queries, and
 translating the result en mass to Scheme objects.  [NOTE: These will
 definitely migrate to other modules at some point before 1.0 release.]
 
-@twerpdoc (sql-pre)
+@tsin i sql-pre
 
 The rest of this chapter is an extended example showing some of the uses of
 @code{pgtable-manager}.
@@ -1847,8 +1581,8 @@ views.
 This section describes Guile-PG support for querying the information schema.
 For PostgreSQL-specific features, @xref{Funky Introspection}.
 
-@twerpdoc (information-schema-names)
-@twerpdoc (information-schema-coldefs)
+@tsin i information-schema-names
+@tsin i information-schema-coldefs
 
 To see everything about everything, for example, you can try:
 
@@ -1870,15 +1604,15 @@ The column definitions of an existing table can be discovered to some extent
 by the @code{defs-from-psql}, @code{infer-defs} and @code{describe-table!}
 procedures, the last one also displaying details on field/column innards.
 
-@twerpdoc (defs-from-psql)
-@twerpdoc (infer-defs)
-@twerpdoc (describe-table!)
+@tsin i defs-from-psql
+@tsin i infer-defs
+@tsin i describe-table!
 
 Once you have a set of defs, you can verify that their types are supported by
 Guile-PG with the following procedures.
 
-@twerpdoc (check-type/elaborate)
-@twerpdoc (strictly-check-types/elaborate!)
+@tsin i check-type/elaborate
+@tsin i strictly-check-types/elaborate!
 
 @heading Example
 @lisp
@@ -1923,7 +1657,7 @@ This provides the procedure @code{gxrepl}.  The ``gx'' stands for ``guile
 extensible'', which is not the case at the moment, but we have great and
 humble plans for this module...
 
-@twerpdoc (gxrepl)
+@tsin i gxrepl
 
 Most comma commands are relatively self-explanatory, with guidance from
 @code{,help}.  The rest of this chapter delves into some of the more
@@ -1961,21 +1695,4 @@ SELECT one AS "latitude", two AS "longitude"
  WHERE ((9 < importance) OR (3 > importance));
 @end example
 
-@c ---------------------------------------------------------------------------
-@c ---------------------------------------------------------------------------
-@node       Procedure Index
-@unnumbered Procedure Index
-
-@printindex fn
-
-@node       Error Index
-@unnumbered Error Index
-
-@xref{Retrieving Data}, for info on @code{pg-error-message}.
-These errors, on the other hand, are not handled by that mechanism.
-
-@printindex er
-
-@c ---------------------------------------------------------------------------
-@c ---------------------------------------------------------------------------
-@bye
+@c ref.texh ends here

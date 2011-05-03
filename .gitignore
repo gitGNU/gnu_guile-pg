@@ -30,20 +30,16 @@
 /build-aux/texinfo.tex
 
 /doc/*.info*
-/doc/*.mk-am-frag
-/doc/.deps
 /doc/Makefile
 /doc/Makefile.in
-/doc/guile-pg.texi
 /doc/qcons-tables.texi
+/doc/ref.texi
 /doc/relinfo.texi
 
-/src/*.doc
 /src/*.la
 /src/*.lo
 /src/*.x
 /src/.deps
-/src/.doc-index
 /src/.libs
 /src/Makefile
 /src/Makefile.in

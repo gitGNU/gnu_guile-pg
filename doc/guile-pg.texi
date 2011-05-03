@@ -1,0 +1,258 @@
+\input texinfo  @c -*-texinfo-*-
+@c %**start of header
+@setfilename guile-pg.info
+@settitle The (database postgres*) Modules
+@ifinfo
+@paragraphindent 0
+@end ifinfo
+@c %**end of header
+@code{}
+@setchapternewpage odd
+
+@c Error index.
+@defcodeindex er
+
+@dircategory Guile modules
+@direntry
+* Guile-PG: (guile-pg).           Access to PostgreSQL databases from Guile.
+@end direntry
+
+@ifinfo
+This file is the Reference Guide for the (database postgres*) Modules.
+
+Copyright @copyright{} 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+2009, 2010 Thien-Thi Nguyen@*
+Portions Copyright @copyright{} 1998 Ian Grant
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+@ignore
+Permission is granted to process this file through TeX and
+print the results, provided the printed document carries a copying
+permission notice identical to this one except for the removal of this
+paragraph (this paragraph not being relevant to the printed manual).
+
+@end ignore
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided also that the
+sections entitled ``Copying'' and ``GNU General Public License'' are
+included exactly as in the original, and provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation
+approved by the Free Software Foundation.
+
+@end ifinfo
+@titlepage
+@sp 10
+@comment The title is printed in a large font.
+@center @titlefont{The (database postgres*) Modules}
+
+@c The following two commands start the copyright page.
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+2009, 2010 Thien-Thi Nguyen@*
+Portions Copyright @copyright{} 1998 Ian Grant
+
+     Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+     Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the sections entitled ``Copying'' and ``GNU General Public
+License'' are included exactly as in the original, and provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+     Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.
+
+@end titlepage
+@contents
+
+@c ---------------------------------------------------------------------------
+@node Top
+@top  The (database postgres*) Modules
+
+Guile-PG is a collection of modules for Guile allowing access to the
+PostgreSQL RDBMS (@url{http://www.postgresql.org}) from Scheme programs.
+
+The low-level module @code{(database postgres)} provides an almost one-to-one
+correspondence with the PostgreSQL @code{libpq} C library interface.  Other
+higher-level modules, typically named @code{(database postgres-FOO)}, provide
+abstractions and convenience procedures.
+
+@include relinfo.texi
+
+@menu
+* Legalities::                  Your rights and freedoms.
+* Quick Start::                 Overview and brief examples.
+
+* Database Connections::        Groundwork for database interaction.
+* Retrieving Data::             Making queries and accessing results.
+* Writing/Reading Data::        Bulk data movement and I/O.
+* Large Objects::               Large-Object support.
+* Miscellaneous::               Everything else starting with "pg-".
+* Not Included::                Functions left out for some reason.
+
+* Query Construction::          Module: (database postgres-qcons).
+* Displaying Results::          Module: (database postgres-resdisp).
+* Types Conversion::            Module: (database postgres-types).
+* Column Definitions::          Module: (database postgres-col-defs).
+* Result Transforms::           Module: (database postgres-resx).
+* Single-Table Abstraction::    Module: (database postgres-table).
+* Introspection::               Module: (database postgres-meta).
+* Easy Interaction::            Module: (database postgres-gxrepl).
+
+* Procedure Index::
+* Error Index::
+@end menu
+
+@c ---------------------------------------------------------------------------
+@node    Legalities
+@chapter Legalities
+
+Guile-PG is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+Guile-PG is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Guile-PG; if not, write to the Free Software Foundation,
+Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+@c ---------------------------------------------------------------------------
+@node    Quick Start
+@chapter Quick Start
+
+To access a PostgreSQL database from Guile, first load the @code{postgres}
+database module.  This is done using the @code{use-modules} syntax:
+
+@lisp
+(use-modules (database postgres))
+@end lisp
+
+@noindent
+The next step is to make a connection to the database using the
+@code{pg-connectdb} procedure.  Then, having created a valid connection to a
+database server, we can use the @code{pg-exec} procedure to execute
+queries and the other @code{pg-} procedures to retrieve the results of the
+queries.
+
+The following Guile session opens a connection and executes an
+SQL statement on the @code{test} database on the default host (either
+@code{localhost} or the host specified in the @code{PGHOST} environment
+variable.)
+
+@cartouche
+@example
+guile> (use-modules (database postgres))
+guile> (define test (pg-connectdb "dbname=test"))
+guile> test
+#<PG-CONN:test::5432:>
+guile> (define result (pg-exec test "SELECT * FROM PEOPLE"))
+guile> result
+#<PG-RESULT:TUPLES_OK:3:5>
+@end example
+@end cartouche
+
+The @code{test} object is a @code{PG-CONN} type representing the database
+connection.  Displaying the @code{PG-CONN} object shows that the serial number
+of the connection is 1, that the database name is @code{test} on the default
+host (the hostname field is empty) on port number 5432 and that the default
+options were passed to the back-end.  This object is passed to @code{pg-exec}
+which returns a @code{PG-RESULT} object representing the result of the SQL
+statement executed on the server.  In this case, displaying the @code{PG-RESULT}
+object shows us that the serial number of the result is 2, that the return code
+from the database was @code{PGRES_TUPLES_OK} and that we have received 3 tuples
+with 5 fields.
+
+Having obtained a result object from the database we can find out how
+many rows and how many columns are in the result.  We can also find out the
+names of the columns:
+
+@cartouche
+@example
+guile> (pg-ntuples result)
+3
+guile> (pg-nfields result)
+5
+guile> (pg-fname result 0)
+"surname"
+guile> (pg-fname result 1)
+"firstname"
+@end example
+@end cartouche
+
+To retrieve the data from the result we use the @code{pg-getvalue} procedure.
+This takes a result object along with the row and column numbers and returns a
+string containing that value.  @code{pg-getvalue} always returns a string: it
+is up to the caller to convert this to whatever type they require.
+
+@cartouche
+@example
+guile> (pg-getvalue result 0 0)
+"Bitdiddle"
+guile> (pg-getvalue result 0 1)
+"Ben"
+guile> (pg-getvalue result 1 0)
+"Ator"
+guile> (pg-getvalue result 1 1)
+"Eva Lu"
+@end example
+@end cartouche
+
+Guile-PG connections are closed when Guile's garbage collector
+collects the discarded object.  This only happens when the connection itself
+and all of the results of @code{pg-exec} are unreachable.  So to close the
+connection we just rebind the results from that connection and the connection
+symbol itself:
+
+@cartouche
+@example
+guile> (define result '())
+guile> (define test '())
+@end example
+@end cartouche
+
+Typically though the result and connection variables will be @code{let}
+bindings so the connection will usually be closed soon after the body of the
+@code{let} returns.
+
+@c ---------------------------------------------------------------------------
+@c ---------------------------------------------------------------------------
+
+@include ref.texi
+
+@c ---------------------------------------------------------------------------
+@c ---------------------------------------------------------------------------
+@node       Procedure Index
+@unnumbered Procedure Index
+
+@printindex fn
+
+@node       Error Index
+@unnumbered Error Index
+
+@xref{Retrieving Data}, for info on @code{pg-error-message}.
+These errors, on the other hand, are not handled by that mechanism.
+
+@printindex er
+
+@c ---------------------------------------------------------------------------
+@c ---------------------------------------------------------------------------
+@bye

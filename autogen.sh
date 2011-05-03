@@ -27,7 +27,7 @@ guile-baux-tool import \
     gbaux-do
 
 #############################################################################
-# Autotools (except automake)
+# Autotools
 
 test x"$1" = x--libtoolize && libtoolize --force
 test -r build-aux/ltmain.sh || libtoolize --force
@@ -35,11 +35,6 @@ test -r build-aux/ltmain.sh || libtoolize --force
 aclocal -I build-aux
 autoheader
 autoconf
-
-#############################################################################
-# Automake
-
-( cd doc ; ./.make-automake-frags )
 automake --add-missing --force -Wall
 
 ######################################################################
