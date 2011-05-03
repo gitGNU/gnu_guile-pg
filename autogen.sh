@@ -4,9 +4,9 @@
 # Bootstrap the development environment.  Optional arg "--libtoolize" means
 # also run "libtoolize --force".  The distribution was made w/ these tools:
 # - autoconf (GNU Autoconf) 2.65
-# - automake (GNU automake) 1.11
+# - automake (GNU automake) 1.11.1
 # - ltmain.sh (GNU libtool) 2.2.6b
-# - Guile 1.4.1.118
+# - Guile 1.4.1.119
 
 ######################################################################
 # Local.
@@ -23,20 +23,7 @@ done
 test x"$1" = x--libtoolize && libtoolize --force
 test -r build-aux/ltmain.sh || libtoolize --force
 
-fresh_guile_m4="`guile-config info datadir`/aclocal/guile.m4"
-cd build-aux
-test -f $fresh_guile_m4 || fresh_guile_m4="guile.m4.snap"
-ln -sf $fresh_guile_m4 guile.m4
-diff -u guile.m4.snap guile.m4 > TMP 2>&1
-if [ -s TMP ] ; then
-    echo "WARNING: guile.m4.snap out of date, diff follows:"
-    cat TMP
-fi
-rm -f TMP
-cd ..
-
-aclocal -I build-aux --install
-
+aclocal -I build-aux
 autoheader
 autoconf
 

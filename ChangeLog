@@ -1,3 +1,11 @@
+2011-05-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build boot] Don't install 3rd-party m4 files.
+
+	* autogen.sh: Don't check guile.m4 for freshness;
+	invoke aclocal without ‘--install’.
+	* build-aux/guile.m4.snap: Delete file.
+
 2011-05-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build doc] Reduce unorthodoxy: Build .info in srcdir.
