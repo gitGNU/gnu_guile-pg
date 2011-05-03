@@ -224,4 +224,10 @@
                                         "postgres-" part ".scm"))))
               parts)))
 
+
+;;; load-time actions
+
+(cond ((getenv "DEBUG")
+       (set! %load-verbosely #t)))
+
 ;;; testing.scm ends here
