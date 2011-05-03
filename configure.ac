@@ -1,7 +1,7 @@
 dnl configure.ac
 dnl
-dnl Copyright (C) 2002, 2003, 2004, 2005,
-dnl   2006, 2007, 2008, 2009, 2010 Thien-Thi Nguyen
+dnl Copyright (C) 2002, 2003, 2004, 2005, 2006,
+dnl   2007, 2008, 2009, 2010, 2011 Thien-Thi Nguyen
 dnl Portions Copyright (C) 1998 Ian Grant
 dnl
 dnl This file is part of Guile-PG.
