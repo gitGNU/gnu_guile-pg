@@ -37,7 +37,6 @@ Building and Installing Guile-PG
 	  ./configure [options]
 	  make
 	  make check
-	  make destroy-nonmodule-guile-pg-prior-install
 	  make install
 
 	Each of the above steps is explained in detail below.
@@ -122,30 +121,6 @@ Testing
 
 	The DEBUG=1 is optional.  If "make check" fails, please re-run
 	it with DEBUG=1 and see "Reporting Bugs" below.
-
-
-Removing Misguided Prior Installations
---------------------------------------
-
-	(If this is the first time you're installing Guile-PG, you can
-	skip this section.)
-
-	Prior to 0.17, "make install" put these files in these dirs:
-
-	   uncompiled modules -- ${datadir}/guile/database
-	   compiled modules   -- ${libdir}/guile-pg/${VERSION}
-
-	(See "What Goes Where" below for current installation practice.)
-
-	There are three ways to delete these old files and directories:
-	- Manually.
-	- Using "make uninstall" in the old Guile-PG build tree.
-	- Using "make destroy-nonmodule-guile-pg-prior-install".
-
-	The last method is recommended because everything is automatic
-	as well as convenient.  In addition to doing the deletions, if
-	a module catalog is found in ${datadir}/guile, the relevant
-	entries are also removed.
 
 
 What Goes Where

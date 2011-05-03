@@ -40,26 +40,4 @@ dist-hook:
 	sed -i 's/RECIP/$(PACKAGE_BUGREPORT)/;s/VERSION/$(VERSION)/' \
 	  $(distdir)/test/show-platform
 
-## bonus target
-destroy-nonmodule-guile-pg-prior-install:
-	dir="$(libdir)/guile-pg" ;				\
-	if test -d $$dir ; then					\
-	  echo NOTE: deleting $$dir ;				\
-	  rm -rf $$dir ; fi ;					\
-	dir="$(datadir)/guile/database" ;			\
-	if test -d $$dir ; then cd $$dir ;			\
-	  files="`ls postgres*.scm 2>/dev/null`" ;		\
-	  if test -n "$$files" ; then				\
-	    for f in $$files ; do				\
-	      echo NOTE: deleting $$dir/$$f ;			\
-	      rm -f $$f ; done ; fi ;				\
-	  if test "`ls`" = "" ; then cd .. ;			\
-	    echo NOTE: deleting $$dir ;				\
-	    rmdir database ; fi ; fi ;				\
-	dir="$(datadir)/guile" ; cat=".module-catalog" ;	\
-	if test -f $$dir/$$cat ; then cd $$dir ;		\
-	  echo NOTE: modifying $$dir/$$cat ;			\
-	  sed '/database postgres/d' $$cat > TMP ;		\
-	  mv TMP $$cat ; fi
-
 # Makefile.am ends here

@@ -1,5 +1,12 @@
 2011-05-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[maint] Decruft: Remove obsolete makefile target.
+
+	* Makefile.am (destroy-nonmodule-guile-pg-prior-install):
+	Delete target.
+
+2011-05-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build] Use Guile-BAUX for doc snarfing.
 
 	* build-aux/common.mk: New file.
