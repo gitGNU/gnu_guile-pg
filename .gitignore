@@ -1,8 +1,13 @@
-/.deps
+# everywhere
+
+.deps
+Makefile
+Makefile.in
+
+# specifically
+
 /.module-catalog
 /INSTALL
-/Makefile
-/Makefile.in
 /aclocal.m4
 /autom4te.cache
 /config.cache
@@ -30,8 +35,6 @@
 /build-aux/texinfo.tex
 
 /doc/*.info*
-/doc/Makefile
-/doc/Makefile.in
 /doc/qcons-tables.texi
 /doc/ref.texi
 /doc/relinfo.texi
@@ -39,18 +42,13 @@
 /src/*.la
 /src/*.lo
 /src/*.x
-/src/.deps
 /src/.libs
-/src/Makefile
-/src/Makefile.in
 /src/config.h
 /src/config.h.in
 /src/modsup.h
 /src/stamp-h1
 
 /test/*.log
-/test/Makefile
-/test/Makefile.in
 /test/config.scm
 /test/create.sh
 /test/drop.sh
