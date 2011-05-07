@@ -23,7 +23,7 @@
 
 SUBDIRS = src test doc
 
-EXTRA_DIST = build-aux/sofix
+EXTRA_DIST = build-aux/sofix build-aux/guile-baux
 
 noinst_DATA = .module-catalog
 

@@ -1,5 +1,14 @@
 2011-05-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[maint] Fix bug: Distribute build-aux/guile-baux/*, too!
+
+	Omission from 2011-05-03, "Import
+	Guile-BAUX modules for doc snarfing".
+
+	* Makefile.am (EXTRA_DIST): Add build-aux/guile-baux.
+
+2011-05-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Use Guile-BAUX for init snarfing.
 
 	* autogen.sh: Import Guile-BAUX module ‘c2x’.
