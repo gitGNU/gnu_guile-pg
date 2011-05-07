@@ -144,8 +144,6 @@ AC_CHECK_LIB(guile, terminating, [
             [Define if libguile defines terminating.])
 ])
 
-GUILE_C2X_METHOD([c2x])
-
 GUILE_MODSUP_H
 
 ])dnl AC_GUILE_PG_BCOMPAT

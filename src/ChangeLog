@@ -1,3 +1,10 @@
+2011-05-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build int] Use Guile-BAUX for init snarfing.
+
+	* Makefile.am (SUFFIXES): Delete var.
+	(.c.x): Use ‘$(gx) c2x’ instead of $(c2x).
+
 2011-05-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build] Use Guile-BAUX for doc snarfing.

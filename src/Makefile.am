@@ -36,12 +36,10 @@ d_LTLIBRARIES = postgres.la
 postgres_la_SOURCES = libpq.c gi.h
 postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0
 
-SUFFIXES = .x
-
 snarfcppopts = $(DEFS) $(DEFAULT_INCLUDES) $(CPPFLAGS)
 
 .c.x:
-	$(c2x) -o $@ $< $(snarfcppopts) $(CFLAGS)
+	$(gx) c2x -o $@ $< -- $(snarfcppopts) $(CFLAGS)
 
 if MAINTAINER_MODE
 

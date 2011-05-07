@@ -21,6 +21,7 @@ done
 # Guile-BAUX
 
 guile-baux-tool import \
+    c2x \
     tsar \
     c-tsar \
     tsin \
