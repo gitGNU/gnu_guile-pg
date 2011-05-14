@@ -1,3 +1,9 @@
+2011-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[inst int] Move $(mkmodcat) invocation from top dir to src/.
+
+	* Makefile.am (install-data-hook): Delete target.
+
 2011-05-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[maint] Fix bug: Distribute build-aux/guile-baux/*, too!

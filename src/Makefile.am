@@ -59,6 +59,7 @@ endif # MAINTAINER_MODE
 install-data-hook:
 	$(top_srcdir)/build-aux/sofix $(SOFIXFLAGS) \
 	  $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
+	$(mkmodcat) '$(GUILE_LIBSITE)'
 
 EXTRA_DIST = modsup.h
 

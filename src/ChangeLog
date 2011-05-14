@@ -1,5 +1,12 @@
 2011-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[inst int] Move $(mkmodcat) invocation from top dir to src/.
+
+	* Makefile.am (install-data-hook): Add command
+	to make the module-catalog in $(GUILE_LIBSITE).
+
+2011-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[inst] Decruft: Don't do "upgrade from previous install" actions.
 
 	These are properly the duty of "make uninstall"

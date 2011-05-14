@@ -31,9 +31,6 @@ noinst_DATA = .module-catalog
 	$(mkpimmc) -d $(DEPDIR) $@ "$(srcdir)"	\
 	    -- -d in,lo,o -X '~$$' -X '[.]git' -X doc
 
-install-data-hook:
-	$(mkmodcat) "$(GUILE_LIBSITE)"
-
 CLEANFILES = $(noinst_DATA)
 
 dist-hook:
