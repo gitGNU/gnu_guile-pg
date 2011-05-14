@@ -1700,7 +1700,7 @@ GH_DEFPROC
 }
 
 GH_DEFPROC
-(pg_get_port,"pg-get-port", 1, 0, 0,
+(pg_get_port, "pg-get-port", 1, 0, 0,
  (SCM conn),
  "Return a string containing the port number to which\n"
  "@var{conn} represents a connection.")
