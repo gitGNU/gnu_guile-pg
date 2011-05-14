@@ -33,4 +33,15 @@ EXTRA_DIST = $(TESTS)                           \
              testing.scm                        \
              show-platform
 
+check_DATA = fake-install
+
+fake-install:
+	top=`pwd`/fake-install ;		\
+	cd ../src ;				\
+	$(MAKE) $(AM_MAKEFLAGS) install		\
+	  prefix="$$top"
+
+clean-local:
+	-rm -rf fake-install
+
 # Makefile.am ends here

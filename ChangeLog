@@ -1,5 +1,15 @@
 2011-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v] Do a partial install under test/; point ‘%load-path’ there.
+
+	* Makefile.am (noinst_DATA): Delete var.
+	(.module-catalog): Delete target.
+	(CLEANFILES): Delete var.
+	* configure.ac (mkpimmc): Delete GUILE_TOOLS_PROG.
+	(GUILE_MODULE_CATALOG_PREP): Delete macro call.
+
+2011-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[inst int] Move $(mkmodcat) invocation from top dir to src/.
 
 	* Makefile.am (install-data-hook): Delete target.

@@ -115,6 +115,9 @@ Testing
 
             make check [DEBUG=1]
 
+	This creates a temporary installation dir test/fake-install/
+	and runs the tests, arranging to use the modules therein.
+
 	The basic tests should all pass.  The large-object tests might
 	fail because of bugs in PostgreSQL.  The abstraction tests are
 	not supposed to fail, but you never know.

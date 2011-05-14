@@ -5,15 +5,27 @@ ts="@abs_top_srcdir@"
 tscm=`cd "$ts/src" ; pwd`
 export tscm
 
-GUILE_LOAD_PATH=`echo "@abs_top_builddir@:$GUILE_LOAD_PATH" | sed 's/:$//'`
-export GUILE_LOAD_PATH
-
 PGDATABASE='guile_pg_test'
 export PGDATABASE
 
 test x"$DEBUG" = x || dopt=--debug
 
+if [ x"$GUILE_LIBSITE" = x ] ; then
+    if echo '@GUILE_LIBSITE@' | grep -F '${prefix}' >/dev/null 2>&1
+        then : ; else
+        echo 'ERROR: Cannot determine fake GUILE_LIBSITE value.'
+        echo 'Try to set it in the environment.'
+        exit 1
+    fi
+fi
+
+prefix=`pwd`/fake-install
+exec_prefix="@exec_prefix@"
+libdir="@libdir@"
+test x"$DEBUG" = x || echo GUILE_LIBSITE: @GUILE_LIBSITE@
+
 exec ${GUILE-@GUILE@} $dopt \
+    -L "@GUILE_LIBSITE@" \
     -l "$ts/test/testing.scm" \
     -s $1
 

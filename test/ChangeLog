@@ -1,5 +1,17 @@
 2011-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v] Do a partial install under test/; point ‘%load-path’ there.
+
+	* Makefile.am (check_DATA): New var.
+	(fake-install, clean-local): New targets.
+	* runtest.in: Don't set and export env var ‘GUILE_LOAD_PATH’;
+	add check for "proper" GUILE_LIBSITE; bail if improper;
+	arrange for ‘@GUILE_LIBSITE@’ to expand to the one under
+	the ./fake-install; display it if env var ‘DEBUG’ set;
+	add ‘-L "@GUILE_LIBSITE@"’ in args to the guile invocation.
+
+2011-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Allow env var ‘GUILE’ to override that in runtest.
 
 	* runtest.in: Use env var ‘GUILE’ if set, instead of @GUILE@.

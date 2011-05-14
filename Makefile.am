@@ -25,14 +25,6 @@ SUBDIRS = src test doc
 
 EXTRA_DIST = build-aux/sofix build-aux/guile-baux
 
-noinst_DATA = .module-catalog
-
-.module-catalog:
-	$(mkpimmc) -d $(DEPDIR) $@ "$(srcdir)"	\
-	    -- -d in,lo,o -X '~$$' -X '[.]git' -X doc
-
-CLEANFILES = $(noinst_DATA)
-
 dist-hook:
 	sed -i 's/RECIP/$(PACKAGE_BUGREPORT)/;s/VERSION/$(VERSION)/' \
 	  $(distdir)/test/show-platform

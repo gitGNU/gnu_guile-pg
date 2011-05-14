@@ -49,7 +49,6 @@ GUILE_FLAGS
 GUILE_SITE_DIR
 GUILE_LIBSITE_DIR
 
-GUILE_TOOLS_PROG([mkpimmc],[mkpimmc])
 GUILE_TOOLS_PROG([mkmodcat],[make-module-catalog])
 
 saved_CPPFLAGS="$CPPFLAGS"	# restoration below
@@ -130,8 +129,6 @@ AC_CONFIG_FILES([
 ])
 
 AC_GUILE_PG_CONFIG_SCRIPT([test/runtest])
-
-GUILE_MODULE_CATALOG_PREP
 
 AC_OUTPUT
 
