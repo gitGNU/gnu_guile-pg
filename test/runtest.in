@@ -13,6 +13,8 @@ export PGDATABASE
 
 test x"$DEBUG" = x || dopt=--debug
 
-exec @GUILE@ $dopt -l "$ts/test/testing.scm" -s $1
+exec ${GUILE-@GUILE@} $dopt \
+    -l "$ts/test/testing.scm" \
+    -s $1
 
 # runtest ends here
