@@ -1,5 +1,12 @@
 2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[int] Add abstractions: PRIMPROC, STONED, MOD_INIT_LINK_THUNK
+
+	* gi.h (PRIMPROC, STONED, MOD_INIT_LINK_THUNK): New #define:s.
+	* libpq.c: Use them, throughout.
+
+2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build maint] Don't bundle modsup.h; copy 3 macros from it, instead.
 
 	* gi.h [!HAVE_GUILE_MODSUP_H] (GH_DEFPROC): New macro.

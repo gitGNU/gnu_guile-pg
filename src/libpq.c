@@ -219,7 +219,7 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *FUNC_NAME)
   return port;
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_lo_creat, "pg-lo-creat", 2, 0, 0,
  (SCM conn, SCM modes),
  "Create a new large object and open a port over it for reading\n"
@@ -276,7 +276,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_lo_open, "pg-lo-open", 3, 0, 0,
  (SCM conn, SCM oid, SCM modes),
  "Open a port over an existing large object.  The port can be\n"
@@ -337,7 +337,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_lo_unlink, "pg-lo-unlink", 2, 0, 0,
  (SCM conn, SCM oid),
  "Delete the large object identified by @var{oid}.\n"
@@ -364,7 +364,7 @@ GH_DEFPROC
 
 #define LOB_STREAM(port)  ((lob_stream *) SCM_STREAM (port))
 
-GH_DEFPROC
+PRIMPROC
 (pg_lo_get_oid, "pg-lo-get-oid", 1, 0, 0,
  (SCM port),
  "Return the integer identifier of the object to which a given\n"
@@ -377,7 +377,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_lo_tell, "pg-lo-tell", 1, 0, 0,
  (SCM port),
  "Return the position of the file pointer for the given large\n"
@@ -511,7 +511,7 @@ lob_seek (SCM port, off_t offset, int whence)
   return ret;
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_lo_seek, "pg-lo-seek", 3, 0, 0,
  (SCM port, SCM where, SCM whence),
  "Set the position of the next read or write to/from the given\n"
@@ -615,7 +615,7 @@ lob_input_waiting_p (UNUSED SCM port)
   return 1;
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_lo_read, "pg-lo-read", 3, 0, 0,
  (SCM siz, SCM num, SCM port),
  "Read @var{num} objects each of length @var{siz} from @var{port}.\n"
@@ -681,7 +681,7 @@ lob_free (SCM port)
   return 0;
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_lo_import, "pg-lo-import", 2, 0, 0,
  (SCM conn, SCM filename),
  "Create a new large object and loads it with the contents of\n"
@@ -709,7 +709,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_lo_export, "pg-lo-export", 3, 0, 0,
  (SCM conn, SCM oid, SCM filename),
  "Write the contents of a given large object to a file.\n"
@@ -926,7 +926,7 @@ drop_paramspecs (struct paramspecs *ps)
 
 static SCM goodies;
 
-GH_DEFPROC
+PRIMPROC
 (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
  (void),
  "Return a list of symbols describing the Guile-PG\n"
@@ -942,7 +942,7 @@ GH_DEFPROC
   return goodies;
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_protocol_version, "pg-protocol-version", 1, 0, 0,
  (SCM conn),
  "Return the client protocol version for @var{conn}.\n"
@@ -976,7 +976,7 @@ SIMPLE_KEYWORD (dispsize);
 
 #define KWD(name)  (kwd_ ## name)
 
-GH_DEFPROC
+PRIMPROC
 (pg_conndefaults, "pg-conndefaults", 0, 0, 0,
  (void),
  "Return an alist associating options with their connection\n"
@@ -1050,7 +1050,7 @@ notice_processor (void *xc, const char *message)
     abort ();
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_connectdb, "pg-connectdb", 1, 0, 0,
  (SCM constr),
  "Open and return a connection to the database specified\n"
@@ -1155,7 +1155,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_connection_p, "pg-connection?", 1, 0, 0,
  (SCM obj),
  "Return @code{#t} iff @var{obj} is a connection object\n"
@@ -1164,7 +1164,7 @@ GH_DEFPROC
   return gh_bool2scm (xc_p (obj));
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_finish, "pg-finish", 1, 0, 0,
  (SCM conn),
  "Close the connection @var{conn} with the backend.")
@@ -1185,7 +1185,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_reset, "pg-reset", 1, 0, 0,
  (SCM conn),
  "Reset the connection @var{conn} with the backend.\n"
@@ -1206,7 +1206,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_server_version, "pg-server-version", 1, 0, 0,
  (SCM conn),
  "Return an integer representation of the server version at @var{conn}.\n"
@@ -1245,7 +1245,7 @@ GH_DEFPROC
  * string and bytea escaping
  */
 
-GH_DEFPROC
+PRIMPROC
 (pg_escape_string_conn, "pg-escape-string-conn", 2, 0, 0,
  (SCM conn, SCM string),
  "Return a new string made from doubling every single-quote\n"
@@ -1277,7 +1277,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_escape_bytea_conn, "pg-escape-bytea-conn", 2, 0, 0,
  (SCM conn, SCM bytea),
  "Return a new string made from doing the ``minimal'' replacement\n"
@@ -1305,7 +1305,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_unescape_bytea, "pg-unescape-bytea", 1, 0, 0,
  (SCM bytea),
  "Return a new bytea made from unescaping @var{bytea}.\n"
@@ -1337,7 +1337,7 @@ GH_DEFPROC
 #define RESFMT_TEXT    0
 #define RESFMT_BINARY  1
 
-GH_DEFPROC
+PRIMPROC
 (pg_exec, "pg-exec", 2, 0, 0,
  (SCM conn, SCM statement),
  "Execute the SQL string @var{statement} on a given connection\n"
@@ -1367,7 +1367,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_exec_params, "pg-exec-params", 3, 0, 0,
  (SCM conn, SCM statement, SCM parms),
  "Like @code{pg-exec}, except that @var{statement} is a\n"
@@ -1393,7 +1393,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_exec_prepared, "pg-exec-prepared", 3, 0, 0,
  (SCM conn, SCM stname, SCM parms),
  "Execute the statement named by @var{stname} (a string)\n"
@@ -1422,7 +1422,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_result_p, "pg-result?", 1, 0, 0,
  (SCM obj),
  "Return @code{#t} iff @var{obj} is a result object\n"
@@ -1442,7 +1442,7 @@ SCM_KEYWORD (kwd_sourcefile, "source-file");
 SCM_KEYWORD (kwd_sourceline, "source-line");
 SCM_KEYWORD (kwd_sourcefunction, "source-function");
 
-GH_DEFPROC
+PRIMPROC
 (pg_result_error_field, "pg-result-error-field", 2, 0, 0,
  (SCM result, SCM fieldcode),
  "Return information associated with @var{result}, on\n"
@@ -1519,7 +1519,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_result_error_message, "pg-result-error-message", 1, 0, 0,
  (SCM result),
  "Return the error message associated with @var{result},\n"
@@ -1538,7 +1538,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_error_message, "pg-error-message", 1, 0, 0,
  (SCM conn),
  "Return the most-recent error message that occurred on the\n"
@@ -1569,7 +1569,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_get_db, "pg-get-db", 1, 0, 0,
  (SCM conn),
  "Return a string containing the name of the database\n"
@@ -1588,7 +1588,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_get_user, "pg-get-user", 1, 0, 0,
  (SCM conn),
  "Return a string containing the user name used to\n"
@@ -1607,7 +1607,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_get_pass, "pg-get-pass", 1, 0, 0,
  (SCM conn),
  "Return a string containing the password used to\n"
@@ -1626,7 +1626,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_get_host, "pg-get-host", 1, 0, 0,
  (SCM conn),
  "Return a string containing the name of the host to which\n"
@@ -1645,7 +1645,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_get_port, "pg-get-port", 1, 0, 0,
  (SCM conn),
  "Return a string containing the port number to which\n"
@@ -1664,7 +1664,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_get_tty, "pg-get-tty", 1, 0, 0,
  (SCM conn),
  "Return a string containing the the name of the\n"
@@ -1683,7 +1683,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_get_options, "pg-get-options", 1, 0, 0,
  (SCM conn),
  "Return a string containing the the options string for @var{conn}.")
@@ -1701,7 +1701,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
  (SCM conn),
  "Return an integer which is the the PID of the backend\n"
@@ -1726,7 +1726,7 @@ SIMPLE_KEYWORD (intrans);
 SIMPLE_KEYWORD (inerror);
 SIMPLE_KEYWORD (unknown);
 
-GH_DEFPROC
+PRIMPROC
 (pg_transaction_status, "pg-transaction-status", 1, 0, 0,
  (SCM conn),
  "Return a keyword describing the current transaction status,\n"
@@ -1753,7 +1753,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_parameter_status, "pg-parameter-status", 2, 0, 0,
  (SCM conn, SCM parm),
  "Return the status (a string) of @var{parm} for @var{conn},\n"
@@ -1772,7 +1772,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_result_status, "pg-result-status", 1, 0, 0,
  (SCM result),
  "Return the symbolic status of a @code{PG_RESULT} object\n"
@@ -1795,7 +1795,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_ntuples, "pg-ntuples", 1, 0, 0,
  (SCM result),
  "Return the number of tuples in @var{result}.")
@@ -1814,7 +1814,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_nfields, "pg-nfields", 1, 0, 0,
  (SCM result),
  "Return the number of fields in @var{result}.")
@@ -1833,7 +1833,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_cmdtuples, "pg-cmdtuples", 1, 0, 0,
  (SCM result),
  "Return the number of tuples in @var{result} affected by a\n"
@@ -1855,7 +1855,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_oid_value, "pg-oid-value", 1, 0, 0,
  (SCM result),
  "If the @var{result} is that of an SQL @code{INSERT} command,\n"
@@ -1877,7 +1877,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_fname, "pg-fname", 2, 0, 0,
  (SCM result, SCM num),
  "Return a string containing the canonical lower-case name\n"
@@ -1896,7 +1896,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_fnumber, "pg-fnumber", 2, 0, 0,
  (SCM result, SCM fname),
  "Return the integer field-number corresponding to field\n"
@@ -1919,7 +1919,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_ftable, "pg-ftable", 2, 0, 0,
  (SCM result, SCM num),
  "Return the OID of the table from which the field @var{num}\n"
@@ -1936,7 +1936,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_ftablecol, "pg-ftablecol", 2, 0, 0,
  (SCM result, SCM num),
  "Return the column number (within its table) of the column\n"
@@ -1954,7 +1954,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_fformat, "pg-fformat", 2, 0, 0,
  (SCM result, SCM num),
  "Return the format code indicating the format of field\n"
@@ -1972,7 +1972,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_ftype, "pg-ftype", 2, 0, 0,
  (SCM result, SCM num),
  "Return the PostgreSQL internal integer representation of\n"
@@ -1995,7 +1995,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_fsize, "pg-fsize", 2, 0, 0,
  (SCM result, SCM num),
  "Return the size of a @var{result} field @var{num} in bytes,\n"
@@ -2021,7 +2021,7 @@ GH_DEFPROC
     }                                                                   \
   while (0)
 
-GH_DEFPROC
+PRIMPROC
 (pg_getvalue, "pg-getvalue", 3, 0, 0,
  (SCM result, SCM stuple, SCM sfield),
  "Return a string containing the value of the attribute\n"
@@ -2050,7 +2050,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_getlength, "pg-getlength", 3, 0, 0,
  (SCM result, SCM stuple, SCM sfield),
  "The size of the datum in bytes.")
@@ -2074,7 +2074,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_getisnull, "pg-getisnull", 3, 0, 0,
  (SCM result, SCM stuple, SCM sfield),
  "Return @code{#t} if the attribute is @code{NULL},\n"
@@ -2098,7 +2098,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_binary_tuples, "pg-binary-tuples?", 1, 0, 0,
  (SCM result),
  "Return @code{#t} if @var{result} contains binary tuple\n"
@@ -2118,7 +2118,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_fmod, "pg-fmod", 2, 0, 0,
  (SCM result, SCM num),
  "Return the integer type-specific modification data for\n"
@@ -2136,7 +2136,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_put_copy_data, "pg-put-copy-data", 2, 0, 0,
  (SCM conn, SCM data),
  "Send on @var{conn} the @var{data} (a string).\n"
@@ -2156,7 +2156,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_put_copy_end, "pg-put-copy-end", 1, 1, 0,
  (SCM conn, SCM errmsg),
  "Send an end-of-data indication over @var{conn}.\n"
@@ -2182,7 +2182,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_get_copy_data, "pg-get-copy-data", 2, 1, 0,
  (SCM conn, SCM port, SCM asyncp),
  "Get a line of COPY data from @var{conn}, writing it to\n"
@@ -2223,7 +2223,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_getline, "pg-getline", 1, 0, 0,
  (SCM conn),
  "Read a line from @var{conn} on which a @code{COPY <table> TO\n"
@@ -2251,7 +2251,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_getlineasync, "pg-getlineasync", 2, 1, 0,
  (SCM conn, SCM buf, SCM tickle),
  "Read a line from @var{conn} on which a @code{COPY <table> TO\n"
@@ -2281,7 +2281,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_putline, "pg-putline", 2, 0, 0,
  (SCM conn, SCM str),
  "Write a line to the connection on which a @code{COPY <table>\n"
@@ -2305,7 +2305,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_endcopy, "pg-endcopy", 1, 0, 0,
  (SCM conn),
  "Resynchronize with the backend process.  This procedure\n"
@@ -2330,7 +2330,7 @@ SIMPLE_KEYWORD (terse);
 SIMPLE_KEYWORD (default);
 SIMPLE_KEYWORD (verbose);
 
-GH_DEFPROC
+PRIMPROC
 (pg_set_error_verbosity, "pg-set-error-verbosity", 2, 0, 0,
  (SCM conn, SCM verbosity),
  "Set the error verbosity for @var{conn} to @var{verbosity}.\n"
@@ -2367,7 +2367,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_trace, "pg-trace", 2, 0, 0,
  (SCM conn, SCM port),
  "Start outputting low-level trace information on the\n"
@@ -2401,7 +2401,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_untrace, "pg-untrace", 1, 0, 0,
  (SCM conn),
  "Stop tracing on connection @var{conn}.\n"
@@ -2535,7 +2535,7 @@ SCM_SYMBOL (pg_sym_field_names, "field-names");
 static SCM valid_print_option_flags;
 static SCM valid_print_option_keys;
 
-GH_DEFPROC
+PRIMPROC
 (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
  (SCM spec),
  "Return an opaque print options object created from @var{spec},\n"
@@ -2661,7 +2661,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_print, "pg-print", 1, 1, 0,
  (SCM result, SCM options),
  "Display @var{result} on the current output port.\n"
@@ -2736,7 +2736,7 @@ GH_DEFPROC
    procedure that takes a string.  For these reasons, we name the procedure
    `pg-set-notice-out!' to help avoid confusion.  */
 
-GH_DEFPROC
+PRIMPROC
 (pg_set_notice_out_x, "pg-set-notice-out!", 2, 0, 0,
  (SCM conn, SCM out),
  "Set notice output handler of @var{conn} to @var{out}.\n"
@@ -2762,7 +2762,7 @@ GH_DEFPROC
 
 /* Fetch asynchronous notifications.  */
 
-GH_DEFPROC
+PRIMPROC
 (pg_notifies, "pg-notifies", 1, 1, 0,
  (SCM conn, SCM tickle),
  "Return the next as-yet-unhandled notification\n"
@@ -2824,7 +2824,7 @@ extern int pg_char_to_encoding (const char *name);
 
 static SCM encoding_alist;
 
-GH_DEFPROC
+PRIMPROC
 (pg_mblen, "pg-mblen", 2, 1, 0,
  (SCM encoding, SCM string, SCM start),
  "Return the number of bytes of the first character in unibyte\n"
@@ -2869,7 +2869,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_client_encoding, "pg-client-encoding", 1, 0, 0,
  (SCM conn),
  "Return the current client encoding for @var{conn}.")
@@ -2884,7 +2884,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
  (SCM conn, SCM encoding),
  "Set the client encoding for @var{conn} to @var{encoding}.\n"
@@ -2906,7 +2906,7 @@ GH_DEFPROC
  * non-blocking connection mode
  */
 
-GH_DEFPROC
+PRIMPROC
 (pg_set_nonblocking_x, "pg-set-nonblocking!", 2, 0, 0,
  (SCM conn, SCM mode),
  "Set the nonblocking status of @var{conn} to @var{mode}.\n"
@@ -2922,7 +2922,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_is_nonblocking_p, "pg-is-nonblocking?", 1, 0, 0,
  (SCM conn),
  "Return @code{#t} if @var{conn} is in nonblocking mode.")
@@ -2941,7 +2941,7 @@ GH_DEFPROC
  * non-blocking query operations
  */
 
-GH_DEFPROC
+PRIMPROC
 (pg_send_query, "pg-send-query", 2, 0, 0,
  (SCM conn, SCM query),
  "Send @var{conn} a non-blocking @var{query} (string).\n"
@@ -2959,7 +2959,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_send_query_params, "pg-send-query-params", 3, 0, 0,
  (SCM conn, SCM query, SCM parms),
  "Like @code{pg-send-query}, except that @var{query} is a\n"
@@ -2983,7 +2983,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_send_query_prepared, "pg-send-query-prepared", 3, 0, 0,
  (SCM conn, SCM stname, SCM parms),
  "Like @code{pg-exec-prepared}, except asynchronous.\n"
@@ -3007,7 +3007,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_get_result, "pg-get-result", 1, 0, 0,
  (SCM conn),
  "Return a result from @var{conn}, or @code{#f}.")
@@ -3027,7 +3027,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_consume_input, "pg-consume-input", 1, 0, 0,
  (SCM conn),
  "Consume input from @var{conn}.  Return @code{#t} iff successful.")
@@ -3040,7 +3040,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_is_busy_p, "pg-is-busy?", 1, 0, 0,
  (SCM conn),
  "Return @code{#t} if there is data waiting for\n"
@@ -3054,7 +3054,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_request_cancel, "pg-request-cancel", 1, 0, 0,
  (SCM conn),
  "Request a cancellation on @var{conn}.\n"
@@ -3081,7 +3081,7 @@ GH_DEFPROC
 #undef FUNC_NAME
 }
 
-GH_DEFPROC
+PRIMPROC
 (pg_flush, "pg-flush", 1, 0, 0,
  (SCM conn),
  "Flush output for connection @var{conn}.\n"
@@ -3146,7 +3146,7 @@ init_module (void)
 
 #include "libpq.x"
 
-#define KLIST(...)  GH_STONED (PCHAIN (__VA_ARGS__))
+#define KLIST(...)  PERMANENT (PCHAIN (__VA_ARGS__))
 
   valid_print_option_keys
     = KLIST (pg_sym_field_sep,
@@ -3171,7 +3171,7 @@ init_module (void)
   {
     unsigned int i;
     for (i = 0; i < sizeof (pgrs) / sizeof (SCM); i++)
-      pgrs[i] = GH_STONED (gh_symbol2scm (PQresStatus (i)));
+      pgrs[i] = PERMANENT (gh_symbol2scm (PQresStatus (i)));
   }
 
   lobp_tag = scm_make_port_type ("pg-lo-port", lob_fill_input, lob_write);
@@ -3200,7 +3200,7 @@ init_module (void)
 }
 
 #ifdef USE_CMOD
-GH_MODULE_LINK_FUNC ("database postgres"
+MOD_INIT_LINK_THUNK ("database postgres"
                      ,database_postgres
                      ,init_module)
 #else

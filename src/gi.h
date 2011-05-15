@@ -110,6 +110,10 @@ scm_init_ ## fname_frag ## _module (void)                               \
 /* Write a C byte array (pointer + len) to a Scheme port.  */
 #define WBPORT(scmport,cp,clen)  scm_lfwrite (cp, clen, scmport)
 
+#define PRIMPROC             GH_DEFPROC
+#define PERMANENT            GH_STONED
+#define MOD_INIT_LINK_THUNK  GH_MODULE_LINK_FUNC
+
 #endif /* _GI_H_ */
 
 /* gi.h ends here */
