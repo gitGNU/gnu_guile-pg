@@ -1,5 +1,18 @@
 2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[int] Move guile abstractions from libpq.c to gi.h.
+
+	* libpq.c (NOINTS, INTSOK, GIVENP, NOT_FALSEP, DEFAULT_FALSE)
+	(RETURN_FALSE, RETURN_UNSPECIFIED, ASSERT, ASSERT_STRING, ROZT_X)
+	(ROZT, MAX_NEWSTRING_LENGTH, SMOBDATA, PCHAIN, ERROR, MEMORY_ERROR)
+	(SYSTEM_ERROR, WBPORT): Move from here...
+	* gi.h (NOINTS, INTSOK, GIVENP, NOT_FALSEP, DEFAULT_FALSE)
+	(RETURN_FALSE, RETURN_UNSPECIFIED, ASSERT, ASSERT_STRING, ROZT_X)
+	(ROZT, MAX_NEWSTRING_LENGTH, SMOBDATA, PCHAIN, ERROR, MEMORY_ERROR)
+	(SYSTEM_ERROR, WBPORT): ...to here.
+
+2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Decruft: Don't #define __func__.
 
 	* libpq.c (__func__): Delete #define

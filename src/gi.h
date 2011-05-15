@@ -1,6 +1,6 @@
 /* gi.h
 
-   Copyright (C) 2004, 2005, 2006, 2008, 2009 Thien-Thi Nguyen
+   Copyright (C) 2004, 2005, 2006, 2008, 2009, 2011 Thien-Thi Nguyen
 
    This file is part of Guile-PG.
 
@@ -45,6 +45,52 @@
 #ifdef HAVE_SCM_GC_PROTECT_OBJECT
 #define scm_protect_object(x)  (scm_gc_protect_object (x))
 #endif
+
+/*
+ * abstractions
+ */
+
+#define NOINTS()   SCM_DEFER_INTS
+#define INTSOK()   SCM_ALLOW_INTS
+
+#define GIVENP(x)          (! SCM_UNBNDP (x))
+#define NOT_FALSEP(x)      (SCM_NFALSEP (x))
+
+#define DEFAULT_FALSE(maybe,yes)  ((maybe) ? (yes) : SCM_BOOL_F)
+#define RETURN_FALSE()                        return SCM_BOOL_F
+#define RETURN_UNSPECIFIED()                  return SCM_UNSPECIFIED
+
+#define ASSERT(what,expr,msg)  SCM_ASSERT ((expr), what, msg, FUNC_NAME)
+#define ASSERT_STRING(n,arg)  ASSERT (arg, SCM_STRINGP (arg), SCM_ARG ## n)
+
+/* Coerce a string that is to be used in contexts where the extracted C
+   string is expected to be zero-terminated and is read-only.  We check
+   this condition precisely instead of simply coercing all substrings,
+   to avoid waste for those substrings that may in fact already satisfy
+   the condition.  Callers should extract w/ ROZT.  */
+#define ROZT_X(x)                                       \
+  if (SCM_ROCHARS (x) [SCM_ROLENGTH (x)])               \
+    x = gh_str2scm (SCM_ROCHARS (x), SCM_ROLENGTH (x))
+
+#define ROZT(x)  (SCM_ROCHARS (x))
+
+/* For some versions of Guile, (make-string (ash 1 24)) => "".
+
+   That is, `make-string' doesn't fail, but lengths past (1- (ash 1 24))
+   overflow an internal limit and silently return an incorrect value.
+   We hardcode this limit here for now.  */
+#define MAX_NEWSTRING_LENGTH ((1 << 24) - 1)
+
+#define SMOBDATA(obj)  ((void *) SCM_SMOB_DATA (obj))
+
+#define PCHAIN(...)  (gh_list (__VA_ARGS__, SCM_UNDEFINED))
+
+#define ERROR(blurb, ...)  SCM_MISC_ERROR (blurb, PCHAIN (__VA_ARGS__))
+#define MEMORY_ERROR()     SCM_MEMORY_ERROR
+#define SYSTEM_ERROR()     SCM_SYSERROR
+
+/* Write a C byte array (pointer + len) to a Scheme port.  */
+#define WBPORT(scmport,cp,clen)  scm_lfwrite (cp, clen, scmport)
 
 #endif /* _GI_H_ */
 
