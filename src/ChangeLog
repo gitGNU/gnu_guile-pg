@@ -1,5 +1,18 @@
 2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[int] Add abstractions for all gh_ elements.
+
+	* gi.h (BOOLEANP, EXACTP, NULLP, PAIRP, STRINGP, SYMBOLP)
+	(PROCEDUREP, BOOLEAN, NUM_INT, NUM_ULONG, SYMBOL, STRING, BSTRING)
+	(CHARACTER, C_INT, VECTOR_LEN, EQ, CONS, CAR, CDR, SETCAR, SETCDR)
+	(EVAL_STRING, APPLY, LISTIFY): New #define:s.
+	(MEMQ): New macro.
+	(ROZT_X): Use ‘BSTRING’.
+	(PCHAIN): Use ‘LISTIFY’.
+	* libpq.c: Use new abstractions, throughout.
+
+2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Add abstractions: PRIMPROC, STONED, MOD_INIT_LINK_THUNK
 
 	* gi.h (PRIMPROC, STONED, MOD_INIT_LINK_THUNK): New #define:s.

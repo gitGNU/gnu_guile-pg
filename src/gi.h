@@ -27,6 +27,31 @@
 
 #include <libguile.h>
 #include <guile/gh.h>
+#define BOOLEANP          gh_boolean_p
+#define EXACTP            gh_exact_p
+#define NULLP             gh_null_p
+#define PAIRP             gh_pair_p
+#define STRINGP           gh_string_p
+#define SYMBOLP           gh_symbol_p
+#define PROCEDUREP        gh_procedure_p
+#define BOOLEAN           gh_bool2scm
+#define NUM_INT           gh_int2scm
+#define NUM_ULONG         gh_ulong2scm
+#define SYMBOL            gh_symbol2scm
+#define STRING            gh_str02scm
+#define BSTRING           gh_str2scm
+#define CHARACTER         gh_char2scm
+#define C_INT             gh_scm2int
+#define VECTOR_LEN        gh_vector_length
+#define EQ                gh_eq_p
+#define CONS              gh_cons
+#define CAR               gh_car
+#define CDR               gh_cdr
+#define SETCAR            gh_set_car_x
+#define SETCDR            gh_set_cdr_x
+#define EVAL_STRING       gh_eval_str
+#define APPLY             gh_apply
+#define LISTIFY           gh_list
 
 /*
  * backward (sometimes foresight was incomplete)
@@ -73,6 +98,7 @@ scm_init_ ## fname_frag ## _module (void)                               \
 
 #define GIVENP(x)          (! SCM_UNBNDP (x))
 #define NOT_FALSEP(x)      (SCM_NFALSEP (x))
+#define MEMQ(k,l)          (NOT_FALSEP (scm_memq ((k), (l))))
 
 #define DEFAULT_FALSE(maybe,yes)  ((maybe) ? (yes) : SCM_BOOL_F)
 #define RETURN_FALSE()                        return SCM_BOOL_F
@@ -88,7 +114,7 @@ scm_init_ ## fname_frag ## _module (void)                               \
    the condition.  Callers should extract w/ ROZT.  */
 #define ROZT_X(x)                                       \
   if (SCM_ROCHARS (x) [SCM_ROLENGTH (x)])               \
-    x = gh_str2scm (SCM_ROCHARS (x), SCM_ROLENGTH (x))
+    x = BSTRING (SCM_ROCHARS (x), SCM_ROLENGTH (x))
 
 #define ROZT(x)  (SCM_ROCHARS (x))
 
@@ -101,7 +127,7 @@ scm_init_ ## fname_frag ## _module (void)                               \
 
 #define SMOBDATA(obj)  ((void *) SCM_SMOB_DATA (obj))
 
-#define PCHAIN(...)  (gh_list (__VA_ARGS__, SCM_UNDEFINED))
+#define PCHAIN(...)  (LISTIFY (__VA_ARGS__, SCM_UNDEFINED))
 
 #define ERROR(blurb, ...)  SCM_MISC_ERROR (blurb, PCHAIN (__VA_ARGS__))
 #define MEMORY_ERROR()     SCM_MEMORY_ERROR

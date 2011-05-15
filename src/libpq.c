@@ -355,7 +355,7 @@ PRIMPROC
   NOINTS ();
   ret = lo_unlink (dbconn, pg_oid);
   INTSOK ();
-  return gh_bool2scm (! PROB (ret));
+  return BOOLEAN (! PROB (ret));
 #undef FUNC_NAME
 }
 
@@ -373,7 +373,7 @@ PRIMPROC
 {
 #define FUNC_NAME s_pg_lo_get_oid
   ASSERT_PORT (1, port, LOBPORTP);
-  return gh_int2scm (LOB_STREAM (port)->oid);
+  return NUM_INT (LOB_STREAM (port)->oid);
 #undef FUNC_NAME
 }
 
@@ -499,7 +499,7 @@ lob_seek (SCM port, off_t offset, int whence)
   ret = lo_lseek (conn, lobp->alod, offset, whence);
   INTSOK ();
   if (PROB (ret))
-    ERROR ("Error (~S) seeking on lo port ~S", gh_int2scm (ret), port);
+    ERROR ("Error (~S) seeking on lo port ~S", NUM_INT (ret), port);
 
   /* Adjust return value to account for guile port buffering.  */
   if (SEEK_CUR == whence)
@@ -539,7 +539,7 @@ PRIMPROC
 
   lob_flush (port);
 
-  return gh_int2scm (lob_seek (port, cwhere, cwhence));
+  return NUM_INT (lob_seek (port, cwhere, cwhence));
 #undef FUNC_NAME
 }
 
@@ -561,7 +561,7 @@ lob_fill_input (SCM port)
   ret = lo_read (conn, lobp->alod, (char *) pt->read_buf, pt->read_buf_size);
   INTSOK ();
   if (PROB (ret))
-    ERROR ("Error (~S) reading from lo port ~S", gh_int2scm (ret), port);
+    ERROR ("Error (~S) reading from lo port ~S", NUM_INT (ret), port);
   if (pt->read_buf_size && !ret)
     return EOF;
   pt->read_pos = pt->read_buf;
@@ -705,7 +705,7 @@ PRIMPROC
   INTSOK ();
 
   return DEFAULT_FALSE (InvalidOid != ret,
-                        gh_int2scm (ret));
+                        NUM_INT (ret));
 #undef FUNC_NAME
 }
 
@@ -733,7 +733,7 @@ PRIMPROC
   ret = lo_export (dbconn, pg_oid, ROZT (filename));
   INTSOK ();
 
-  return gh_bool2scm (! PROB (ret));
+  return BOOLEAN (! PROB (ret));
 #undef FUNC_NAME
 }
 
@@ -848,7 +848,7 @@ strip_newlines (char *str)
   while (str <= lc && *lc == '\n')
     lc--;
 
-  return gh_str2scm (str, lc + 1 - str);
+  return BSTRING (str, lc + 1 - str);
 }
 
 
@@ -885,11 +885,11 @@ prep_paramspecs (const char *FUNC_NAME, struct paramspecs *ps, SCM v)
      procedure programming interface is upward-compatible by design, so we
      can ease into full specification later (by relaxing/extending the
      vector element validation).  */
-  ps->len = len = gh_vector_length (v);
+  ps->len = len = VECTOR_LEN (v);
   for (i = 0; i < len; i++)
     {
       elem = VREF (v, i);
-      if (! gh_string_p (elem))
+      if (! STRINGP (elem))
         ERROR ("bad parameter-vector element: ~S", elem);
     }
   ps->types = NULL;
@@ -960,7 +960,7 @@ PRIMPROC
 
   v = PQprotocolVersion (dbconn);
 
-  return DEFAULT_FALSE (v, gh_int2scm (v));
+  return DEFAULT_FALSE (v, NUM_INT (v));
 #undef FUNC_NAME
 }
 
@@ -1003,21 +1003,21 @@ PRIMPROC
   SCM rv = SCM_EOL;
 
 #define PAIRM(field,exp) /* maybe */                            \
-    gh_cons (KWD (field),                                       \
-             DEFAULT_FALSE (opt->field && opt->field[0],        \
-                            (exp)))
+    CONS (KWD (field),                                          \
+          DEFAULT_FALSE (opt->field && opt->field[0],           \
+                         (exp)))
 #define PAIRX(field,exp) /* unconditional */    \
-    gh_cons (KWD (field), (exp))
+    CONS (KWD (field), (exp))
 
   for (head = opt = PQconndefaults (); opt && opt->keyword; opt++)
-    rv = gh_cons
+    rv = CONS
       (PCHAIN (scm_c_make_keyword (opt->keyword),
-               PAIRX (envvar,   gh_str02scm (opt->envvar)),
-               PAIRM (compiled, gh_str02scm (opt->compiled)),
-               PAIRM (val,      gh_str02scm (opt->val)),
-               PAIRM (label,    gh_str02scm (opt->label)),
-               PAIRM (dispchar, gh_char2scm (opt->dispchar[0])),
-               PAIRX (dispsize, gh_int2scm (opt->dispsize))),
+               PAIRX (envvar,   STRING (opt->envvar)),
+               PAIRM (compiled, STRING (opt->compiled)),
+               PAIRM (val,      STRING (opt->val)),
+               PAIRM (label,    STRING (opt->label)),
+               PAIRM (dispchar, CHARACTER (opt->dispchar[0])),
+               PAIRX (dispsize, NUM_INT (opt->dispsize))),
        rv);
 
 #undef PAIRX
@@ -1034,7 +1034,7 @@ notice_processor (void *xc, const char *message)
 {
   SCM out = ((xc_t *) xc)->notice;
 
-  if (gh_boolean_p (out))
+  if (BOOLEANP (out))
     {
       if (NOT_FALSEP (out))
         out = scm_current_error_port ();
@@ -1044,8 +1044,8 @@ notice_processor (void *xc, const char *message)
 
   if (SCM_OUTPUT_PORT_P (out))
     WBPORT (out, message, strlen (message));
-  else if (gh_procedure_p (out))
-    gh_apply (out, PCHAIN (gh_str02scm (message)));
+  else if (PROCEDUREP (out))
+    APPLY (out, PCHAIN (STRING (message)));
   else
     abort ();
 }
@@ -1161,7 +1161,7 @@ PRIMPROC
  "Return @code{#t} iff @var{obj} is a connection object\n"
  "returned by @code{pg-connectdb}.")
 {
-  return gh_bool2scm (xc_p (obj));
+  return BOOLEAN (xc_p (obj));
 }
 
 PRIMPROC
@@ -1236,7 +1236,7 @@ PRIMPROC
   combined = PQserverVersion (dbconn);
 #endif /* HAVE_PQSERVERVERSION */
 
-  return DEFAULT_FALSE (combined, gh_int2scm (combined));
+  return DEFAULT_FALSE (combined, NUM_INT (combined));
 #undef FUNC_NAME
 }
 
@@ -1271,7 +1271,7 @@ PRIMPROC
 
   olen = PQescapeStringConn (dbconn, answer, ROZT (string), ilen, &errcode);
   rv = DEFAULT_FALSE (! errcode,
-                      gh_str02scm (answer));
+                      STRING (answer));
   free (answer);
   return rv;
 #undef FUNC_NAME
@@ -1299,7 +1299,7 @@ PRIMPROC
   ilen = SCM_ROLENGTH (bytea);
   rv = DEFAULT_FALSE
     (answer = PQescapeByteaConn (dbconn, SCM_ROUCHARS (bytea), ilen, &olen),
-     gh_str2scm ((char *) answer, olen ? olen - 1 : 0));
+     BSTRING ((char *) answer, olen ? olen - 1 : 0));
   PQfreemem (answer);
   return rv;
 #undef FUNC_NAME
@@ -1320,7 +1320,7 @@ PRIMPROC
 
   rv = DEFAULT_FALSE
     (answer = PQunescapeBytea (SCM_ROUCHARS (bytea), &olen),
-     gh_str2scm ((char *) answer, olen));
+     BSTRING ((char *) answer, olen));
   PQfreemem (answer);
   return rv;
 #undef FUNC_NAME
@@ -1428,7 +1428,7 @@ PRIMPROC
  "Return @code{#t} iff @var{obj} is a result object\n"
  "returned by @code{pg-exec}.")
 {
-  return gh_bool2scm (res_p (obj));
+  return BOOLEAN (res_p (obj));
 }
 
 SIMPLE_KEYWORD (severity);
@@ -1480,7 +1480,7 @@ PRIMPROC
   SCM_VALIDATE_KEYWORD (2, fieldcode);
 
 #define CHKFC(x,y)                              \
-  if (gh_eq_p (fieldcode, (x)))                 \
+  if (EQ (fieldcode, (x)))                 \
     do { fc = (y); goto gotfc; } while (0)
 
   CHKFC (KWD (severity),          PG_DIAG_SEVERITY);
@@ -1505,13 +1505,13 @@ PRIMPROC
         {
         case PG_DIAG_STATEMENT_POSITION:
         case PG_DIAG_SOURCE_LINE:
-          rv = gh_eval_str (s);
+          rv = EVAL_STRING (s);
           break;
         case PG_DIAG_SOURCE_FUNCTION:
-          rv = gh_symbol2scm (s);
+          rv = SYMBOL (s);
           break;
         default:
-          rv = gh_str02scm (s);
+          rv = STRING (s);
         }
     }
 
@@ -1584,7 +1584,7 @@ PRIMPROC
   rv = PQdb (dbconn);
   INTSOK ();
 
-  return gh_str02scm (rv);
+  return STRING (rv);
 #undef FUNC_NAME
 }
 
@@ -1603,7 +1603,7 @@ PRIMPROC
   rv = PQuser (dbconn);
   INTSOK ();
 
-  return gh_str02scm (rv);
+  return STRING (rv);
 #undef FUNC_NAME
 }
 
@@ -1622,7 +1622,7 @@ PRIMPROC
   rv = PQpass (dbconn);
   INTSOK ();
 
-  return gh_str02scm (rv);
+  return STRING (rv);
 #undef FUNC_NAME
 }
 
@@ -1641,7 +1641,7 @@ PRIMPROC
   rv = PQhost (dbconn);
   INTSOK ();
 
-  return gh_str02scm (rv);
+  return STRING (rv);
 #undef FUNC_NAME
 }
 
@@ -1660,7 +1660,7 @@ PRIMPROC
   rv = PQport (dbconn);
   INTSOK ();
 
-  return gh_str02scm (rv);
+  return STRING (rv);
 #undef FUNC_NAME
 }
 
@@ -1679,7 +1679,7 @@ PRIMPROC
   rv = PQtty (dbconn);
   INTSOK ();
 
-  return gh_str02scm (rv);
+  return STRING (rv);
 #undef FUNC_NAME
 }
 
@@ -1697,7 +1697,7 @@ PRIMPROC
   rv = PQoptions (dbconn);
   INTSOK ();
 
-  return gh_str02scm (rv);
+  return STRING (rv);
 #undef FUNC_NAME
 }
 
@@ -1716,7 +1716,7 @@ PRIMPROC
   pid = PQbackendPID (dbconn);
   INTSOK ();
 
-  return gh_int2scm (pid);
+  return NUM_INT (pid);
 #undef FUNC_NAME
 }
 
@@ -1768,7 +1768,7 @@ PRIMPROC
   SCM_VALIDATE_SYMBOL (2, parm);
 
   cstatus = PQparameterStatus (dbconn, ROZT (parm));
-  return DEFAULT_FALSE (cstatus, gh_str02scm (cstatus));
+  return DEFAULT_FALSE (cstatus, STRING (cstatus));
 #undef FUNC_NAME
 }
 
@@ -1810,7 +1810,7 @@ PRIMPROC
   ntuples = PQntuples (res);
   INTSOK ();
 
-  return gh_int2scm (ntuples);
+  return NUM_INT (ntuples);
 #undef FUNC_NAME
 }
 
@@ -1826,7 +1826,7 @@ PRIMPROC
   VALIDATE_RESULT_UNBOX (1, result, res);
 
   NOINTS ();
-  rv = gh_int2scm (PQnfields (res));
+  rv = NUM_INT (PQnfields (res));
   INTSOK ();
 
   return rv;
@@ -1851,7 +1851,7 @@ PRIMPROC
   cmdtuples = PQcmdTuples (res);
   INTSOK ();
 
-  return gh_str02scm (cmdtuples);
+  return STRING (cmdtuples);
 #undef FUNC_NAME
 }
 
@@ -1873,7 +1873,7 @@ PRIMPROC
   INTSOK ();
 
   return DEFAULT_FALSE (InvalidOid != oid_value,
-                        gh_int2scm (oid_value));
+                        NUM_INT (oid_value));
 #undef FUNC_NAME
 }
 
@@ -1892,7 +1892,7 @@ PRIMPROC
   VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
   fname = PQfname (res, field);
-  return gh_str02scm (fname);
+  return STRING (fname);
 #undef FUNC_NAME
 }
 
@@ -1915,7 +1915,7 @@ PRIMPROC
   fnum = PQfnumber (res, ROZT (fname));
   INTSOK ();
 
-  return gh_int2scm (fnum);
+  return NUM_INT (fnum);
 #undef FUNC_NAME
 }
 
@@ -1932,7 +1932,7 @@ PRIMPROC
   VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
 
-  return gh_ulong2scm (PQftable (res, field));
+  return NUM_ULONG (PQftable (res, field));
 #undef FUNC_NAME
 }
 
@@ -1950,7 +1950,7 @@ PRIMPROC
   VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
 
-  return gh_ulong2scm (PQftablecol (res, field));
+  return NUM_ULONG (PQftablecol (res, field));
 #undef FUNC_NAME
 }
 
@@ -1968,7 +1968,7 @@ PRIMPROC
   VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
 
-  return gh_ulong2scm (PQfformat (res, field));
+  return NUM_ULONG (PQfformat (res, field));
 #undef FUNC_NAME
 }
 
@@ -1991,7 +1991,7 @@ PRIMPROC
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
   ftype = PQftype (res, field);
 
-  return gh_int2scm (ftype);
+  return NUM_INT (ftype);
 #undef FUNC_NAME
 }
 
@@ -2009,7 +2009,7 @@ PRIMPROC
   VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
   fsize = PQfsize (res, field);
-  return gh_int2scm (fsize);
+  return NUM_INT (fsize);
 #undef FUNC_NAME
 }
 
@@ -2042,8 +2042,8 @@ PRIMPROC
   NOINTS ();
   val = PQgetvalue (res, ctuple, cfield);
   rv = PQbinaryTuples (res)
-    ? gh_str2scm (val, PQgetlength (res, ctuple, cfield))
-    : gh_str02scm (val);
+    ? BSTRING (val, PQgetlength (res, ctuple, cfield))
+    : STRING (val);
   INTSOK ();
 
   return rv;
@@ -2069,7 +2069,7 @@ PRIMPROC
   len = PQgetlength (res, ctuple, cfield);
   INTSOK ();
 
-  ret = gh_int2scm (len);
+  ret = NUM_INT (len);
   return ret;
 #undef FUNC_NAME
 }
@@ -2091,7 +2091,7 @@ PRIMPROC
   CHECK_TUPLE_COORDS ();
 
   NOINTS ();
-  rv = gh_bool2scm (PQgetisnull (res, ctuple, cfield));
+  rv = BOOLEAN (PQgetisnull (res, ctuple, cfield));
   INTSOK ();
 
   return rv;
@@ -2111,7 +2111,7 @@ PRIMPROC
   VALIDATE_RESULT_UNBOX (1, result, res);
 
   NOINTS ();
-  rv = gh_bool2scm (PQbinaryTuples (res));
+  rv = BOOLEAN (PQbinaryTuples (res));
   INTSOK ();
 
   return rv;
@@ -2132,7 +2132,7 @@ PRIMPROC
   VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
   fmod = PQfmod (res, field);
-  return gh_int2scm (fmod);
+  return NUM_INT (fmod);
 #undef FUNC_NAME
 }
 
@@ -2150,9 +2150,9 @@ PRIMPROC
   SCM_VALIDATE_STRING (2, data);
 
   ROZT_X (data);
-  return gh_int2scm (PQputCopyData (dbconn,
-                                    ROZT (data),
-                                    SCM_ROLENGTH (data)));
+  return NUM_INT (PQputCopyData (dbconn,
+                                 ROZT (data),
+                                 SCM_ROLENGTH (data)));
 #undef FUNC_NAME
 }
 
@@ -2178,7 +2178,7 @@ PRIMPROC
       cerrmsg = ROZT (errmsg);
     }
 
-  return gh_int2scm (PQputCopyEnd (dbconn, cerrmsg));
+  return NUM_INT (PQputCopyEnd (dbconn, cerrmsg));
 #undef FUNC_NAME
 }
 
@@ -2203,7 +2203,7 @@ PRIMPROC
     pwritep = 1;
   else
     {
-      ASSERT (port, gh_pair_p (port), 2);
+      ASSERT (port, PAIRP (port), 2);
       swritep = 1;
     }
 
@@ -2214,12 +2214,12 @@ PRIMPROC
       if (pwritep)
         WBPORT (port, newbuf, rv);
       if (swritep)
-        gh_set_car_x (port, gh_str2scm (newbuf, rv));
+        SETCAR (port, BSTRING (newbuf, rv));
     }
   INTSOK ();
   PQfreemem (newbuf);
 
-  return gh_int2scm (rv);
+  return NUM_INT (rv);
 #undef FUNC_NAME
 }
 
@@ -2244,10 +2244,10 @@ PRIMPROC
       NOINTS ();
       ret = PQgetline (dbconn, buf, BUF_LEN);
       INTSOK ();
-      gh_set_cdr_x (tp, gh_cons (gh_str02scm (buf), SCM_EOL));
-      tp = gh_cdr (tp);
+      SETCDR (tp, CONS (STRING (buf), SCM_EOL));
+      tp = CDR (tp);
     }
-  return scm_string_append (gh_cdr (box));
+  return scm_string_append (CDR (box));
 #undef FUNC_NAME
 }
 
@@ -2275,9 +2275,9 @@ PRIMPROC
        the first place.  */
     PQconsumeInput (dbconn);
 
-  return gh_int2scm (PQgetlineAsync (dbconn,
-                                     SCM_ROCHARS (buf),
-                                     SCM_ROLENGTH (buf)));
+  return NUM_INT (PQgetlineAsync (dbconn,
+                                  SCM_ROCHARS (buf),
+                                  SCM_ROLENGTH (buf)));
 #undef FUNC_NAME
 }
 
@@ -2301,7 +2301,7 @@ PRIMPROC
   NOINTS ();
   status = PQputnbytes (dbconn, SCM_ROCHARS (str), SCM_ROLENGTH (str));
   INTSOK ();
-  return gh_bool2scm (! status);
+  return BOOLEAN (! status);
 #undef FUNC_NAME
 }
 
@@ -2322,7 +2322,7 @@ PRIMPROC
   ret = PQendcopy (dbconn);
   INTSOK ();
 
-  return gh_bool2scm (! ret);
+  return BOOLEAN (! ret);
 #undef FUNC_NAME
 }
 
@@ -2347,11 +2347,11 @@ PRIMPROC
   {
     PGVerbosity now = PQERRORS_DEFAULT;
 
-    if (gh_eq_p (verbosity, KWD (terse)))
+    if (EQ (verbosity, KWD (terse)))
       now = PQERRORS_TERSE;
-    else if (gh_eq_p (verbosity, KWD (default)))
+    else if (EQ (verbosity, KWD (default)))
       now = PQERRORS_DEFAULT;
-    else if (gh_eq_p (verbosity, KWD (verbose)))
+    else if (EQ (verbosity, KWD (verbose)))
       now = PQERRORS_VERBOSE;
     else
       ERROR ("Invalid verbosity: ~A", verbosity);
@@ -2567,47 +2567,46 @@ PRIMPROC
   int count = 0;                        /* of substnames */
   SCM check, substnames = SCM_EOL, flags = SCM_EOL, keys = SCM_EOL;
 
-  ASSERT (spec, gh_null_p (spec) || gh_pair_p (spec), 1);
+  ASSERT (spec, NULLP (spec) || PAIRP (spec), 1);
 
   /* Hairy validation/collection: symbols in `flags', pairs in `keys'.  */
   check = spec;
-  while (! gh_null_p (check))
+  while (! NULLP (check))
     {
-      SCM head = gh_car (check);
+      SCM head = CAR (check);
 
 #define CHECK_HEAD(expr)                        \
       ASSERT (head, (expr), 1)
 
-      if (gh_symbol_p (head))
+      if (SYMBOLP (head))
         {
-          CHECK_HEAD (NOT_FALSEP (gh_memq (head, valid_print_option_flags)));
-          flags = gh_cons (head, flags);
+          CHECK_HEAD (MEMQ (head, valid_print_option_flags));
+          flags = CONS (head, flags);
         }
-      else if (gh_pair_p (head))
+      else if (PAIRP (head))
         {
-          SCM key = gh_car (head);
-          SCM val = gh_cdr (head);
+          SCM key = CAR (head);
+          SCM val = CDR (head);
 
-          ASSERT (key, NOT_FALSEP (gh_memq (key, valid_print_option_keys)),
-                  1);
+          ASSERT (key, MEMQ (key, valid_print_option_keys), 1);
           if (key == pg_sym_field_names)
             {
-              CHECK_HEAD (! gh_null_p (val));
-              while (! gh_null_p (val))
+              CHECK_HEAD (! NULLP (val));
+              while (! NULLP (val))
                 {
-                  CHECK_HEAD (gh_string_p (gh_car (val)));
+                  CHECK_HEAD (STRINGP (CAR (val)));
                   count++;
-                  val = gh_cdr (val);
+                  val = CDR (val);
                 }
-              substnames = gh_cdr (head);    /* i.e., `val' */
+              substnames = CDR (head);    /* i.e., `val' */
             }
           else
             {
               ASSERT_STRING (1, val);
-              keys = gh_cons (head, keys);
+              keys = CONS (head, keys);
             }
         }
-      check = gh_cdr (check);
+      check = CDR (check);
 
 #undef CHECK_HEAD
     }
@@ -2615,8 +2614,8 @@ PRIMPROC
   po = scm_must_malloc (sizeof (PQprintOpt), sepo_name);
 
 #define _FLAG_CHECK(m)                                  \
-  (NOT_FALSEP (gh_memq (pg_sym_no_ ## m, flags))        \
-   ? 0 : (NOT_FALSEP (gh_memq (pg_sym_ ## m, flags))    \
+  (MEMQ (pg_sym_no_ ## m, flags)                        \
+   ? 0 : (MEMQ (pg_sym_ ## m, flags)                    \
           ? 1 : default_print_options.m))
 
   po->header   = _FLAG_CHECK (header);
@@ -2642,7 +2641,7 @@ PRIMPROC
   _STRING_CHECK_SETX (caption, caption);
 #undef _STRING_CHECK_SETX
 
-  if (gh_null_p (substnames))
+  if (NULLP (substnames))
     po->fieldName = NULL;
   else
     {
@@ -2652,8 +2651,8 @@ PRIMPROC
       po->fieldName[count] = NULL;
       for (i = 0; i < count; i++)
         {
-          po->fieldName[i] = strdup (SCM_ROCHARS (gh_car (substnames)));
-          substnames = gh_cdr (substnames);
+          po->fieldName[i] = strdup (SCM_ROCHARS (CAR (substnames)));
+          substnames = CDR (substnames);
         }
     }
 
@@ -2749,9 +2748,9 @@ PRIMPROC
 {
 #define FUNC_NAME s_pg_set_notice_out_x
   ASSERT_CONNECTION (1, conn);
-  ASSERT (out, (gh_boolean_p (out)
+  ASSERT (out, (BOOLEANP (out)
                 || SCM_OUTPUT_PORT_P (out)
-                || gh_procedure_p (out)),
+                || PROCEDUREP (out)),
           2);
 
   CONN_NOTICE (conn) = out;
@@ -2789,8 +2788,8 @@ PRIMPROC
   n = PQnotifies (dbconn);
   if (n)
     {
-      rv = gh_cons (gh_str02scm (n->relname),
-                    gh_int2scm (n->be_pid));
+      rv = CONS (STRING (n->relname),
+                 NUM_INT (n->be_pid));
       PQfreemem (n);
     }
   return DEFAULT_FALSE (n, rv);
@@ -2840,32 +2839,32 @@ PRIMPROC
   int cenc;
   size_t cstart = 0, clen;
 
-  if (gh_string_p (encoding))
-    encoding = gh_symbol2scm (ROZT (encoding));
-  ASSERT (encoding, gh_symbol_p (encoding), 1);
-  cell = gh_assq (encoding, gh_cdr (encoding_alist));
+  if (STRINGP (encoding))
+    encoding = SYMBOL (ROZT (encoding));
+  ASSERT (encoding, SYMBOLP (encoding), 1);
+  cell = scm_assq (encoding, CDR (encoding_alist));
   if (NOT_FALSEP (cell))
-    cenc = gh_scm2int (gh_cdr (cell));
+    cenc = C_INT (CDR (cell));
   else
     {
       if (PROB (cenc = pg_char_to_encoding (ROZT (encoding))))
         ERROR ("No such encoding: ~A", encoding);
-      cell = gh_cons (encoding, gh_int2scm (cenc));
-      gh_set_cdr_x (encoding_alist, gh_cons (cell, gh_cdr (encoding_alist)));
+      cell = CONS (encoding, NUM_INT (cenc));
+      SETCDR (encoding_alist, CONS (cell, CDR (encoding_alist)));
     }
 
   ASSERT_STRING (2, string);
   clen = SCM_ROLENGTH (string);
   if (GIVENP (start))
     {
-      ASSERT (start, gh_exact_p (start), 3);
-      cstart = gh_scm2int (start);
+      ASSERT (start, EXACTP (start), 3);
+      cstart = C_INT (start);
       if (clen < cstart)
         ERROR ("String start index out of range: ~A", start);
     }
-  return gh_int2scm ((clen == cstart)
-                     ? 0
-                     : PQmblen ((unsigned char *) ROZT (string) + cstart, cenc));
+  return NUM_INT ((clen == cstart)
+                  ? 0
+                  : PQmblen ((unsigned char *) ROZT (string) + cstart, cenc));
 #undef FUNC_NAME
 }
 
@@ -2879,7 +2878,7 @@ PRIMPROC
   SCM enc;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  enc = gh_str02scm (pg_encoding_to_char (PQclientEncoding (dbconn)));
+  enc = STRING (pg_encoding_to_char (PQclientEncoding (dbconn)));
   return enc;
 #undef FUNC_NAME
 }
@@ -2897,7 +2896,7 @@ PRIMPROC
   ASSERT_STRING (2, encoding);
   ROZT_X (encoding);
 
-  return gh_bool2scm (! PQsetClientEncoding (dbconn, ROZT (encoding)));
+  return BOOLEAN (! PQsetClientEncoding (dbconn, ROZT (encoding)));
 #undef FUNC_NAME
 }
 
@@ -2918,7 +2917,7 @@ PRIMPROC
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
-  return gh_bool2scm (! PQsetnonblocking (dbconn, NOT_FALSEP (mode)));
+  return BOOLEAN (! PQsetnonblocking (dbconn, NOT_FALSEP (mode)));
 #undef FUNC_NAME
 }
 
@@ -2932,7 +2931,7 @@ PRIMPROC
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
-  return gh_bool2scm (PQisnonblocking (dbconn));
+  return BOOLEAN (PQisnonblocking (dbconn));
 #undef FUNC_NAME
 }
 
@@ -2955,7 +2954,7 @@ PRIMPROC
   ASSERT_STRING (2, query);
   ROZT_X (query);
 
-  return gh_bool2scm (PQsendQuery (dbconn, ROZT (query)));
+  return BOOLEAN (PQsendQuery (dbconn, ROZT (query)));
 #undef FUNC_NAME
 }
 
@@ -2979,7 +2978,7 @@ PRIMPROC
                               RESFMT_TEXT);
   INTSOK ();
   drop_paramspecs (&ps);
-  return gh_bool2scm (result);
+  return BOOLEAN (result);
 #undef FUNC_NAME
 }
 
@@ -3003,7 +3002,7 @@ PRIMPROC
                                 RESFMT_TEXT);
   INTSOK ();
   drop_paramspecs (&ps);
-  return gh_bool2scm (result);
+  return BOOLEAN (result);
 #undef FUNC_NAME
 }
 
@@ -3036,7 +3035,7 @@ PRIMPROC
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  return gh_bool2scm (PQconsumeInput (dbconn));
+  return BOOLEAN (PQconsumeInput (dbconn));
 #undef FUNC_NAME
 }
 
@@ -3050,7 +3049,7 @@ PRIMPROC
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  return gh_bool2scm (PQisBusy (dbconn));
+  return BOOLEAN (PQisBusy (dbconn));
 #undef FUNC_NAME
 }
 
@@ -3077,7 +3076,7 @@ PRIMPROC
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  return gh_bool2scm (PQrequestCancel (dbconn));
+  return BOOLEAN (PQrequestCancel (dbconn));
 #undef FUNC_NAME
 }
 
@@ -3092,7 +3091,7 @@ PRIMPROC
 #define FUNC_NAME s_pg_flush
   ASSERT_CONNECTION (1, conn);
 
-  return gh_int2scm (PQflush (CONN_CONN (conn)));
+  return NUM_INT (PQflush (CONN_CONN (conn)));
 #undef FUNC_NAME
 }
 
@@ -3171,7 +3170,7 @@ init_module (void)
   {
     unsigned int i;
     for (i = 0; i < sizeof (pgrs) / sizeof (SCM); i++)
-      pgrs[i] = PERMANENT (gh_symbol2scm (PQresStatus (i)));
+      pgrs[i] = PERMANENT (SYMBOL (PQresStatus (i)));
   }
 
   lobp_tag = scm_make_port_type ("pg-lo-port", lob_fill_input, lob_write);
