@@ -1,5 +1,14 @@
 2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build maint] Don't bundle modsup.h; copy 3 macros from it, instead.
+
+	* gi.h [!HAVE_GUILE_MODSUP_H] (GH_DEFPROC): New macro.
+	[!HAVE_GUILE_MODSUP_H] (GH_MODULE_LINK_FUNC, GH_STONED): Likewise.
+	* modsup.h.snap: Delete file.
+	* Makefile.am (EXTRA_DIST): Delete var.
+
+2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Move guile abstractions from libpq.c to gi.h.
 
 	* libpq.c (NOINTS, INTSOK, GIVENP, NOT_FALSEP, DEFAULT_FALSE)

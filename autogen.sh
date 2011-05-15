@@ -40,21 +40,6 @@ autoconf
 automake --add-missing --force -Wall
 
 ######################################################################
-# Header: <guile/modsup.h>
-
-fresh_modsup_h="`guile-config info includedir`/guile/modsup.h"
-test -f $fresh_modsup_h || fresh_modsup_h="modsup.h.snap"
-cd src
-ln -sf $fresh_modsup_h modsup.h
-diff -u modsup.h.snap modsup.h > TMP 2>&1
-if [ -s TMP ] ; then
-    echo "WARNING: modsup.h.snap out of date, diff follows:"
-    cat TMP
-fi
-rm -f TMP
-cd ..
-
-######################################################################
 # Done.
 
 : Now run configure and make.

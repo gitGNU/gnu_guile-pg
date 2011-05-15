@@ -88,8 +88,6 @@ else !USE_CMOD
 	fi
 endif !USE_CMOD
 
-EXTRA_DIST = modsup.h
-
 DISTCLEANFILES = *.x postgres.exports
 
 CLEANFILES = *.x postgres

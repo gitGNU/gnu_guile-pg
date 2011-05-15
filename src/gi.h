@@ -34,9 +34,27 @@
 
 #ifdef HAVE_GUILE_MODSUP_H
 #include <guile/modsup.h>
-#else
-#include "modsup.h"
-#endif
+#else  /* !defined HAVE_GUILE_MODSUP_H */
+
+#define GH_DEFPROC(fname, primname, req, opt, var, arglist, docstring) \
+  SCM_SNARF_HERE (static SCM fname arglist;)                           \
+  SCM_DEFINE (fname, primname, req, opt, var, arglist, docstring)
+
+#define GH_MODULE_LINK_FUNC(module_name, fname_frag, module_init_func)  \
+void                                                                    \
+scm_init_ ## fname_frag ## _module (void);                              \
+void                                                                    \
+scm_init_ ## fname_frag ## _module (void)                               \
+{                                                                       \
+  /* Make sure strings(1) finds module name at bol.  */                 \
+  static const char modname[] = "\n" module_name;                       \
+  scm_register_module_xxx (1 + modname, module_init_func);              \
+}
+
+#define GH_STONED(obj) \
+  scm_permanent_object (obj)
+
+#endif  /* !defined HAVE_GUILE_MODSUP_H */
 
 /*
  * forward (sometimes kids make messes for others to clean up)

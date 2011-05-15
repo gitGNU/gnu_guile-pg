@@ -45,7 +45,6 @@ Makefile.in
 /src/.libs
 /src/config.h
 /src/config.h.in
-/src/modsup.h
 /src/stamp-h1
 
 /test/*.log
