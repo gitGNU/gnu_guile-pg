@@ -1,7 +1,8 @@
-\input texinfo  @c -*-texinfo-*-
+\input texinfo  @c -*- mode: texinfo; coding: utf-8; -*-
 @c %**start of header
 @setfilename guile-pg.info
 @settitle The (database postgres*) Modules
+@documentencoding UTF-8
 @ifinfo
 @paragraphindent 0
 @end ifinfo

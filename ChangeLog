@@ -1,5 +1,14 @@
 2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Use U+2018, U+2019 in example.
+
+	* doc/guile-pg.texi: Add ‘coding’ cookie for Emacs;
+	declare document encoding to be ‘UTF-8’.
+	* ref.texh: Add ‘coding’ local variable at eof.
+	(Easy Interaction): Use U+2018, U+2019 in example.
+
+2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build maint] Don't bundle modsup.h; copy 3 macros from it, instead.
 
 	* autogen.sh: Don't maintain modsup.h, modsup.h.snap.

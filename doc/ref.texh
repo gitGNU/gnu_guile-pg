@@ -1671,7 +1671,7 @@ For example:
 
 @example
 ,fix #:from icbmcoords
-Use the table `icbmcoords' (with columns `one', `two' and `importance').
+Use the table ‘icbmcoords’ (with columns ‘one’, ‘two’ and ‘importance’).
 
 ,fsel one two #:where (< 9 importance)
 Select some tuples.
@@ -1695,4 +1695,7 @@ SELECT one AS "latitude", two AS "longitude"
  WHERE ((9 < importance) OR (3 > importance));
 @end example
 
+@c Local variables:
+@c coding: utf-8
+@c End:
 @c ref.texh ends here
