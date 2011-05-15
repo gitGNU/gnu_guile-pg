@@ -1,5 +1,12 @@
 2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[int] Decruft: Don't #define __func__.
+
+	* libpq.c (__func__): Delete #define
+	and surrounding preproc conditionals.
+
+2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build inst] Add support for "no C module" mode.
 
 	* Makefile.am (d_LTLIBRARIES): Conditionalize with ‘USE_CMOD’.
