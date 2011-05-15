@@ -322,12 +322,12 @@
   `(#:%LPAREN ,@x #:%RPAREN))
 
 ;; Return a tree made by mapping @var{proc} over list @var{ls},
-;; w/ elements separated by commas.  Optional third arg @var{parens?}
+;; with elements separated by commas.  Optional third arg @var{parens?}
 ;; non-@code{#f} includes surrounding parentheses.  The rest of the args
 ;; are more lists, whose @sc{car}s are passed as additional args
 ;; to @var{proc}.
 ;;
-;;-sig: (proc ls [parens? [more-ls...]])
+;;-args: (- 0 2 parens? more-ls)
 ;;
 (define (make-comma-separated-tree proc ls . opts)
   ((if (and (not (null? opts)) (car opts))
@@ -430,8 +430,8 @@
 ;; Return a @dfn{order-by clause} tree for @var{orderings} (a list).
 ;; Each element of @var{orderings} has the form: @code{(ORDFUNC EXPR)}.
 ;; If @var{ordfunc} is the symbol @code{<} or the keyword @code{#:ASC},
-;; it is taken as "ASC".  Likewise, @code{>} or @code{#:DESC} is taken
-;; as "DESC".
+;; it is taken as @code{ASC}.  Likewise, @code{>} or @code{#:DESC} is taken
+;; as @code{DESC}.
 ;;
 (define (make-ORDER-BY-tree orderings)
   (list #:ORDER-BY
@@ -546,7 +546,7 @@
 ;; @var{froms} and @var{cols} (both lists).  In addition to the
 ;; constituent processing done by @code{make-SELECT/COLS-tree}
 ;; and @code{make-FROM-tree} on @var{cols} and @var{froms},
-;; respectively, prefix a "SELECT" token.  If @var{froms} is
+;; respectively, prefix a @code{SELECT} token.  If @var{froms} is
 ;; @code{#f}, it is omitted.
 ;;
 (define (make-SELECT/FROM/COLS-tree froms cols)

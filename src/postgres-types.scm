@@ -66,7 +66,7 @@
 ;; Optional arg @var{fresh?} non-@code{#f} a (re-)query, updating the cache.
 ;; Return a list of oid/type-name (number/string) pairs.
 ;;
-;;-sig: (conn [fresh?])
+;;-args: (- 1 0 fresh?)
 ;;
 (define (oid-type-name-cache conn . opt)
   (define (fresh)
@@ -146,16 +146,18 @@
 (define (read-array-string-proc objectifier)
   (lambda (string) (read-array-string objectifier string)))
 
-;; Register type NAME with DEFAULT, STRINGIFIER and OBJECTIFIER procs.  NAME
-;; is a symbol.  DEFAULT is a string to use if the Scheme object is @code{#f}.
-;; STRINGIFIER is a proc that takes a Scheme object and returns a string
-;; suitable for use in an "INSERT VALUES" SQL command.  OBJECTIFIER is a proc
-;; that takes a string and returns the Scheme object parsed out of it.
+;; Register type @var{name} with @var{default}, @var{stringifier} and
+;; @var{objectifier} procs.  @var{name} is a symbol.  @var{default} is a
+;; string to use if the Scheme object is @code{#f}.  @var{stringifier} is a
+;; proc that takes a Scheme object and returns a string suitable for use in an
+;; @code{INSERT VALUES} SQL command.  @var{objectifier} is a proc that takes a
+;; string and returns the Scheme object parsed out of it.
 ;;
-;; Both STRINGIFIER and OBJECTIFIER need not worry about SQL-style
+;; Both @var{stringifier} and @var{objectifier} need not worry about SQL-style
 ;; quoting (using single quotes) and related quote escaping.
 ;;
-;; If NAME already exists, it is redefined.  See also `dbcoltype-lookup'.
+;; If @var{name} already exists, it is redefined.
+;; See also @code{dbcoltype-lookup}.
 ;;
 (define (define-db-col-type name default stringifier objectifier)
   (set! *db-col-types*
@@ -180,18 +182,20 @@
           ((vector? x) (flatten (dive (vector->list x))))
           (else        (stringifier x)))))
 
-;; Register type COMPOSED, an array variant of SIMPLE, with optional PROCS.
-;; SIMPLE should be a type name already registered using `define-db-col-type'.
-;; COMPOSED is conventionally formed by appending SIMPLE with one or more pairs
-;; of square braces "[]", with the number of pairs indicating the array
-;; dimensionality.  For example, if SIMPLE is `text', a two-dimensional text
-;; array would be named `text[][]'.
+;; Register type @var{composed}, an array variant of @var{simple}, with
+;; optional @var{procs}.  @var{simple} should be a type name already
+;; registered using @code{define-db-col-type}.  @var{composed} is
+;; conventionally formed by appending @var{simple} with one or more pairs of
+;; @samp{[]} (square braces), with the number of pairs indicating the array
+;; dimensionality.  For example, if @var{simple} is @code{text}, a
+;; two-dimensional text array would be named @code{text[][]}.
 ;;
-;; Optional arg PROCS is a list specifying alternative stringifier and
-;; objectifier procedures (in that order).  If unspecified, SIMPLE is looked up
-;; and its stringifier and objectifier are used.  See `dbcoltype-lookup'.
+;; Optional arg @var{procs} is a list specifying alternative stringifier and
+;; objectifier procedures (in that order).  If unspecified, @var{simple} is
+;; looked up and its stringifier and objectifier are used.  See
+;; @code{dbcoltype-lookup}.
 ;;
-;; The default value of all array types is "@{@}" and cannot be changed.
+;; The default value of all array types is @samp{@{@}} and cannot be changed.
 ;;
 (define (define-db-col-type-array-variant composed simple . procs)
   (let* ((lookup (dbcoltype-lookup simple))

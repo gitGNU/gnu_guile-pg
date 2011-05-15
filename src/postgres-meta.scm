@@ -69,7 +69,7 @@
 ;;;
 ;;; Underscores are ugly and we would like more than anything for them to be
 ;;; replaced by hyphens.  Unfortunately, that would require both forward- and
-;;; backward-translation in many places outside Guile-PG's control, ie, in
+;;; backward-translation in many places outside Guile-PG's control, i.e., in
 ;;; user code and in PostgreSQL internal code.  Sigh.
 
 (define-db-col-type 'cardinal_number "0"
@@ -546,7 +546,7 @@
 ;; Optional arg @var{full?}, non-@code{#f} means to prefix each
 ;; name with @samp{information_schema.} (note trailing dot).
 ;;
-;;-sig: ([full?])
+;;-args: (- 1 0)
 ;;
 (define (information-schema-names . full?)
   (map (if (and (not (null? full?))

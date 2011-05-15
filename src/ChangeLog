@@ -1,5 +1,18 @@
 2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Spiff docstrings; use ‘-args:’ instead of ‘-sig:’.
+
+	* libpq.c: Throughout, as described above.
+	* postgres-col-defs.scm: Likewise.
+	* postgres-gxrepl.scm: Likewise.
+	* postgres-meta.scm: Likewise.
+	* postgres-qcons.scm: Likewise.
+	* postgres-resdisp.scm: Likewise.
+	* postgres-table.scm: Likewise.
+	* postgres-types.scm: Likewise.
+
+2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc int] Use ‘doc:’+comment for ‘PRIMPROC’ docstrings.
 
 	* libpq.c: Throughout, convert series-of-strings

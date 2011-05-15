@@ -228,7 +228,7 @@ and/or writing.  @var{modes} is a string describing the mode in
 which the port is to be opened.  The mode string must include
 one of @code{r} for reading, @code{w} for writing or @code{a}
 for append (but since the object is empty to start with this is
-the same as @code{w}.)  The return value is a large object port
+the same as @code{w}).  Return a large object port
 which can be used to read or write data to/from the object, or
 @code{#f} on failure in which case @code{pg-error-message} from
 the connection should give some idea of what happened.
@@ -288,11 +288,11 @@ should be an integer identifier representing the large object.
 @var{modes} must be a string describing the mode in which the
 port is to be opened.  The mode string must include one of
 @code{r} for reading, @code{w} for writing, @code{a} for
-append or @code{+} with any of the above indicating both
-reading and writing/appending.  @code{A} is equivalent to
+appending or @code{+} with any of the above indicating both
+reading and writing/appending.  Using @code{a} is equivalent to
 opening the port for writing and immediately doing a
-@code{(pg-lo-seek)} to the end.  The return value is either
-an open large object port or @code{#f} on failure in which
+@code{(pg-lo-seek)} to the end.  Return either
+an open large object port or @code{#f} on failure, in which
 case @code{pg-error-message} from the connection should give
 some idea of what happened.
 
@@ -389,8 +389,8 @@ PRIMPROC
  doc: /***********
 Return the position of the file pointer for the given large
 object port.  @var{port} must be a large object port returned
-from @code{pg-lo-creat} or @code{pg-lo-open}.  The return
-value is either an integer greater than or equal to zero or
+from @code{pg-lo-creat} or @code{pg-lo-open}.  Return
+either an integer greater than or equal to zero, or
 @code{#f} if an error occurred.  In the latter case
 @code{pg-error-message} applied to @code{conn} should
 explain what went wrong.  */)
@@ -537,7 +537,7 @@ Relative to the current position.
 Relative to the end of the file.
 @end table
 
-The return value is an integer which is the new position
+Return an integer which is the new position
 relative to the beginning of the object, or a number less than
 zero if an error occurred.  */)
 {
@@ -699,7 +699,7 @@ PRIMPROC
 Create a new large object and loads it with the contents of
 the specified file.  @var{filename} must be a string containing
 the name of the file to be loaded into the new object.  Return
-the integer identifier (OID) of the newly created large object,
+the integer identifier (@acronym{OID}) of the newly created large object,
 or @code{#f} if an error occurred, in which case
 @code{pg-error-message} should be consulted to determine
 the failure.  */)
@@ -1080,14 +1080,14 @@ The @var{name} can be any of:
 
 @table @code
 @item host
-The host-name or dotted-decimal IP address of the host
+The host-name or dotted-decimal @acronym{IP} address of the host
 on which the postmaster is running.  If no @code{host=}
 sub-string is given then consult in order: the
 environment variable @code{PGHOST}, otherwise the name
 of the local host.
 
 @item port
-The TCP or Unix socket on which the backend is
+The @acronym{TCP} or Unix socket on which the backend is
 listening.  If this is not specified then consult in
 order: the environment variable @code{PGPORT},
 otherwise the default port (5432).
@@ -1106,7 +1106,7 @@ messages from the backend are to be displayed.  If this
 is empty (@code{""}), then consult the environment
 variable @code{PGTTY}.  If the specified tty is a file
 then the file will be readable only by the user the
-postmaster runs as (usually @code{postgres}).
+postmaster runs as (usually @samp{postgres}).
 Similarly, if the specified tty is a device then it
 must have permissions allowing the postmaster user to
 write to it.
@@ -1131,7 +1131,8 @@ pg_hba.conf(5) man page for details.
 @item authtype
 This must be set to @code{password} if password
 authentication is in use, otherwise it must not be
-specified.  @end table
+specified.
+@end table
 
 If @var{value} contains spaces it must be enclosed in
 single quotes, and any single quotes appearing in
@@ -1730,8 +1731,7 @@ PRIMPROC
 (pg_get_options, "pg-get-options", 1, 0, 0,
  (SCM conn),
  doc: /***********
-Return a string containing the
-options string for @var{conn}.  */)
+Return a string containing the options string for @var{conn}.  */)
 {
 #define FUNC_NAME s_pg_get_options
   PGconn *dbconn;
@@ -1750,7 +1750,7 @@ PRIMPROC
 (pg_backend_pid, "pg-backend-pid", 1, 0, 0,
  (SCM conn),
  doc: /***********
-Return an integer which is the the PID of the backend
+Return an integer which is the the @acronym{PID} of the backend
 process for @var{conn}.  */)
 {
 #define FUNC_NAME s_pg_backend_pid
@@ -1824,7 +1824,7 @@ PRIMPROC
 (pg_result_status, "pg-result-status", 1, 0, 0,
  (SCM result),
  doc: /***********
-Return the symbolic status of a @code{PG_RESULT} object
+Return the symbolic status of the @var{result}
 returned by @code{pg-exec}.  */)
 {
 #define FUNC_NAME s_pg_result_status
@@ -1848,8 +1848,7 @@ PRIMPROC
 (pg_ntuples, "pg-ntuples", 1, 0, 0,
  (SCM result),
  doc: /***********
-Return the number of tuples
-in @var{result}.  */)
+Return the number of tuples in @var{result}.  */)
 {
 #define FUNC_NAME s_pg_ntuples
   PGresult *res;
@@ -1869,8 +1868,7 @@ PRIMPROC
 (pg_nfields, "pg-nfields", 1, 0, 0,
  (SCM result),
  doc: /***********
-Return the number of fields
-in @var{result}.  */)
+Return the number of fields in @var{result}.  */)
 {
 #define FUNC_NAME s_pg_nfields
   PGresult *res;
@@ -1893,7 +1891,7 @@ PRIMPROC
 Return the number of tuples in @var{result} affected by a
 command.  This is a string which is empty in the case of
 commands like @code{CREATE TABLE}, @code{GRANT}, @code{REVOKE}
-etc. which don't affect tuples.  */)
+etc., which don't affect tuples.  */)
 {
 #define FUNC_NAME s_pg_cmdtuples
   PGresult *res;
@@ -1914,7 +1912,7 @@ PRIMPROC
  (SCM result),
  doc: /***********
 If the @var{result} is that of an SQL @code{INSERT} command,
-return the integer OID of the inserted tuple, otherwise return
+return the integer @acronym{OID} of the inserted tuple, otherwise
 @code{#f}.  */)
 {
 #define FUNC_NAME s_pg_oid_value
@@ -1957,7 +1955,7 @@ PRIMPROC
  (SCM result, SCM fname),
  doc: /***********
 Return the integer field-number corresponding to field
-@var{fname} if this exists in @var{result}, or @code{-1}
+@var{fname} (a string) if this exists in @var{result}, or @code{-1}
 otherwise.  */)
 {
 #define FUNC_NAME s_pg_fnumber
@@ -1980,7 +1978,7 @@ PRIMPROC
 (pg_ftable, "pg-ftable", 2, 0, 0,
  (SCM result, SCM num),
  doc: /***********
-Return the OID of the table from which the field @var{num}
+Return the @acronym{OID} of the table from which the field @var{num}
 was fetched in @var{result}.  */)
 {
 #define FUNC_NAME s_pg_ftable
@@ -2000,7 +1998,7 @@ PRIMPROC
  doc: /***********
 Return the column number (within its table) of the column
 making up field @var{num} of @var{result}.  Column numbers
-start at 0.  */)
+start at zero.  */)
 {
 #define FUNC_NAME s_pg_ftablecol
   PGresult *res;
@@ -2017,7 +2015,7 @@ PRIMPROC
 (pg_fformat, "pg-fformat", 2, 0, 0,
  (SCM result, SCM num),
  doc: /***********
-Return the format code indicating the format of field
+Return an integer indicating the format of field
 @var{num} of @var{result}.  Zero (0) indicates textual
 data representation; while one (1) indicates binary.  */)
 {
@@ -2038,9 +2036,9 @@ PRIMPROC
  doc: /***********
 Return the PostgreSQL internal integer representation of
 the type of the given attribute.  The integer is actually an
-OID (object ID) which can be used as the primary key to
-reference a tuple from the system table @code{pg_type}.  A
-@code{misc-error} is thrown if the @code{field-number} is
+@acronym{OID} (object ID) which can be used as the primary key to
+reference a tuple from the system table @code{pg_type}.
+Throw @code{misc-error} if the field @var{num} is
 not valid for the given @code{result}.  */)
 {
 #define FUNC_NAME s_pg_ftype
@@ -2061,7 +2059,7 @@ PRIMPROC
  (SCM result, SCM num),
  doc: /***********
 Return the size of a @var{result} field @var{num} in bytes,
-or -1 if the field is variable-length.  */)
+or @code{-1} if the field is variable-length.  */)
 {
 #define FUNC_NAME s_pg_fsize
   PGresult *res;
@@ -2117,7 +2115,8 @@ PRIMPROC
 (pg_getlength, "pg-getlength", 3, 0, 0,
  (SCM result, SCM stuple, SCM sfield),
  doc: /***********
-The size of the datum in bytes.  */)
+Return the size in bytes of the value of the attribute
+@var{sfield}, tuple @var{stuple} of @var{result}.  */)
 {
 #define FUNC_NAME s_pg_getlength
   PGresult *res;
@@ -2142,8 +2141,8 @@ PRIMPROC
 (pg_getisnull, "pg-getisnull", 3, 0, 0,
  (SCM result, SCM stuple, SCM sfield),
  doc: /***********
-Return @code{#t} if the attribute is @code{NULL},
-@code{#f} otherwise.  */)
+Return @code{#t} if the value of the attribute @var{sfield}, tuple
+@var{stuple} of @var{result}, is @code{NULL}, @code{#f} otherwise.  */)
 {
 #define FUNC_NAME s_pg_getisnull
   PGresult *res;
@@ -2208,8 +2207,8 @@ PRIMPROC
  (SCM conn, SCM data),
  doc: /***********
 Send on @var{conn} the @var{data} (a string).
-Return 1 if ok; 0 if the server is in nonblocking mode
-and the attempt would block; and -1 if an error occurred.  */)
+Return one if ok; zero if the server is in nonblocking mode
+and the attempt would block; and @code{-1} if an error occurred.  */)
 {
 #define FUNC_NAME s_pg_put_copy_data
   PGconn *dbconn;
@@ -2230,10 +2229,10 @@ PRIMPROC
  doc: /***********
 Send an end-of-data indication over @var{conn}.
 Optional arg @var{errmsg} is a string, which if present,
-forces the COPY operation to fail with @var{errmsg} as the
+forces the @code{COPY} operation to fail with @var{errmsg} as the
 error message.
-Return 1 if ok; 0 if the server is in nonblocking mode
-and the attempt would block; and -1 if an error occurred.  */)
+Return one if ok; zero if the server is in nonblocking mode
+and the attempt would block; and @code{-1} if an error occurred.  */)
 {
 #define FUNC_NAME s_pg_put_copy_end
   PGconn *dbconn;
@@ -2255,13 +2254,13 @@ PRIMPROC
 (pg_get_copy_data, "pg-get-copy-data", 2, 1, 0,
  (SCM conn, SCM port, SCM asyncp),
  doc: /***********
-Get a line of COPY data from @var{conn}, writing it to
+Get a line of @code{COPY} data from @var{conn}, writing it to
 output @var{port}.  If @var{port} is a pair, construct
 a new string and set its @sc{car} to the new string.
 Return the number of data bytes in the row (always greater
-than zero); or zero to mean the COPY is still in progress
-and no data is yet available; or -1 to mean the COPY is
-done; or -2 to mean an error occurred.  */)
+than zero); zero to mean the @code{COPY} is still in progress
+and no data is yet available; @code{-1} to mean the @code{COPY} is
+done; or @code{-2} to mean an error occurred.  */)
 {
 #define FUNC_NAME s_pg_get_copy_data
   PGconn *dbconn;
@@ -2328,12 +2327,12 @@ PRIMPROC
  doc: /***********
 Read a line from @var{conn} on which a @code{COPY <table> TO
 STDOUT} has been issued, into @var{buf} (a string).
-Return -1 to mean end-of-copy marker recognized, or a number
+Return @code{-1} to mean end-of-copy marker recognized, or a number
 (possibly zero) indicating how many bytes of data were read.
 The returned data may contain at most one newline (in the last
 byte position).
 Optional arg @var{tickle} non-@code{#f} means to do a
-"consume input" operation prior to the read.  */)
+``consume input'' operation prior to the read.  */)
 {
 #define FUNC_NAME s_pg_getlineasync
   PGconn *dbconn;
@@ -2360,7 +2359,7 @@ PRIMPROC
 Write a line to the connection on which a @code{COPY <table>
 FROM STDIN} has been issued.  The lines written should include
 the final newline characters.  The last line should be a
-backslash, followed by a full-stop.  After this, the
+backslash, followed by a @samp{.} (full-stop).  After this, the
 @code{pg-endcopy} procedure should be called for this
 connection before any further @code{pg-exec} call is made.
 Return @code{#t} if successful.  */)
@@ -2382,7 +2381,7 @@ PRIMPROC
 (pg_endcopy, "pg-endcopy", 1, 0, 0,
  (SCM conn),
  doc: /***********
-Resynchronize with the backend process.  This procedure
+Resynchronize with the backend process on @var{conn}.  This procedure
 must be called after the last line of a table has been
 transferred using @code{pg-getline}, @code{pg-getlineasync}
 or @code{pg-putline}.  Return @code{#t} if successful.  */)
@@ -2448,9 +2447,9 @@ PRIMPROC
  doc: /***********
 Start outputting low-level trace information on the
 connection @var{conn} to @var{port}, which must have been
-opened for writing.  This trace is more useful for debugging
-PostgreSQL than it is for debugging its clients.
-The return value is unspecified.  */)
+opened for writing.  Some consider this information more useful
+for debugging PostgreSQL than for debugging its clients,
+but as usual, @acronym{YMMV}.  */)
 {
 #define FUNC_NAME s_pg_trace
   PGconn *dbconn;
@@ -2481,8 +2480,7 @@ PRIMPROC
 (pg_untrace, "pg-untrace", 1, 0, 0,
  (SCM conn),
  doc: /***********
-Stop tracing on connection @var{conn}.
-The return value is unspecified.  */)
+Stop tracing on connection @var{conn}.  */)
 {
 #define FUNC_NAME s_pg_untrace
   PGconn *dbconn;
@@ -2616,7 +2614,7 @@ PRIMPROC
 (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
  (SCM spec),
  doc: /***********
-Return an opaque print options object created from @var{spec},
+Return a @dfn{print options object} created from @var{spec},
 suitable for use with @code{pg-print}.  @var{spec} is a list
 of elements, each either a flag (symbol) or a key-value pair
 (with the key being a symbol).  Recognized flags:
@@ -2629,7 +2627,7 @@ of elements, each either a flag (symbol) or a key-value pair
 @item expanded: Expand tables.
 @end itemize
 
-To specify a disabled flag, use @dfn{no-FLAG}, e.g.,"
+To specify a disabled flag, use @dfn{no-FLAG}, e.g.,
 @code{no-header}.  Recognized keys:
 
 @itemize
@@ -2855,10 +2853,10 @@ Return the next as-yet-unhandled notification
 from @var{conn}, or @code{#f} if there are none available.
 The notification is a pair with @sc{car} @var{relname},
 a string naming the relation containing data; and
-@sc{cdr} @var{pid}, the integer pid
+@sc{cdr} @var{pid}, the integer @acronym{PID}
 of the backend delivering the notification.
 Optional arg @var{tickle} non-@code{#f} means to do a
-"consume input" operation prior to the query.  */)
+``consume input'' operation prior to the query.  */)
 {
 #define FUNC_NAME s_pg_notifies
   PGconn *dbconn;
@@ -2921,7 +2919,7 @@ into @var{string} to use instead of the default (zero).
 
 Signal error if @var{encoding} is unknown or if @var{start}
 is out of range.  If @var{start} is exactly the length of
-@var{string}, return 0 (zero).  */)
+@var{string}, return zero.  */)
 {
 #define FUNC_NAME s_pg_mblen
   SCM cell;
@@ -2961,7 +2959,7 @@ PRIMPROC
 (pg_client_encoding, "pg-client-encoding", 1, 0, 0,
  (SCM conn),
  doc: /***********
-Return the current client encoding for @var{conn}.  */)
+Return the current client encoding for @var{conn} as a string.  */)
 {
 #define FUNC_NAME s_pg_client_encoding
   PGconn *dbconn;
@@ -2977,7 +2975,7 @@ PRIMPROC
 (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
  (SCM conn, SCM encoding),
  doc: /***********
-Set the client encoding for @var{conn} to @var{encoding}.
+Set the client encoding for @var{conn} to @var{encoding} (a string).
 Return @code{#t} if successful, @code{#f} otherwise.  */)
 {
 #define FUNC_NAME s_pg_set_client_encoding_x
@@ -3127,8 +3125,7 @@ PRIMPROC
 (pg_consume_input, "pg-consume-input", 1, 0, 0,
  (SCM conn),
  doc: /***********
-Consume input from @var{conn}.
-Return @code{#t} iff successful.  */)
+Consume input from @var{conn}.  Return @code{#t} iff successful.  */)
 {
 #define FUNC_NAME s_pg_consume_input
   PGconn *dbconn;
@@ -3187,9 +3184,9 @@ PRIMPROC
  (SCM conn),
  doc: /***********
 Flush output for connection @var{conn}.
-Return 0 (zero) if successful (or if the send queue is empty),
--1 if flushing failed for some reason, or 1 if not all data was
-sent (only possible for a non-blocking connection).  */)
+Return zero if successful (or if the send queue is empty);
+@code{-1} if flushing failed for some reason; or one if not all
+data was sent (only possible for a non-blocking connection).  */)
 {
 #define FUNC_NAME s_pg_flush
   ASSERT_CONNECTION (1, conn);

@@ -96,9 +96,10 @@
 ;; @item @var{title} is the title (string) of the column, or @code{#f}
 ;;
 ;; @item @var{type} is a column type (symbol) such as @code{int4},
-;; or @code{#f} to mean @code{text}, or #t to mean use the type associated
-;; with the column named in @var{expr}, or the pair @code{(#t . name)}
-;; to mean use the type associated with column @var{name}
+;; or @code{#f} to mean @code{text}, or @code{#t} to mean
+;; use the type associated with the column named in @var{expr},
+;; or the pair @code{(#t . name)} to mean use the type associated
+;; with column @var{name}
 ;; @end itemize
 ;; @end itemize
 ;;

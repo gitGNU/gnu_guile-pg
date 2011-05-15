@@ -61,7 +61,7 @@
       (do ((fn 0 (1+ fn))) ((= ftot fn) v)
         (v! v fn (init fn))))))
 
-;; Display @var{result}, including header and ASCII decoration.
+;; Display @var{result}, including header and @acronym{ASCII} decoration.
 ;; @var{result} is an object that satisfies @code{pg-result?}.
 ;; Optional second arg @var{decor} is a symbol, one of:
 ;;
@@ -86,7 +86,7 @@
 ;; between the header and the table body, and at the bottom of the
 ;; output, respectively; as well as the left and right decorations.
 ;;
-;;-sig: (result [decor [flags...]])
+;;-args: (- 0 2 decor flags)
 ;;
 (define (display-result result . opts)
   (or (and (pg-result? result)

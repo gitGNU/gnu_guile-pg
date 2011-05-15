@@ -80,7 +80,7 @@
 ;; the type (a symbol) and can do further checks on it.  It should return
 ;; non-@code{#f} to indicate success.
 ;;
-;;-sig: (obj [typecheck])
+;;-args: (- 1 0)
 ;;
 (define (validate-def obj . typecheck)
   (or (and (pair? obj)

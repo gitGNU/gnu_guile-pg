@@ -182,11 +182,11 @@ Exiting from the recursive repl returns to this one."
 ;; The repl accepts two kinds of commands:
 ;;
 ;; @itemize
-;; @item SQL statements such as "CREATE TABLE" or "SELECT" are
-;; executed using @code{pg-exec}.
+;; @item SQL statements such as @code{CREATE TABLE} or
+;; @code{SELECT} are executed using @code{pg-exec}.
 ;;
 ;; @item @dfn{Comma commands} are short commands beginning with
-;; a comma (the most important being ",help") that do various
+;; a comma (the most important being @samp{,help}) that do various
 ;; meta-repl or prepackaged operations.
 ;; @end itemize
 ;;
