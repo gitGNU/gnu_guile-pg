@@ -25,6 +25,7 @@ guile-baux-tool import \
     tsar \
     c-tsar \
     tsin \
+    gen-scheme-wrapper \
     gbaux-do
 
 #############################################################################

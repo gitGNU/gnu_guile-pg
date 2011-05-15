@@ -1,3 +1,10 @@
+2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build inst] Add support for "no C module" mode.
+
+	* Makefile.am (fake-install): For sub-"make install",
+	set makefile variable ‘FOR_MAKE_CHECK’.
+
 2011-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v] Do a partial install under test/; point ‘%load-path’ there.

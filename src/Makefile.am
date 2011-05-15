@@ -32,9 +32,26 @@ ddir = $(GUILE_LIBSITE)/database
 
 dist_d_DATA = $(schemestems:=.scm)
 
+if USE_CMOD
 d_LTLIBRARIES = postgres.la
+else
+pkglib_LTLIBRARIES = postgres.la
+endif
 postgres_la_SOURCES = libpq.c gi.h
 postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0
+
+if !USE_CMOD
+d_DATA = postgres
+
+postgres.exports: $(postgres_la_SOURCES)
+	> $@ \
+	$(SED) '/^(pg_/!d;s/^.*"\(.*\)".*/\1/' $^
+
+postgres: postgres.la postgres.exports
+	$(gx) gen-scheme-wrapper \
+	  -o $@ $< -g database -t guile_pg_init_~A_module \
+	  -i '$(pkglibdir)'
+endif !USE_CMOD
 
 snarfcppopts = $(DEFS) $(DEFAULT_INCLUDES) $(CPPFLAGS)
 
@@ -57,14 +74,24 @@ scheme.tsar: $(schemestems:=.scm)
 endif # MAINTAINER_MODE
 
 install-data-hook:
+if USE_CMOD
 	$(top_srcdir)/build-aux/sofix $(SOFIXFLAGS) \
 	  $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
-	$(mkmodcat) '$(GUILE_LIBSITE)'
+	$(GUILE_TOOLS) make-module-catalog \
+	  -t '$(DESTDIR)' '$(DESTDIR)$(GUILE_LIBSITE)'
+else !USE_CMOD
+	@if [ 1 = '$(FOR_MAKE_CHECK)' ] ; then		\
+	  mv -f postgres postgres.STASH ;		\
+	  $(MAKE) $(AM_MAKEFLAGS) postgres ;		\
+	  $(INSTALL_DATA) postgres '$(ddir)/postgres' ;	\
+	  mv -f postgres.STASH postgres ;		\
+	fi
+endif !USE_CMOD
 
 EXTRA_DIST = modsup.h
 
-DISTCLEANFILES = *.x
+DISTCLEANFILES = *.x postgres.exports
 
-CLEANFILES = *.x
+CLEANFILES = *.x postgres
 
 # Makefile.am ends here

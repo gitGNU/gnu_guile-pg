@@ -1,5 +1,23 @@
 2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build inst] Add support for "no C module" mode.
+
+	* Makefile.am (d_LTLIBRARIES): Conditionalize with ‘USE_CMOD’.
+	[!USE_CMOD] (pkglib_LTLIBRARIES, d_DATA): New vars.
+	[!USE_CMOD] (postgres.exports, postgres): New targets.
+	(install-data-hook): Conditionalize sofix invocation with ‘USE_CMOD’.
+	(install-data-hook) [USE_CMOD]: Don't use $(mkmodcat);
+	instead, invoke "$(GUILE_TOOLS) make-module-catalog" directly.
+	(install-data-hook) [!USE_CMOD]: Add commands to generate
+	and install an in-tree Scheme wrapper, if ‘FOR_MAKE_CHECK’ set.
+	(DISTCLEANFILES): Add postgres.exports.
+	(CLEANFILES): Add postgres.
+	* libpq.c (scm_init_database_postgres_module):
+	Conditionalize this GH_MODULE_LINK_FUNC with ‘ifdef USE_CMOD’.
+	[!USE_CMOD] (guile_pg_init_database_postgres_module): New func.
+
+2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Rename some libpq.c functions for uniformity.
 
 	U(X) ≡ "Rename from X".

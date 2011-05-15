@@ -39,6 +39,7 @@ fake-install:
 	top=`pwd`/fake-install ;		\
 	cd ../src ;				\
 	$(MAKE) $(AM_MAKEFLAGS) install		\
+	  FOR_MAKE_CHECK=1			\
 	  prefix="$$top"
 
 clean-local:

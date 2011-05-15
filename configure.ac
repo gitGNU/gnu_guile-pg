@@ -29,6 +29,14 @@ AM_CONFIG_HEADER([src/config.h])
 
 AM_MAINTAINER_MODE
 
+AC_ARG_ENABLE([cmod],[AS_HELP_STRING([--disable-cmod],
+ [do not install (database postgres) as a shared object library;
+  use a Scheme wrapper that does the dynamic-link "manually"
+  (default: install the module as a shared object library,
+  but only if Guile seems capable of loading it directly)])],[],[
+enable_cmod=yes
+])
+
 LT_PREREQ([2.2.6])
 LT_INIT([dlopen disable-static]) dnl module only
 
@@ -49,7 +57,23 @@ GUILE_FLAGS
 GUILE_SITE_DIR
 GUILE_LIBSITE_DIR
 
-GUILE_TOOLS_PROG([mkmodcat],[make-module-catalog])
+AS_IF([test xyes = x$enable_cmod],[
+AC_CACHE_CHECK([for "guile-tools make-module-catalog"],[pg_cv_mkmodcat],[
+if $GUILE_TOOLS make-module-catalog --version >/dev/null 2>&1
+then pg_cv_mkmodcat=yes
+else pg_cv_mkmodcat=no
+fi
+])])
+AM_CONDITIONAL([USE_CMOD],
+[test yes = $enable_cmod && test xyes = x"$pg_cv_mkmodcat"])
+
+AM_COND_IF([USE_CMOD],[
+  AC_DEFINE([USE_CMOD], 1,
+     [Define to 1 if Guile can load C modules.])
+  AC_MSG_NOTICE([will install C module directly])
+],[
+  AC_MSG_NOTICE([will install Scheme wrapper for shared object library])
+])
 
 saved_CPPFLAGS="$CPPFLAGS"	# restoration below
 saved_LDFLAGS="$LDFLAGS"

@@ -1,3 +1,14 @@
+2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build inst] Add support for "no C module" mode.
+
+	* autogen.sh: Import Guile-BAUX module ‘gen-scheme-wrapper’.
+	* configure.ac (cmod): New AC_ARG_ENABLE.
+	(mkmodcat): Delete GUILE_TOOLS_PROG.
+	(pg_cv_mkmodcat): New AC_CACHE_CHECK.
+	(USE_CMOD): New AM_CONDITIONAL.
+	(USE_CMOD): New AC_DEFINE.
+
 2011-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v] Do a partial install under test/; point ‘%load-path’ there.

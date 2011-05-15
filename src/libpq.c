@@ -3253,8 +3253,16 @@ init_module (void)
 #undef KLIST
 }
 
+#ifdef USE_CMOD
 GH_MODULE_LINK_FUNC ("database postgres"
                      ,database_postgres
                      ,init_module)
+#else
+void
+guile_pg_init_database_postgres_module (void)
+{
+  init_module ();
+}
+#endif
 
 /* libpq.c ends here */
