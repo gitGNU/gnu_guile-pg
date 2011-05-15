@@ -343,7 +343,7 @@
       (map (lambda (x)
              (xt #:DROP x))
            `((#:TABLE ,dq-table-name)
-             ;; Also drop associated sequences created by magic `serial'
+             ;; Also drop associated sequences created by magic ‘serial’
              ;; type.  Apparently, this was not handled automatically in
              ;; old PostgreSQL versions.  See PostgreSQL User Guide: The
              ;; Serial Types.

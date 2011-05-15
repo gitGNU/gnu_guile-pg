@@ -35,16 +35,16 @@
 
 2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Drop procs `pg-set-client-data!', `pg-get-client-data'.
+	Drop procs ‘pg-set-client-data!’, ‘pg-get-client-data’.
 
 	* basic.scm (test:set-client-data, test:get-client-data):
-	Eviscerate; simply return, and check for, the symbol `defunct'.
+	Eviscerate; simply return, and check for, the symbol ‘defunct’.
 
 2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Drop proc `pg-lo-get-connection'.
+	Drop proc ‘pg-lo-get-connection’.
 
-	* large.scm (test:lo-open-read): Don't call `pg-lo-get-connection'.
+	* large.scm (test:lo-open-read): Don't call ‘pg-lo-get-connection’.
 
 2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -52,14 +52,14 @@
 
 2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Make `pg-parameter-status' accept symbol for PARM.
+	Make ‘pg-parameter-status’ accept symbol for PARM.
 
 	* basic.scm (test:parameter-status): Use symbols.
-	(test:server-version): Use symbol for `pg-parameter-status' parm.
+	(test:server-version): Use symbol for ‘pg-parameter-status’ parm.
 
 2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	[test] Make more robust: Normalize `pg-client-encoding' rv.
+	[test] Make more robust: Normalize ‘pg-client-encoding’ rv.
 
 	* basic.scm (test:various-connection-info):
 	Add internal proc to normalize encoding names UNICODE to UTF8,
@@ -74,14 +74,14 @@
 
 2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	[test] Verify length of inserted `bytea' data.
+	[test] Verify length of inserted ‘bytea’ data.
 
 	* types-table.scm (test-m3):
-	Check `octet_length' of inserted data.
+	Check ‘octet_length’ of inserted data.
 
 2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	[test] Improve `pg-set-client-encoding' coverage.
+	[test] Improve ‘pg-set-client-encoding’ coverage.
 
 	* basic.scm (test:various-connection-info): Ensure
 	that the new encoding is actually different from the original.
@@ -95,15 +95,15 @@
 
 2008-09-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Use `(string-null? foo)' instead of `(string=? "" foo)'.
+	Use ‘(string-null? foo)’ instead of ‘(string=? "" foo)’.
 
-	* basic.scm (ok?): Use `string-null?'.
+	* basic.scm (ok?): Use ‘string-null?’.
 
 2008-08-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Tighten up "show-platform" a bit.
 
-	* show-platform (recip): Use `RECIP'.
+	* show-platform (recip): Use ‘RECIP’.
 	(go): Avoid head(1).  Also, don't report libguile version.
 
 2008-08-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
@@ -120,7 +120,7 @@
 
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Remove `pg-get-connection'.
+	Remove ‘pg-get-connection’.
 
 	* basic.scm (test:get-connection): Pass unconditionally.
 
@@ -129,26 +129,26 @@
 	Use absolute dir name to locate test/*.scm.
 
 	* runtest.in (srcdir): Delete var.
-	(ts): New var; use in `exec' invocation.
+	(ts): New var; use in ‘exec’ invocation.
 	(tscm): New var, exported.
-	* testing.scm (manually-load): Use env var `tscm'.
+	* testing.scm (manually-load): Use env var ‘tscm’.
 
 2008-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	For "make check", drop result/connection object references when done.
 
 	* testing.scm (d/c): New proc.
-	(drop!): Use `d/c'.
+	(drop!): Use ‘d/c’.
 	(create!): Delete proc.
 	(fresh!): New proc.
-	* basic.scm: Use `fresh!'.
-	* large.scm: Use `fresh!'
-	(main): Use `pg-finish'.
-	* types-table.scm: Use `fresh!'.
-	(test-m2): Do `(m2 'finish)'.
-	(test-m3): Do `(m3 #:finish)'.
-	(cleanup!): Do `(m #:finish)'.
-	* meta.scm: Use `fresh!'; reset `RES' and `CONN'.
+	* basic.scm: Use ‘fresh!’.
+	* large.scm: Use ‘fresh!’
+	(main): Use ‘pg-finish’.
+	* types-table.scm: Use ‘fresh!’.
+	(test-m2): Do ‘(m2 ’finish)'.
+	(test-m3): Do ‘(m3 #:finish)’.
+	(cleanup!): Do ‘(m #:finish)’.
+	* meta.scm: Use ‘fresh!’; reset ‘RES’ and ‘CONN’.
 
 2008-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -163,7 +163,7 @@
 
 	* testing.scm (fs): New proc.
 	(drop!, create!): Rewrite procs.
-	* basic.scm: Move `drop!' and `create!' calls after `use-modules'.
+	* basic.scm: Move ‘drop!’ and ‘create!’ calls after ‘use-modules’.
 	* large.scm: Likewise.
 	* types-table.scm: Likewise.
 	* meta.scm: Likewise.
@@ -224,7 +224,7 @@
 	Avoid requiring procs from module (ice-9 regex).
 
 	* guile-pg-basic-tests.scm (test:set-notice-out!-1):
-	Use `regexp-exec' and `make-regexp'.
+	Use ‘regexp-exec’ and ‘make-regexp’.
 
 2008-02-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -243,7 +243,7 @@
 2007-10-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* guile-pg-basic-tests.scm (test:asynchronous-retrieval):
-	After sending loop using `pg-flush' until all sent.
+	After sending loop using ‘pg-flush’ until all sent.
 
 2007-10-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -259,12 +259,12 @@
 
 	* guile-pg-abstraction-scm-tests.scm
 	(test-m3 check-1): New internal proc.
-	(test-m3): Add `between' checks.
+	(test-m3): Add ‘between’ checks.
 	(main): Update expected-count.
 
 2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	* guile-pg-abstraction-scm-tests.scm (test-m3): Add `in/set' checks.
+	* guile-pg-abstraction-scm-tests.scm (test-m3): Add ‘in/set’ checks.
 	(main): Update expected-count.
 
 	* abstraction-scm-tests.sh: Explicitly load postgres-qcons.scm.
@@ -272,7 +272,7 @@
 2007-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* guile-pg-abstraction-scm-tests.scm (test-m3): New proc.
-	(main): Update expected-count and call `mtest-m3'.
+	(main): Update expected-count and call ‘mtest-m3’.
 
 2007-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -282,12 +282,12 @@
 2007-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* guile-pg-abstraction-scm-tests.scm (mgr): New proc.
-	Throughout, use it instead of `pgtable-manager'.
+	Throughout, use it instead of ‘pgtable-manager’.
 
 2007-04-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* guile-pg-abstraction-scm-tests.scm (test-m2):
-	Add check for `tuples-result->rows'.
+	Add check for ‘tuples-result->rows’.
 	(main): Update expected-count.
 
 2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
@@ -307,12 +307,12 @@
 
 2007-01-29  Thien-Thi Nguyen  <ttn@ambire>
 
-	* guile-pg-lo-tests.scm (test:lo-seek): Use `open-output-file'.
+	* guile-pg-lo-tests.scm (test:lo-seek): Use ‘open-output-file’.
 
 2006-04-05  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (test:asynchronous-retrieval):
-	Move nonblocking disabling prior to first `pg-putline'.
+	Move nonblocking disabling prior to first ‘pg-putline’.
 
 2006-04-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -323,17 +323,17 @@
 2006-04-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (test:asynchronous-retrieval):
-	Turn off nonblocking mode right before `pg-endcopy' call.
+	Turn off nonblocking mode right before ‘pg-endcopy’ call.
 
 2006-04-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (test:fnumber-and-friends):
-	Rename test from `test:fnumber'.  Update unique caller.
+	Rename test from ‘test:fnumber’.  Update unique caller.
 
 2006-04-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (test:parameter-status)
-	(test:set-error-verbosity): Use `PQPROTOCOLVERSION'.
+	(test:set-error-verbosity): Use ‘PQPROTOCOLVERSION’.
 
 2006-03-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -345,13 +345,13 @@
 2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-abstraction-scm-tests.scm:
-	Convert "where ..." clauses to `#:where EXPR'.
+	Convert "where ..." clauses to ‘#:where EXPR’.
 	(main): Enable verbose output.
 
 2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-abstraction-scm-tests.scm
-	(pass-if): Set procedure's `name' property.
+	(pass-if): Set procedure's ‘name’ property.
 	(sel/check): If tuples not ok, display its error message.
 
 2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -391,7 +391,7 @@
 	* guile-pg-abstraction-scm-tests.scm (objwalk): Delete data structure.
 	(sel/check check-dim): New internal proc. Update callers to use it.
 	(sel/check): No longer compute and validate array.
-	(test:m-procs, cleanup!): Don't set or clear `objwalk', respectively.
+	(test:m-procs, cleanup!): Don't set or clear ‘objwalk’, respectively.
 	(test-m2): Simplify 2x2 test into single "m2 is 2x2" test.
 	(main): Update expected-pass counts.
 
@@ -416,22 +416,22 @@
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-abstraction-scm-tests.scm (test:m-help): Delete test proc.
-	(main): No longer use `test:m-help'. Update expected-passes number.
+	(main): No longer use ‘test:m-help’. Update expected-passes number.
 
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-abstraction-scm-tests.scm
-	(mtest:select-*): Use string for `select' arg.
+	(mtest:select-*): Use string for ‘select’ arg.
 
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* guile-pg-lo-tests.scm: Use `define-macro'.
+	* guile-pg-lo-tests.scm: Use ‘define-macro’.
 	* guile-pg-abstraction-scm-tests.scm: Likewise.
 
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-abstraction-scm-tests.scm:
-	No longer use strings for first arg to `select'.
+	No longer use strings for first arg to ‘select’.
 
 2005-01-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -442,12 +442,12 @@
 2005-01-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (ok?):
-	Check `pg-result-error-message' return value.
+	Check ‘pg-result-error-message’ return value.
 
 2004-11-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (test:asynchronous-retrieval): Fix bug:
-	Move tuple check inside `begin' block.  Also, no longer flush ports.
+	Move tuple check inside ‘begin’ block.  Also, no longer flush ports.
 
 2004-11-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -459,7 +459,7 @@
 2004-11-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (cexec): Append semicolon to command.
-	(test:set-notice-out!-1): Omit semicolon from arg to `cexec'.
+	(test:set-notice-out!-1): Omit semicolon from arg to ‘cexec’.
 	(test:set-notice-out!-2): Likewise.
 
 2004-11-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -474,9 +474,9 @@
 
 2004-11-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* drop.sh.in: Handle DEBUG=1. Handle option `--no-worries'.
+	* drop.sh.in: Handle DEBUG=1. Handle option ‘--no-worries’.
 	* create.sh.in: Handle DEBUG=1.
-	* basic-tests.sh: Pass `--no-worries' for first drop.
+	* basic-tests.sh: Pass ‘--no-worries’ for first drop.
 	* lo-tests.sh: Likewise.
 	* abstraction-scm-tests.sh: Likewise.
 
@@ -489,7 +489,7 @@
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm
-	(test:getline): Update return value check for `pg-endcopy'.
+	(test:getline): Update return value check for ‘pg-endcopy’.
 	(test:getlineasync): Likewise.
 	(test:putline): Likewise.
 
@@ -517,7 +517,7 @@
 2004-06-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* alive.sh: No longer load $top_builddir/scm/postgres.scm.
-	Instead, evaluate `use-modules' form.
+	Instead, evaluate ‘use-modules’ form.
 
 	* basic-tests.sh: No longer load $top_builddir/scm/postgres.scm.
 	* lo-tests.sh: Likewise.
@@ -527,14 +527,14 @@
 
 	* guile-pg-basic-tests.scm
 	(test:oid-value-was-oid-status): Rename from
-	`test:oid-status'.  Convert to check using `pg-oid-value'.
-	(test:oid-value): Also check that `oid' is a number.
-	(main): Use `test:oid-value-was-oid-status'.
+	‘test:oid-status’.  Convert to check using ‘pg-oid-value’.
+	(test:oid-value): Also check that ‘oid’ is a number.
+	(main): Use ‘test:oid-value-was-oid-status’.
 
 2004-06-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (main):
-	No longer check `pg-guile-pg-version'.
+	No longer check ‘pg-guile-pg-version’.
 	* guile-pg-lo-tests.scm (main): Likewise.
 
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -542,15 +542,15 @@
 	* guile-pg-lo-tests.scm
 	(some-test-data): Make var into a single string.
 	(test:make-data): Rewrite.
-	(test:lo-export): Update `some-test-data' use site.
+	(test:lo-export): Update ‘some-test-data’ use site.
 
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-lo-tests.scm: Use module (ice-9 rdelim).
 	(eval-port): Delete proc.
 	(some-test-data): No longer quote sexp.
-	(test:lo-open-read): No longer use `eval-port'.
-	Instead, check values of two calls to `read'.
+	(test:lo-open-read): No longer use ‘eval-port’.
+	Instead, check values of two calls to ‘read’.
 
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -572,17 +572,17 @@
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm
-	(tuples-ok?): Also check `pg-binary-tuples?'.
+	(tuples-ok?): Also check ‘pg-binary-tuples?’.
 	(getvalues, gettuple): Delete unused procs.
 	(test:pg-guile-pg-loaded): New test proc.
 	(main): Use new test proc to replace
-	raw `pg-guile-pg-loaded' test.
+	raw ‘pg-guile-pg-loaded’ test.
 
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (count-records): Fix typo.
-	(test:ftypes): Rename to `test:fmod+ftypes'.
-	Add `pg-fmod' checks for each field.
+	(test:ftypes): Rename to ‘test:fmod+ftypes’.
+	Add ‘pg-fmod’ checks for each field.
 
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -668,8 +668,8 @@
 
 2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* show-platform (go): Omit `uname -p' and `uname -v' output.
-	(gosexp): New func. Use it for mailing intead of `go'.
+	* show-platform (go): Omit ‘uname -p’ and ‘uname -v’ output.
+	(gosexp): New func. Use it for mailing intead of ‘go’.
 
 2004-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -679,17 +679,17 @@
 
 2004-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* guile-pg-abstraction-scm-tests.scm: For `m2',
-	also test `tuples-result->object-alist'.
+	* guile-pg-abstraction-scm-tests.scm: For ‘m2’,
+	also test ‘tuples-result->object-alist’.
 
 2004-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* testing.scm: Update copyright.
 	(test-report): Return #f on count mismatch,
-	non-zero `xpass-count', or non-zero `fail-count'.
+	non-zero ‘xpass-count’, or non-zero ‘fail-count’.
 
 	* guile-pg-lo-tests.scm: Update copyright.
-	Use `test-report' return value as exit value.
+	Use ‘test-report’ return value as exit value.
 	* guile-pg-basic-tests.scm: Likewise.
 	* guile-pg-abstraction-scm-tests.scm: Likewise.
 
@@ -700,17 +700,17 @@
 2004-01-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-lo-tests.scm: Update copyright.
-	(eval-port): Use `eval-in-module' instead of naked `eval'.
+	(eval-port): Use ‘eval-in-module’ instead of naked ‘eval’.
 
 2003-11-27  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* Makefile.am (TESTS_ENVIRONMENT): Also define var `GUILE'.
+	* Makefile.am (TESTS_ENVIRONMENT): Also define var ‘GUILE’.
 
 2003-11-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* guile-pg-basic-tests.scm (result->output-string): New proc.
 	(test:count-records): Also do a manual line count to check backend
-	count as well as exercise `pg-print' via `result->output-string'.
+	count as well as exercise ‘pg-print’ via ‘result->output-string’.
 
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -738,7 +738,7 @@
 2003-01-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* guile-pg-basic-tests.scm (test:make-connection):
-	Also test using `pg-connection?'.
+	Also test using ‘pg-connection?’.
 
 2002-12-29  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
@@ -749,7 +749,7 @@
 	* abstraction-scm-tests: Likewise.
 
 	* guile-pg-abstraction-scm-tests.scm:
-	Look for testing.scm in `*srcdir*'.
+	Look for testing.scm in ‘*srcdir*’.
 
 	* guile-pg-basic-tests.scm: New file converted from .in file.
 	* guile-pg-lo-tests.scm: Likewise.
@@ -764,7 +764,7 @@
 
 2002-12-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
-	* Makefile.am (TESTS_ENVIRONMENT): Add `top_srcdir' and `srcdir'.
+	* Makefile.am (TESTS_ENVIRONMENT): Add ‘top_srcdir’ and ‘srcdir’.
 
 	* abstraction-scm-tests.sh:
 	Look for guile-pg-abstraction-scm-tests.scm under $srcdir.
@@ -772,7 +772,7 @@
 
 2002-12-25  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
-	* guile-pg-basic-tests.scm.in (run-cmd): Also use `pg-result?'.
+	* guile-pg-basic-tests.scm.in (run-cmd): Also use ‘pg-result?’.
 
 2002-12-23  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
@@ -816,9 +816,9 @@
 
 2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
-	* guile-pg-lo-tests.scm.in (test:lo-tell): New proc, run by `test'.
-	(test:make-connection): Use `->bool' instead of `if'.
-	(test:lo-open-read): Also test `pg-lo-get-connection'.
+	* guile-pg-lo-tests.scm.in (test:lo-tell): New proc, run by ‘test’.
+	(test:make-connection): Use ‘->bool’ instead of ‘if’.
+	(test:lo-open-read): Also test ‘pg-lo-get-connection’.
 
 2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 

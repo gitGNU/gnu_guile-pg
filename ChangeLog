@@ -137,17 +137,17 @@
 
 2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Drop procs `pg-set-client-data!', `pg-get-client-data'.
+	Drop procs ‘pg-set-client-data!’, ‘pg-get-client-data’.
 
 	* doc/guile-pg.twerp (Database Connections): Remove
 	@section "Client Data", including two @twerpdoc entries.
 
 2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Drop proc `pg-lo-get-connection'.
+	Drop proc ‘pg-lo-get-connection’.
 
 	* doc/guile-pg.twerp (Large Objects):
-	Remove @twerpdoc for `pg-lo-get-connection'.
+	Remove @twerpdoc for ‘pg-lo-get-connection’.
 
 2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -160,7 +160,7 @@
 	Mention imminent demise of certain procs.
 
 	* doc/guile-pg.twerp (Processing Results):
-	Don't mention `pg-set-client-data!'.
+	Don't mention ‘pg-set-client-data!’.
 	(Miscellaneous): Use object property in tracing example.
 
 2009-06-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
@@ -190,7 +190,7 @@
 	New (database postgres) proc: pg-server-version
 
 	* doc/guile-pg.twerp (Database Connections):
-	Add @twerpdoc for `pg-server-version'.
+	Add @twerpdoc for ‘pg-server-version’.
 	* configure.in (AC_CHECK_FUNCS): Add PQserverVersion.
 
 2009-06-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
@@ -208,7 +208,7 @@
 
 2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	[config] Trim `EXTRA_DIST' in Makefile.am files.
+	[config] Trim ‘EXTRA_DIST’ in Makefile.am files.
 
 	* Makefile.am (EXTRA_DIST): Delete THANKS.
 	* doc/Makefile.am (EXTRA_DIST): Delete twerp.mk-am-frag.
@@ -225,16 +225,16 @@
 
 	New (database postgres) proc: pg-mblen
 
-	* doc/guile-pg.twerp (Miscellaneous): Add @twerpdoc for `pg-mblen'.
-	(Not Included): Remove `PQmblen'.
-	* configure.in (AC_CHECK_DECLS): Add check for `pg_char_to_encoding'.
+	* doc/guile-pg.twerp (Miscellaneous): Add @twerpdoc for ‘pg-mblen’.
+	(Not Included): Remove ‘PQmblen’.
+	* configure.in (AC_CHECK_DECLS): Add check for ‘pg_char_to_encoding’.
 
 2009-06-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc] Update table of unaddressed interface elements.
 
 	* doc/guile-pg.twerp (Not Included): Add entries for
-	`PQdisplayTuples', `PQprintTuples', `PQmblen', `PQenv2encoding'.
+	‘PQdisplayTuples’, ‘PQprintTuples’, ‘PQmblen’, ‘PQenv2encoding’.
 
 2009-06-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -254,8 +254,8 @@
 	Remove support for unused SCM_OUTPORTP.
 
 	* build-aux/guile-pg.m4 (AC_GUILE_PG_FCOMPAT):
-	Delete AC_LINK_IFELSE check for `SCM_OUTPORTP'
-	and the related `HAVE_SCM_OUTPORTP' AC_DEFINE.
+	Delete AC_LINK_IFELSE check for ‘SCM_OUTPORTP’
+	and the related ‘HAVE_SCM_OUTPORTP’ AC_DEFINE.
 
 2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -273,16 +273,16 @@
 
 	Add infrastructure to more easily tweak GCC warnings for "make all".
 
-	* configure.in: When using GCC, don't modify `CFLAGS';
-	instead, set var `AGGRESSIVE_WARNINGS'.  Enable many warnings.
+	* configure.in: When using GCC, don't modify ‘CFLAGS’;
+	instead, set var ‘AGGRESSIVE_WARNINGS’.  Enable many warnings.
 	(AGGRESSIVE_WARNINGS): New AC_SUBST.
 
 2008-08-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Decruft: Don't check for `crypt' in libcrypt.
+	Decruft: Don't check for ‘crypt’ in libcrypt.
 
 	* build-aux/guile-pg.m4 (PQ_FLAGS): No longer check for func
-	`crypt' in libcrypt.  No longer modfiy `PQ_LDFLAGS' accordingly.
+	‘crypt’ in libcrypt.  No longer modfiy ‘PQ_LDFLAGS’ accordingly.
 
 2008-08-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -295,10 +295,10 @@
 	Drop support for PostgreSQL 7.3.x and earlier.
 
 	* build-aux/guile-pg.m4 (PQ_FLAGS): No longer check
-	for `PQsetdbLogin' in libpq.  Instead, check for
-	`PQprotocolVersion'.  Update error message.
-	* configure.in: No longer check for `PQconnectdb' in libpq.
-	No longer check for `InvalidOID' decl in libpq-fe.h.
+	for ‘PQsetdbLogin’ in libpq.  Instead, check for
+	‘PQprotocolVersion’.  Update error message.
+	* configure.in: No longer check for ‘PQconnectdb’ in libpq.
+	No longer check for ‘InvalidOID’ decl in libpq-fe.h.
 	(INVALIDOID_HEADER): Delete this AC_DEFINE.
 	(PQfmod, PQbinaryTuples, PQbackendPID)
 	(PQresultErrorMessage, PQpass, PQputnbytes)
@@ -310,7 +310,7 @@
 	New (database postgres-resx) proc: object<-result
 
 	* doc/guile-pg.twerp (Result Transforms): Reorg intro blurbs
-	slightly; add @twerpdoc for `object<-result'.
+	slightly; add @twerpdoc for ‘object<-result’.
 
 2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -391,90 +391,90 @@
 
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Use `PGresult' directly as result object (no more "extended result").
+	Use ‘PGresult’ directly as result object (no more "extended result").
 
 	* libpostgres.c (xr_t): Delete struct.
-	(res_p): Rename func from `xr_p'.
-	(res_unbox): Rename func from `xr_unbox'; return `PGresult *'.
+	(res_p): Rename func from ‘xr_p’.
+	(res_unbox): Rename func from ‘xr_unbox’; return ‘PGresult *’.
 	(RESULT): Delete unused macro.
-	(VALIDATE_RESULT_UNBOX): Rename from `VALIDATE_RESULT_UNBOX2';
-	drop second C var from arglist; use `res_unbox'.
-	(res_box): Rename from `xr_box'; take `PGresult *'.
-	(res_display): Rename from `xr_display'; use `res_unbox'.
-	(res_mark): Rename from `xr_mark'; use `res_unbox'.
-	(res_free): Rename from `xr_free'; use `res_unbox'; return 0.
-	(make_res): Rename from `make_xr'; use `res_box'.
-	(pg_exec, pg_exec_params): Use `make_res'.
-	(pg_result_p): Use `res_p'.
-	(pg_result_error_field): Use `VALIDATE_RESULT_UNBOX'.
+	(VALIDATE_RESULT_UNBOX): Rename from ‘VALIDATE_RESULT_UNBOX2’;
+	drop second C var from arglist; use ‘res_unbox’.
+	(res_box): Rename from ‘xr_box’; take ‘PGresult *’.
+	(res_display): Rename from ‘xr_display’; use ‘res_unbox’.
+	(res_mark): Rename from ‘xr_mark’; use ‘res_unbox’.
+	(res_free): Rename from ‘xr_free’; use ‘res_unbox’; return 0.
+	(make_res): Rename from ‘make_xr’; use ‘res_box’.
+	(pg_exec, pg_exec_params): Use ‘make_res’.
+	(pg_result_p): Use ‘res_p’.
+	(pg_result_error_field): Use ‘VALIDATE_RESULT_UNBOX’.
 	(pg_result_error_message): Likewise.
-	(pg_error_message): Use `res_p'.
-	(pg_result_status): Use `VALIDATE_RESULT_UNBOX'.
+	(pg_error_message): Use ‘res_p’.
+	(pg_result_status): Use ‘VALIDATE_RESULT_UNBOX’.
 	(pg_ntuples, pg_nfields, pg_cmdtuples, pg_oid_value): Likewise.
 	(pg_fname, pg_fnumber, pg_ftable, pg_ftablecol): Likewise.
 	(pg_fformat, pg_ftype, pg_fsize, pg_getvalue): Likewise.
 	(pg_getlength, pg_getisnull, pg_binary_tuples): Likewise.
 	(pg_fmod, pg_print): Likewise.
-	(pg_get_result): Use `make_res'.
-	(init_module): Use `res_mark', `res_free' and `res_display'.
+	(pg_get_result): Use ‘make_res’.
+	(init_module): Use ‘res_mark’, ‘res_free’ and ‘res_display’.
 
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Don't keep track of `conn' for result objects.
+	Don't keep track of ‘conn’ for result objects.
 
-	* libpostgres.c (xr_t): Delete member `conn'.
-	(xr_mark, make_xr): Update to not bother w/ `xr->conn'.
+	* libpostgres.c (xr_t): Delete member ‘conn’.
+	(xr_mark, make_xr): Update to not bother w/ ‘xr->conn’.
 
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Use `unsigned long int' instead of struct `smob_tag'.
+	Use ‘unsigned long int’ instead of struct ‘smob_tag’.
 
-	* libpostgres.c (smob_tag): Delete `typedef struct'.
-	(pg_conn_tag, pg_result_tag): Use `unsigned long int'.
+	* libpostgres.c (smob_tag): Delete ‘typedef struct’.
+	(pg_conn_tag, pg_result_tag): Use ‘unsigned long int’.
 	(xc_p, xc_box, xr_p, xr_box, init_module): Update references
-	to `pg_conn_tag' and `pg_result_tag' to use them directly.
+	to ‘pg_conn_tag’ and ‘pg_result_tag’ to use them directly.
 
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Don't keep track of `count' for smob/connection/result objects.
+	Don't keep track of ‘count’ for smob/connection/result objects.
 
-	* libpostgres.h (xc_t): Delete member `count'.
-	* libpostgres.c (smob_tag): Delete member `count'.
-	(xc_mark, xc_free): For GC_PRINT, display `xc' directly.
-	(xr_t): Delete member `count'.
-	(xr_mark, xr_free): For GC_PRINT, display `xr' directly.
-	(make_xr): Don't maintain `count' for result object.
+	* libpostgres.h (xc_t): Delete member ‘count’.
+	* libpostgres.c (smob_tag): Delete member ‘count’.
+	(xc_mark, xc_free): For GC_PRINT, display ‘xc’ directly.
+	(xr_t): Delete member ‘count’.
+	(xr_mark, xr_free): For GC_PRINT, display ‘xr’ directly.
+	(make_xr): Don't maintain ‘count’ for result object.
 	(pg_connectdb): Likewise, for connection object.
 
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Remove serial number from connection and result external reps.
 
-	* libpostgres.c (xc_display): Don't output `xc->count' and colon.
-	(xr_display): Don't output `xr->count' and colon.
+	* libpostgres.c (xc_display): Don't output ‘xc->count’ and colon.
+	(xr_display): Don't output ‘xr->count’ and colon.
 	* doc/guile-pg.twerp (Database Connections)
 	(Processing Results, Quick Start, Single-Table Abstraction):
 	Update examples and descriptions to not mention serial numbers.
 
 2008-07-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Remove `pg-get-connection'.
+	Remove ‘pg-get-connection’.
 
 	* libpostgres.c (pg_get_connection): Delete GH_DEFPROC.
-	* doc/guile-pg.twerp (Types Conversion): Define `CONN' in
-	example, instead of using `pg-get-connection' on a result.
+	* doc/guile-pg.twerp (Types Conversion): Define ‘CONN’ in
+	example, instead of using ‘pg-get-connection’ on a result.
 	(Processing Results): Likewise.  Also,
-	remove @twerpdoc for `pg-get-connection'.
+	remove @twerpdoc for ‘pg-get-connection’.
 
 2008-07-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Conditionalize `pg_encoding_to_char' decl; make its retval `const'.
+	Conditionalize ‘pg_encoding_to_char’ decl; make its retval ‘const’.
 
 	Reported by Hans Ruschinski <hans.ruschinski@gmail.com>.
 
 	* configure.in (pg_encoding_to_char): New AC_CHECK_DECLS.
-	* libpostgres.c (pg_encoding_to_char): Add `const' to retval
-	of this decl; surround w/ `#if !HAVE_DECL_PG_ENCODING_TO_CHAR'.
+	* libpostgres.c (pg_encoding_to_char): Add ‘const’ to retval
+	of this decl; surround w/ ‘#if !HAVE_DECL_PG_ENCODING_TO_CHAR’.
 
 2008-05-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -502,7 +502,7 @@
 	(.c.doc, .scm.doc, install-data-hook, .doc-index): Likewise.
 	* configure.in (AM_INIT_AUTOMAKE): Use one-arg form.
 	* autogen.sh: Simplify invocation of doc/.make-automake-frags.
-	Call automake with option `-Wall'.
+	Call automake with option ‘-Wall’.
 
 2008-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -517,7 +517,7 @@
 	Add handling for #:finish to pgtable-manager (and -worker) closure.
 
 	* scm/postgres-table.scm: From module (database postgres),
-	also select `pg-finish'.
+	also select ‘pg-finish’.
 	(pgtable-manager): Handle #:finish; add @findex entries.
 
 2008-05-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
@@ -550,7 +550,7 @@
 	Add standard introspection support to (database postgres-meta).
 
 	* scm/postgres-meta.scm: From module (database postgres-types),
-	select also `define-db-col-type'.
+	select also ‘define-db-col-type’.
 	(cardinal_number): New column type specification.
 	(character_data, sql_identifier): Likewise.
 	(INFSCH-DEFS): New data structure: alist of information schema coldefs.
@@ -574,24 +574,24 @@
 	Make gxrepl close connection when done.
 
 	* scm/postgres-gxrepl.scm: From module (database postgres),
-	select also `pg-finish'.
-	(gxrepl): Do `pg-finish' prior to gc.
+	select also ‘pg-finish’.
+	(gxrepl): Do ‘pg-finish’ prior to gc.
 
 2008-04-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Make qcons able to produce "{UNION,INTERSECT,EXCEPT} ALL".
 
 	* scm/postgres-qcons.scm (parse+make-SELECT-tree compose): Arg
-	TYPE now a rest (dotted) arg; pass w/o change to `list-sep-proc'.
+	TYPE now a rest (dotted) arg; pass w/o change to ‘list-sep-proc’.
 	(parse+make-SELECT-tree): Handle #:union-all,
 	#:intersect-all and #:except-all, as well.
 
 2008-04-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Small refactoring: Use macro `SCM_RETURN_NEWSMOB'.
+	Small refactoring: Use macro ‘SCM_RETURN_NEWSMOB’.
 
 	* libpostgres.c (xc_box, xr_box, sepo_box):
-	Use `SCM_RETURN_NEWSMOB'.
+	Use ‘SCM_RETURN_NEWSMOB’.
 
 2008-04-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -639,14 +639,14 @@
 2008-01-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* doc/guile-pg.twerp (Not Included): Remove entry for
-	`PQescapeStringConn', `PQescapeByteaConn' and `PQunescapeBytea'.
+	‘PQescapeStringConn’, ‘PQescapeByteaConn’ and ‘PQunescapeBytea’.
 
 2008-01-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* libpostgres.c (pg_escape_string_conn, pg_escape_bytea_conn)
 	(pg_unescape_bytea): New GH_DEFPROCs.
 	* doc/guile-pg.twerp (Miscellaneous): Add blurb and @twerpdoc for
-	`pg-escape-string-conn', `pg-escape-bytea-conn' and `pg-unescape-bytea'.
+	‘pg-escape-string-conn’, ‘pg-escape-bytea-conn’ and ‘pg-unescape-bytea’.
 
 2008-01-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -669,32 +669,32 @@
 2007-12-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* doc/guile-pg.twerp (Not Included): Downgrade
-	`PQescapeString' and `PQescapeBytea' to "deprecated".
+	‘PQescapeString’ and ‘PQescapeBytea’ to "deprecated".
 
 2007-12-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* libpostgres.c (pgrs_t): Delete typedef.
 	(_PGRES): Delete macro.
-	(pgrs): Make into array of `SCM'.
-	(xr_display, init_module): Use `PQresStatus'.
+	(pgrs): Make into array of ‘SCM’.
+	(xr_display, init_module): Use ‘PQresStatus’.
 
 2007-12-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	* libpostgres.c (pgrs_t): Remove member `n'.
+	* libpostgres.c (pgrs_t): Remove member ‘n’.
 	(pgrs): Order entries to match libpq-fe.h order.
 	(pgrs_count): Delete var.
 	(xr_display, pg_result_status): Clamp status value;
-	use it to index into `pgrs' directly.
-	(init_module): Use `sizeof (pgrs) / sizeof (pgrs_t)' directly.
+	use it to index into ‘pgrs’ directly.
+	(init_module): Use ‘sizeof (pgrs) / sizeof (pgrs_t)’ directly.
 
 2007-12-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* doc/guile-pg.twerp (Not Included):
-	Downgrade `PQresStatus' to "unuseful".
+	Downgrade ‘PQresStatus’ to "unuseful".
 
 2007-11-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	* contrib/ttn/markup.scm (markup-table-manager ->tree): Use `let'.
+	* contrib/ttn/markup.scm (markup-table-manager ->tree): Use ‘let’.
 
 2007-10-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -704,8 +704,8 @@
 2007-10-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* libpostgres.c (pg_flush): New GH_DEFPROC.
-	* doc/guile-pg.twerp (Not Included): Remove @deffn `PQflush'.
-	(Asynchronous Retrieval): Add @twerpdoc for `pg-flush'.
+	* doc/guile-pg.twerp (Not Included): Remove @deffn ‘PQflush’.
+	(Asynchronous Retrieval): Add @twerpdoc for ‘pg-flush’.
 
 2007-10-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -720,8 +720,8 @@
 
 	* doc/guile-pg.twerp (Database Connections):
 	Document external rep for closed connections.
-	Also add blurb and @twerpdoc for `pg-finish'.
-	(Not Included): Remove @deffn `PQfinish'.
+	Also add blurb and @twerpdoc for ‘pg-finish’.
+	(Not Included): Remove @deffn ‘PQfinish’.
 
 2007-10-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -739,9 +739,9 @@
 
 2007-08-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	* libpostgres_lo.c (lob_flush): Specify `unsigned char *ptr'.
-	Add typecast when used as arg 3 to `lo_write'.
-	(lob_fill_input): Add typecast for arg 3 of `lo_read'.
+	* libpostgres_lo.c (lob_flush): Specify ‘unsigned char *ptr’.
+	Add typecast when used as arg 3 to ‘lo_write’.
+	(lob_fill_input): Add typecast for arg 3 of ‘lo_read’.
 
 2007-08-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -759,18 +759,18 @@
 2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* scm/postgres-qcons.scm (any/all-rx): New compiled regexp.
-	(expr add-noise!): Handle `any--OP' and `all--OP'.
+	(expr add-noise!): Handle ‘any--OP’ and ‘all--OP’.
 	* doc/guile-pg.twerp (qcons special operators): Document them.
 
 2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	* scm/postgres-qcons.scm (expr add-noise!): Handle `between'.
-	* doc/guile-pg.twerp (qcons special operators): Document `between'.
+	* scm/postgres-qcons.scm (expr add-noise!): Handle ‘between’.
+	* doc/guile-pg.twerp (qcons special operators): Document ‘between’.
 
 2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	* scm/postgres-qcons.scm (expr add-noise!): Handle `in/set'.
-	* doc/guile-pg.twerp (qcons special operators): Document `in/set'.
+	* scm/postgres-qcons.scm (expr add-noise!): Handle ‘in/set’.
+	* doc/guile-pg.twerp (qcons special operators): Document ‘in/set’.
 
 2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -783,7 +783,7 @@
 	(varchar, character, bytea): New built-in type converters.
 
 	* doc/guile-pg.twerp (Selected Notes About Some Types):
-	Remove `decimal', `numeric', `varchar', `character', `bytea'.
+	Remove ‘decimal’, ‘numeric’, ‘varchar’, ‘character’, ‘bytea’.
 
 2007-05-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -817,7 +817,7 @@
 2007-04-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* scm/postgres-table.scm: From module (database
-	postgres-resx), also select `result->object-rows'.
+	postgres-resx), also select ‘result->object-rows’.
 	(pgtable-manager): Add support for #:tuples-result->rows.
 
 2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
@@ -838,7 +838,7 @@
 
 2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	* doc/Makefile.am (.twerp.texi): Specify `--scheme-implied'.
+	* doc/Makefile.am (.twerp.texi): Specify ‘--scheme-implied’.
 
 2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -879,7 +879,7 @@
 2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* configure.in (AC_CONFIG_SRCDIR): Remove.
-	(AC_CONFIG_AUX_DIR): New; specify subdir `build-aux'.
+	(AC_CONFIG_AUX_DIR): New; specify subdir ‘build-aux’.
 
 2007-04-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -890,11 +890,11 @@
 
 	* scm/postgres-table.scm (put, get): Delete proc aliases.
 	(ohints): New object property.
-	(select-proc, pgtable-manager): Use `ohints'.
+	(select-proc, pgtable-manager): Use ‘ohints’.
 
 	* scm/postgres-types.scm (put, get): Delete proc aliases.
 	(o/t): New object property.
-	(oid-type-name-cache): Use `o/t'.
+	(oid-type-name-cache): Use ‘o/t’.
 	Also, don't refresh if FRESH? is specified #f.
 
 	* doc/guile-pg.twerp (Database Connections): Update example.
@@ -906,7 +906,7 @@
 2007-03-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	* libpostgres.h (PG_DEFINE): Delete macro.
-	* libpostgres.c, libpostgres_lo.c: Use `GH_DEFPROC'.
+	* libpostgres.c, libpostgres_lo.c: Use ‘GH_DEFPROC’.
 
 2007-03-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -917,7 +917,7 @@
 	(select-proc): No longer special-case
 	strings for OUTSPEC or REST-CLAUSES.
 
-	* scm/postgres-qcons.scm (make-SELECT/COLS-tree): Use `expr' directly.
+	* scm/postgres-qcons.scm (make-SELECT/COLS-tree): Use ‘expr’ directly.
 	Also, no longer special-case string X; instead, let it signal error.
 	(make-SELECT/COLS-tree expr-nostring): Delete internal proc.
 
@@ -925,10 +925,10 @@
 
 	* bugtest/testlobseek.scm
 	* bugtest/testloseek.scm
-	* bugtest/testwrite.scm: Use `open-output-file'.
+	* bugtest/testwrite.scm: Use ‘open-output-file’.
 
 	* doc/guile-pg.twerp (Miscellaneous):
-	Use `open-output-file' in example.
+	Use ‘open-output-file’ in example.
 
 2006-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -954,14 +954,14 @@
 	New PG_DEFINE funcs.
 
 	* doc/guile-pg.twerp (Writing/Reading Data): Add blurb and
-	@twerpdoc for `pg-put-copy-data', `pg-put-copy-end' and
-	`pg-get-copy-data'.  Add @heading for obsolete COPY funcs.
+	@twerpdoc for ‘pg-put-copy-data’, ‘pg-put-copy-end’ and
+	‘pg-get-copy-data’.  Add @heading for obsolete COPY funcs.
 
 2006-04-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in (PQfreemem): Check for this func.
 
-	* libpostgres.c (pg_notifies) [HAVE_PQFREEMEM]: Use `PQfreemem'.
+	* libpostgres.c (pg_notifies) [HAVE_PQFREEMEM]: Use ‘PQfreemem’.
 
 2006-04-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -977,7 +977,7 @@
 	New PG_DEFINE funcs.
 
 	* doc/guile-pg.twerp (Processing Results): Add @twerpdoc
-	for `pg-ftable', `pg-ftablecol' and `pg-fformat'.
+	for ‘pg-ftable’, ‘pg-ftablecol’ and ‘pg-fformat’.
 
 2006-04-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -987,9 +987,9 @@
 
 	* libpostgres.c (pg_result_error_field, pg_transaction_status)
 	(pg_parameter_status, pg_set_error_verbosity):
-	Use `HAVE_PQPROTOCOLVERSION'.
+	Use ‘HAVE_PQPROTOCOLVERSION’.
 	(PQTRANSACTIONSTATUS, PQPARAMETERSTATUS, PQSETERRORVERBOSITY)
-	(PQRESULTERRORFIELD): Delete symbols.  Update `init_module'.
+	(PQRESULTERRORFIELD): Delete symbols.  Update ‘init_module’.
 
 2006-03-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1002,10 +1002,10 @@
 	(pg_result_error_field): New PG_DEFINE func.
 	(PQRESULTERRORFIELD) [HAVE_PQRESULTERRORFIELD]: New symbol.
 	(init_module) [HAVE_PQRESULTERRORFIELD]:
-	Include `PQRESULTERRORFIELD' in `goodies'.
+	Include ‘PQRESULTERRORFIELD’ in ‘goodies’.
 
 	* doc/guile-pg.twerp (Processing Results):
-	Add @twerpdoc for `pg-result-error-field'.
+	Add @twerpdoc for ‘pg-result-error-field’.
 
 2006-03-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1030,10 +1030,10 @@
 2006-03-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-qcons.scm (==kw-over-commas): New hash table.
-	(qcons-declare!): For #:keyword-args-ok, augment `==kw-over-commas'.
-	(expr add-noise!): Do kw rendering for ops in `==kw-over-commas'.
+	(qcons-declare!): For #:keyword-args-ok, augment ‘==kw-over-commas’.
+	(expr add-noise!): Do kw rendering for ops in ‘==kw-over-commas’.
 
-	* doc/mkinc: Add blurb and processed output of `==kw-over-commas'.
+	* doc/mkinc: Add blurb and processed output of ‘==kw-over-commas’.
 
 2006-03-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1046,7 +1046,7 @@
 
 2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c: Throughout, remove explicit `(void)' casts.
+	* libpostgres.c: Throughout, remove explicit ‘(void)’ casts.
 
 2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1055,7 +1055,7 @@
 2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in (HAVE_PARAMVARIANTS):
-	New AC_DEFINE if `PQexecParams' found.
+	New AC_DEFINE if ‘PQexecParams’ found.
 
 	* libpostgres.c
 	(noparams) [! HAVE_PARAMVARIANTS]: New static string.
@@ -1071,18 +1071,18 @@
 	(pg_send_query_prepared): Likewise.
 	(PARAMVARIANTS) [HAVE_PARAMVARIANTS]: New symbol.
 	(init_module) [HAVE_PARAMVARIANTS]:
-	Include `PARAMVARIANTS' in `goodies'.
+	Include ‘PARAMVARIANTS’ in ‘goodies’.
 
 	* doc/guile-pg.twerp (Retrieving Data): Add "Parameters" to menu.
 	(Parameters): New node/section.
 	(Synchronous Retrieval): Add intro blurb, @xref to "Parameters",
-	and @twerpdoc for `pg-exec-params' and `pg-exec-prepared'.
+	and @twerpdoc for ‘pg-exec-params’ and ‘pg-exec-prepared’.
 	(Asynchronous Retrieval): Add @xref to "Parameters" and @twerpdoc
-	for `pg-send-query-params' and `pg-send-query-prepared'.
+	for ‘pg-send-query-params’ and ‘pg-send-query-prepared’.
 
 2006-03-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c (pg_parameter_status): Make const auto var `cstatus'.
+	* libpostgres.c (pg_parameter_status): Make const auto var ‘cstatus’.
 
 2006-03-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1092,10 +1092,10 @@
 	(pg_set_error_verbosity): New PG_DEFINE func.
 	[HAVE_PQSETERRORVERBOSITY] (PQSETERRORVERBOSITY): New symbol.
 	(init_module) [HAVE_PQSETERRORVERBOSITY]:
-	Include `PQSETERRORVERBOSITY' in `goodies'.
+	Include ‘PQSETERRORVERBOSITY’ in ‘goodies’.
 
 	* doc/guile-pg.twerp (Miscellaneous): Add
-	@erindex and @twerpdoc for `pg-set-error-verbosity'.
+	@erindex and @twerpdoc for ‘pg-set-error-verbosity’.
 
 2006-03-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1104,10 +1104,10 @@
 	* libpostgres.c (pg_parameter_status): New PG_DEFINE func.
 	[HAVE_PQPARAMETERSTATUS] (PQPARAMETERSTATUS): New symbol.
 	(init_module) [HAVE_PQPARAMETERSTATUS]:
-	Include `PQPARAMETERSTATUS' in `goodies'.
+	Include ‘PQPARAMETERSTATUS’ in ‘goodies’.
 
 	* doc/guile-pg.twerp (Database Connections):
-	Add @twerpdoc for `pg-parameter-status'.
+	Add @twerpdoc for ‘pg-parameter-status’.
 
 2006-03-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1118,10 +1118,10 @@
 	(pg_transaction_status): New PG_DEFINE func.
 	(PQTRANSACTIONSTATUS) [HAVE_PQTRANSACTIONSTATUS]: New symbol.
 	(init_module) [HAVE_PQTRANSACTIONSTATUS]:
-	Include `PQTRANSACTIONSTATUS' in `goodies'.
+	Include ‘PQTRANSACTIONSTATUS’ in ‘goodies’.
 
 	* doc/guile-pg.twerp (Database Connections):
-	Add @twerdoc for `pg-transaction-status'.
+	Add @twerdoc for ‘pg-transaction-status’.
 
 2006-03-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1130,20 +1130,20 @@
 	* libpostgres.c (pg_protocol_version): New PG_DEFINE func.
 	[HAVE_PQPROTOCOLVERSION] (PQPROTOCOLVERSION): New symbol.
 	(init_module) [HAVE_PQPROTOCOLVERSION]:
-	Include `PQPROTOCOLVERSION' in `goodies'.
+	Include ‘PQPROTOCOLVERSION’ in ‘goodies’.
 
 	* doc/guile-pg.twerp (Database Connections):
-	Add blurb and @twerpdoc for `pg-protocol-version'.
+	Add blurb and @twerpdoc for ‘pg-protocol-version’.
 
 2006-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in: Quote (with square brackets) AC_CHECK_FUNCS arg.
-	Also for the arg, use backslash at eol instead of `dnl'.
+	Also for the arg, use backslash at eol instead of ‘dnl’.
 
 2006-01-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* doc/guile-pg.twerp (Single-Table Abstraction):
-	Remove @twerpdoc for `tuples-result->table'.
+	Remove @twerpdoc for ‘tuples-result->table’.
 
 2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1162,7 +1162,7 @@
 2005-08-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm:
-	From module (database postgres), select `pg-make-print-options'.
+	From module (database postgres), select ‘pg-make-print-options’.
 	(gxrepl -print): Print result rows with separator " | ".
 
 2005-08-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -1172,7 +1172,7 @@
 
 2005-08-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostres.c (pg_print): Force output prior to `PQprint' call.
+	* libpostres.c (pg_print): Force output prior to ‘PQprint’ call.
 
 2005-08-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1182,17 +1182,17 @@
 
 	* scm/postgres-table.scm (where-clausifier): Delete proc.
 	* doc/guile-pg.twerp (Single-Table Abstraction): Remove @twerpdoc
-	for `where-clausifier'.  Also, rewrite example without it.
+	for ‘where-clausifier’.  Also, rewrite example without it.
 
 2005-08-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostres.c (pg_guile_pg_loaded):
-	Use `false-if-exception' in docstring example.
+	Use ‘false-if-exception’ in docstring example.
 
 2005-07-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in (top_builddir_absolute): Delete AC_SUBST var.
-	* wily-guile.in (top_builddir): Use `abs_top_builddir'.
+	* wily-guile.in (top_builddir): Use ‘abs_top_builddir’.
 
 2005-07-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1233,30 +1233,30 @@
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* doc/mkinc (symbol->texi): New proc.
-	(pp-ls): Use `symbol->texi'.
+	(pp-ls): Use ‘symbol->texi’.
 
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-qcons.scm (*conditional-operations*): Add a bunch.
 	(*infix-operations*): Likewise.
 	(*postfix-display-aliases*): New var.
-	(*display-aliases*): Use `*postfix-display-aliases*'.
-	(*postfix-operations*): Add `!'. Use `*postfix-display-aliases*'.
+	(*display-aliases*): Use ‘*postfix-display-aliases*’.
+	(*postfix-operations*): Add ‘!’. Use ‘*postfix-display-aliases*’.
 
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-meta.scm:
 	From module (database postgres-qcons), no longer select
-	`make-SELECT/FROM/COLS-tree' or `parse+make-SELECT/tail-tree'.
-	Instead, select `parse+make-SELECT-tree'.
-	(table-fields-info): Use `parse+make-SELECT-tree'.
+	‘make-SELECT/FROM/COLS-tree’ or ‘parse+make-SELECT/tail-tree’.
+	Instead, select ‘parse+make-SELECT-tree’.
+	(table-fields-info): Use ‘parse+make-SELECT-tree’.
 
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm From module (database postgres-qcons), no
-	longer select `make-SELECT/COLS-tree' or `parse+make-SELECT/tail-tree'.
-	Instead, select `parse+make-SELECT-tree'.
-	(sqlsel): Use `parse+make-SELECT-tree'.
+	longer select ‘make-SELECT/COLS-tree’ or ‘parse+make-SELECT/tail-tree’.
+	Instead, select ‘parse+make-SELECT-tree’.
+	(sqlsel): Use ‘parse+make-SELECT-tree’.
 
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1273,7 +1273,7 @@
 	* scm/postgres-qcons.scm (parse+make-SELECT-tree): New proc, exported.
 
 	* doc/guile-pg.twerp (Query Construction):
-	Add @twerpdoc for `parse+make-SELECT-tree'.
+	Add @twerpdoc for ‘parse+make-SELECT-tree’.
 
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1281,7 +1281,7 @@
 
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-gxrepl.scm (dt): Use `sqlsel'.
+	* scm/postgres-gxrepl.scm (dt): Use ‘sqlsel’.
 
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1296,7 +1296,7 @@
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm (dt): For this comma-command, convert
-	manually-constructed from tree into a `parse+make-SELECT/tail-tree'
+	manually-constructed from tree into a ‘parse+make-SELECT/tail-tree’
 	argument.
 
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -1306,18 +1306,18 @@
 2005-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-qcons.scm (paren): New proc.
-	(make-comma-separated-tree): Use `paren'.
-	(expr): Remove internal proc `paren'.
+	(make-comma-separated-tree): Use ‘paren’.
+	(expr): Remove internal proc ‘paren’.
 
 2005-02-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm: From module (database postgres-qcons),
-	no longer select `make-SELECT/FROM/COLS-tree'.
-	Instead, select `make-SELECT/COLS-tree'.
+	no longer select ‘make-SELECT/FROM/COLS-tree’.
+	Instead, select ‘make-SELECT/COLS-tree’.
 	(sqlsel): New proc.
-	(obvious): For this comma-command, use `sqlsel'.
+	(obvious): For this comma-command, use ‘sqlsel’.
 	(fsel): Likewise.
-	(dt): Likewise.  Also, use `make-SELECT/COLS-tree'.
+	(dt): Likewise.  Also, use ‘make-SELECT/COLS-tree’.
 
 2005-02-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1327,20 +1327,20 @@
 
 	* scm/postgres-gxrepl.scm (fsel): For this
 	comma-command, no longer do #f to null-list conversion;
-	let `parse+make-SELECT/tail-tree' handle it.  Also,
+	let ‘parse+make-SELECT/tail-tree’ handle it.  Also,
 	for #:where/combiner, no longer special-case singular condition.
 
 2005-02-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-qcons.scm (make-FROM-tree): No longer handle #f.
-	Also, use `as' instead of simple list.
-	(make-SELECT/FROM/COLS-tree): Handle `froms' as #f here.
+	Also, use ‘as’ instead of simple list.
+	(make-SELECT/FROM/COLS-tree): Handle ‘froms’ as #f here.
 	(parse+make-SELECT/tail-tree): Handle associated value of #f.
 
 2005-02-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-qcons.scm (as): New proc.
-	(expr, make-SELECT/COLS-tree): Use `as'.
+	(expr, make-SELECT/COLS-tree): Use ‘as’.
 
 2005-02-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1366,7 +1366,7 @@
 	* scm/postgres-meta.scm
 	(table-info): Use keyword for pgtable-manager message.
 	(describe-table!): Likewise.
-	Also, use #:k and #:connection instead of `pgdb'.
+	Also, use #:k and #:connection instead of ‘pgdb’.
 
 2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1376,7 +1376,7 @@
 
 2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-qcons.scm (expr): Handle `::' as SQL `CAST'.
+	* scm/postgres-qcons.scm (expr): Handle ‘::’ as SQL ‘CAST’.
 
 2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1384,22 +1384,22 @@
 
 2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-qcons.scm (expr): Add/use internal proc `paren'.
+	* scm/postgres-qcons.scm (expr): Add/use internal proc ‘paren’.
 
 2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-qcons.scm (*infix-operations*): Add `/'.
+	* scm/postgres-qcons.scm (*infix-operations*): Add ‘/’.
 
 2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-resx.scm (result->object-rows): New proc, exported.
 
 	* doc/guile-pg.twerp (Result Transforms):
-	Add @twerpdoc for `result->object-rows'.  Update intro.
+	Add @twerpdoc for ‘result->object-rows’.  Update intro.
 
 2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* doc/guile-pg.twerp (Result Transforms): Mention `identity'.
+	* doc/guile-pg.twerp (Result Transforms): Mention ‘identity’.
 
 2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1408,7 +1408,7 @@
 2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm (tuples-result->table): Document expiration.
-	(where-clausifier): Likewise. Also, pass result through `sql-pre'.
+	(where-clausifier): Likewise. Also, pass result through ‘sql-pre’.
 
 2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1422,18 +1422,18 @@
 
 	* scm/postgres-gxrepl.scm (fsel): For this comma-command,
 	handle arbitrary number of related expressions, not just one.
-	(gxrepl): Init connection property `#:cols'.
+	(gxrepl): Init connection property ‘#:cols’.
 
 2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm (fix): For this comma-command,
 	make handling consistent for unspecified set and reset
-	conditions.  Also, add `?' handling.
+	conditions.  Also, add ‘?’ handling.
 
 2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-gxrepl.scm (gxrepl): In sub-proc `-print',
-	handle trees of strings marked `--for-display', as well.
+	* scm/postgres-gxrepl.scm (gxrepl): In sub-proc ‘-print’,
+	handle trees of strings marked ‘--for-display’, as well.
 
 2005-02-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1443,41 +1443,41 @@
 
 	* scm/postgres-qcons.scm
 	(make-SELECT/COLS-tree, make-SELECT/FROM/COLS-tree):
-	Rename from `make-SELECT/OUT-tree' and `make-SELECT/FROM/OUT-tree',
+	Rename from ‘make-SELECT/OUT-tree’ and ‘make-SELECT/FROM/OUT-tree’,
 	respectively.  Update export list and callers.
 
 	* doc/guile-pg.twerp (Query Construction): Rename @twerpdoc
-	for `make-SELECT/OUT-tree' and `make-SELECT/FROM/OUT-tree'
-	to `make-SELECT/COLS-tree' and `make-SELECT/FROM/COLS-tree',
+	for ‘make-SELECT/OUT-tree’ and ‘make-SELECT/FROM/OUT-tree’
+	to ‘make-SELECT/COLS-tree’ and ‘make-SELECT/FROM/COLS-tree’,
 	respectively.
 
-	* scm/postgres-table.scm: Throughout, use `make-SELECT/FROM/COLS-tree'.
+	* scm/postgres-table.scm: Throughout, use ‘make-SELECT/FROM/COLS-tree’.
 
 	* scm/postgres-gxrepl.scm: Likewise.
 
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm: From module (database postgres-qcons),
-	no long select `sql-quote' or `make-SELECT/OUT-tree'.
-	(obvious): For this comma-command, use `make-SELECT/FROM/OUT-tree'.
+	no long select ‘sql-quote’ or ‘make-SELECT/OUT-tree’.
+	(obvious): For this comma-command, use ‘make-SELECT/FROM/OUT-tree’.
 	(dt, fsel): Likewise.
 
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-qcons.scm (make-FROM-tree):
 	If given #f, return the null tree.
-	Also, pass all symbols through `maybe-dq'.
+	Also, pass all symbols through ‘maybe-dq’.
 
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm: From module (database
-	postgres-qcons), no longer select `make-WHERE-tree'.
+	postgres-qcons), no longer select ‘make-WHERE-tree’.
 	(fix, fsel): Rewrite these comma-commands.
 
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-qcons.scm (maybe-dq): Never double-quote `*'.
-	(expr): Pass symbols through `maybe-dq'.
+	* scm/postgres-qcons.scm (maybe-dq): Never double-quote ‘*’.
+	(expr): Pass symbols through ‘maybe-dq’.
 	(make-SELECT/OUT-tree): Accept numbers.
 
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -1487,7 +1487,7 @@
 
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-qcons.scm: No longer call `qcons-declare!' at load-time.
+	* scm/postgres-qcons.scm: No longer call ‘qcons-declare!’ at load-time.
 	(*infix-operations*): Add symbols formerly added at load-time.
 
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -1503,23 +1503,23 @@
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm (--for-display): New object property.
-	(for-display, gxrepl): Use `--for-display'.
+	(for-display, gxrepl): Use ‘--for-display’.
 
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm: From module (database postgres-qcons),
-	no longer select `make-ORDER-BY-tree'
-	Instead, select `parse+make-SELECT/tail-tree'.
-	(dt): Use `parse+make-SELECT/tail-tree'.
+	no longer select ‘make-ORDER-BY-tree’
+	Instead, select ‘parse+make-SELECT/tail-tree’.
+	(dt): Use ‘parse+make-SELECT/tail-tree’.
 
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-qcons.scm (*conditional-operations*):
-	Remove `ALL', `ANY', `IN' and `LIKE'.
+	Remove ‘ALL’, ‘ANY’, ‘IN’ and ‘LIKE’.
 
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-qcons.scm (sql<-trees): Mark rv w/ `sql-pre'.
+	* scm/postgres-qcons.scm (sql<-trees): Mark rv w/ ‘sql-pre’.
 	(sql-command<-trees): Mention marking in docstring; nfc.
 
 2005-02-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -1533,17 +1533,17 @@
 	(sql-pre, sql-pre?, sql-unpre): New procs, exported.
 	(sql-quote): Mark return value as preformatted.
 	(maybe-dq): Likewise.
-	(expr): Remove #:q* handling. Arrange to do `sql-quote'
+	(expr): Remove #:q* handling. Arrange to do ‘sql-quote’
 	non-recursively, and only if the tree is not marked as preformatted.
 	(make-SELECT/OUT-tree): Mark naked strings as preformatted.
 	Likewise for strings used in title position.
 	(parse+make-SELECT/tail-tree): Rewrite.
 
 	* scm/postgres-table.scm: From module (database postgres-qcons),
-	select also `sql-pre' and `sql-pre?'. Re-export `sql-pre'.
+	select also ‘sql-pre’ and ‘sql-pre?’. Re-export ‘sql-pre’.
 	(preformatted): Delete object property.
 	(sql-pre): Delete proc.
-	(->db-insert-string): Use `sql-pre?'.
+	(->db-insert-string): Use ‘sql-pre?’.
 	(delete-rows-proc): Mark string where condition as preformatted.
 	(update-col-proc): Likewise.
 	(select-proc): Likewise for string outspec and string rest clauses.
@@ -1552,13 +1552,13 @@
 	excise #:q* from make-*-tree args.
 
 	* doc/guile-pg.twerp (Query Construction): Add section "Quoting".
-	Add @twerpdoc for `sql-pre', `sql-pre?' and `sql-unpre'
-	and move @twerpdoc for `sql-quote', there.
+	Add @twerpdoc for ‘sql-pre’, ‘sql-pre?’ and ‘sql-unpre’
+	and move @twerpdoc for ‘sql-quote’, there.
 
 2005-02-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-qcons.scm (make-ORDER-BY-tree):
-	Do not `maybe-dq' integer ordfunc.
+	Do not ‘maybe-dq’ integer ordfunc.
 
 2005-02-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1579,20 +1579,20 @@
 
 	* scm/postgres-qcons.scm (make-ORDER-BY-tree): Signal
 	error if ordering item is neither an integer nor a symbol.
-	Also, fix bug: Call `maybe-dq' only if ordering item is a symbol.
+	Also, fix bug: Call ‘maybe-dq’ only if ordering item is a symbol.
 
 2005-02-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-qcons.scm (maybe-dq): New proc.
-	(make-ORDER-BY-tree, make-SELECT/OUT-tree): Use `maybe-dq'.
+	(make-ORDER-BY-tree, make-SELECT/OUT-tree): Use ‘maybe-dq’.
 
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm: From module (database postgres-qcons),
-	select also `make-WHERE-tree' and `parse+make-SELECT/tail-tree'.
-	(delete-rows-proc): Use `make-WHERE-tree' if condition not a string.
+	select also ‘make-WHERE-tree’ and ‘parse+make-SELECT/tail-tree’.
+	(delete-rows-proc): Use ‘make-WHERE-tree’ if condition not a string.
 	(update-col-proc): Likewise.
-	(select-proc): Use `parse+make-SELECT/tail-tree'
+	(select-proc): Use ‘parse+make-SELECT/tail-tree’
 	if rest clauses do not start w/ a string.
 
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -1601,17 +1601,17 @@
 	(parse+make-SELECT/tail-tree): New proc, exported.
 
 	* doc/guile-pg.twerp (Query Construction):
-	Add @twerpdoc for `parse+make-SELECT/tail-tree'.
+	Add @twerpdoc for ‘parse+make-SELECT/tail-tree’.
 
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm (preformatted): New object property.
-	(sql-pre, ->db-insert-string): Use `preformatted'.
+	(sql-pre, ->db-insert-string): Use ‘preformatted’.
 
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm: From module (database postgres-qcons),
-	also select `make-comma-separated-tree' and `sql<-trees'.
+	also select ‘make-comma-separated-tree’ and ‘sql<-trees’.
 	(string-append/separator): Delete proc.
 	(char-sep, ssep, csep): Likewise.
 	(drop-proc): Compose SQL using trees, not strings.
@@ -1626,19 +1626,19 @@
 
 	* scm/postgres-qcons.scm (list-sep-proc): Return multi-arity proc.
 	(make-comma-separated-tree): New proc, exported.
-	(sql<-trees): Recurse immediately; do not use `for-each'.
+	(sql<-trees): Recurse immediately; do not use ‘for-each’.
 
 	* doc/guile-pg.twerp (Query Construction):
-	Add @twerpdoc for `make-comma-separated-tree'.
+	Add @twerpdoc for ‘make-comma-separated-tree’.
 
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm (string*): Delete proc.
-	(select-proc): Use `sql-command<-trees' to flatten rest clauses.
+	(select-proc): Use ‘sql-command<-trees’ to flatten rest clauses.
 
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-table.scm (pgtable-manager): Handle `#:k'.
+	* scm/postgres-table.scm (pgtable-manager): Handle ‘#:k’.
 
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1647,9 +1647,9 @@
 
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-resdisp.scm (decor): Rename from `intersection-style'.
+	* scm/postgres-resdisp.scm (decor): Rename from ‘intersection-style’.
 	Also, handle keyword arg.
-	(display-result): Use `decor'. Recognize/pass keywords.
+	(display-result): Use ‘decor’. Recognize/pass keywords.
 
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1660,16 +1660,16 @@
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm (pgdb-connection): Delete proc.
-	(pgtable-manager): Incorporate `pgdb-connection'.
+	(pgtable-manager): Incorporate ‘pgdb-connection’.
 
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm: From module (ice-9 common-list),
-	no longer select `every' or `pick-mappings.
-	From module (database postgres-col-defs), select also `validate-def'.
+	no longer select ‘every’ or ‘pick-mappings.
+	From module (database postgres-col-defs), select also ‘validate-def’.
 	(validate-def): Delete proc.
 	(validate-defs): Likewise.
-	(pgtable-manager): Incorporate `validate-defs'.
+	(pgtable-manager): Incorporate ‘validate-defs’.
 
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1677,43 +1677,43 @@
 	(validate-def): New proc, exported.
 
 	* doc/guile-pg.twerp (Column Definitions):
-	Add @twerpoc for `validate-def'.
+	Add @twerpoc for ‘validate-def’.
 
 2005-02-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm (drop-table-cmd): Delete proc.
 	(drop-sequence-cmd): Likewise.
-	(drop-proc): Incorporate `drop-table-cmd' and `drop-sequence-cmd'.
-	Use `serial?'.  Also, take `beex' instead of `pgdb'.  Update callers.
+	(drop-proc): Incorporate ‘drop-table-cmd’ and ‘drop-sequence-cmd’.
+	Use ‘serial?’.  Also, take ‘beex’ instead of ‘pgdb’.  Update callers.
 	(create-cmd): Delete proc.
-	(create-proc): Incorporate `create-cmd'. No longer validate defs.
-	Also, take `beex' instead of `pgdb'.  Update callers.
+	(create-proc): Incorporate ‘create-cmd’. No longer validate defs.
+	Also, take ‘beex’ instead of ‘pgdb’.  Update callers.
 	(clean-defs): No longer validate defs.
 	(cdefs->cols): Delete proc.
 	(pre-insert-into): New proc.
 	(insert-values-cmd): Delete proc.
-	(insert-values-proc): Incorporate `insert-values-cmd' and `cdefs->cols'.
-	No longer validate defs.  Take `beex' instead of `pgdb'.  Update callers.
-	(insert-col-values-cmd): Take `pre' instead of `table-name'.
+	(insert-values-proc): Incorporate ‘insert-values-cmd’ and ‘cdefs->cols’.
+	No longer validate defs.  Take ‘beex’ instead of ‘pgdb’.  Update callers.
+	(insert-col-values-cmd): Take ‘pre’ instead of ‘table-name’.
 	Update callers.
 	(insert-col-values-proc): No longer validate defs.
-	Take `beex' instead of `pgdb'.  Update callers.
+	Take ‘beex’ instead of ‘pgdb’.  Update callers.
 	(insert-alist-cmd): Delete proc.
-	(insert-alist-proc): Incorporate `insert-alist-cmd'.
-	No longer validate defs.  Take `beex' intead of `pgdb'.  Update callers.
+	(insert-alist-proc): Incorporate ‘insert-alist-cmd’.
+	No longer validate defs.  Take ‘beex’ intead of ‘pgdb’.  Update callers.
 	(delete-rows-cmd): Delete proc.
-	(delete-rows-proc): Take `beex' instead of `pgdb'.  Also, take
+	(delete-rows-proc): Take ‘beex’ instead of ‘pgdb’.  Also, take
 	third arg but do not do anything w/ it.  Update callers.
 	(update-col-cmd): Delete proc.
-	(update-col-proc): Incorporate `update-col-cmd'.
-	Take `beex' instead of `pgdb'.  Update callers.
-	(select-proc): Take `beex' instead of `pgdb'.  Update callers.
-	No longer validate defs.  Change `res' property to #:pgtable-ohints.
-	(pgtable-manager): Rewrite.  Update `res' property.
+	(update-col-proc): Incorporate ‘update-col-cmd’.
+	Take ‘beex’ instead of ‘pgdb’.  Update callers.
+	(select-proc): Take ‘beex’ instead of ‘pgdb’.  Update callers.
+	No longer validate defs.  Change ‘res’ property to #:pgtable-ohints.
+	(pgtable-manager): Rewrite.  Update ‘res’ property.
 
 2005-02-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-table.scm (pgdb-connection): Do not `fmt' error message.
+	* scm/postgres-table.scm (pgdb-connection): Do not ‘fmt’ error message.
 
 2005-02-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1739,32 +1739,32 @@
 2005-02-17  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm: From module (database postgres),
-	select also `pg-result-error-message'.
-	(gxrepl): Do not display result status if `PGRES_TUPLES_OK'.
+	select also ‘pg-result-error-message’.
+	(gxrepl): Do not display result status if ‘PGRES_TUPLES_OK’.
 
 2005-02-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm (obvious): Skip proc docstring.
-	(dt): Tighten output formatting.  Use `#:q*'.
+	(dt): Tighten output formatting.  Use ‘#:q*’.
 	(fix, fsel): New comma-commands.
 
 	* doc/guile-pg.twerp (Easy Interaction):
-	Give examples on `fix' and `fsel'.
+	Give examples on ‘fix’ and ‘fsel’.
 
 2005-02-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-gxrepl.scm (dt): Convert `table-name' to string.
+	* scm/postgres-gxrepl.scm (dt): Convert ‘table-name’ to string.
 	(gxrepl): New comma-command.
 	(q): Delete comma-command.
 
 2005-02-16  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-qcons.scm (*conditional-operations*): Add `!='.
+	* scm/postgres-qcons.scm (*conditional-operations*): Add ‘!=’.
 	(*sql-functions*): Delete var and associated load-time actions.
-	(qcons-declare!): Remove handling for `*sql-functions*'.
+	(qcons-declare!): Remove handling for ‘*sql-functions*’.
 	(sql-quote): No longer accept symbols.
 	(expr): For op, if not recognized, handle as a function application.
-	Add special handling for `#:q*', `case', `cond', `if', #t and #f.
+	Add special handling for ‘#:q*’, ‘case’, ‘cond’, ‘if’, #t and #f.
 	(make-SELECT/OUT-tree): For symbolic elements,
 	do not double-quote if table name is included.
 
@@ -1776,7 +1776,7 @@
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-gxrepl.scm: Autoload (ice-9 pretty-print).
-	From (database postgres-qcons), select also `make-SELECT/OUT-tree'.
+	From (database postgres-qcons), select also ‘make-SELECT/OUT-tree’.
 	(obvious): New comma-command.
 
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -1795,12 +1795,12 @@
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm: From module (database postgres-qcons),
-	select also `make-SELECT/FROM/OUT-tree' and `sql-command<-trees'.
-	(compile-outspec): No longer use `symbol->qstring'.
+	select also ‘make-SELECT/FROM/OUT-tree’ and ‘sql-command<-trees’.
+	(compile-outspec): No longer use ‘symbol->qstring’.
 	Also, no longer do "AS" or comma-separation formatting.
 	(select-proc): No longer do "SELECT...FROM" formatting.
-	Instead, use `make-SELECT/FROM/OUT-tree' and `sql-command<-trees'.
-	(pgtable-manager): Document expiration date of `select' string support.
+	Instead, use ‘make-SELECT/FROM/OUT-tree’ and ‘sql-command<-trees’.
+	(pgtable-manager): Document expiration date of ‘select’ string support.
 
 2005-02-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1810,7 +1810,7 @@
 2005-02-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm (make-v): New proc.
-	(tuples-result->table): Rewrite to avoid `iota'.
+	(tuples-result->table): Rewrite to avoid ‘iota’.
 	(t-obj-walk-proc): Likewise.
 
 2005-02-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -1825,9 +1825,9 @@
 2005-02-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-qcons.scm (*infix-operations*):
-	Rename from `*binary-infix-operations*'.
-	Add `+' and `-' in load-time actions.
-	(qcons-declare!): Use `*infix-operations*'. Rename key likewise.
+	Rename from ‘*binary-infix-operations*’.
+	Add ‘+’ and ‘-’ in load-time actions.
+	(qcons-declare!): Use ‘*infix-operations*’. Rename key likewise.
 	(expr): Likewise. Also, handle arity greater than 2 for infix ops.
 
 2005-02-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -1858,18 +1858,18 @@
 	(sql-command<-trees): Likewise.
 
 	* doc/guile-pg.twerp (Query Construction): Expand. Add sections.
-	Add @twerpdoc for `qcons-declare!', `make-WHERE-tree',
-	`make-GROUP-BY-tree', `make-HAVING-tree', `make-ORDER-BY-tree',
-	`make-SELECT/OUT-tree', `make-FROM-tree', `make-SELECT/FROM/OUT-tree',
-	`sql<-trees' and `sql-command<-trees'.
+	Add @twerpdoc for ‘qcons-declare!’, ‘make-WHERE-tree’,
+	‘make-GROUP-BY-tree’, ‘make-HAVING-tree’, ‘make-ORDER-BY-tree’,
+	‘make-SELECT/OUT-tree’, ‘make-FROM-tree’, ‘make-SELECT/FROM/OUT-tree’,
+	‘sql<-trees’ and ‘sql-command<-trees’.
 
 2005-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-meta.scm (fs): New proc.
-	(psql-command, strictly-check-types/elaborate!): Use `fs'.
+	(psql-command, strictly-check-types/elaborate!): Use ‘fs’.
 
-	* scm/postgres-table.scm (fmt): Use `simple-format'.
-	(symbol->qstring): Use `fmt'.
+	* scm/postgres-table.scm (fmt): Use ‘simple-format’.
+	(symbol->qstring): Use ‘fmt’.
 
 2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1907,14 +1907,14 @@
 	(host-stringifier): Likewise.
 	(host-objectifier): Likewise.
 	(inet): For this built-in type converter,
-	rewrite to use `n+m-stringifier' and `n+m-objectifier'.
+	rewrite to use ‘n+m-stringifier’ and ‘n+m-objectifier’.
 	(cidr, inet-host): New built-in type converters.
 
 2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-types.scm (bigint): New built-in type converter.
 	(int2, int8, double, float8, bigserial, serial4, serial8): Likewise.
-	(serial, inet): Remove `lambda' wrapping.
+	(serial, inet): Remove ‘lambda’ wrapping.
 	(name): Bump truncation to 63. Make it conditional.
 
 2005-02-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -1928,7 +1928,7 @@
 
 	* scm/postgres-types.scm (dbcoltype:name): Delete proc.
 	* doc/guile-pg.twerp (Types Conversion):
-	Remove `dbcoltype:name' @twerpdoc.
+	Remove ‘dbcoltype:name’ @twerpdoc.
 
 2005-01-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -1943,11 +1943,11 @@
 
 	* scm/postgres-table.scm (sql-quote): Rewrite for speed.
 	(string-append/separator): Likewise.
-	(ssep, csep): Pass char instead of string to `char-sep'.
+	(ssep, csep): Pass char instead of string to ‘char-sep’.
 
 2005-01-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-meta.scm (defs-from-psql): Use `reverse!'.
+	* scm/postgres-meta.scm (defs-from-psql): Use ‘reverse!’.
 	* scm/postgres-table.scm (sql-quote): Likewise.
 	* scm/postgres-types.scm (read-pgarray-1): Likewise.
 
@@ -1972,49 +1972,49 @@
 	(pg_result_error_message): New PG_DEFINE func.
 	(pg_error_message): Rewrite.
 	(PQRESULTERRORMESSAGE): New SIMPLE_SYMBOL.
-	(init_module): Add `PQRESULTERRORMESSAGE' handling.
+	(init_module): Add ‘PQRESULTERRORMESSAGE’ handling.
 
 	* doc/guile-pg.twerp (Processing Results):
-	Add @twerpdoc for `pg-result-error-message'.
+	Add @twerpdoc for ‘pg-result-error-message’.
 
 2005-01-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.h (ASSERT_CONNECTION): Delete macro.
 	(VALIDATE_CONNECTION_UNBOX_DBCONN): New macro.
 
-	* libpostgres.c: Use `VALIDATE_CONNECTION_UNBOX_DBCONN'.
+	* libpostgres.c: Use ‘VALIDATE_CONNECTION_UNBOX_DBCONN’.
 	(XCONN): Delete macro.
 	(ASSERT_CONNECTION): New macro.
 	(CONN_NOTICE, CONN_CLIENT, CONN_FPTRACE): New macros. Use throughout.
-	(pg_error_message): Use `xc_unbox'.
+	(pg_error_message): Use ‘xc_unbox’.
 
-	* libpostgres_lo.c: Use `VALIDATE_CONNECTION_UNBOX_DBCONN'.
+	* libpostgres_lo.c: Use ‘VALIDATE_CONNECTION_UNBOX_DBCONN’.
 	(XCONN): Delete macro.
-	(LOB_CONN): Use `xc_unbox'.
+	(LOB_CONN): Use ‘xc_unbox’.
 
 2004-12-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.c (ASSERT_RESULT): Delete macro.
 	(VALIDATE_RESULT_UNBOX2): New macro. Use throughout.
 	(VALIDATE_FIELD_NUMBER_COPY): New macro.
-	(pg_fname): Use `VALIDATE_FIELD_NUMBER_COPY'.
-	Also, remove refs to `SCM_DEFER_INTS' and `SCM_ALLOW_INTS'.
+	(pg_fname): Use ‘VALIDATE_FIELD_NUMBER_COPY’.
+	Also, remove refs to ‘SCM_DEFER_INTS’ and ‘SCM_ALLOW_INTS’.
 	(pg_ftype, pg_fsize, pg_fmod): Likewise.
 
 2004-12-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c: Use `SCM_VALIDATE_INUM_MIN_COPY'.
+	* libpostgres.c: Use ‘SCM_VALIDATE_INUM_MIN_COPY’.
 
-	* libpostgres_lo.c: Use `SCM_VALIDATE_INUM_MIN_COPY',
-	`SCM_VALIDATE_ULONG_COPY' and `SCM_VALIDATE_INUM_COPY'.
+	* libpostgres_lo.c: Use ‘SCM_VALIDATE_INUM_MIN_COPY’,
+	‘SCM_VALIDATE_ULONG_COPY’ and ‘SCM_VALIDATE_INUM_COPY’.
 
 2004-12-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.h (ASSERT_CONNECTION): New macro.
 
-	* libpostgres_lo.c: Use `ASSERT_CONNECTION'.
+	* libpostgres_lo.c: Use ‘ASSERT_CONNECTION’.
 
-	* libpostgres.c: Use `ASSERT_CONNECTION'.
+	* libpostgres.c: Use ‘ASSERT_CONNECTION’.
 	(ASSERT_RESULT): New macro. Use throughout.
 	(ASSERT_CONNECTION_OR_RESULT): Likewise.
 
@@ -2032,8 +2032,8 @@
 	[HAVE_PQSETNONBLOCKING] (PQSETNONBLOCKING): New symbol.
 	[HAVE_PQISNONBLOCKING] (PQISNONBLOCKING): New symbol.
 	(init_module)
-	[HAVE_PQSETNONBLOCKING]: Include `PQSETNONBLOCKING' in `goodies'.
-	[HAVE_PQISNONBLOCKING]: Include `PQISNONBLOCKING' in `goodies'.
+	[HAVE_PQSETNONBLOCKING]: Include ‘PQSETNONBLOCKING’ in ‘goodies’.
+	[HAVE_PQISNONBLOCKING]: Include ‘PQISNONBLOCKING’ in ‘goodies’.
 
 2004-11-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2044,7 +2044,7 @@
 	(pg_is_nonblocking_p): Likewise.
 
 	* doc/guile-pg.twerp (Database Connections): Add @twerpdoc
-	for `pg-set-nonblocking!' and `pg-is-nonblocking?' in new
+	for ‘pg-set-nonblocking!’ and ‘pg-is-nonblocking?’ in new
 	section "Non-Blocking Mode".
 
 2004-11-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -2056,11 +2056,11 @@
 2004-11-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres_lo.c (lob_mklobport, lob_write):
-	Use `SCM_CELL_WORD_0'.  Patch by Greg Troxel.
+	Use ‘SCM_CELL_WORD_0’.  Patch by Greg Troxel.
 
 2004-11-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c (xc_p, xr_p, sepo_p): Use `SCM_SMOB_PREDICATE'.
+	* libpostgres.c (xc_p, xr_p, sepo_p): Use ‘SCM_SMOB_PREDICATE’.
 
 2004-11-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2088,7 +2088,7 @@
 
 	* libpostgres.h (xc_display): New func decl.
 	* libpostgres.c (xc_display): Func no longer static.
-	* libpostgres_lo.c (lob_printp): Use `xc_display'.
+	* libpostgres_lo.c (lob_printp): Use ‘xc_display’.
 
 2004-11-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2099,14 +2099,14 @@
 2004-11-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres_lo.c (TTN_COERCE_INT): Delete macro.
-	(lob_mklobport): No longer use `TTN_COERCE_INT'.
+	(lob_mklobport): No longer use ‘TTN_COERCE_INT’.
 	(lob_write): Likewise.
 
 2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres_lo.c (LOBPORTP): Rename from `SCM_LOBPORTP'.
-	(OPLOBPORTP): Rename from `SCM_OPLOBPORTP'.
-	(OPINLOBPORTP): Rename from `SCM_OPINLOBPORTP'.
+	* libpostgres_lo.c (LOBPORTP): Rename from ‘SCM_LOBPORTP’.
+	(OPLOBPORTP): Rename from ‘SCM_OPLOBPORTP’.
+	(OPINLOBPORTP): Rename from ‘SCM_OPINLOBPORTP’.
 	(lob_lo_get_connection): Use new names.
 	(lob_lo_get_oid): Likewise.
 	(lob_lo_tell): Likewise.
@@ -2119,7 +2119,7 @@
 
 2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c (xc_p): Use `gh_car' and `gh_cdr'.
+	* libpostgres.c (xc_p): Use ‘gh_car’ and ‘gh_cdr’.
 	(xc_unbox): Likewise.
 	(xr_p): Likewise.
 	(xr_unbox): Likewise.
@@ -2128,7 +2128,7 @@
 	(pg_make_print_options): Likewise.
 	(init_module): Likewise.
 
-	* libpostgres_lo.c (SCM_OPLOBPORTP): Use `gh_car' and `gh_cdr'.
+	* libpostgres_lo.c (SCM_OPLOBPORTP): Use ‘gh_car’ and ‘gh_cdr’.
 	(SCM_OPINLOBPORTP): Likewise.
 	(SCM_OPOUTLOBPORTP): Likewise.
 	(lob_mklobport): Likewise.
@@ -2144,7 +2144,7 @@
 
 2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c (pg_fname): Use `gh_scm2int'.
+	* libpostgres.c (pg_fname): Use ‘gh_scm2int’.
 	(pg_ftype): Likewise.
 	(pg_fsize): Likewise.
 	(pg_getvalue): Likewise.
@@ -2165,24 +2165,24 @@
 	(EXACTLY_FALSEP): Likewise.
 	(EXACTLY_TRUEP): Likewise.
 
-	* libpostgres.c (notice_processor): Use `NOT_FALSEP',
-	`EXACTLY_FALSEP' and `EXACTLY_TRUEP'.
+	* libpostgres.c (notice_processor): Use ‘NOT_FALSEP’,
+	‘EXACTLY_FALSEP’ and ‘EXACTLY_TRUEP’.
 	(pg_make_print_options): Likewise.
 	(pg_set_notice_out_x): Likewise.
 	(pg_notifies): Likewise.
 
 2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c (pg_conndefaults): Use `gh_char2scm'.
+	* libpostgres.c (pg_conndefaults): Use ‘gh_char2scm’.
 
 2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c (strip_newlines): Use `gh_str2scm'.
+	* libpostgres.c (strip_newlines): Use ‘gh_str2scm’.
 	(pg_getvalue): Likewise.
 
 2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c (pg_conndefaults): Use `gh_int2scm'.
+	* libpostgres.c (pg_conndefaults): Use ‘gh_int2scm’.
 	(pg_backend_pid): Likewise.
 	(pg_result_status): Likewise.
 	(pg_ntuples): Likewise.
@@ -2206,7 +2206,7 @@
 
 2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c (pg_conndefaults): Use `gh_str02scm'.
+	* libpostgres.c (pg_conndefaults): Use ‘gh_str02scm’.
 	(notice_processor): Likewise.
 	(pg_get_db): Likewise.
 	(pg_get_user): Likewise.
@@ -2224,7 +2224,7 @@
 
 2004-10-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c (pg_conndefaults): Use `gh_cons'.
+	* libpostgres.c (pg_conndefaults): Use ‘gh_cons’.
 	(pg_make_print_options): Likewise.
 	(pg_notifies): Likewise.
 	(init_module): Likewise.
@@ -2266,9 +2266,9 @@
 
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c: Throughout, add explicit `(void)' casts
+	* libpostgres.c: Throughout, add explicit ‘(void)’ casts
 	for void return values from PQ functions.  For each unused non-void
-	return value, add also a comment explaining why we "don't care".
+	return value, add also a comment explaining why we "don’t care".
 
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2277,7 +2277,7 @@
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* doc/guile-pg.twerp (Writing/Reading Data):
-	Add example proc `copy-to-port-async'.
+	Add example proc ‘copy-to-port-async’.
 
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2289,7 +2289,7 @@
 
 2004-08-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* acinclude.m4 (PQ_FLAGS): Add `pq-rpath' AC_ARG_ENABLE block.
+	* acinclude.m4 (PQ_FLAGS): Add ‘pq-rpath’ AC_ARG_ENABLE block.
 	Also, munge PQ_LDFLAGS before substitution if --enable-pq-rpath.
 	Suggested by Greg Troxel.
 
@@ -2318,7 +2318,7 @@
 2004-07-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* acinclude.m4 (PQ_FLAGS):
-	Use var `PQ_CPPFLAGS' instead of `PQ_CFLAGS'.
+	Use var ‘PQ_CPPFLAGS’ instead of ‘PQ_CFLAGS’.
 	* configure.in: Likewise.
 	* Makefile.am: Likewise.
 
@@ -2351,19 +2351,19 @@
 2004-07-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in: For Guile checks using the C compiler,
-	save/restore env var `CPPFLAGS' instead of `CFLAGS'.
+	save/restore env var ‘CPPFLAGS’ instead of ‘CFLAGS’.
 
 2004-07-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in: Move "fill_input in struct scm_ptob_descriptor"
 	check into acinclude.m4 AC_GUILE_PG_BCOMPAT.
-	Likewise w/ `scm_terminating' check.
+	Likewise w/ ‘scm_terminating’ check.
 	Move save/restore of env vars CFLAGS and LDFLAGS
 	to be immediately prior/after AC_GUILE_PG_*COMPAT calls.
 
 	* acinclude.m4 (AC_GUILE_PG_BCOMPAT): Add checks
 	for "fill_input in struct scm_ptob_descriptor"
-	and `scm_terminating', formerly in configure.in.
+	and ‘scm_terminating’, formerly in configure.in.
 
 2004-07-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2437,7 +2437,7 @@
 	* configure.in (AC_CONFIG_FILES): Remove scm/postgres.scm.
 
 	* libpostgres.c (scm_init_database_postgres_module):
-	Rename from `scm_init_database_postgres_sup_module'.
+	Rename from ‘scm_init_database_postgres_sup_module’.
 
 	* Makefile.am
 	(d_LTLIBRARIES): Add postgres.la. Remove postgres-sup.la.
@@ -2453,7 +2453,7 @@
 	* libpostgres.c (pg_oid_status): Delete PG_DEFINE func.
 
 	* doc/guile-pg.twerp (Processing Results): Remove @twerpdoc
-	and associated "deprecated" blurb for `pg-oid-status'.
+	and associated "deprecated" blurb for ‘pg-oid-status’.
 
 2004-06-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2467,8 +2467,8 @@
 	(pg-guile-pg-module-config-stamp): Likewise.
 
 	* doc/guile-pg.twerp (Miscellaneous): Remove @twerpdoc for
-	`pg-guile-pg-version', `pg-guile-pg-module-version' and
-	`pg-guile-pg-module-config-stamp', as well as intro blurb.
+	‘pg-guile-pg-version’, ‘pg-guile-pg-module-version’ and
+	‘pg-guile-pg-module-config-stamp’, as well as intro blurb.
 
 2004-06-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2501,8 +2501,8 @@
 
 	* libpostgres.c
 	(strip_newlines): Fix OBOE: Correctly compute string length.
-	(pg_connectdb): Fix liveness bug: Call `PQerrorMessage'
-	before `PQfinish' to avoid accessing stale `dbconn' storage.
+	(pg_connectdb): Fix liveness bug: Call ‘PQerrorMessage’
+	before ‘PQfinish’ to avoid accessing stale ‘dbconn’ storage.
 
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2511,7 +2511,7 @@
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* configure.in (twerp-prep): For this AC_CONFIG_COMMANDS
-	entry, fix skew bug: look for command `prep-Ptexi'.
+	entry, fix skew bug: look for command ‘prep-Ptexi’.
 
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2519,7 +2519,7 @@
 
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres_lo.c (lob_stream): Rename struct field `fd' to `alod'.
+	* libpostgres_lo.c (lob_stream): Rename struct field ‘fd’ to ‘alod’.
 	Update all usage sites.
 	(lob_mklobport): Use var name "alod" instead of "fd".
 	(lob_lo_creat): Likewise.
@@ -2528,7 +2528,7 @@
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* doc/guile-pg.twerp: In program fragments,
-	use `format' instead of `write-line'.
+	use ‘format’ instead of ‘write-line’.
 
 2004-06-14  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2549,17 +2549,17 @@
 
 2004-05-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres_lo.c (lob_mklobport): Move `pt->read_buf'
+	* libpostgres_lo.c (lob_mklobport): Move ‘pt->read_buf’
 	to head of chained assignment to avoid compiler warning.
 
 2004-05-17  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c (strip_newlines): Do not modify `str'.
+	* libpostgres.c (strip_newlines): Do not modify ‘str’.
 
 2004-05-17  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c (strip_newlines): Use `scm_makfromstr'.
-	Update callers to no longer use `strdup' and `free'.
+	* libpostgres.c (strip_newlines): Use ‘scm_makfromstr’.
+	Update callers to no longer use ‘strdup’ and ‘free’.
 
 2004-05-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2578,7 +2578,7 @@
 
 2004-05-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* acinclude.m4 (AC_GUILE_PG_FCOMPAT): Use 3-arg `AC_DEFINE'
+	* acinclude.m4 (AC_GUILE_PG_FCOMPAT): Use 3-arg ‘AC_DEFINE’
 	instantiation variant instead of 1-arg variant.
 
 2004-05-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -2603,7 +2603,7 @@
 
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres_lo.c: Use ~S in `scm_misc_error' format string.
+	* libpostgres_lo.c: Use ~S in ‘scm_misc_error’ format string.
 
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2617,7 +2617,7 @@
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.c (goodies): New file-static var.
-	(pg_guile_pg_loaded): Return `goodies'.
+	(pg_guile_pg_loaded): Return ‘goodies’.
 	(pg_get_pass) [HAVE_PQPASS]: Convert from conditional definition
 	to unconditional definition w/ conditional return value.
 	(pg_backend_pid) [HAVE_PQBACKENDPID]: Likewise.
@@ -2630,7 +2630,7 @@
 	(pg_sym_PQOIDVALUE) [HAVE_PQOIDVALUE]: Likewise.
 	(pg_sym_PQBINARYTUPLES) [HAVE_PQBINARYTUPLES]: Likewise.
 	(pg_sym_PQFMOD) [HAVE_PQFMOD]: Likewise.
-	(init_module): Initialize `goodies'.
+	(init_module): Initialize ‘goodies’.
 
 2004-03-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2652,7 +2652,7 @@
 
 2004-03-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c (pg_set_client_encoding_x): Hse `ROZT'.
+	* libpostgres.c (pg_set_client_encoding_x): Hse ‘ROZT’.
 	(pg_send_query): Likewise.
 
 2004-03-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -2672,27 +2672,27 @@
 
 2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.h (scm_extended_dbconn): Rename to `xc_t'.
+	* libpostgres.h (scm_extended_dbconn): Rename to ‘xc_t’.
 	(scm_extended_result): Move to libpostgres.c.
-	(guile_pg_sec_p): Rename to `xc_p'.
-	(guile_pg_sec_unbox): Rename to `xc_unbox'.
+	(guile_pg_sec_p): Rename to ‘xc_p’.
+	(guile_pg_sec_unbox): Rename to ‘xc_unbox’.
 
-	* libpostgres.c (guile_pg_sec_p): Rename to `xc_p'.
+	* libpostgres.c (guile_pg_sec_p): Rename to ‘xc_p’.
 	(sec_p): Delete macro.
-	(guile_pg_sec_unbox): Rename to `xc_unbox'.
+	(guile_pg_sec_unbox): Rename to ‘xc_unbox’.
 	(sec_unbox): Delete macro.
-	(sec_box): Rename to `xc_box'.
-	(sec_display): Rename to `xc_display'.
-	(sec_mark): Rename to `xc_mark'.
-	(sec_free): Rename to `xc_free'.
+	(sec_box): Rename to ‘xc_box’.
+	(sec_display): Rename to ‘xc_display’.
+	(sec_mark): Rename to ‘xc_mark’.
+	(sec_free): Rename to ‘xc_free’.
 	(xr_t): New struct typedef, from libpostgres.h.
-	(ser_p): Rename to `xr_p'.
-	(ser_unbox): Rename to `xr_unbox'.
-	(ser_box): Rename to `xr_box'.
-	(ser_display): Rename to `xr_display'.
-	(ser_mark): Rename to `xr_mark'.
-	(ser_free): Rename to `xr_free'.
-	(make_ser): Rename to `make_xr'.
+	(ser_p): Rename to ‘xr_p’.
+	(ser_unbox): Rename to ‘xr_unbox’.
+	(ser_box): Rename to ‘xr_box’.
+	(ser_display): Rename to ‘xr_display’.
+	(ser_mark): Rename to ‘xr_mark’.
+	(ser_free): Rename to ‘xr_free’.
+	(make_ser): Rename to ‘make_xr’.
 
 	* libpostgres_lo.c (sec_p): Delete macro.
 	(sec_unbox): Likewise.
@@ -2702,13 +2702,13 @@
 	* libpostgres.h (ROZT_X, ROZT): New macros.
 
 	* libpostgres.c (maybe_strcpy): Delete func.
-	Rework callers to use `ROZT_X' and `ROZT'.
+	Rework callers to use ‘ROZT_X’ and ‘ROZT’.
 	(strip_newlines): Return SCM string. Update callers.
 	(pg_getlineasync): Fix bug: Use SCM_ROCHARS.
 	(pg_putline): Likewise.
 
 	* libpostgres_lo.c (lob_lo_creat): No longer unconditionally
-	coerce substring.  Instead, use `ROZT_X' and `ROZT'.
+	coerce substring.  Instead, use ‘ROZT_X’ and ‘ROZT’.
 	(lob_lo_open): Likewise.
 	(lob_lo_import): Likewise.
 	(lob_lo_export): Likewise.
@@ -2730,13 +2730,13 @@
 	* libpostres_lo.c (XCONN): New macro. Use throughout.
 
 	* libpostgres.c (XCONN, RESULT): New macros. Use throughout.
-	(pg_putline) [!HAVE_PQPUTNBYTES]: Use `maybe_strcpy'.
-	(pg_set_client_encoding_x): Use `maybe_strcpy'.
+	(pg_putline) [!HAVE_PQPUTNBYTES]: Use ‘maybe_strcpy’.
+	(pg_set_client_encoding_x): Use ‘maybe_strcpy’.
 
 2004-03-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.c (make_ser): New static func.
-	(pg_exec): Use `make_ser'.
+	(pg_exec): Use ‘make_ser’.
 	(pg_send_query): New PG_DEFINE func.
 	(pg_get_result): Likewise.
 	(pg_consume_input): Likewise.
@@ -2752,8 +2752,8 @@
 	* libpostgres.c (QUERY_BUF_LEN): Delete macro.
 	(strncpy0): Delete decl and func.
 	(maybe_strcpy): New static decl and func.
-	(pg_connectdb): Use `maybe_strcpy' and dynamic memory
-	allocation instead of `strncpy0' and function-static buffers.
+	(pg_connectdb): Use ‘maybe_strcpy’ and dynamic memory
+	allocation instead of ‘strncpy0’ and function-static buffers.
 	(pg_exec): Likewise.
 	(pg_error_message): Likewise.
 	(pg_fnumber): Likewise.
@@ -2761,12 +2761,12 @@
 2004-03-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm (pgtable-manager): Make
-	returned proc also accept keyword for `choice'.
+	returned proc also accept keyword for ‘choice’.
 	(pgtable-worker): New proc, exported.
 
 	* doc/guile-pg.twerp (Single-Table Abstraction):
 	Mention views in intro.
-	Add @twerpdoc for `pgtable-worker'.
+	Add @twerpdoc for ‘pgtable-worker’.
 
 2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2780,12 +2780,12 @@
 	(strictly-check-types/elaborate!): Likewise.
 
 	* doc/guile-pg.twerp (Introspection): Add @twerpdoc entries and
-	related blurbs for `defs-from-psql', `check-type/elaborate' and
-	`strictly-check-types/elaborate!'.  Also, add example.
+	related blurbs for ‘defs-from-psql’, ‘check-type/elaborate’ and
+	‘strictly-check-types/elaborate!’.  Also, add example.
 
 2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* scm/postgres-meta.scm (defs-from-psql): Take additional arg `psql'.
+	* scm/postgres-meta.scm (defs-from-psql): Take additional arg ‘psql’.
 
 2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2803,24 +2803,24 @@
 2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-meta.scm (put, get): Delete aliases.
-	(describe-table!): Use `pg-print' instead of `describe-table'.
+	(describe-table!): Use ‘pg-print’ instead of ‘describe-table’.
 	(display-table): Delete proc.
 
 2004-02-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-meta.scm (*class-defs*): New var.
 	(*table-info-selection*): New var.
-	(make-M:pg-class): Use `*class-defs*'.
-	(table-info): Use `*table-info-selection*'.
+	(make-M:pg-class): Use ‘*class-defs*’.
+	(table-info): Use ‘*table-info-selection*’.
 
 2004-02-11  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.c (pg_getline): Doc munging; nfc.
 	(pg_getlineasync): New PG_DEFINE func.
 
-	* doc/guile-pg.twerp (Retrieving Data): Also mention `pg-getlineasync'.
+	* doc/guile-pg.twerp (Retrieving Data): Also mention ‘pg-getlineasync’.
 	(Writing/Reading Data): Add intro blurb re need to
-	call `pg-endcopy'.  Add @twerpdoc for `pg-getlineasync'.
+	call ‘pg-endcopy’.  Add @twerpdoc for ‘pg-getlineasync’.
 
 2004-02-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2834,7 +2834,7 @@
 	(pg_conndefaults): New PG_DEFINE func.
 
 	* doc/guile-pg.twerp (Database Connections): Mention default
-	values in blurb.  Add @twerpdoc for `pg-conndefaults'.
+	values in blurb.  Add @twerpdoc for ‘pg-conndefaults’.
 
 2004-02-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2910,8 +2910,8 @@
 2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* doc/guile-pg.twerp (Miscellaneous): Replace @deffn with
-	@twerpdoc for `pg-guile-pg-loaded', `pg-guile-pg-version',
-	`pg-guile-pg-module-version' and `pg-guile-pg-module-config-stamp'.
+	@twerpdoc for ‘pg-guile-pg-loaded’, ‘pg-guile-pg-version’,
+	‘pg-guile-pg-module-version’ and ‘pg-guile-pg-module-config-stamp’.
 	Mention that the latter three will not be included in 1.0 release.
 
 	* Makefile.am (DOTDOCFILES): Add scm/postgres.doc.
@@ -2958,7 +2958,7 @@
 2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* doc/guile-pg.twerp (Database Connections): Add section and @twerpdoc
-	entries for `pg-client-encoding' and `pg-set-client-encoding!'.
+	entries for ‘pg-client-encoding’ and ‘pg-set-client-encoding!’.
 
 2004-02-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -2984,25 +2984,25 @@
 
 	* scm/postgres-table.scm (select-cmd): Delete proc.
 	(compile-outspec): New proc, exported.
-	(select-proc): Rewrite to use `compile-outspec'.
+	(select-proc): Rewrite to use ‘compile-outspec’.
 	(pgtable-manager): Doc munging; nfc.
 
 	* doc/guile-pg.twerp (Single-Table Abstraction):
-	Add @twerpdoc for `compile-outspec'.
+	Add @twerpdoc for ‘compile-outspec’.
 
 2004-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-table.scm (select-cmd): Take additional
-	caller-allocated arg `obh-box', a list.  For symbolic
+	caller-allocated arg ‘obh-box’, a list.  For symbolic
 	selections, either singular or a list, pass back through the
-	`obh-box' the ordered list of objectifier procs associated with
+	‘obh-box’ the ordered list of objectifier procs associated with
 	the selection type(s).
-	(select-proc): Update call to `select-cmd'.  Capture `pg-exec'
-	return value and set its `objectifier-hints' property to the
-	list computed by `select-cmd', or #f.
-	(pgtable-manager): For `tuples-result->object-alist' and
-	`tuples-result->object-alists', prefer the result's
-	`objectifier-hints' property if available, over the full
+	(select-proc): Update call to ‘select-cmd’.  Capture ‘pg-exec’
+	return value and set its ‘objectifier-hints’ property to the
+	list computed by ‘select-cmd’, or #f.
+	(pgtable-manager): For ‘tuples-result->object-alist’ and
+	‘tuples-result->object-alists’, prefer the result's
+	‘objectifier-hints’ property if available, over the full
 	list of objectifiers.
 
 2004-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -3018,7 +3018,7 @@
 
 	* configure.in: Update copyright.
 	(AC_GUILE_PG_FCOMPAT): New macro call.
-	(AH_BOTTOM): Add `scm_protect_object' redefinition
+	(AH_BOTTOM): Add ‘scm_protect_object’ redefinition
 	conditional on HAVE_SCM_GC_PROTECT_OBJECT.
 
 2004-01-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -3026,7 +3026,7 @@
 	* libpostgres.c (pg_notifies): New PG_DEFINE func.
 
 	* doc/guile-pg.twerp (Database Connections): Add @section headers.
-	Add @twerpdoc for `pg-notifies'.
+	Add @twerpdoc for ‘pg-notifies’.
 
 2004-01-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
@@ -3042,58 +3042,58 @@
 2004-01-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-meta.scm (describe-table!):
-	Use `display' and `newline' instead of `write-line'.
+	Use ‘display’ and ‘newline’ instead of ‘write-line’.
 
 2004-01-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres-col-defs.scm: Update copyright.
-	Use "#:" in `define-module' form.
+	Use "#:" in ‘define-module’ form.
 	* scm/postgres-meta.scm: Likewise.
 	* scm/postgres-resx.scm: Likewise.
 	* scm/postgres-table.scm: Likewise.
 	* scm/postgres-types.scm: Likewise.
 
 	* doc/guile-pg.twerp: Update copyright.
-	Use "#:" in `use-modules' forms.
+	Use "#:" in ‘use-modules’ forms.
 
 2003-12-29  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.h (scm_extended_dbconn): Add member `SCM notice'.
+	* libpostgres.h (scm_extended_dbconn): Add member ‘SCM notice’.
 
-	* libpostgres.c (sec_mark): Also mark `sec->notice'.
+	* libpostgres.c (sec_mark): Also mark ‘sec->notice’.
 	(notice_processor): New static func.
-	(pg_connectdb): Init `sec->notice'.
+	(pg_connectdb): Init ‘sec->notice’.
 	Also, set connection's notice processor.
-	(pg_set_notice_out_x): New `PG_DEFINE' func.
+	(pg_set_notice_out_x): New ‘PG_DEFINE’ func.
 
 	* doc/guile-pg.twerp (Database Connections): Add blurb about notices.
-	Also, add @twerpdoc for `pg-set-notice-out!'.
+	Also, add @twerpdoc for ‘pg-set-notice-out!’.
 
 2003-11-27  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* scm/postgres.scm.in: Use module (database postgres-sup).
 	No longer manually load the shared object library.  Instead,
 	replace public interface w/ that of module (database postgres-sup),
-	and delete all the now-defunct `export' forms.
+	and delete all the now-defunct ‘export’ forms.
 
 2003-11-27  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* bugtest/testloseek.scm (pg-exec-cmd): Use symbol
-	`PGRES_COMMAND_OK' instead of variable by same name.
+	‘PGRES_COMMAND_OK’ instead of variable by same name.
 
 2003-11-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
-	* libpostgres.c (init_module): Rename from `init_postgres'.
+	* libpostgres.c (init_module): Rename from ‘init_postgres’.
 	Make static.
 	(scm_init_database_postgres_sup_module): Rename from
-	`scm_init_database_interface_postgres_module'.
-	Re-implement as macro call to `GH_MODULE_LINK_FUNC'.
+	‘scm_init_database_interface_postgres_module’.
+	Re-implement as macro call to ‘GH_MODULE_LINK_FUNC’.
 
 2003-11-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* autogen.sh: Update tool version comments.
 	Use "guile-config info datadir" to compute aclocal include dir.
-	Append override for macro `_LT_AC_TAGCONFIG' to aclocal.m4.
+	Append override for macro ‘_LT_AC_TAGCONFIG’ to aclocal.m4.
 	Add symlinking of modsup.h.
 	Add creation of .last-release file.
 
@@ -3141,11 +3141,11 @@
 	* Makefile.am (libpostgres_la_SOURCES): Add tmpfile.c.
 
 	* libpostgres.c: If HAVE_TMPFILE not defined,
-	also #include "tmpfile.h" and define `tmpfile'
-	to expand to `guile_pg_tmpfile'.
+	also #include "tmpfile.h" and define ‘tmpfile’
+	to expand to ‘guile_pg_tmpfile’.
 	(pg_print): Remove "undefined" branch of HAVE_TMPFILE,
-	since we will always have `tmpfile' available.
-	Add check for NULL `fout'; call `scm_syserror' in that case.
+	since we will always have ‘tmpfile’ available.
+	Add check for NULL ‘fout’; call ‘scm_syserror’ in that case.
 	Remove dire warnings from docstring.
 
 2003-09-10  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -3158,7 +3158,7 @@
 	* configure.in: Add "AC_CHECK_FUNCS(tmpfile)".
 
 	* libpostgres.c (pg_print): When cpp macro HAVE_TMPFILE is defined,
-	pass a temporary `FILE *' to `PQprint', read it out again and
+	pass a temporary ‘FILE *’ to ‘PQprint’, read it out again and
 	send a freshly constructed scheme string to the current output port.
 
 2003-09-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -3188,7 +3188,7 @@
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
 
 	* libpostgres.c (pg_make_print_options): Doc fix; nfc.
-	(pg_print): If `options' is not specified (undefined), set
+	(pg_print): If ‘options’ is not specified (undefined), set
 	it to a pg-print-option object derived from the '() spec.
 
 2003-08-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
@@ -3246,7 +3246,7 @@
 	* doc/guile-pg.twerp (Column Definitions): New node/chapter.
 	(Result Transforms): New node/chapter.
 	(Single-Table Abstraction): Move some things to new nodes.
-	(Introspection): Add `@twerpdoc (infer-defs)'.
+	(Introspection): Add ‘@twerpdoc (infer-defs)’.
 
 2003-01-15  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
@@ -3263,8 +3263,8 @@
 
 	(def:col-name, def:type-name, def:type-options):
 	Remove from Commentary, but continue to export.
-	(pgtable-manager): Use `result->object-alist'
-	and `result->object-alists'; nfc.
+	(pgtable-manager): Use ‘result->object-alist’
+	and ‘result->object-alists’; nfc.
 
 2003-01-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
@@ -3289,7 +3289,7 @@
 	* scm/postgres.scm.in (pg-connection?): Export.
 
 	* doc/guile-pg.twerp (Database Connections): Add intro blurb.
-	Also, add directive for `pg-connection?'.
+	Also, add directive for ‘pg-connection?’.
 
 2002-12-29  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
@@ -3302,8 +3302,8 @@
 
 2002-12-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
-	* libpostgres.c (guile_pg_sec_p): Rename from `sec_p'.
-	(guile_pg_sec_unbox): Rename from `sec_unbox'.
+	* libpostgres.c (guile_pg_sec_p): Rename from ‘sec_p’.
+	(guile_pg_sec_unbox): Rename from ‘sec_unbox’.
 	* libpostgres.h: Likewise.
 
 	* libposgres_lo.c (sec_p, sec_unbox): New macros.
@@ -3340,7 +3340,7 @@
 	* scm/postgres.scm.in (pg-result?): Export.
 
 	* doc/guile-pg.twerp (Retrieving Data):
-	Add intro blurb and twerpdoc for `pg-result?'.
+	Add intro blurb and twerpdoc for ‘pg-result?’.
 
 2002-12-23  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
@@ -3403,11 +3403,11 @@
 
 2002-12-21  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
-	* configure.in: Add check for `terminating' in libguile; define
+	* configure.in: Add check for ‘terminating’ in libguile; define
 	HAVE_LIBGUILE_TERMINATING in config.h if available.
 
 	* libpostgres_lo.c: When not HAVE_SCM_TERMINATING, only declare
-	`terminating' if also HAVE_LIBGUILE_TERMINATING.
+	‘terminating’ if also HAVE_LIBGUILE_TERMINATING.
 	(lob_flush): On error, if neither HAVE_SCM_TERMINATING nor
 	HAVE_LIBGUILE_TERMINATING, unconditionally write to stderr.
 
@@ -3457,9 +3457,9 @@
 2002-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
 	* configure.in (HAVE_SCM_TERMINATING): Arrange to define this
-	config.h macro if libguile.h declares `scm_terminating'.
+	config.h macro if libguile.h declares ‘scm_terminating’.
 
-	* libpostgres_lo.c (scm_terminating): Rename from `terminating',
+	* libpostgres_lo.c (scm_terminating): Rename from ‘terminating’,
 	but only declare if HAVE_SCM_TERMINATING is not defined.  Use
 	"extern int" in that case.
 
@@ -3470,7 +3470,7 @@
 
 2002-12-16  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
-	* configure.in: Add multiple checks for `InvalidOid' decl.
+	* configure.in: Add multiple checks for ‘InvalidOid’ decl.
 	Signal error if not found.
 
 	* libpostgres.c (INVALIDOID_HEADER): #include this if defined.
@@ -3491,7 +3491,7 @@
 
 	* libpostgres_lo.c (lob_seek): Only adjust return value on SEEK_CUR.
 	(lob_lo_seek): No longer construct args for, or
-	call, `lo_lseek'; use `lob_seek' instead.
+	call, ‘lo_lseek’; use ‘lob_seek’ instead.
 
 2002-12-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
@@ -3502,9 +3502,9 @@
 	* libpostgres_lo.c (lob_seek): Adjust return value by the amount
 	in the port's read-buffer between the read_pos and read_end.
 
-	* guile-pg-lo-tests.scm.in (test:lo-tell): New proc, run by `test'.
-	(test:make-connection): Use `->bool' instead of `if'.
-	(test:lo-open-read): Also test `pg-lo-get-connection'.
+	* guile-pg-lo-tests.scm.in (test:lo-tell): New proc, run by ‘test’.
+	(test:make-connection): Use ‘->bool’ instead of ‘if’.
+	(test:lo-open-read): Also test ‘pg-lo-get-connection’.
 
 2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
@@ -3516,12 +3516,12 @@
 	(ser_status_str, ser_status_str_count, ser_status): Delete vars.
 	(pgrs_t): New typedef.
 	(pgrs, pgrs_count): New vars, static.
-	(ser_display): Replace `ser_status' and `ser_status_str' lookup
-	with `pgrs' lookup.
+	(ser_display): Replace ‘ser_status’ and ‘ser_status_str’ lookup
+	with ‘pgrs’ lookup.
 	(str2symbol): Delete macro.
-	(pg_result_status): No longer create symbol; use `pgrs' for lookup.
+	(pg_result_status): No longer create symbol; use ‘pgrs’ for lookup.
 	(init_postgres): No longer define PGRES_* vars.
-	Instead, initialize `sym' field in `pgrs'.
+	Instead, initialize ‘sym’ field in ‘pgrs’.
 
 2002-12-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
 
@@ -3584,7 +3584,7 @@
 	(lob_write): Use TTN_COERCE_INT.
 
 	* scm/postgres.scm.in: Update copyright.
-	Rework loading to use `make-app-module-loader' if available,
+	Rework loading to use ‘make-app-module-loader’ if available,
 	emulating it if not.
 
 	(pg-setdb): New export.
@@ -3624,7 +3624,7 @@
 	guile_pg_LDFLAGS): Delete.
 	(INCLUDES): Add "-I.".
 	(pkglibversdir): New var.
-	(pkglibvers_LTLIBRARIES): Renamed from `lib_LTLIBRARIES'.
+	(pkglibvers_LTLIBRARIES): Renamed from ‘lib_LTLIBRARIES’.
 	(.c.x): Update guile-snarf invocation to use "-o OUT IN" syntax.
 	(CLEANFILES): New directive.
 

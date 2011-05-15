@@ -190,7 +190,7 @@
     (lambda ()
       ;; Starting with PostgreSQL 8.0, "UTF8" is more correct than "UNICODE".
       ;; This is not mentioned until the 8.1 release notes, however.  :-/
-      ;; Perhaps this should be moved into `pg-client-encoding' proper.
+      ;; Perhaps this should be moved into ‘pg-client-encoding’ proper.
       (define (normalized-cenc)
         (let ((s (pg-client-encoding *C*)))
           (case (string->symbol s)
@@ -336,13 +336,13 @@
 (define test:set-client-data
   (add-test 'defunct
     (lambda ()
-      ;; `pg-set-client-data!' was removed in Guile-PG 0.39.
+      ;; ‘pg-set-client-data!’ was removed in Guile-PG 0.39.
       'defunct)))
 
 (define test:get-client-data
   (add-test 'defunct
     (lambda ()
-      ;; `pg-get-client-data' was removed in Guile-PG 0.39.
+      ;; ‘pg-get-client-data’ was removed in Guile-PG 0.39.
       'defunct)))
 
 (define test:make-table
@@ -438,7 +438,7 @@
 (define test:get-connection
   (add-test 'defunct
     (lambda ()
-      ;; Although `pg-get-connection' was removed for the "more modesty"
+      ;; Although ‘pg-get-connection’ was removed for the "more modesty"
       ;; release (pre-announced in Guile-PG 0.37), we leave this test here.
       'defunct)))
 
@@ -706,7 +706,7 @@
        ;; mask bugs.
        (command-ok? (cexec "NOTIFY \"sooper-sikret message\""))
        ;; Post-checks: Although one notification is all we want, we need to
-       ;; use short-circuit `or' for the "first" in this post-checks series.
+       ;; use short-circuit ‘or’ for the "first" in this post-checks series.
        ;; Subsequent checks are invalid.
        (let ((ans (or (pg-notifies *C*) (pg-notifies *C* #t))))
          (and (pair? ans)
@@ -737,8 +737,8 @@
        ((ok? 'PGRES_COPY_IN) (cexec "COPY async FROM STDIN"))
        (begin
          (and (memq 'PQPROTOCOLVERSION (pg-guile-pg-loaded))
-              ;; Test fails for PostgreSQL 7.4.12 at `pg-endcopy' if omitted.
-              ;; This needs to be done prior to `pg-putline', as well.
+              ;; Test fails for PostgreSQL 7.4.12 at ‘pg-endcopy’ if omitted.
+              ;; This needs to be done prior to ‘pg-putline’, as well.
               (pg-set-nonblocking! *C* #f))
          (do ((i 4224 (1- i)))
              ((= i 0))
@@ -753,7 +753,7 @@
            ((1) (begin (sleep 1) (loop (pg-flush *C*))))
            (else #f)))
        ;; Perhaps usage protocol does not absolutely require this check, but
-       ;; removing it causes the subsequent `pg-send-query' to return #f, with
+       ;; removing it causes the subsequent ‘pg-send-query’ to return #f, with
        ;; error message "another command is already in progress".
        (not (pg-is-busy? *C*))
        ;; Register a query.

@@ -4,7 +4,7 @@ Welcome! (or "☡ Guile ∘ PostgreSQL ∞")
 	Guile-PG is a collection of modules for Guile allowing access to
 	the PostgreSQL RDBMS from Scheme programs.
 
-	The low-level module `(database postgres)' provides an almost
+	The low-level module ‘(database postgres)’ provides an almost
 	one-to-one correspondence with the PostgreSQL "libpq" C library
 	interface.  The other modules build on it to provide abstractions
 	and convenience procedures:
@@ -25,7 +25,7 @@ Welcome! (or "☡ Guile ∘ PostgreSQL ∞")
 	To build Guile-PG you need to have installed both the PostgreSQL
 	frontend library libpq, and a version of Guile that can load
 	binary module (a b c) from file a/b/c.so or a/b/c/libc.la under
-	`%load-path'.
+	‘%load-path’.
 
 
 Building and Installing Guile-PG
@@ -95,7 +95,7 @@ Testing
 	Guile-PG build directory.  You could do this by unpacking and
 	building Guile-PG as the Postgres superuser, or by making
 	yourself a user with permissions to create databases.  To do the
-	latter use the PostgreSQL `createuser' command.
+	latter use the PostgreSQL ‘createuser’ command.
 
 	The tests assume that the postmaster is either running on the
 	local host or on the host pointed to by the PGHOST environment
@@ -140,7 +140,7 @@ What Goes Where
 	/usr/local/lib/guile/site and /usr/local/info.  Note that
 	${GUILE_LIBSITE} is based on the ${prefix} used for installing
 	Guile, and may or may not coincide with the one specified by
-	`configure --prefix'.
+	‘configure --prefix’.
 
 	Additionally, if the system supports it, "make install" updates
 	each site dir's module catalog.

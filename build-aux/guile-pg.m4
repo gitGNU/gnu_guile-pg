@@ -32,7 +32,7 @@
 #                   always just a -I flag.
 #
 #   PQ_LDFLAGS --- flags to pass to the linker to link a
-#                  program against libpq.  This includes `-lpq' for
+#                  program against libpq.  This includes ‘-lpq’ for
 #                  the pq library itself. It may also include a -L
 #                  flag to tell the compiler where to find the libraries
 #

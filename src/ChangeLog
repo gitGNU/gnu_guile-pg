@@ -159,16 +159,16 @@
 
 2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	No longer accept keyword for `pg-parameter-status' PARM arg.
+	No longer accept keyword for ‘pg-parameter-status’ PARM arg.
 
 	* libpq.c (pg_parameter_status):
 	No longer accept keyword for PARM arg.
 
 2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Drop procs `pg-set-client-data!', `pg-get-client-data'.
+	Drop procs ‘pg-set-client-data!’, ‘pg-get-client-data’.
 
-	* libpq.c (xc_t): Delete member `client'.
+	* libpq.c (xc_t): Delete member ‘client’.
 	(xc_mark): Update.
 	(CONN_CLIENT): Delete cpp macro.
 	(pg_connectdb): Update.
@@ -176,7 +176,7 @@
 
 2010-01-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Drop proc `pg-lo-get-connection'.
+	Drop proc ‘pg-lo-get-connection’.
 
 	* libpq.c (lob_lo_get_connection): Delete func.
 
@@ -184,7 +184,7 @@
 
 	[C int] Add cast to silence compiler warning.
 
-	* libpq.c (pg_mblen): Add cast in call to `PQmblen'.
+	* libpq.c (pg_mblen): Add cast in call to ‘PQmblen’.
 
 2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -192,7 +192,7 @@
 
 2009-06-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Make `pg-parameter-status' accept symbol for PARM.
+	Make ‘pg-parameter-status’ accept symbol for PARM.
 
 	* libpq.c (pg_parameter_status): Accept symbol as PARM.
 
@@ -239,13 +239,13 @@
 
 2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Revert: Support "E-prefixing" for `pgtable-manager' SQL quoting.
+	Revert: Support "E-prefixing" for ‘pgtable-manager’ SQL quoting.
 
 	That is the wrong approach.
 
 	* postgres-table.scm: From module (database postgres),
-	no longer select `pg-result-status'.
-	(pgtable-manager): Use `sql-quote' directly.
+	no longer select ‘pg-result-status’.
+	(pgtable-manager): Use ‘sql-quote’ directly.
 
 2009-06-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -276,7 +276,7 @@
 	New func decl.
 	(encoding_alist): New static data structure.
 	(pg_mblen): New GH_DEFPROC.
-	(init_module): Init `encoding_alist'.
+	(init_module): Init ‘encoding_alist’.
 
 2009-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -287,9 +287,9 @@
 
 2008-11-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Use `(ftell port)' instead of `(seek port 0 SEEK_CUR)'.
+	Use ‘(ftell port)’ instead of ‘(seek port 0 SEEK_CUR)’.
 
-	* libpq.c (lob_lo_tell): Use `scm_ftell'.
+	* libpq.c (lob_lo_tell): Use ‘scm_ftell’.
 
 2008-11-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -300,17 +300,17 @@
 
 2008-09-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Use `(string-null? foo)' instead of `(string=? "" foo)'.
+	Use ‘(string-null? foo)’ instead of ‘(string=? "" foo)’.
 
-	* postgres-gxrepl.scm (gxrepl -read): Use `string-null?'.
+	* postgres-gxrepl.scm (gxrepl -read): Use ‘string-null?’.
 	(gxrepl -print): Likewise.
 	* postgres-table.scm (pgtable-manager): Likewise.
 
 2008-09-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Use `size_t' instead of `scm_sizet'.
+	Use ‘size_t’ instead of ‘scm_sizet’.
 
-	* libpq.c (xc_free): Change return value type to `size_t'.
+	* libpq.c (xc_free): Change return value type to ‘size_t’.
 	(res_free, sepo_free): Likewise.
 
 2008-08-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
@@ -328,29 +328,29 @@
 	(EXACTLY_FALSEP, EXACTLY_TRUEP): Delete macros.
 	(DEFAULT_FALSE, RETURN_FALSE, RETURN_UNSPECIFIED): New macros.
 	(ASSERT, ASSERT_STRING): New macros.
-	(SYSCALL): Rename macro from `SCM_SYSCALL'.
-	(ROZT_X): Use `gh_str2scm'.
+	(SYSCALL): Rename macro from ‘SCM_SYSCALL’.
+	(ROZT_X): Use ‘gh_str2scm’.
 	(SMOBDATA, PCHAIN, ERROR): New macros.
 	(MEMORY_ERROR, SYSTEM_ERROR, WBPORT): New macros.
-	(xc_unbox): Use `SMOBDATA'.
-	(ASSERT_CONNECTION): Use `ASSERT'.
+	(xc_unbox): Use ‘SMOBDATA’.
+	(ASSERT_CONNECTION): Use ‘ASSERT’.
 	(CONN_CONN): New macro.
 	(xc_name): New static char array (string).
 	(xc_display): Rewrite.
-	(VALIDATE_CONNECTION_UNBOX_DBCONN): Use `ASSERT' and `CONN_CONN'.
-	(LOB_CONN): Use `CONN_CONN'.
-	(LOBPORTP): Use `SCM_NIMP'.
+	(VALIDATE_CONNECTION_UNBOX_DBCONN): Use ‘ASSERT’ and ‘CONN_CONN’.
+	(LOB_CONN): Use ‘CONN_CONN’.
+	(LOBPORTP): Use ‘SCM_NIMP’.
 	(lob_mklobport, lob_lo_creat, lob_lo_open, lob_lo_unlink): Update.
 	(ASSERT_PORT, LOB_STREAM): New macros.
 	(lob_lo_get_connection, lob_lo_get_oid, lob_lo_tell, lob_flush)
 	(lob_end_input, lob_seek, lob_lo_seek, lob_fill_input, lob_write)
 	(lob_lo_read, lob_close, lob_mark, lob_free, lob_lo_import)
 	(lob_lo_export, lob_printpt, res_unbox, res_box): Update.
-	(VALIDATE_RESULT_UNBOX): Use `ASSERT'.
+	(VALIDATE_RESULT_UNBOX): Use ‘ASSERT’.
 	(res_name): New static cahr array (string).
 	(res_display): Rewrite.
-	(prep_paramspecs): Use `gh_vector_length'; update; call
-	`free' unconditionally (without checking if its arg is NULL).
+	(prep_paramspecs): Use ‘gh_vector_length’; update; call
+	‘free’ unconditionally (without checking if its arg is NULL).
 	(pg_protocol_version, pg_conndefaults, notice_processor)
 	(pg_connectdb, pg_connection_p, pg_finish, pg_reset)
 	(pg_set_client_data, pg_escape_string_conn, pg_escape_bytea_conn)
@@ -381,14 +381,14 @@
 
 2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Make `pg-print' faster: Add fast path for file ports.
+	Make ‘pg-print’ faster: Add fast path for file ports.
 
 	* libpq.c (pg_print): Rework detection for redirect case
 	to exclude ports w/ an underlying file descriptor (file ports);
 	for those, if the current output-port's has a file descriptor
 	and it is the same as stdout's, use that directly, otherwise
-	`dup' and `fdopen' the current output-port's file descriptor,
-	and `fclose' it afterwards.
+	‘dup’ and ‘fdopen’ the current output-port's file descriptor,
+	and ‘fclose’ it afterwards.
 
 2008-08-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -422,14 +422,14 @@
 
 	Tweak C code to eliminate some compiler warnings.
 
-	* libpq.c (lob_write): Remove unnecessary cast from `void *'.
-	Also, use `size_t' for vars involved in computing `remaining'.
-	(pg_result_error_field): Add `default: ;' to `switch'.
-	(init_module): Use `unsigned int' for iteration var.
+	* libpq.c (lob_write): Remove unnecessary cast from ‘void *’.
+	Also, use ‘size_t’ for vars involved in computing ‘remaining’.
+	(pg_result_error_field): Add ‘default: ;’ to ‘switch’.
+	(init_module): Use ‘unsigned int’ for iteration var.
 
 2008-08-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	C optimization: Make `pg-lo-read' faster.
+	C optimization: Make ‘pg-lo-read’ faster.
 
 	* libpq.c (MAX_NEWSTRING_LENGTH): New macro.
 	(lob_lo_read): Rewrite.
@@ -452,15 +452,15 @@
 
 	Increase abstraction: Use SCM_{MEMORY,MISC}_ERROR and SCM_SYSERROR.
 
-	* libpq.c (lob_mklobport): Use `SCM_MEMORY_ERROR'.
-	(lob_lo_creat, lob_lo_open): Use `SCM_MISC_ERROR'.
-	(lob_flush): Use `SCM_SYSERROR'.
-	(lob_end_input, lob_seek, lob_fill_input): Use `SCM_MISC_ERROR'.
-	(lob_write): Use `SCM_SYSERROR'.
-	(prep_paramspecs, pg_connectdb): Use `SCM_MISC_ERROR'.
-	(pg_escape_string_conn): Use `SCM_SYSERROR'.
-	(pg_set_error_verbosity): Use `SCM_MISC_ERROR'.
-	(pg_trace, pg_untrace, pg_print): Use `SCM_SYSERROR'.
+	* libpq.c (lob_mklobport): Use ‘SCM_MEMORY_ERROR’.
+	(lob_lo_creat, lob_lo_open): Use ‘SCM_MISC_ERROR’.
+	(lob_flush): Use ‘SCM_SYSERROR’.
+	(lob_end_input, lob_seek, lob_fill_input): Use ‘SCM_MISC_ERROR’.
+	(lob_write): Use ‘SCM_SYSERROR’.
+	(prep_paramspecs, pg_connectdb): Use ‘SCM_MISC_ERROR’.
+	(pg_escape_string_conn): Use ‘SCM_SYSERROR’.
+	(pg_set_error_verbosity): Use ‘SCM_MISC_ERROR’.
+	(pg_trace, pg_untrace, pg_print): Use ‘SCM_SYSERROR’.
 
 2008-08-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -496,23 +496,23 @@
 
 	* libpq.c (RESFMT_TEXT, RESFMT_BINARY): New value macros.
 	(pg_exec_params, pg_exec_prepared, pg_send_query_params)
-	(pg_send_query_prepared): Use `RESFMT_TEXT'.
+	(pg_send_query_prepared): Use ‘RESFMT_TEXT’.
 
 2008-08-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	C optimization: Declare smob-predicate funcs inline.
 
-	* libpq.c (xc_p, res_p, sepo_p): Declare `inline'.
+	* libpq.c (xc_p, res_p, sepo_p): Declare ‘inline’.
 
 2008-08-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Support "E-prefixing" for `pgtable-manager' SQL quoting.
+	Support "E-prefixing" for ‘pgtable-manager’ SQL quoting.
 
 	* postgres-table.scm: From module (database postgres),
-	also select `pg-result-status'.
-	(pgtable-manager): Don't use `sql-quote' directly; instead, init
+	also select ‘pg-result-status’.
+	(pgtable-manager): Don't use ‘sql-quote’ directly; instead, init
 	at closure-creation time the SQL-quoting procedure that wraps
-	`sql-quote' to a variant that does "E-prefixing" if the supported
+	‘sql-quote’ to a variant that does "E-prefixing" if the supported
 	by the backend.
 
 2008-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
@@ -523,24 +523,24 @@
 
 2008-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Hide `compile-outspec' implementation details.
+	Hide ‘compile-outspec’ implementation details.
 
 	* postgres-table.scm (compiled-outspec?): New object property.
-	(compile-outspec): Replace `(cons compiled-outspec RV)'
-	marking with setting of property `compile-outspec?'.
+	(compile-outspec): Replace ‘(cons compiled-outspec RV)’
+	marking with setting of property ‘compile-outspec?’.
 	(compiled-outspec?-extract): Rewrite.
 
 2008-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	For `pgtable-manager', validate INSERT column counts.
+	For ‘pgtable-manager’, validate INSERT column counts.
 
 	* postgres-table (pgtable-manager check-col-count): New proc.
-	(pgtable-manager insert-values): Use `check-col-count'.
+	(pgtable-manager insert-values): Use ‘check-col-count’.
 	(pgtable-manager insert-col-values): Likewise.
 
 2008-08-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Make `pgtable-manager' INSERT commands faster.
+	Make ‘pgtable-manager’ INSERT commands faster.
 
 	* postgres-table.scm (pgtable-manager):
 	compute number of columns and type names once.
@@ -551,23 +551,23 @@
 	(pgtable-manager insert-values): Likewise.
 	(pgtable-manager insert-col-values): Likewise.
 	(pgtable-manager insert-alist): Likewise.
-	(pgtable-manager die!): No longer treat `insert-alist',
-	`insert-col-values' and `insert-values' dynamically.
+	(pgtable-manager die!): No longer treat ‘insert-alist’,
+	‘insert-col-values’ and ‘insert-values’ dynamically.
 
 2008-08-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Debogify: Make `pgtable-manager' INSERTs no longer strip `serial' cols.
+	Debogify: Make ‘pgtable-manager’ INSERTs no longer strip ‘serial’ cols.
 
 	* postgres-table.scm (pgtable-manager insert-variant clean-defs):
 	Delete internal proc; update callers to elide its call.
 
 2008-08-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Make `pgtable-manager' faster.
+	Make ‘pgtable-manager’ faster.
 
 	* postgres-table.scm: From module (ice-9 common-list),
-	select also `pick-mappings'.
-	(fmt): Incorporate into `pgtable-manager'.
+	select also ‘pick-mappings’.
+	(fmt): Incorporate into ‘pgtable-manager’.
 	(symbol->qstring, serial? col-defs, drop-proc, create-proc)
 	(->db-insert-string, clean-defs, pre-insert-into, insert-values-proc)
 	(insert-col-values-cmd, insert-col-values-proc, insert-alist-proc)
@@ -578,7 +578,7 @@
 
 	C optimization: Declare unboxing funcs inline.
 
-	* libpq.c (xc_unbox, res_unbox, sepo_unbox): Declare `inline'.
+	* libpq.c (xc_unbox, res_unbox, sepo_unbox): Declare ‘inline’.
 
 2008-07-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -586,21 +586,21 @@
 
 	* libpq.c (GC_PRINT, INIT_PRINT): Delete macros
 	and surrounding pre-processor conditionals.
-	(xc_mark, xc_free): Remove `GC_PRINT' call.
+	(xc_mark, xc_free): Remove ‘GC_PRINT’ call.
 	(res_mark, res_free, sepo_mark, sepo_free): Likewise.
-	(init_module): Remove `INIT_PRINT' call.
+	(init_module): Remove ‘INIT_PRINT’ call.
 
 2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Increase abstraction: Use "cell word 0" for lobport access.
 
 	* libpq.c (LOBPORT_WITH_FLAGS_P): New macro.
-	(OPLOBPORTP, OPINLOBPORTP): Use `LOBPORT_WITH_FLAGS_P'.
-	(lob_mklobport): Use `SCM_SET_CELL_WORD_0'.
+	(OPLOBPORTP, OPINLOBPORTP): Use ‘LOBPORT_WITH_FLAGS_P’.
+	(lob_mklobport): Use ‘SCM_SET_CELL_WORD_0’.
 
 2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Increase abstraction: Make `res_box' handle NULL-check.
+	Increase abstraction: Make ‘res_box’ handle NULL-check.
 
 	* libpq.c (res_box): If given NULL, return Scheme false.
 	(pg_exec, pg_exec_params, pg_exec_prepared, pg_send_query): Update.
@@ -610,24 +610,24 @@
 	Decruft: Inline single-use *_box funcs.
 
 	* libpq.c (xc_box, sepo_box): Delete funcs.
-	(pg_connectdb): Use `SCM_RETURN_NEWSMOB' directly.
+	(pg_connectdb): Use ‘SCM_RETURN_NEWSMOB’ directly.
 	(pg_make_print_options): Likewise.
 
 2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Increase abstraction: Use C macros for smob data access.
 
-	* libpq.c (xc_unbox): Use `SCM_SMOB_DATA'.
+	* libpq.c (xc_unbox): Use ‘SCM_SMOB_DATA’.
 	(res_unbox, sepo_unbox): Likewise.
-	(xc_free): Use `SCM_SET_SMOB_DATA'.
+	(xc_free): Use ‘SCM_SET_SMOB_DATA’.
 	(res_free, sepo_free): Likewise.
 
 2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
-	Decruft: Elide internal function `make_res'.
+	Decruft: Elide internal function ‘make_res’.
 
 	* libpq.c (make_res): Delete func;
-	convert all callers to use `res_box (result)' instead.
+	convert all callers to use ‘res_box (result)’ instead.
 
 2008-07-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 

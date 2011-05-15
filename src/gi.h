@@ -120,7 +120,7 @@ scm_init_ ## fname_frag ## _module (void)                               \
 
 /* For some versions of Guile, (make-string (ash 1 24)) => "".
 
-   That is, `make-string' doesn't fail, but lengths past (1- (ash 1 24))
+   That is, ‘make-string’ doesn't fail, but lengths past (1- (ash 1 24))
    overflow an internal limit and silently return an incorrect value.
    We hardcode this limit here for now.  */
 #define MAX_NEWSTRING_LENGTH ((1 << 24) - 1)

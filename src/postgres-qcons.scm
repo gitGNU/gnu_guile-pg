@@ -65,7 +65,7 @@
 ;;; mirroring bootstrap
 
 ;; Naming convention: Hash tables begin with "==".  They are
-;; initialized on module load and updated by `qcons-declare!'.
+;; initialized on module load and updated by ‘qcons-declare!’.
 
 (define-macro (define-hash name size pair? init)
   `(begin
@@ -393,7 +393,7 @@
                                    rest))))
              ((regexp-exec any/all-rx (symbol->string op))
               => (lambda (m)
-                   ;; FIXME: Debug :-/ and use `match:suffix'.
+                   ;; FIXME: Debug :-/ and use ‘match:suffix’.
                    (let ((s (vector-ref m 0)))
                      (paren (expr (car rest))
                             (sql-pre (substring s 5))

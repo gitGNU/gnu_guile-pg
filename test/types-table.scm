@@ -211,7 +211,7 @@
              (pass-if "value" (string=? "2" (tref 0 0)))))
 
 (define (test:mtest-cleanup)
-  (command-ok? (car (drop))))           ; use CAR because `drop' => a list
+  (command-ok? (car (drop))))           ; use CAR because ‘drop’ => a list
 
 ;;; now do some specific checks
 
@@ -300,7 +300,7 @@
                   ("almost 2^5, eh?" 31)))))
 
     (pass-if "m2 final drop"
-      (command-ok? (car ((m2 'drop)))))   ; use CAR because `drop' => a list
+      (command-ok? (car ((m2 'drop)))))   ; use CAR because ‘drop’ => a list
     ((m2 'finish))))                      ; no check
 
 (define (test-m3)

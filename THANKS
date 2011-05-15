@@ -5,17 +5,17 @@ Thanks go to these people for their help in improving Guile-PG.
   - transferred maintenance to others w/ more time
 
 - Joost Helberg
-  - pointed out `terminating' is actually part of libguile
-  - supplied patch for `scm_misc_error' format string bug
+  - pointed out ‘terminating’ is actually part of libguile
+  - supplied patch for ‘scm_misc_error’ format string bug
 
 - Martin Rodgers
-  - pointed out missing `InvalidOid' decl for PostgreSQL 7.0.3
+  - pointed out missing ‘InvalidOid’ decl for PostgreSQL 7.0.3
 
 - Stan Pinte
   - bug report: configure runs twerp2texi unconditionally
 
 - Russ McManus
-  - wrote `sybase_glue' which was used as a framework for Guile-PG
+  - wrote ‘sybase_glue’ which was used as a framework for Guile-PG
 
 - Greg Troxel
   - portability bug reports, testing

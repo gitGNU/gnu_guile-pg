@@ -554,7 +554,7 @@ zero if an error occurred.  */)
 }
 
 /* Fill a port's read-buffer with a single read.  Return the first char and
-   move the `read_pos' pointer past it, or return EOF if end of file.  */
+   move the ‘read_pos’ pointer past it, or return EOF if end of file.  */
 static int
 lob_fill_input (SCM port)
 {
@@ -1360,7 +1360,7 @@ If there is an error, return @code{#f}.  */)
  * exec and results
  */
 
-/* At this time, we use `RESFMT_TEXT' exclusively.  TODO: Figure out what
+/* At this time, we use ‘RESFMT_TEXT’ exclusively.  TODO: Figure out what
    higher layers need to do/know to be able to handle both text and binary,
    then make it dynamic.  */
 #define RESFMT_TEXT    0
@@ -2343,7 +2343,7 @@ Optional arg @var{tickle} non-@code{#f} means to do a
 
   if (GIVENP (tickle) && NOT_FALSEP (tickle))
     /* We don't care if there was an error consuming input; caller can use
-       `pg_error_message' to find out afterwards, or simply avoid tickling in
+       ‘pg_error_message’ to find out afterwards, or simply avoid tickling in
        the first place.  */
     PQconsumeInput (dbconn);
 
@@ -2653,7 +2653,7 @@ List of replacement field names, each a string.
 
   ASSERT (spec, NULLP (spec) || PAIRP (spec), 1);
 
-  /* Hairy validation/collection: symbols in `flags', pairs in `keys'.  */
+  /* Hairy validation/collection: symbols in ‘flags’, pairs in ‘keys’.  */
   check = spec;
   while (! NULLP (check))
     {
@@ -2682,7 +2682,7 @@ List of replacement field names, each a string.
                   count++;
                   val = CDR (val);
                 }
-              substnames = CDR (head);    /* i.e., `val' */
+              substnames = CDR (head);    /* i.e., ‘val’ */
             }
           else
             {
@@ -2815,10 +2815,10 @@ specifies various parameters of the output format.  */)
 
 /* Modify notice processing.
 
-   Note that this is not a simple wrap of `PQsetNoticeProcessor'.  Instead,
-   we simply modify `xc->notice'.  Also, the value can either be a port or
+   Note that this is not a simple wrap of ‘PQsetNoticeProcessor’.  Instead,
+   we simply modify ‘xc->notice’.  Also, the value can either be a port or
    procedure that takes a string.  For these reasons, we name the procedure
-   `pg-set-notice-out!' to help avoid confusion.  */
+   ‘pg-set-notice-out!’ to help avoid confusion.  */
 
 PRIMPROC
 (pg_set_notice_out_x, "pg-set-notice-out!", 2, 0, 0,
@@ -2869,7 +2869,7 @@ Optional arg @var{tickle} non-@code{#f} means to do a
 
   if (GIVENP (tickle) && NOT_FALSEP (tickle))
     /* We don't care if there was an error consuming input; caller can use
-       `pg_error_message' to find out afterwards, or simply avoid tickling in
+       ‘pg_error_message’ to find out afterwards, or simply avoid tickling in
        the first place.  */
     PQconsumeInput (dbconn);
   n = PQnotifies (dbconn);
@@ -2886,12 +2886,12 @@ Optional arg @var{tickle} non-@code{#f} means to do a
 
 /* Client encoding.  */
 
-/* Hmmm, `pg_encoding_to_char' is mentioned in the PostgreSQL documentation,
+/* Hmmm, ‘pg_encoding_to_char’ is mentioned in the PostgreSQL documentation,
    Chapter "Localization", Section "Character Set Support", but is not in
    libpq-fe.h (at least, as of PostgreSQL 7.4.21).
 
-   We add a `const' since apparently sometime between PostgreSQL 7.4.21 and
-   8.2.9 the actual (installed-header) prototype changed to include `const'
+   We add a ‘const’ since apparently sometime between PostgreSQL 7.4.21 and
+   8.2.9 the actual (installed-header) prototype changed to include ‘const’
    even though the suggested (documented) one doesn't.  Sigh.
 
    The whole thing is wrapped in a preprocessor conditional to handle the

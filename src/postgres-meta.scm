@@ -30,7 +30,7 @@
 ;;
 ;; DB-NAME and TABLE-NAME are strings.  DEF is a single column def.  DEFS is a
 ;; list of column defs.  TYPE and NEW-TYPE are symbols.  KNOWN-TOBJ is the
-;; type object already registered.  CONN is a the result of `pg-connectdb'.
+;; type object already registered.  CONN is a the result of ‘pg-connectdb’.
 ;; ERROR means an error is thrown.  PSQL is either a string, a thunk, or #t.
 
 ;;; Code:

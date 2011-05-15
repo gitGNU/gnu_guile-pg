@@ -41,7 +41,7 @@
 ;; Define some basic procedures
 
 ;; cexec SQL
-;; Execute SQL command on `*C*', return #t if OK, #f otherwise.
+;; Execute SQL command on ‘*C*’, return #t if OK, #f otherwise.
 (define (cexec sql)
   (let ((res (pg-exec *C* sql)))
     (and res (eq? 'PGRES_COMMAND_OK (pg-result-status res)))))

@@ -109,7 +109,7 @@
   ;; ugh, i hate parsing...  the right thing to do would be find out if
   ;; postgres supports (easily!)  parameterizable array output formatting.
   ;; then, we could just specify using "()" instead of "{}" and space instead
-  ;; of comma, and this proc becomes a simple objectifier walk over `read'
+  ;; of comma, and this proc becomes a simple objectifier walk over ‘read’
   ;; output.
   (let ((next (lambda () (peek-char port))))
     (let loop ((c (next)) (acc '()))
@@ -280,7 +280,7 @@
 
 (define-db-col-type 'serial "0"
   ;; This is a magic PostgreSQL type that actually causes the backend
-  ;; to create a sequence `SEQ' w/ the column typed `serial' doing a
+  ;; to create a sequence ‘SEQ’ w/ the column typed ‘serial’ doing a
   ;; nextval('SEQ').  The sequence name is TABLENAME_COLNAME_seq,
   ;; where TABLENAME and COLNAME are not defined here.
   number->string
