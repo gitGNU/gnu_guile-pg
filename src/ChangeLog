@@ -1,5 +1,12 @@
 2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc int] Use ‘doc:’+comment for ‘PRIMPROC’ docstrings.
+
+	* libpq.c: Throughout, convert series-of-strings
+	style docstrings to ‘doc:’+comment style docstrings.
+
+2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Add abstractions for all gh_ elements.
 
 	* gi.h (BOOLEANP, EXACTP, NULLP, PAIRP, STRINGP, SYMBOLP)
