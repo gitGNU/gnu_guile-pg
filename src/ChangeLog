@@ -1,3 +1,18 @@
+2011-05-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[int] Rename some libpq.c functions for uniformity.
+
+	U(X) ≡ "Rename from X".
+	* libpq.c (pg_lo_creat): U (lob_lo_creat).
+	(pg_lo_open): U (lob_lo_open).
+	(pg_lo_unlink): U (lob_lo_unlink).
+	(pg_lo_get_oid): U (lob_lo_get_oid).
+	(pg_lo_tell): U (lob_lo_tell).
+	(pg_lo_seek): U (lob_lo_seek).
+	(pg_lo_read): U (lob_lo_read).
+	(pg_lo_import): U (lob_lo_import).
+	(pg_lo_export): U (lob_lo_export).
+
 2011-05-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[inst int] Move $(mkmodcat) invocation from top dir to src/.
