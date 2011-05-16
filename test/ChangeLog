@@ -3,7 +3,7 @@
 	[maint] Instantiate test/show-platform at configure-time.
 
 	* show-platform.in: New file.
-	* show-platforM: Delete file.
+	* show-platform: Delete file.
 
 2011-05-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
@@ -885,7 +885,7 @@
 	  same directory.
 
 
-Copyright (C) 2010 Thien-Thi Nguyen
+Copyright (C) 2010, 2011 Thien-Thi Nguyen
 
 Copying and distribution of this file, with or without modification,
 are permitted provided the copyright notice and this notice are preserved.

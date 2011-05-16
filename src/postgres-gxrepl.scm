@@ -1,6 +1,6 @@
 ;;; postgres-gxrepl.scm --- like psql(1) but still evolving
 
-;; Copyright (C) 2005, 2006, 2008, 2009 Thien-Thi Nguyen
+;; Copyright (C) 2005, 2006, 2008, 2009, 2011 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;

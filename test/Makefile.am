@@ -1,6 +1,7 @@
 # Makefile.am
 #
-# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2008, 2009 Thien-Thi Nguyen
+# Copyright (C) 2002, 2003, 2004, 2005, 2006,
+#   2008, 2009, 2011 Thien-Thi Nguyen
 # Portions Copyright (C) 1998 Ian Grant
 #
 # This file is part of Guile-PG.
