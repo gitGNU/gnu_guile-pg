@@ -1,8 +1,7 @@
 #!/bin/sh
 # Usage: sh -x autogen.sh
 #
-# Bootstrap the development environment.  Optional arg "--libtoolize" means
-# also run "libtoolize --force".  The distribution was made w/ these tools:
+# The distribution was made w/ these tools:
 #  - autoconf (GNU Autoconf) 2.68
 #  - automake (GNU automake) 1.11.1
 #  - libtool (GNU libtool) 2.4
