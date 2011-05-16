@@ -152,6 +152,7 @@ AC_CONFIG_FILES([
   test/Makefile
 ])
 
+AC_GUILE_PG_CONFIG_SCRIPT([test/show-platform])
 AC_GUILE_PG_CONFIG_SCRIPT([test/runtest])
 
 AC_OUTPUT

@@ -1,12 +1,12 @@
 #!/bin/sh
 # usage: show-platform      # display "uname -a" and "tool: version" info
-#        show-platform -m   # also mail info to ttn
+#        show-platform -m   # also mail info to <@PACKAGE_BUGREPORT@>
 
-recip='RECIP'
+recip='@PACKAGE_BUGREPORT@'
 
 go ()
 {
-    echo guile-pg: VERSION
+    echo '@PACKAGE_STRING@'
     for opt in m s r ; do echo uname-${opt}: `uname -$opt` ; done
     echo autoconf: `autoconf --version | sed -e 's/[^0-9.]*//g;1q'`
     echo automake: `automake --version | sed -e 's/[^0-9.]*//g;1q'`

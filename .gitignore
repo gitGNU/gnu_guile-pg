@@ -54,3 +54,4 @@ Makefile.in
 /test/drop.sh
 /test/lo-tests-data-*
 /test/runtest
+/test/show-platform

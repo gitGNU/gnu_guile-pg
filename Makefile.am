@@ -30,8 +30,4 @@ EXTRA_DIST = \
   build-aux/uninstall-sofixed \
   build-aux/guile-baux
 
-dist-hook:
-	sed -i 's/RECIP/$(PACKAGE_BUGREPORT)/;s/VERSION/$(VERSION)/' \
-	  $(distdir)/test/show-platform
-
 # Makefile.am ends here
