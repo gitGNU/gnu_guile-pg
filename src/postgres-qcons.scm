@@ -86,11 +86,12 @@
 
 (define *infix-operations*              ; entry: NAME
   (append! '(|| ||/ |/ / !! % ^ * - +
-                     @ & | #{#}# << >>
-                       #{##}# && &< &>
-                       <-> <^ >^ #{?#}#
+                     @ & | << >>
+                       && &< &>
+                       <-> <^ >^
                        ?- ?-| @-@ ?| ?||
                        @@ ~= <<= >>=)
+           (map string->symbol '("#" "##" "?#"))
            *conditional-operations*))
 
 (define-hash ==infix-operations 67 #f *infix-operations*)
