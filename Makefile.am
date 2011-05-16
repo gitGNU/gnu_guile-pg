@@ -23,7 +23,10 @@
 
 SUBDIRS = src test doc
 
-EXTRA_DIST = build-aux/sofix build-aux/guile-baux
+EXTRA_DIST = \
+  build-aux/sofix \
+  build-aux/uninstall-sofixed \
+  build-aux/guile-baux
 
 dist-hook:
 	sed -i 's/RECIP/$(PACKAGE_BUGREPORT)/;s/VERSION/$(VERSION)/' \

@@ -33,6 +33,7 @@ Makefile.in
 /build-aux/sofix
 /build-aux/sofix.m4
 /build-aux/texinfo.tex
+/build-aux/uninstall-sofixed
 
 /doc/*.info*
 /doc/qcons-tables.texi

@@ -11,7 +11,7 @@
 ######################################################################
 # Local.
 
-for f in sofix sofix.m4 ; do
+for f in sofix sofix.m4 uninstall-sofixed ; do
     g=../.common/$f
     test -f $g || { echo ERROR: No such file: $g ; exit 1 ; }
     ( cd build-aux ; ln -sf ../$g $f )

@@ -1,5 +1,13 @@
 2011-05-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[uninstall] Fix bug: Make sure everything is properly deleted.
+
+	* Makefile.am (update-libsite-module-catalog): New target.
+	(install-data-hook) [USE_CMOD]: Use ‘update-libsite-module-catalog’.
+	(uninstall-hook): New target.
+
+2011-05-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Refactor src/Makefile.am slightly.
 
 	* Makefile.am (schemesource, EXTRA_DIST, d_DATA): New vars.

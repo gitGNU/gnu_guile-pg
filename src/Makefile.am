@@ -74,12 +74,15 @@ scheme.tsar: $(schemesource)
 
 endif # MAINTAINER_MODE
 
+update-libsite-module-catalog:
+	$(GUILE_TOOLS) make-module-catalog \
+	  -t '$(DESTDIR)' '$(DESTDIR)$(GUILE_LIBSITE)'
+
 install-data-hook:
 if USE_CMOD
 	$(top_srcdir)/build-aux/sofix $(SOFIXFLAGS) \
 	  $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
-	$(GUILE_TOOLS) make-module-catalog \
-	  -t '$(DESTDIR)' '$(DESTDIR)$(GUILE_LIBSITE)'
+	$(MAKE) $(AM_MAKEFLAGS) update-libsite-module-catalog
 else !USE_CMOD
 	@if [ 1 = '$(FOR_MAKE_CHECK)' ] ; then		\
 	  mv -f postgres postgres.STASH ;		\
@@ -88,6 +91,15 @@ else !USE_CMOD
 	  mv -f postgres.STASH postgres ;		\
 	fi
 endif !USE_CMOD
+
+uninstall-hook:
+if USE_CMOD
+	$(top_srcdir)/build-aux/uninstall-sofixed \
+	  $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
+	$(MAKE) $(AM_MAKEFLAGS) update-libsite-module-catalog
+endif USE_CMOD
+	-rmdir $(ddir)
+	-rmdir $(pkglibdir)
 
 DISTCLEANFILES = *.x postgres.exports
 
