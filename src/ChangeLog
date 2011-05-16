@@ -1,5 +1,11 @@
 2011-05-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Specify ‘ACLOCAL_AMFLAGS’ in Makefile.am.
+
+	* Makefile.am (ACLOCAL_AMFLAGS): New var.
+
+2011-05-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build install] Installed punified Scheme, sans ".scm" extension.
 
 	* Makefile.am (d_DATA, stamp-all): Do s/schemesource/schemestems/.
