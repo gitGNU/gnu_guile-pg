@@ -23,14 +23,15 @@ include $(top_srcdir)/build-aux/common.mk
 
 schemefrags = resdisp types col-defs resx qcons gxrepl table meta
 schemestems = $(schemefrags:%=postgres-%)
+schemesource = $(schemestems:=.scm)
 
+EXTRA_DIST = $(schemesource)
 BUILT_SOURCES = libpq.x
 
 AM_CFLAGS = $(AGGRESSIVE_WARNINGS) $(MORE_AGGRESSIVE_WARNINGS)
 
 ddir = $(GUILE_LIBSITE)/database
-
-dist_d_DATA = $(schemestems:=.scm)
+d_DATA = $(schemesource)
 
 if USE_CMOD
 d_LTLIBRARIES = postgres.la
@@ -41,7 +42,7 @@ postgres_la_SOURCES = libpq.c gi.h
 postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0
 
 if !USE_CMOD
-d_DATA = postgres
+d_DATA += postgres
 
 postgres.exports: $(postgres_la_SOURCES)
 	> $@ \
@@ -68,7 +69,7 @@ all.tsar: libpq.tsar scheme.tsar
 libpq.tsar: libpq.c
 	$(gx) c-tsar -f $@ -c utf-8 update $^ -- $(snarfcppopts)
 
-scheme.tsar: $(schemestems:=.scm)
+scheme.tsar: $(schemesource)
 	$(gx) tsar -f $@ -c utf-8 update $^
 
 endif # MAINTAINER_MODE

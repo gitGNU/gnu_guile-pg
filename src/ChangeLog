@@ -1,5 +1,14 @@
 2011-05-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Refactor src/Makefile.am slightly.
+
+	* Makefile.am (schemesource, EXTRA_DIST, d_DATA): New vars.
+	(dist_d_DATA): Delete var.
+	[!USE_CMOD] (d_DATA): Convert assignment from ‘=’ to ‘+=’.
+	[MAINTAINER_MODE] (scheme.tsar): Use $(schemesource).
+
+2011-05-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[qcons int] Avoid using literal symbols with ‘#\#’ in the name.
 
 	These cause round-trip problems that vary from
