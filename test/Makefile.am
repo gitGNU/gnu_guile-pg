@@ -35,8 +35,9 @@ EXTRA_DIST = $(TESTS)                           \
 
 check_DATA = fake-install
 
-fake-install:
+fake-install: ../src/stamp-all
 	top=`pwd`/fake-install ;		\
+	rm -rf $$top ;				\
 	cd ../src ;				\
 	$(MAKE) $(AM_MAKEFLAGS) install		\
 	  FOR_MAKE_CHECK=1			\

@@ -33,6 +33,10 @@ AM_CFLAGS = $(AGGRESSIVE_WARNINGS) $(MORE_AGGRESSIVE_WARNINGS)
 ddir = $(GUILE_LIBSITE)/database
 d_DATA = $(schemesource)
 
+stamp-all: $(schemesource) $(d_LTLIBRARIES) $(pkglib_LTLIBRARIES)
+	@touch $@
+noinst_DATA = stamp-all
+
 if USE_CMOD
 d_LTLIBRARIES = postgres.la
 else
@@ -61,7 +65,7 @@ snarfcppopts = $(DEFS) $(DEFAULT_INCLUDES) $(CPPFLAGS)
 
 if MAINTAINER_MODE
 
-noinst_DATA = all.tsar
+noinst_DATA += all.tsar
 
 all.tsar: libpq.tsar scheme.tsar
 	$(gx) tsar -f $@ -c utf-8 concat $^
@@ -103,6 +107,6 @@ endif USE_CMOD
 
 DISTCLEANFILES = *.x postgres.exports
 
-CLEANFILES = *.x postgres
+CLEANFILES = *.x postgres stamp-all
 
 # Makefile.am ends here
