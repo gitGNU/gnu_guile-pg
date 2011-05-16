@@ -40,33 +40,33 @@
 # This whole approach is rather ungainly and needs to be rethought. --ttn
 #
 AC_DEFUN([PQ_FLAGS],[
-  AC_ARG_ENABLE([pq-rpath], AC_HELP_STRING([--enable-pq-rpath],
+  AC_ARG_ENABLE([pq-rpath], AS_HELP_STRING([--enable-pq-rpath],
                               [arrange to use "-R" when linking libpq]))
-  AC_ARG_WITH([libpq], AC_HELP_STRING([--with-libpq=DIR],
+  AC_ARG_WITH([libpq], AS_HELP_STRING([--with-libpq=DIR],
    [look for libpq headers in DIR/include and libpq.a in DIR/lib
     @<:@default=$prefix@:>@; see also --with-libpq-includes and
     --with-libpq-lib below]),
    [AC_MSG_CHECKING([$withval/include/libpq-fe.h exists])
     if test ! -f "$withval/include/libpq-fe.h" ; then
       AC_MSG_RESULT(no)
-      AC_ERROR([$withval/include/libpq-fe.h does not exist.])
+      AC_MSG_ERROR([$withval/include/libpq-fe.h does not exist.])
     else
       AC_MSG_RESULT(yes)
     fi
     AC_MSG_CHECKING([$withval/lib/libpq.a exists])
     if test ! -f "$withval/lib/libpq.a" ; then
       AC_MSG_RESULT(no)
-      AC_ERROR([$withval/include/libpq.a does not exist.])
+      AC_MSG_ERROR([$withval/include/libpq.a does not exist.])
     else
       AC_MSG_RESULT(yes)
     fi
     PQ_CPPFLAGS="-I$withval/include"
     PQ_LDFLAGS="-L$withval/lib -lpq"
    ],[
-    AC_ARG_WITH([libpq-includes], AC_HELP_STRING([--with-libpq-includes=DIR],
+    AC_ARG_WITH([libpq-includes], AS_HELP_STRING([--with-libpq-includes=DIR],
                                     [look for libpq includes in DIR]),[
        if test ! -f "$withval/libpq-fe.h" ; then
-         AC_ERROR([$withval/libpq-fe.h does not exist.])
+         AC_MSG_ERROR([$withval/libpq-fe.h does not exist.])
        fi
        PQ_CPPFLAGS="-I$withval"],[
        saved_CPPFLAGS="$CPPFLAGS"
@@ -74,16 +74,16 @@ AC_DEFUN([PQ_FLAGS],[
        AC_CHECK_HEADERS(libpq-fe.h)
        CPPFLAGS="$saved_CPPFLAGS"
        if test ! "$ac_cv_header_libpq_fe_h" = yes ; then
-         AC_ERROR([Cannot find libpq-fe.h; try "--with-libpq-includes=DIR"])
+         AC_MSG_ERROR([Cannot find libpq-fe.h; try "--with-libpq-includes=DIR"])
        fi
        PQ_CPPFLAGS="-I$prefix/include"
     ])
-    AC_ARG_WITH([libpq-lib], AC_HELP_STRING([--with-libpq-lib=DIR],
+    AC_ARG_WITH([libpq-lib], AS_HELP_STRING([--with-libpq-lib=DIR],
                                [look for libpq libraries in DIR]),[
        AC_MSG_CHECKING([$withval/libpq.a exists])
        if test ! -f "$withval/libpq.a" ; then
          AC_MSG_RESULT(no)
-         AC_ERROR([$withval/libpq.a does not exist.])
+         AC_MSG_ERROR([$withval/libpq.a does not exist.])
        else
          AC_MSG_RESULT(yes)
        fi
@@ -93,8 +93,8 @@ AC_DEFUN([PQ_FLAGS],[
        AC_CHECK_LIB([pq],[PQprotocolVersion])
        LDFLAGS="$saved_LDFLAGS"
        if test ! "$ac_cv_lib_pq_PQprotocolVersion" = yes ; then
-         AC_ERROR([Cannot find libpq that supports Protocol 3.0 or later;
-                   try "--with-libpq-lib=DIR"])
+         AC_MSG_ERROR([Cannot find libpq that supports Protocol 3.0 or later;
+                       try "--with-libpq-lib=DIR"])
        fi
        PQ_LDFLAGS="-L$prefix/lib -lpq"
     ])
@@ -123,8 +123,9 @@ AC_DEFUN([AC_GUILE_PG_BCOMPAT],[
 
 AC_CACHE_CHECK([for fill_input in struct scm_ptob_descriptor],
                [ac_cv_struct_fill_input],[
-  AC_TRY_COMPILE([#include <libguile.h>],
-                 [struct scm_ptob_descriptor s; s.fill_input;],
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#include <libguile.h>
+]],[[struct scm_ptob_descriptor s; s.fill_input;]])],
                  [ac_cv_struct_fill_input=yes],
                  [ac_cv_struct_fill_input=no])
 ])

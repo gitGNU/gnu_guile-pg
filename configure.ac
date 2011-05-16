@@ -25,7 +25,7 @@ AC_INIT([Guile-PG],[0.39],[ttn@gnuvola.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([1.11 -Wall])
 
-AM_CONFIG_HEADER([src/config.h])
+AC_CONFIG_HEADERS([src/config.h])
 
 AM_MAINTAINER_MODE
 
@@ -42,9 +42,9 @@ LT_INIT([dlopen disable-static]) dnl module only
 
 AC_PROG_CC
 
-AC_STDC_HEADERS
+AC_HEADER_STDC
 
-AC_HAVE_HEADERS(string.h stdio.h stdlib.h malloc.h unistd.h)
+AC_CHECK_HEADERS([string.h stdio.h stdlib.h malloc.h unistd.h])
 
 ##----------------------------------------------------------------------------
 ## Guile

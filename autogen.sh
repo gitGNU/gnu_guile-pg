@@ -1,5 +1,5 @@
 #!/bin/sh
-# Usage: sh -x autogen.sh [--libtoolize]
+# Usage: sh -x autogen.sh
 #
 # Bootstrap the development environment.  Optional arg "--libtoolize" means
 # also run "libtoolize --force".  The distribution was made w/ these tools:
@@ -8,6 +8,8 @@
 #  - libtool (GNU libtool) 2.4
 #  - guile (Unofficial Guile) 1.4.1.122
 #  - guile-baux-tool (Guile-BAUX) 20110515.1158.8d8c7ae
+
+set -e
 
 ######################################################################
 # Local.
@@ -33,13 +35,7 @@ guile-baux-tool import \
 #############################################################################
 # Autotools
 
-test x"$1" = x--libtoolize && libtoolize --force
-test -r build-aux/ltmain.sh || libtoolize --force
-
-aclocal -I build-aux
-autoheader
-autoconf
-automake --add-missing --force -Wall
+autoreconf --verbose --force --install --symlink --warnings=all
 
 ######################################################################
 # Done.

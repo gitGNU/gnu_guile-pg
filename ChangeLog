@@ -1,5 +1,18 @@
 2011-05-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[maint] Upgrade m4 to avoid obsolete constructs; use autoreconf.
+
+	* build-aux/guile-pg.m4
+	(PQ_FLAGS): Use ‘AS_HELP_STRING’, ‘AC_MSG_ERROR’.
+	(AC_GUILE_PG_BCOMPAT): Use ‘AC_COMPILE_IFELSE’, ‘AC_LANG_PROGRAM’.
+	* configure.ac (AM_CONFIG_HEADER): Replace with ‘AC_CONFIG_HEADERS’.
+	(AC_STDC_HEADERS): Replace with ‘AC_HEADER_STDC’.
+	(AC_HAVE_HEADERS): Replace with ‘AC_CHECK_HEADERS’.
+	* autogen.sh: Do ‘set -e’; replace libtoolize, aclocal, autoheader,
+	autoconf, and automake invocations with one autoreconf invocation.
+
+2011-05-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[maint] Instantiate test/show-platform at configure-time.
 
 	* configure.ac (test/show-platform): New AC_GUILE_PG_CONFIG_SCRIPT.
