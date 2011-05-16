@@ -26,6 +26,7 @@ guile-baux-tool import \
     c-tsar \
     tsin \
     gen-scheme-wrapper \
+    punify \
     gbaux-do
 
 #############################################################################

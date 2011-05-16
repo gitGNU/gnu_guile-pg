@@ -31,11 +31,13 @@ BUILT_SOURCES = libpq.x
 AM_CFLAGS = $(AGGRESSIVE_WARNINGS) $(MORE_AGGRESSIVE_WARNINGS)
 
 ddir = $(GUILE_LIBSITE)/database
-d_DATA = $(schemesource)
+d_DATA = $(schemestems)
 
-stamp-all: $(schemesource) $(d_LTLIBRARIES) $(pkglib_LTLIBRARIES)
+stamp-all: $(schemestems) $(d_LTLIBRARIES) $(pkglib_LTLIBRARIES)
 	@touch $@
 noinst_DATA = stamp-all
+
+SUFFIXES = .scm
 
 if USE_CMOD
 d_LTLIBRARIES = postgres.la
@@ -63,6 +65,9 @@ snarfcppopts = $(DEFS) $(DEFAULT_INCLUDES) $(CPPFLAGS)
 .c.x:
 	$(gx) c2x -o $@ $< -- $(snarfcppopts) $(CFLAGS)
 
+.scm:
+	$(gx) punify -n $< > $@
+
 if MAINTAINER_MODE
 
 noinst_DATA += all.tsar
@@ -83,6 +88,12 @@ update-libsite-module-catalog:
 	  -t '$(DESTDIR)' '$(DESTDIR)$(GUILE_LIBSITE)'
 
 install-data-hook:
+	@for f in $(schemestems) ; do					  \
+	  g="$(ddir)/$$f" ;						  \
+	  if [ -f "$(DESTDIR)$$g.scm" ] ; then				  \
+	    echo "WARNING: previously installed $$g.scm may shadow $$f" ; \
+	  fi ;								  \
+	done
 if USE_CMOD
 	$(top_srcdir)/build-aux/sofix $(SOFIXFLAGS) \
 	  $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
@@ -107,6 +118,6 @@ endif USE_CMOD
 
 DISTCLEANFILES = *.x postgres.exports
 
-CLEANFILES = *.x postgres stamp-all
+CLEANFILES = *.x postgres stamp-all $(schemestems)
 
 # Makefile.am ends here

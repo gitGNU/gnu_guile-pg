@@ -1,5 +1,15 @@
 2011-05-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build install] Installed punified Scheme, sans ".scm" extension.
+
+	* Makefile.am (d_DATA, stamp-all): Do s/schemesource/schemestems/.
+	(SUFFIXES): New var.
+	(.scm): New old-style suffix rule.
+	(install-data-hook): Check for "foo.scm" in $(ddir); emit warning.
+	(CLEANFILES): Add $(schemestems).
+
+2011-05-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Make partial install depend on ../src "make all".
 
 	Omission from 2011-05-14, "Do a partial
