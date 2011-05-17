@@ -1,5 +1,14 @@
 2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Make checks for <guile/FOO.h> more precise.
+
+	* configure.ac (PG_CHECK_GUILE_HEADER): New AC_DEFUN.
+	(HAVE_GUILE_GH_H): New PG_CHECK_GUILE_HEADER.
+	(HAVE_GUILE_MODSUP_H): Likewise.
+	(GUILE_MODSUP_H): Delete macro call.
+
+2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Conditionalize check for ‘terminating’.
 
 	* configure.ac: Don't bother checking for
