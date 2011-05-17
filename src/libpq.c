@@ -558,7 +558,7 @@ zero if an error occurred.  */)
 static int
 lob_fill_input (SCM port)
 {
-  const char *FUNC_NAME = "lob_fill_input";
+  const char *FUNC_NAME = __func__;
   scm_port *pt = SCM_PTAB_ENTRY (port);
   lob_stream *lobp = LOB_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
@@ -583,7 +583,7 @@ lob_fill_input (SCM port)
 static void
 lob_write (SCM port, const void *data, size_t size)
 {
-  const char *FUNC_NAME = "lob_write";
+  const char *FUNC_NAME = __func__;
   scm_port *pt = SCM_PTAB_ENTRY (port);
 
   if (pt->write_buf == &pt->shortbuf)
