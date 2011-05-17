@@ -80,8 +80,37 @@ saved_LDFLAGS="$LDFLAGS"
 CPPFLAGS="$GUILE_CFLAGS $CPPFLAGS"
 LDFLAGS="$GUILE_LDFLAGS $LDFLAGS"
 
-AC_GUILE_PG_BCOMPAT
-AC_GUILE_PG_FCOMPAT
+AC_CACHE_CHECK([for fill_input in struct scm_ptob_descriptor],
+               [ac_cv_struct_fill_input],[
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#include <libguile.h>
+]],[[struct scm_ptob_descriptor s; s.fill_input;]])],
+                 [ac_cv_struct_fill_input=yes],
+                 [ac_cv_struct_fill_input=no])
+])
+if test $ac_cv_struct_fill_input = no; then
+  AC_MSG_ERROR([guile struct scm_ptob_descriptor lacks member fill_input])
+fi
+
+## Older guiles know "scm_terminating" as simply "terminating" and don't
+## declare it.  So, we check for both.  See libpostgres_lo.c comments.
+
+AC_CHECK_DECL([scm_terminating],[
+                AC_DEFINE(HAVE_SCM_TERMINATING, 1,
+                          [Define if libguile.h declares scm_terminating.])
+              ],,[[#include "libguile.h"]])
+
+AC_CHECK_LIB(guile, terminating, [
+  AC_DEFINE(HAVE_LIBGUILE_TERMINATING, 1,
+            [Define if libguile defines terminating.])
+])
+
+GUILE_MODSUP_H
+
+AC_CHECK_DECL([scm_gc_protect_object],[
+ AC_DEFINE([HAVE_SCM_GC_PROTECT_OBJECT], [1],
+   [Define if libguile provides the scm_gc_protect_object function.])
+],,[#include "libguile.h"])
 
 CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"

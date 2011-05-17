@@ -1,3 +1,11 @@
+2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[maint] Inline AC_GUILE_PG_[BB]COMPAT into configure.ac.
+
+	* build-aux/guile-pg.m4 (AC_GUILE_PG_BCOMPAT)
+	(AC_GUILE_PG_FCOMPAT): Incorporate these AC_DEFUNs from here...
+	* configure.ac: ...to here, at top-level.
+
 2011-05-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[maint] Upgrade m4 to avoid obsolete constructs; use autoreconf.
