@@ -95,10 +95,7 @@ fi
 ## Older guiles know "scm_terminating" as simply "terminating" and don't
 ## declare it.  So, we check for both.  See libpostgres_lo.c comments.
 
-AC_CHECK_DECL([scm_terminating],[
-                AC_DEFINE(HAVE_SCM_TERMINATING, 1,
-                          [Define if libguile.h declares scm_terminating.])
-              ],,[[#include "libguile.h"]])
+AC_CHECK_DECLS([scm_terminating],,,[[#include <libguile.h>]])
 
 AC_CHECK_LIB(guile, terminating, [
   AC_DEFINE(HAVE_LIBGUILE_TERMINATING, 1,

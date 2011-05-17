@@ -407,12 +407,12 @@ explain what went wrong.  */)
    variable: scm_terminating.  If it's not available in some form (see
    guile-pg.m4 comments), we arrange to unconditionally write to stderr
    instead of risking further muck-up.  */
-#ifndef HAVE_SCM_TERMINATING
+#if !HAVE_DECL_SCM_TERMINATING
 # ifdef HAVE_LIBGUILE_TERMINATING
 extern int terminating;
 #   define scm_terminating terminating
 # endif /* HAVE_LIBGUILE_TERMINATING */
-#endif /* !HAVE_SCM_TERMINATING */
+#endif /* !HAVE_DECL_SCM_TERMINATING */
 
 static void
 lob_flush (SCM port)
@@ -447,12 +447,11 @@ lob_flush (SCM port)
                 }
               pt->write_pos = pt->write_buf + remaining;
             }
-#if defined (HAVE_SCM_TERMINATING) || defined (HAVE_LIBGUILE_TERMINATING)
+#if HAVE_DECL_SCM_TERMINATING || defined (HAVE_LIBGUILE_TERMINATING)
           if (! scm_terminating)
             SYSTEM_ERROR ();
           else
-#endif /* defined (HAVE_SCM_TERMINATING) ||
-          defined (HAVE_LIBGUILE_TERMINATING) */
+#endif /* HAVE_DECL_SCM_TERMINATING || defined (HAVE_LIBGUILE_TERMINATING) */
             {
               const char *msg = "Error: could not"
                 " flush large object file descriptor ";

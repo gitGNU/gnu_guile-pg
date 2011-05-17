@@ -1,5 +1,12 @@
 2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Use ‘AC_CHECK_DECLS’ for ‘scm_terminating’.
+
+	* configure.ac (HAVE_SCM_TERMINATING): Delete AC_DEFINE.
+	(scm_terminating): Use ‘AC_CHECK_DECLS’.
+
+2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[maint] Inline AC_GUILE_PG_[BB]COMPAT into configure.ac.
 
 	* build-aux/guile-pg.m4 (AC_GUILE_PG_BCOMPAT)

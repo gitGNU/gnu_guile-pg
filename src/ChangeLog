@@ -1,5 +1,12 @@
 2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Use ‘AC_CHECK_DECLS’ for ‘scm_terminating’.
+
+	* libpq.c: Throughout, replace ‘defined HAVE_SCM_TERMINATING’
+	with ‘HAVE_DECL_SCM_TERMINATING’.
+
+2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq int] Use ‘__func__’ more.
 
 	* libpq.c (lob_fill_input, lob_write): Use ‘__func__’.
