@@ -217,13 +217,6 @@
         (else (display "ERROR: fresh! failed. Giving up.\n")
               (exit #f))))
 
-(define (manually-load . parts)
-  (let ((dir (getenv "tscm")))
-    (for-each (lambda (part)
-                (load (in-vicinity dir (string-append
-                                        "postgres-" part ".scm"))))
-              parts)))
-
 
 ;;; load-time actions
 

@@ -24,7 +24,6 @@
            (newline)
            (exit #f)))
 
-(manually-load "types" "col-defs" "resx" "qcons" "table")
 (use-modules (database postgres)
              (database postgres-types)
              (database postgres-table)

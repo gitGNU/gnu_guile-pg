@@ -23,7 +23,6 @@
             (newline)
             (exit #f)))
 
-(manually-load "types" "col-defs" "resx" "qcons" "table" "meta")
 (use-modules (database postgres) (database postgres-meta))
 
 (fresh!)
