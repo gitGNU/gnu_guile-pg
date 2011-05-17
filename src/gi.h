@@ -82,14 +82,6 @@ scm_init_ ## fname_frag ## _module (void)                               \
 #endif  /* !defined HAVE_GUILE_MODSUP_H */
 
 /*
- * forward (sometimes kids make messes for others to clean up)
- */
-
-#ifdef HAVE_SCM_GC_PROTECT_OBJECT
-#define scm_protect_object(x)  (scm_gc_protect_object (x))
-#endif
-
-/*
  * abstractions
  */
 

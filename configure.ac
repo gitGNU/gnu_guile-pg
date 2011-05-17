@@ -104,11 +104,6 @@ AC_CHECK_LIB(guile, terminating, [
 
 GUILE_MODSUP_H
 
-AC_CHECK_DECL([scm_gc_protect_object],[
- AC_DEFINE([HAVE_SCM_GC_PROTECT_OBJECT], [1],
-   [Define if libguile provides the scm_gc_protect_object function.])
-],,[#include "libguile.h"])
-
 CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"
 

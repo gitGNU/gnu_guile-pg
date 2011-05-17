@@ -1,5 +1,11 @@
 2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Decruft: Don't bother with ‘scm_gc_protect_object’.
+
+	* gi.h (scm_protect_object): Delete #define.
+
+2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Use ‘AC_CHECK_DECLS’ for ‘scm_terminating’.
 
 	* libpq.c: Throughout, replace ‘defined HAVE_SCM_TERMINATING’

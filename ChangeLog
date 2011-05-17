@@ -1,5 +1,12 @@
 2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Decruft: Don't bother with ‘scm_gc_protect_object’.
+
+	* configure.ac (scm_gc_protect_object): Delete AC_CHECK_DECL.
+	(HAVE_SCM_GC_PROTECT_OBJECT): Delete AC_DEFINE.
+
+2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Use ‘AC_CHECK_DECLS’ for ‘scm_terminating’.
 
 	* configure.ac (HAVE_SCM_TERMINATING): Delete AC_DEFINE.
