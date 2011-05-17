@@ -1,5 +1,16 @@
 2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build] Fix bug: #include <libpq-fe.h> to look for some pg_ funcs.
+
+	Omission from 2008-07-11, "Conditionalize
+	‘pg_encoding_to_char’ decl; make its retval ‘const’";
+	and 2009-06-18, "New (database postgres) proc: pg-mblen".
+
+	* configure.ac (pg_encoding_to_char, pg_char_to_encoding):
+	Specify #include <libpq-fe.h> to AC_CHECK_DECLS.
+
+2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Decruft: Don't check for "Guile site dir".
 
 	* configure.ac (GUILE_SITE_DIR): Delete macro call.

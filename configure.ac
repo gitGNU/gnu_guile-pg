@@ -121,7 +121,9 @@ saved_LDFLAGS="$LDFLAGS"
 CPPFLAGS="$PQ_CPPFLAGS $CPPFLAGS"
 LDFLAGS="$PQ_LDFLAGS $LDFLAGS"
 
-AC_CHECK_DECLS([pg_encoding_to_char, pg_char_to_encoding])
+AC_CHECK_DECLS([pg_encoding_to_char, pg_char_to_encoding],,,[
+#include <libpq-fe.h>
+])
 
 # 8.0
 AC_CHECK_FUNCS([PQserverVersion])
