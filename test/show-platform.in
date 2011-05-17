@@ -20,8 +20,9 @@
 # Fifth Floor, Boston, MA  02110-1301  USA
 
 ##
-# usage: show-platform      # display "uname -a" and "tool: version" info
-#        show-platform -m   # also mail info to <@PACKAGE_BUGREPORT@>
+# usage:
+#  sh show-platform      # display "uname -a" and "tool: version" info
+#  sh show-platform -m   # also mail info to <@PACKAGE_BUGREPORT@>
 ##
 
 recip='@PACKAGE_BUGREPORT@'

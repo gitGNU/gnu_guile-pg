@@ -109,11 +109,4 @@ AC_DEFUN([PQ_FLAGS],[
   AC_SUBST(PQ_LDFLAGS)
 ])
 
-
-# AC_GUILE_PG_CONFIG_SCRIPT(FILE)
-#
-AC_DEFUN([AC_GUILE_PG_CONFIG_SCRIPT],[
-  AC_CONFIG_FILES([$1],[chmod +x $1])
-])
-
 # guile-pg.m4 ends here

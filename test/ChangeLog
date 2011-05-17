@@ -1,5 +1,12 @@
 2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build] Don't chmod +x test/{runtest,show-platform}.
+
+	* Makefile.am (TESTS_ENVIRONMENT): Invoke w/ sh(1).
+	* show-platform.in: Update usage comment; nfc.
+
+2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v int] Use $srcdir in runtest.
 
 	* runtest.in (ts): Delete var;

@@ -169,10 +169,9 @@ AC_CONFIG_FILES([
   src/Makefile
   doc/Makefile
   test/Makefile
+  test/runtest
+  test/show-platform
 ])
-
-AC_GUILE_PG_CONFIG_SCRIPT([test/show-platform])
-AC_GUILE_PG_CONFIG_SCRIPT([test/runtest])
 
 AC_OUTPUT
 

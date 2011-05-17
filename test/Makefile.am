@@ -21,7 +21,7 @@
 # write to the Free Software Foundation, Inc., 51 Franklin Street,
 # Fifth Floor, Boston, MA  02110-1301  USA
 
-TESTS_ENVIRONMENT = ./runtest
+TESTS_ENVIRONMENT = sh runtest
 
 TESTS = alive.scm basic.scm large.scm types-table.scm meta.scm
 
