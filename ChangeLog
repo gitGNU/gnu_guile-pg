@@ -1,5 +1,11 @@
 2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Decruft: Don't check for "Guile site dir".
+
+	* configure.ac (GUILE_SITE_DIR): Delete macro call.
+
+2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build] Don't chmod +x test/{runtest,show-platform}.
 
 	* configure.ac (AC_CONFIG_FILES):

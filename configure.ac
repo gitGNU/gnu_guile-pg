@@ -53,8 +53,6 @@ AC_MSG_NOTICE([checking Guile particulars])
 
 GUILE_PROGS
 GUILE_FLAGS
-
-GUILE_SITE_DIR
 GUILE_LIBSITE_DIR
 
 AS_IF([test xyes = x$enable_cmod],[
