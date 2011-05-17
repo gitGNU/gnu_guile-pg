@@ -1,5 +1,12 @@
 2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Decruft: Don't check for ‘scm_ptob_descriptor.fill_input’.
+
+	* configure.ac: Remove obsolete/unused check for
+	‘struct scm_ptob_descriptor’ member ‘fill_input’.
+
+2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Make checks for <guile/FOO.h> more precise.
 
 	* configure.ac (PG_CHECK_GUILE_HEADER): New AC_DEFUN.

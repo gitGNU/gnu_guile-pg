@@ -80,18 +80,6 @@ saved_LDFLAGS="$LDFLAGS"
 CPPFLAGS="$GUILE_CFLAGS $CPPFLAGS"
 LDFLAGS="$GUILE_LDFLAGS $LDFLAGS"
 
-AC_CACHE_CHECK([for fill_input in struct scm_ptob_descriptor],
-               [ac_cv_struct_fill_input],[
-  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#include <libguile.h>
-]],[[struct scm_ptob_descriptor s; s.fill_input;]])],
-                 [ac_cv_struct_fill_input=yes],
-                 [ac_cv_struct_fill_input=no])
-])
-if test $ac_cv_struct_fill_input = no; then
-  AC_MSG_ERROR([guile struct scm_ptob_descriptor lacks member fill_input])
-fi
-
 dnl Ancient guiles know ‘scm_terminating’ as simply ‘terminating’
 dnl and don't even declare it.  So, we check for both.
 
