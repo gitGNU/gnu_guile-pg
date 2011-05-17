@@ -20,8 +20,6 @@
 # write to the Free Software Foundation, Inc., 51 Franklin Street,
 # Fifth Floor, Boston, MA  02110-1301  USA
 
-ts="@abs_top_srcdir@"
-
 PGDATABASE='guile_pg_test'
 export PGDATABASE
 
@@ -43,7 +41,7 @@ test x"$DEBUG" = x || echo GUILE_LIBSITE: @GUILE_LIBSITE@
 
 exec ${GUILE-@GUILE@} $dopt \
     -L "@GUILE_LIBSITE@" \
-    -l "$ts/test/testing.scm" \
+    -l $srcdir/testing.scm \
     -s $1
 
 # runtest ends here
