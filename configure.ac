@@ -189,18 +189,19 @@ CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"
 
 ##----------------------------------------------------------------------------
-## Compose CPPFLAGS, LDFLAGS
+## Compose ‘SUBCPPFLAGS’ and ‘SUBLDFLAGS’, whose names are deliberately
+## without underscore (info "(automake) Flag Variables Ordering").
 
-if test x"$PQ_CPPFLAGS" = x"$GUILE_CFLAGS" ; then
-  CPPFLAGS="$GUILE_CFLAGS"
-else
-  CPPFLAGS="$PQ_CPPFLAGS $GUILE_CFLAGS"
-fi
-LDFLAGS="$PQ_LDFLAGS $GUILE_LDFLAGS"
+AS_IF([test "$PQ_CPPFLAGS" = "$GUILE_CFLAGS"],
+      [SUBCPPFLAGS="$GUILE_CFLAGS"],
+      [SUBCPPFLAGS="$PQ_CPPFLAGS $GUILE_CFLAGS"])
+SUBLDFLAGS="$PQ_LDFLAGS $GUILE_LDFLAGS"
+AC_SUBST([SUBCPPFLAGS])
+AC_SUBST([SUBLDFLAGS])
 
-AC_MSG_NOTICE([NOTE: preprocessor and linker flags (see README if wrong):
- CPPFLAGS: $CPPFLAGS
-  LDFLAGS: $LDFLAGS])
+AC_MSG_NOTICE([NOTE: combined cpp and linker flags (see README if wrong):
+ SUBCPPFLAGS: $SUBCPPFLAGS
+  SUBLDFLAGS: $SUBLDFLAGS])
 
 ##----------------------------------------------------------------------------
 ## Etc

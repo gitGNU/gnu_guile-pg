@@ -28,7 +28,9 @@ schemesource = $(schemestems:=.scm)
 EXTRA_DIST = $(schemesource)
 BUILT_SOURCES = libpq.x
 
+AM_CPPFLAGS = $(SUBCPPFLAGS)
 AM_CFLAGS = $(AGGRESSIVE_WARNINGS) $(MORE_AGGRESSIVE_WARNINGS)
+AM_LDFLAGS = $(SUBLDFLAGS)
 
 ddir = $(GUILE_LIBSITE)/database
 d_DATA = $(schemestems)
@@ -46,6 +48,7 @@ pkglib_LTLIBRARIES = postgres.la
 endif
 postgres_la_SOURCES = libpq.c gi.h
 postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0
+postgres_la_LDFLAGS += $(AM_LDFLAGS)
 
 if !USE_CMOD
 d_DATA += postgres
@@ -60,7 +63,7 @@ postgres: postgres.la postgres.exports
 	  -i '$(pkglibdir)'
 endif !USE_CMOD
 
-snarfcppopts = $(DEFS) $(DEFAULT_INCLUDES) $(CPPFLAGS)
+snarfcppopts = $(DEFS) $(DEFAULT_INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS)
 
 .c.x:
 	$(gx) c2x -o $@ $< -- $(snarfcppopts) $(CFLAGS)

@@ -1,3 +1,11 @@
+2011-05-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build] Don't clobber Makefile "user vars" ‘CPPFLAGS’, ‘LDFLAGS’.
+
+	* Makefile.am (AM_CPPFLAGS, AM_LDFLAGS): New vars.
+	(postgres_la_LDFLAGS): Add $(AM_LDFLAGS).
+	(snarfcppopts): Add $(AM_CPPFLAGS).
+
 2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build int] Decruft: Don't bother with ‘scm_gc_protect_object’.

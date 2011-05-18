@@ -1,5 +1,12 @@
 2011-05-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build] Don't clobber Makefile "user vars" ‘CPPFLAGS’, ‘LDFLAGS’.
+
+	* configure.ac: Don't compose ‘CPPFLAGS’, ‘LDFLAGS’;
+	instead, compose ‘SUBCPPFLAGS’, ‘SUBLDFLAGS’.
+
+2011-05-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Rewrite --with-libpq{,-includes,-lib} handling.
 
 	* configure.ac (pq-rpath): New AC_ARG_ENABLE.
