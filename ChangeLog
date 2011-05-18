@@ -1,3 +1,17 @@
+2011-05-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build int] Rewrite --with-libpq{,-includes,-lib} handling.
+
+	* configure.ac (pq-rpath): New AC_ARG_ENABLE.
+	(PG_CHECK_DIR): New AC_DEFUN.
+	(libpq, libpq-includes, libpq-lib): New AC_ARG_WITHs.
+	(PG_PQ_NOT_YET): New AC_DEFUN.
+	<top-level>: Rewrite ‘--with-libpq’ handling; combine
+	handling of ‘--with-libpq-includes’ and ‘--with-libpq-lib’;
+	simplify failure message; use ‘AC_MSG_FAILURE’; simplify
+	‘--enable-pq-rpath’ handling; append " -lpq" as the last step.
+	* build-aux/guile-pg.m4: Delete file.
+
 2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build] Fix bug: #include <libpq-fe.h> to look for some pg_ funcs.

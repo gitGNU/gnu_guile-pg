@@ -37,6 +37,24 @@ AC_ARG_ENABLE([cmod],[AS_HELP_STRING([--disable-cmod],
 enable_cmod=yes
 ])
 
+AC_ARG_ENABLE([pq-rpath],[AS_HELP_STRING([--enable-pq-rpath],
+ [arrange to use "-R" when linking libpq])])
+
+AC_DEFUN([PG_CHECK_DIR],
+[AS_IF([test yes = $withval],
+       [AC_MSG_ERROR([--with-$1 requires argument DIR])])])
+
+AC_ARG_WITH([libpq],[AS_HELP_STRING([--with-libpq=DIR],
+ [look for libpq headers in DIR/include and libpq.a in DIR/lib
+  @<:@default=$prefix@:>@; see also --with-libpq-includes and
+  --with-libpq-lib below])],[PG_CHECK_DIR([libpq])])
+
+AC_ARG_WITH([libpq-includes],[AS_HELP_STRING([--with-libpq-includes=DIR],
+ [look for libpq includes in DIR])],[PG_CHECK_DIR([libpq-includes])])
+
+AC_ARG_WITH([libpq-lib],[AS_HELP_STRING([--with-libpq-lib=DIR],
+ [look for libpq libraries in DIR])],[PG_CHECK_DIR([libpq-lib])])
+
 LT_PREREQ([2.2.6])
 LT_INIT([dlopen disable-static]) dnl module only
 
@@ -112,9 +130,48 @@ AC_MSG_NOTICE([checking PostgreSQL particulars])
 ## setting the environment variables PQ_CPPFLAGS and PQ_LDFLAGS.  This is
 ## useful e.g. when running 'Make distcheck', which runs ./configure.
 
-if test "x$PQ_LDFLAGS" = "x" && test "x$PQ_CPPFLAGS" = "x" ; then
-PQ_FLAGS
-fi
+AC_DEFUN([PG_PQ_NOT_YET],
+[AS_IF([test -z "$PQ_CPPFLAGS" && test -z "$PQ_LDFLAGS"],$1)])
+
+PG_PQ_NOT_YET([AS_IF([test set = "${with_libpq+set}"],[
+AC_CACHE_CHECK([for libpq-fe.h and libpq.a under $with_libpq],[pg_cv_w],
+[AS_IF([test -f "${with_libpq}/include/libpq-fe.h" &&
+        test -f "${with_libpq}/lib/libpq.a"],
+[pg_cv_w=yes],
+[pg_cv_w=no])])
+AS_IF([test yes = $pg_cv_w],[
+PQ_CPPFLAGS="-I${with_libpq}/include"
+PQ_LDFLAGS="-L${with_libpq}/lib"
+])])])
+
+PG_PQ_NOT_YET([AS_IF([test set = ${with_libpq_includes+set} &&
+                      test set = ${with_libpq_lib+set}],[
+AC_CACHE_CHECK([for ${with_libpq_includes}/libpq-fe.h],[pg_cv_wi],
+[AS_IF([test -f "${with_libpq_includes}/libpq-fe.h"],
+[pg_cv_wi=yes],
+[pg_cv_wi=no])])
+AC_CACHE_CHECK([for ${with_libpq_lib}/libpq.a],[pg_cv_wl],
+[AS_IF([test -f "${with_libpq_lib}/libpq.a"],
+[pg_cv_wl=yes],
+[pg_cv_wl=no])])
+AS_IF([test yes = $pg_cv_wi && test yes = $pg_cv_wl],[
+PQ_CPPFLAGS="-I${with_libpq_includes}"
+PQ_LDFLAGS="-L${with_libpq_lib}"
+])])])
+
+PG_PQ_NOT_YET([
+AC_MSG_FAILURE([Cannot find libpq header and lib; see README])
+])
+
+# Add rpath to link flags if requested by ‘--enable-pq-rpath’.
+AS_IF([test yes = "$enable_pq_rpath"],[
+more=`echo $PQ_LDFLAGS | sed s/^-L/-R/`
+PQ_LDFLAGS="$more $PQ_LDFLAGS"
+AS_UNSET([more])
+])
+
+# Finally!
+PQ_LDFLAGS="$PQ_LDFLAGS -lpq"
 
 saved_CPPFLAGS="$CPPFLAGS"                  # restoration below
 saved_LDFLAGS="$LDFLAGS"
