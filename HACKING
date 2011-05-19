@@ -4,21 +4,27 @@ This file is both a guide for newcomers and a todo list for oldstayers.
 It lives in the repo but is not included in the distribution.
 
 * 0.40
+*** transition maintenance support from 1.4-fu to Guile-BAUX
+***** doc extraction / mogrification
+***** init extraction
+***** compilation
+******* C: two deployment modes
+******* Scheme: punify
 *** fully support PostgreSQL 8.x
 *** add UPDATE (as comma-command ‘fup’) to gxrepl
+*** make ‘pg-set-client-encoding!’ accept symbol, too
 
 * ongoing (some of which may go into the next release)
 *** comment code (audience: intermediate scheme programmer)
-*** transition maintenance support from ttn-fu to Guile-fu
-***** doc extraction / mogrification
-***** compilation
-***** linking
 *** obsolete "maintainer mode"
 
 * portability
-  | guile version | bootstrap | build | run |
-  |     1.4.1.118 | yes       | yes   | yes |
-  |     1.4.1.119 | yes       | yes   | yes |
+  bbr ≡ boot build run
+  |     guile |     pg | b | b | r |
+  | 1.4.1.118 | 7.4.30 | x | x | x |
+  | 1.4.1.119 | 7.4.30 | x | x | x |
+  | 1.4.1.122 | 7.4.30 | x | x | x |
+  | 1.4.1.122 |  8.4.1 | x | x | x |
 
 * coding standards
 *** C code: indent -nut
