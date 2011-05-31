@@ -798,11 +798,12 @@
                   (newline))))
          ;; Sync up with the cancellation.
          (and (not (tuples-ok? (pg-get-result *C*)))
-              (return-it #t (format #t "INFO: (~A)\n"
-                                    (let ((reason (pg-error-message *C*)))
-                                      (if (string-null? reason)
-                                          "cancellation"
-                                          reason))))))))))
+              (begin (format #t "INFO: (~A)\n"
+                             (let ((reason (pg-error-message *C*)))
+                               (if (string-null? reason)
+                                   "cancellation"
+                                   reason)))
+                     #t)))))))
 
 (define test:close
   (add-test #t

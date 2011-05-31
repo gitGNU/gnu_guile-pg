@@ -1,3 +1,9 @@
+2011-05-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v int] Avoid ‘return-it’.
+
+	* basic.scm (test:request-cancel): Rephrase w/o ‘return-it’.
+
 2011-05-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build] Don't chmod +x test/{runtest,show-platform}.
