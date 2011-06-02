@@ -4,19 +4,56 @@ This file is both a guide for newcomers and a todo list for oldstayers.
 It lives in the repo but is not included in the distribution.
 
 * 0.40
-*** transition maintenance support from 1.4-fu to Guile-BAUX
+*** DONE transition maintenance support from 1.4-fu to Guile-BAUX
 ***** doc extraction / mogrification
 ***** init extraction
 ***** compilation
 ******* C: two deployment modes
 ******* Scheme: punify
-*** fully support PostgreSQL 8.x
+*** TODO requisite futzing to pass "make check" under Guile 1.8.x
+* other stuff to do
+*** fully [[file:src/libpq.org][support]] PostgreSQL 8.x
 *** add UPDATE (as comma-command ‘fup’) to gxrepl
 *** make ‘pg-set-client-encoding!’ accept symbol, too
 
-* ongoing (some of which may go into the next release)
+*** fully [[file:src/libpq.org][support]] PostgreSQL 9.x
 *** comment code (audience: intermediate scheme programmer)
-*** obsolete "maintainer mode"
+*** extend (database postgres-qcons) to handle subquery expressions
+    Particularly: IN (scalar form) and NOT IN (scalar form).  It would
+    be nice to handle the subquery forms of these operators as well, in
+    which case, might as well handle: EXISTS, ANY/SOME, ALL.  Lastly,
+    row-wise comparison may not be worth the hassle.
+*** provide builtin converters for all PostgreSQL "native" types
+*** regularize error handling
+*** review examples in documentation
+*** enable post-install maintenance of (database postgres-meta)
+***** write/document proc that updates *class-defs*
+***** also use it at "make" time
+*** avoid usage of external programs createdb, dropdb, psql
+    The first two are easy to replace, since they are simple wrappers
+    for SQL commands "CREATE DATABASE" and "DROP DATABASE".  The third
+    is used in proc `defs-from-psql' in (database postgres-meta) and
+    is more challenging.  Probably involves mucking around w/ the
+    "information_schema".
+*** add to the manual a section giving an overview of using large-objects
+    This must explain the ideas of OID's as references to objects.
+    Also we need examples of using lo-streams.  Perhaps a scheme
+    implementation of lo-export and lo-import and, just for fun, a
+    demonstration of executing scheme code contained in a large
+    object.  There should also be an example of updating a table with
+    a large number of large objects.  Perhaps it could take a
+    directory with lots of binary files in it and store each file in a
+    large object in a table listing the names of the files.
+*** incorporate scheme result-iterator/stream procs
+    This should provide query-level functions like (pg:for-each) which
+    iterates over a set of tuples returned from a query.  Also provide
+    a streams interface so that (pg:stream-cdr) and (pg:stream-car)
+    return tuples.
+*** keep an eye out for methodology to replace --with-libpq*
+*** clean up port type-hackery in src/libpq.c
+    The weirdness is probably unavoidably related to Guile's port
+    implementation.  However, the least we can do is understand it
+    better.
 
 * portability
   bbr ≡ boot build run
