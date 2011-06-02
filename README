@@ -18,14 +18,14 @@ Welcome! (or "☡ Guile ∘ PostgreSQL ∞")
 	  (database postgres-meta)      -- Introspection
 	  (database postgres-gxrepl)    -- Easy Interaction
 
-	This is alpha code (pre 1.0 release), tested with Guile 1.4.x and
-	PostgreSQL 7.4, 8.0, 8.1, 8.2, 8.3.  It may have bugs, and the
-	interfaces may change from version to version.
+	This is alpha code (pre 1.0 release), tested with various, but
+	not all, versions of Guile and PostgreSQL.  It may have bugs,
+	and the interfaces may change from version to version.
 
 	To build Guile-PG you need to have installed both the PostgreSQL
-	frontend library libpq, and a version of Guile that can load
-	binary module (a b c) from file a/b/c.so or a/b/c/libc.la under
-	‘%load-path’.
+	frontend library libpq, and a version of Guile that can either
+	load binary module (a b c) from file a/b/c.so or a/b/c/libc.la
+	under ‘%load-path’, or provide ‘dynamic-link’ and ‘dynamic-call’.
 
 
 Building and Installing Guile-PG
