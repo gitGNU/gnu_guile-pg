@@ -1,3 +1,11 @@
+2011-06-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[scheme] Use ‘cons*’, not ‘list*’.
+
+	Apparently, ‘list*’ is not cool enough for some Guile versions.
+
+	* postgres-gxrepl.scm (defcc): Use ‘cons*’, not ‘list*’.
+
 2011-05-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build] Don't clobber Makefile "user vars" ‘CPPFLAGS’, ‘LDFLAGS’.

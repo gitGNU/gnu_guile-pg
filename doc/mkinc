@@ -45,7 +45,7 @@ exec ${GUILE-guile} -s $0 "$@" # -*- scheme -*-
         (loop (cdr ls)
               (let ((c (car ls)))
                 (if (char=? #\@ c)
-                    (list* c c acc)
+                    (cons* c c acc)
                     (cons c acc)))))))
 
 (define (pp-ls ls blurb)

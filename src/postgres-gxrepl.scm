@@ -109,7 +109,7 @@ is normal."
                (with-output-to-string
                  (lambda ()
                    (pretty-print (let ((all (procedure-source proc)))
-                                   (list* (car all)
+                                   (cons* (car all)
                                           (cadr all)
                                           ;; skip docstring
                                           (cdddr all)))))))))
