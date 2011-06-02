@@ -6,7 +6,7 @@
 #  - automake (GNU automake) 1.11.1
 #  - libtool (GNU libtool) 2.4
 #  - guile (Unofficial Guile) 1.4.1.122
-#  - guile-baux-tool (Guile-BAUX) 20110515.1158.8d8c7ae
+#  - guile-baux-tool (Guile-BAUX) 20110602.0947.0c5de38
 
 set -e
 
