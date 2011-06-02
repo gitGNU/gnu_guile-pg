@@ -1,0 +1,73 @@
+#!/bin/sh
+# sofix --- smooth out things after $(LIBTOOL) --mode=install
+#
+# Copyright (C) 2007 Thien-Thi Nguyen
+#
+# This file is part of ttn-do, released under the terms of the
+# GNU General Public License as published by the Free Software
+# Foundation; either version 3, or (at your option) any later
+# version.  There is NO WARRANTY.  See file COPYING for details.
+##
+# Usage: sofix FLAGS DIR FOO.la...
+#
+# Change directory to DIR and do various things based on FOO.la
+# vars and FLAGS, a comma-separated list of symbols:
+#
+#  no-symlinks -- from the files in library_names=LIST, delete
+#                 those that are symlinks, and update FOO.la
+#                 vars `dlname' and `library_names' as well
+#
+#  no-la       -- delete FOO.la
+#
+#  ln-s-lib    -- symlink (or copy if no-la) FOO.la to libFOO.la
+#                 [default: remove any such symlinks found]
+#
+# To specify no flags, use "none".  Note, however, that "none"
+# does not prevent any libFOO.la files from being deleted anyway.
+#
+# Lastly, chmod -x the remaining regular (non-symlink) files.
+##
+
+version="2.0"
+v () { echo sofix $version ; echo ; }
+usage () { sed '/^##/,/^##/!d;/^##/d;s/^# //g;s/^#$//g' $0 ; }
+
+[ x"$1" = x--help ] && { v ; usage ; exit 0 ; }
+[ x"$1" = x--version ] && { v ; exit 0 ; }
+[ x"$2" = x ] && { usage ; exit 1 ; }
+
+flags=,"$1", ; shift
+cd $1 ; shift
+
+for la ; do
+
+    eval `sed '/^dlname=/!d' $la`
+    eval `sed '/^library_names=/!d' $la`
+
+    case $flags in *,no-symlinks,*)
+            for name in $library_names ; do
+                if [ -h "$name" ] ; then
+                    rm -f "$name"
+                elif [ "$dlname" != "$name" ] ; then
+                    sed -e 's/^\(dlname=\).*/\1'"'$name'"'/' \
+                        -e 's/^\(library_names=\).*/\1'"'$name'"'/' \
+                        $la > ${la}T
+                    mv ${la}T $la
+                    dlname="$name"
+                fi
+            done ;;
+    esac
+
+    rm -f lib$la
+    case $flags in *,ln-s-lib,*)
+            rep="ln -s"
+            case $flags in *,no-la,*) rep=cp ;; esac
+            $rep $la lib$la ;;
+    esac
+
+    chmod -x $la $dlname
+
+    case $flags in *,no-la,*) rm -f $la ;; esac
+done
+
+# sofix ends here

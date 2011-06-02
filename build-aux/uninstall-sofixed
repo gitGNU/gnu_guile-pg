@@ -1,0 +1,51 @@
+#!/bin/sh
+# uninstall-sofixed --- manually do "libtool --mode=uninstall"
+#
+# Copyright (C) 2008 Thien-Thi Nguyen
+#
+# This program is part of ttn-do, released under the terms of the
+# GNU General Public License as published by the Free Software
+# Foundation; either version 3, or (at your option) any later
+# version.  There is NO WARRANTY.  See file COPYING for details.
+##
+# Usage: uninstall-sofixed DIR FOO.la...
+#
+# NOTE: This program does, more or less, the equivalent of
+# "libtool --mode=uninstall FOO.la".  It is only necessary if
+# "libtool --mode=install" was followed by a call to "sofix".
+# This is because libtool (more precisely, GNU Libtool 1.5.26)
+# mines the filenames out of the installed .la file, which
+# sofix may or may not have deleted previously.
+#
+# This also deletes the installed .la file.
+#
+# Yes, this is ugly, but so is sofix.
+# Such a vicious circle.
+#
+# Do "sofix --help" for an explanation of DIR and FOO.la...,
+# which should be the same as for the sofix invocation.
+##
+
+version="1.1"
+v () { echo $(basename $0) $version ; echo ; }
+usage () { sed '/^##/,/^##/!d;/^##/d;s/^# //g;s/^#$//g' $0 ; }
+
+[ x"$1" = x--help ] && { v ; usage ; exit 0 ; }
+[ x"$1" = x--version ] && { v ; exit 0 ; }
+[ x"$2" = x ] && { usage ; exit 1 ; }
+
+inst="$1" ; shift
+
+for la ; do
+    if [ -r "$la" ] ; then : ; else
+        echo No such file: "$la"
+        exit 1
+    fi
+    eval $(sed '/^library_names=/!d' "$la")
+    if [ x"$library_names" = x ] ; then : ; else
+	( cd "$inst" && rm -f $library_names )
+    fi
+    ( cd "$inst" && rm -f $(basename "$la") )
+done
+
+# uninstall-sofixed ends here

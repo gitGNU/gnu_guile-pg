@@ -1,5 +1,14 @@
 2011-06-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build boot] Add sofix files to repo.
+
+	* build-aux/sofix: New file.
+	* build-aux/sofix.m4: New file.
+	* build-aux/uninstall-sofixed: New file.
+	* autogen.sh: Don't symlink sofix files from ../.common.
+
+2011-06-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[scheme] Use ‘cons*’, not ‘list*’.
 
 	Apparently, ‘list*’ is not cool enough for some Guile versions.
