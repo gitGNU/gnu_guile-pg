@@ -1,5 +1,12 @@
 2011-06-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[int] Don't use assignment expression as ‘SCM_OPFPORTP’ arg.
+
+	* libpq.c (pg_print): Assign to local var
+	‘curout’ first; then use it as ‘SCM_OPFPORTP’ arg.
+
+2011-06-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] If necessary, #define SCM_{ROCHARS,ROLENGTH,ROUCHARS}.
 
 	* gi.h [!SCM_ROCHARS] (SCM_ROCHARS): New #define.

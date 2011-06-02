@@ -2762,7 +2762,8 @@ specifies various parameters of the output format.  */)
              : pg_make_print_options (SCM_EOL));
   ASSERT (options, sepo_p (options), 2);
 
-  fd = (SCM_OPFPORTP (curout = scm_current_output_port ())
+  curout = scm_current_output_port ();
+  fd = (SCM_OPFPORTP (curout)
         ? SCM_FPORT_FDES (curout)
         : -1);
 
