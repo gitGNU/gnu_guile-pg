@@ -1,0 +1,71 @@
+libpq.org
+
+This file lives in the repo but is not included in the distribution.
+
+* 7.4
+  | func                | status |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQtransactionStatus%20libpq.c")][PQtransactionStatus]] |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQparameterStatus%20libpq.c")][PQparameterStatus]]   |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQprotocolVersion%20libpq.c")][PQprotocolVersion]]   |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQsetErrorVerbosity%20libpq.c")][PQsetErrorVerbosity]] |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQsetNoticeReceiver%20libpq.c")][PQsetNoticeReceiver]] |  never |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQexecParams%20libpq.c")][PQexecParams]]        |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQexecPrepared%20libpq.c")][PQexecPrepared]]      |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQsendQueryParams%20libpq.c")][PQsendQueryParams]]   |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQsendQueryPrepared%20libpq.c")][PQsendQueryPrepared]] |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQputCopyData%20libpq.c")][PQputCopyData]]       |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQputCopyEnd%20libpq.c")][PQputCopyEnd]]        |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQgetCopyData%20libpq.c")][PQgetCopyData]]       |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQresultErrorField%20libpq.c")][PQresultErrorField]]  |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQftable%20libpq.c")][PQftable]]            |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQftablecol%20libpq.c")][PQftablecol]]         |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQfformat%20libpq.c")][PQfformat]]           |   0.30 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQfreemem%20libpq.c")][PQfreemem]]           |    int |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQmblen%20libpq.c")][PQmblen]]             |   0.38 |
+* 8.0
+  | func            | status |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQdsplen%20libpq.c")][PQdsplen]]        |        |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQserverVersion%20libpq.c")][PQserverVersion]] |   0.38 |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQprepare%20libpq.c")][PQprepare]]       |        |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQsendPrepared%20libpq.c")][PQsendPrepared]]  |        |
+*** pg-mb-display-length
+*** DONE pg-server-version
+*** pg-prepare / pg-send-prepared
+* 8.1
+  | func      | status |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20lo_create%20libpq.c")][lo_create]] |        |
+*** pg-lo-create
+* 8.2
+  | func               | status |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQencryptPassword%20libpq.c")][PQencryptPassword]]  |        |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQisthreadsafe%20libpq.c")][PQisthreadsafe]]     |        |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQdescribePrepared%20libpq.c")][PQdescribePrepared]] |        |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQdescribePortal%20libpq.c")][PQdescribePortal]]   |        |
+  | (others?)          |        |
+*** pg-encrypt-password
+*** pg-thread-safe?
+*** pg-describe-prepared / pg-describe-portal (+ related)
+* 8.3
+  | func                      | status |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20lo_truncate%20libpq.c")][lo_truncate]]               |        |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQconnectionNeedsPassword%20libpq.c")][PQconnectionNeedsPassword]] |        |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQconnectionUsedPassword%20libpq.c")][PQconnectionUsedPassword]]  |        |
+*** pg-lo-truncate
+*** pg-connection-needs-password / pg-connection-used-password
+* 8.4
+  | func               | status |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20lo_import_with_oid%20libpq.c")][lo_import_with_oid]] |        |
+*** extend ‘pg-lo-import’ with optional arg ‘loid’
+* 9.0
+  | func                 | status         |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQconnectdbParams%20libpq.c")][PQconnectdbParams]]    |                |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQconnectStartParams%20libpq.c")][PQconnectStartParams]] | probably never |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQescapeLiteral%20libpq.c")][PQescapeLiteral]]      |                |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQescapeIdentifier%20libpq.c")][PQescapeIdentifier]]   |                |
+*** extend ‘pg-connectdb’ to handle params
+    This can be done immediately, composing NAME=VAL internally for those
+    systems that do not have ‘PQconnectdbParams’.
+*** pg-escape-literal
+*** pg-escape-identifier
+* etc
+#+STARTUP: odd
