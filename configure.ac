@@ -62,6 +62,8 @@ AC_PROG_CC
 
 AC_HEADER_STDC
 
+AC_CHECK_HEADERS_ONCE([postgresql/libpq-fe.h postgresql/libpq/libpq-fs.h])
+
 ##----------------------------------------------------------------------------
 ## Guile
 
@@ -130,6 +132,14 @@ AC_MSG_NOTICE([checking PostgreSQL particulars])
 
 AC_DEFUN([PG_PQ_NOT_YET],
 [AS_IF([test -z "$PQ_CPPFLAGS" && test -z "$PQ_LDFLAGS"],$1)])
+
+PG_PQ_NOT_YET([
+AS_IF([test yes = $ac_cv_header_postgresql_libpq_fe_h &&
+       test yes = $ac_cv_header_postgresql_libpq_libpq_fs_h],[
+AC_CHECK_LIB([pq],[PQconnectdb],[
+PQ_CPPFLAGS=' '
+PQ_LDFLAGS=' '
+])])])
 
 PG_PQ_NOT_YET([AS_IF([test set = "${with_libpq+set}"],[
 AC_CACHE_CHECK([for libpq-fe.h and libpq.a under $with_libpq],[pg_cv_w],
