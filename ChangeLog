@@ -1,5 +1,12 @@
 2011-06-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build] Decruft: Don't check some standard headers twice.
+
+	* configure.ac (AC_CHECK_HEADERS): Don't explicitly
+	check for string.h, stdio.h, stdlib.h, malloc.h, unistd.h.
+
+2011-06-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build boot] Add sofix files to repo.
 
 	* build-aux/sofix: New file.

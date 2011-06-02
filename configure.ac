@@ -62,8 +62,6 @@ AC_PROG_CC
 
 AC_HEADER_STDC
 
-AC_CHECK_HEADERS([string.h stdio.h stdlib.h malloc.h unistd.h])
-
 ##----------------------------------------------------------------------------
 ## Guile
 
