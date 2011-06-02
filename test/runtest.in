@@ -25,22 +25,25 @@ export PGDATABASE
 
 test x"$DEBUG" = x || dopt=--debug
 
-if [ x"$GUILE_LIBSITE" = x ] ; then
-    if echo '@GUILE_LIBSITE@' | grep -F '${prefix}' >/dev/null 2>&1
-        then : ; else
-        echo 'ERROR: Cannot determine fake GUILE_LIBSITE value.'
-        echo 'Try to set it in the environment.'
-        exit 1
-    fi
-fi
-
 prefix=`pwd`/fake-install
 exec_prefix="@exec_prefix@"
 libdir="@libdir@"
-test x"$DEBUG" = x || echo GUILE_LIBSITE: @GUILE_LIBSITE@
+
+if [ x"$GUILE_LIBSITE" = x ]
+then d="@GUILE_LIBSITE@"
+else d="$GUILE_LIBSITE"
+fi
+
+# Make sure ‘GUILE_LIBSITE’ is sane.
+test x"$DEBUG" = x || echo GUILE_LIBSITE: $d
+if [ -z "$d" ] || [ ! -d "$d" ]
+then
+    echo 'runtest: Invalid GUILE_LIBSITE value.'
+    exit 1
+fi
 
 exec ${GUILE-@GUILE@} $dopt \
-    -L "@GUILE_LIBSITE@" \
+    -L "$d" \
     -l $srcdir/testing.scm \
     -s $1
 

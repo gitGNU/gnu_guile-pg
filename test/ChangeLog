@@ -1,3 +1,11 @@
+2011-06-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v int] Make runtest sanity-check more robust.
+
+	* runtest.in: Don't look for '${prefix}' in ‘@GUILE_LIBSITE@’;
+	instead, resolve the dir, whether from env or substitution,
+	and check sanity of the result.
+
 2011-05-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v int] Avoid ‘return-it’.
