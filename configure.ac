@@ -187,7 +187,11 @@ CPPFLAGS="$PQ_CPPFLAGS $CPPFLAGS"
 LDFLAGS="$PQ_LDFLAGS $LDFLAGS"
 
 AC_CHECK_DECLS([pg_encoding_to_char, pg_char_to_encoding],,,[
+#ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
+#include <postgresql/libpq-fe.h>
+#else
 #include <libpq-fe.h>
+#endif
 ])
 
 # 8.0

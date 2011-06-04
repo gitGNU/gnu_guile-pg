@@ -1,3 +1,13 @@
+2011-06-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build] Use <postgresql/foo> for checking decls.
+
+	Omission from 2011-06-02, "Prefer libpq headers
+	in $(includedir)/postgresql, if available".
+
+	* configure.ac (pg_encoding_to_char, pg_char_to_encoding):
+	In this AC_CHECK_DECLS, use <postgresql/libpq-fe.h> if available.
+
 2011-06-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build] Prefer libpq headers in $(includedir)/postgresql, if available.
