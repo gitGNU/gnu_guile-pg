@@ -31,6 +31,7 @@ CLEANFILES = $(TESTS:.scm=.log)                 \
              test-lo-seek.log
 
 EXTRA_DIST = $(TESTS)                           \
+             OK                                 \
              testing.scm                        \
              show-platform
 

@@ -1,0 +1,49 @@
+test/OK                                                       -*- org -*-
+
+The platforms listed here successfully "make" and pass "make check".
+Information is from ‘$(top_builddir)/config.log’ and other places.
+
+Please send new entries to maintainer.  Include few details if things
+went smoothly, more (such as tricky configuration / compilation flags,
+or suspicious warnings) otherwise.
+
+* ttn's computer in 32-bit mode -- 2011-06-03
+*** i686-pc-linux-gnu
+    uname -m = i686
+    uname -r = 2.6.26-2-686
+    uname -s = Linux
+    uname -v = #1 SMP Thu Jan 27 00:28:05 UTC 2011
+*** software
+    guile (Unofficial Guile) 1.4.1.122
+    psql (PostgreSQL) 7.4.30
+    gcc (Debian 4.3.2-1.1) 4.3.2
+* ttn's computer in 64-bit mode -- 2011-06-03
+*** x86_64-unknown-linux-gnu
+    uname -m = x86_64
+    uname -r = 2.6.32-5-amd64
+    uname -s = Linux
+    uname -v = #1 SMP Wed May 18 23:13:22 UTC 2011
+*** software
+    guile (GNU Guile) 1.8.7
+    psql (PostgreSQL) 8.4.?
+    gcc-4.3 (Debian 4.3.5-4) 4.3.5
+*** configure CC=gcc-4.3
+* ttn's computer in 64-bit mode -- 2011-06-03
+*** x86_64-unknown-linux-gnu
+    uname -m = x86_64
+    uname -r = 2.6.32-5-amd64
+    uname -s = Linux
+    uname -v = #1 SMP Wed May 18 23:13:22 UTC 2011
+*** software
+    guile (GNU Guile) 1.8.7
+    psql (PostgreSQL) 8.4.?
+    gcc-4.4 (Debian 4.4.5-8) 4.4.5
+*** configure CC=gcc-4.4
+* etc
+#+STARTUP: odd
+
+
+Copyright (C) 2011 Thien-Thi Nguyen
+
+Copying and distribution of this file, with or without modification,
+are permitted provided the copyright notice and this notice are preserved.
