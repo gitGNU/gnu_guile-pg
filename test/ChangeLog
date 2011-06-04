@@ -1,5 +1,12 @@
 2011-06-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v] Add test for double-call to ‘pg-trace’.
+
+	* basic.scm (test:tracing-traced-connection): New test proc.
+	(main): Use new test proc; update expected-pass number.
+
+2011-06-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	Add and distribute test/OK.
 
 	* OK: New file.

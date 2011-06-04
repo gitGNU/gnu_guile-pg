@@ -180,6 +180,16 @@
              (not (= 0 v))
              (< 1 v))))))
 
+(define test:tracing-traced-connection
+  (add-test #f
+    (lambda ()
+      (define (one!)
+        (pg-trace *C* (current-error-port)))
+      (one!)
+      (let ((rv (false-if-exception (one!))))
+        (pg-untrace *C*)
+        rv))))
+
 (define test:untracing-untraced-connection
   (add-test (if #f #f)
     (lambda ()
@@ -814,12 +824,13 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic" 58)
+  (test-init "basic" 59)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:protocol-version/bad-connection
          test:make-connection
          test:protocol-version
+         test:tracing-traced-connection
          test:untracing-untraced-connection
          test:various-connection-info
          test:mblen
