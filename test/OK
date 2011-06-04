@@ -24,8 +24,8 @@ or suspicious warnings) otherwise.
     uname -s = Linux
     uname -v = #1 SMP Wed May 18 23:13:22 UTC 2011
 *** software
-    guile (GNU Guile) 1.8.7
-    psql (PostgreSQL) 8.4.?
+    Guile 1.8.7
+    psql (PostgreSQL) 8.4.7
     gcc-4.3 (Debian 4.3.5-4) 4.3.5
 *** configure CC=gcc-4.3
 * ttn's computer in 64-bit mode -- 2011-06-03
@@ -35,8 +35,8 @@ or suspicious warnings) otherwise.
     uname -s = Linux
     uname -v = #1 SMP Wed May 18 23:13:22 UTC 2011
 *** software
-    guile (GNU Guile) 1.8.7
-    psql (PostgreSQL) 8.4.?
+    Guile 1.8.7
+    psql (PostgreSQL) 8.4.7
     gcc-4.4 (Debian 4.4.5-8) 4.4.5
 *** configure CC=gcc-4.4
 * etc
