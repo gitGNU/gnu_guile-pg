@@ -2469,8 +2469,8 @@ but as usual, @acronym{YMMV}.  */)
   FILE *fpout;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  ASSERT (conn, ! CONN_FPTRACE (conn),
-          "tracing already in progress for connection: ~S");
+  if (CONN_FPTRACE (conn))
+    ERROR ("Tracing already in progress for connection: ~S", conn);
   port = SCM_COERCE_OUTPORT (port);
   ASSERT_PORT (2, port, SCM_OPOUTFPORTP);
 

@@ -1,5 +1,11 @@
 2011-06-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[C] Use ‘ERROR’ more.
+
+	* libpq.c (pg_trace): Use ‘ERROR’.
+
+2011-06-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[C] Convert auto var ‘FUNC_NAME’ to #define.
 
 	This avoids "unused variable" warnings in newer Guile versions.
