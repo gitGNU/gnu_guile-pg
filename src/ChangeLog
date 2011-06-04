@@ -1,5 +1,11 @@
 2011-06-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[C] For consistency, use ‘unsigned long int’ for sepo tag.
+
+	* libpq.c (sepo_type_tag): Change type to ‘unsigned long int’.
+
+2011-06-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[C] Paper signed/unsigned wart for ‘PQmblen’ first arg.
 
 	* libpq.c (pg_mblen): Cast first arg of ‘PQmblen’ to ‘void *’.

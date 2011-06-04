@@ -2523,7 +2523,7 @@ Stop tracing on connection @var{conn}.  */)
  * printing -- this is arguably more trouble than its worth
  */
 
-static long sepo_type_tag;
+static unsigned long int sepo_type_tag;
 
 static inline int
 sepo_p (SCM obj)
