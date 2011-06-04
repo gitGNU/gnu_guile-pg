@@ -425,7 +425,7 @@ extern int terminating;
 static void
 lob_flush (SCM port)
 {
-  const char *FUNC_NAME = "lob_flush";
+#define FUNC_NAME __func__
   scm_port *pt = SCM_PTAB_ENTRY (port);
   lob_stream *lobp = LOB_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
@@ -476,12 +476,13 @@ lob_flush (SCM port)
       remaining -= count;
     }
   pt->write_pos = pt->write_buf;
+#undef FUNC_NAME
 }
 
 static void
 lob_end_input (SCM port, int offset)
 {
-  const char *FUNC_NAME = "lob_end_input";
+#define FUNC_NAME __func__
   scm_port *pt = SCM_PTAB_ENTRY (port);
   lob_stream *lobp = LOB_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
@@ -499,12 +500,13 @@ lob_end_input (SCM port, int offset)
         ERROR ("Error seeking on lo port ~S", port);
     }
   pt->rw_active = SCM_PORT_NEITHER;
+#undef FUNC_NAME
 }
 
 static off_t
 lob_seek (SCM port, off_t offset, int whence)
 {
-  const char *FUNC_NAME = "lob_seek";
+#define FUNC_NAME __func__
   lob_stream *lobp = LOB_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
   off_t ret;
@@ -523,6 +525,7 @@ lob_seek (SCM port, off_t offset, int whence)
     }
 
   return ret;
+#undef FUNC_NAME
 }
 
 PRIMPROC
@@ -565,7 +568,7 @@ zero if an error occurred.  */)
 static int
 lob_fill_input (SCM port)
 {
-  const char *FUNC_NAME = __func__;
+#define FUNC_NAME __func__
   scm_port *pt = SCM_PTAB_ENTRY (port);
   lob_stream *lobp = LOB_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
@@ -585,12 +588,13 @@ lob_fill_input (SCM port)
   pt->read_end = pt->read_buf + ret;
 
   return * (pt->read_buf);
+#undef FUNC_NAME
 }
 
 static void
 lob_write (SCM port, const void *data, size_t size)
 {
-  const char *FUNC_NAME = __func__;
+#define FUNC_NAME __func__
   scm_port *pt = SCM_PTAB_ENTRY (port);
 
   if (pt->write_buf == &pt->shortbuf)
@@ -623,6 +627,7 @@ lob_write (SCM port, const void *data, size_t size)
           && memchr (data, '\n', size))
         lob_flush (port);
     }
+#undef FUNC_NAME
 }
 
 /* Check whether a port can supply input.  */
