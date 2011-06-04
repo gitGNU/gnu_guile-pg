@@ -1,5 +1,11 @@
 2011-06-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[C] Paper signed/unsigned wart for ‘PQmblen’ first arg.
+
+	* libpq.c (pg_mblen): Cast first arg of ‘PQmblen’ to ‘void *’.
+
+2011-06-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[C] Use ‘ERROR’ more.
 
 	* libpq.c (pg_trace): Use ‘ERROR’.

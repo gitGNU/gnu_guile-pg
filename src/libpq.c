@@ -2964,7 +2964,10 @@ is out of range.  If @var{start} is exactly the length of
     }
   return NUM_INT ((clen == cstart)
                   ? 0
-                  : PQmblen ((unsigned char *) ROZT (string) + cstart, cenc));
+                  /* Somewhere around PostgreSQL 8.1 the first arg type
+                     changed from ‘const unsigned char *’ to ‘const char *’.
+                     This ‘void *’ papers over that wart.  */
+                  : PQmblen ((void *) (ROZT (string) + cstart), cenc));
 #undef FUNC_NAME
 }
 
