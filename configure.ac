@@ -71,7 +71,14 @@ AC_MSG_NOTICE([checking Guile particulars])
 
 GUILE_PROGS
 GUILE_FLAGS
-GUILE_LIBSITE_DIR
+
+AC_CACHE_CHECK([module installation root dir],[pg_cv_minstroot],[
+eval `GUILE="$GUILE" \
+      $srcdir/build-aux/guile-baux/gbaux-do \
+      re-prefixed-site-dirs "$GUILE_CONFIG" pg`
+])
+GUILE_LIBSITE="$pg_cv_minstroot"
+AC_SUBST([GUILE_LIBSITE])
 
 AS_IF([test xyes = x$enable_cmod],[
 AC_CACHE_CHECK([for "guile-tools make-module-catalog"],[pg_cv_mkmodcat],[

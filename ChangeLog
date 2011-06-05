@@ -1,3 +1,12 @@
+2011-06-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build] Use Guile-BAUX to compute ‘GUILE_LIBSITE’.
+
+	* autogen.sh: Import Guile-BAUX module ‘re-prefixed-site-dirs’.
+	* configure.ac (GUILE_LIBSITE_DIR): Delete macro call.
+	(pg_cv_minstroot): New var, via ‘AC_CACHE_CHECK’.
+	(GUILE_LIBSITE): New AC_SUBST.
+
 2011-06-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build] Use <postgresql/foo> for checking decls.

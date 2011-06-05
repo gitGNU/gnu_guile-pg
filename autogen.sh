@@ -14,6 +14,7 @@ set -e
 # Guile-BAUX
 
 guile-baux-tool import \
+    re-prefixed-site-dirs \
     c2x \
     tsar \
     c-tsar \
