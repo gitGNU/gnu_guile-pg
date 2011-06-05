@@ -1,5 +1,9 @@
 2011-06-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.40 (tag v0.40)
+
+2011-06-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[uninst int] Use $(DESTDIR) more.
 
 	* Makefile.am (uninstall-hook): Use $(DESTDIR) more.

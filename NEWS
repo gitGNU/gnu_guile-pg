@@ -1,4 +1,25 @@
 NEWS for Guile-PG
+Copyright (C) 2002-2011 Thien-Thi Nguyen
+See the end for copying conditions.
+
+
+- 0.40 | 2011-06-05
+  - Changes to configuration
+    - Bug fixed in finding ‘pg_encoding_to_char’, ‘pg_char_to_encoding’
+    - Now seeks and arranges to use <postgresql/foo> headers
+    - No longer clobbers user vars ‘CPPFLAGS’, ‘LDFLAGS’
+  - Changes to build / test / install
+    - Bug fixed: Delete everything on "make uninstall"
+    - Scheme code now punified for install
+    - Add "no C module" mode for build / install
+    - Changes to "make check"
+      - Flaky symlinking replaced w/ partial in-tree installation
+      - runtest now honors env var ‘GUILE’
+      - runtest now shows loaded files if env var ‘DEBUG’ set
+  - New (database postgres-qcons) proc: idquote
+  - Docs now explicitly UTF-8
+  - Tested on more platforms (see file test/OK)
+  - Maintenance uses AAL 2.68, 1.11.1, 2.4; Guile-BAUX 20110605.1656
 
 
 - 0.39 | 2010-01-11
@@ -1247,6 +1268,10 @@ NEWS for Guile-PG
 
 
 - etc
+Copyright (C) 2002-2011 Thien-Thi Nguyen
+
+Copying and distribution of this file, with or without modification,
+are permitted provided the copyright notice and this notice are preserved.
 
 	Local Variables:
 	mode: outline

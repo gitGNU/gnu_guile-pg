@@ -1,5 +1,11 @@
 2011-06-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.40 (tag v0.40)
+
+	* configure.ac (AC_INIT): Bump version to "0.40" for release.
+
+2011-06-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build] Use Guile-BAUX to compute ‘GUILE_LIBSITE’.
 
 	* autogen.sh: Import Guile-BAUX module ‘re-prefixed-site-dirs’.
