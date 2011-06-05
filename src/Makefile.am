@@ -98,6 +98,7 @@ install-data-hook:
 	  fi ;								  \
 	done
 if USE_CMOD
+	-rmdir '$(DESTDIR)$(pkglibdir)'
 	$(top_srcdir)/build-aux/sofix $(SOFIXFLAGS) \
 	  $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
 	$(MAKE) $(AM_MAKEFLAGS) update-libsite-module-catalog

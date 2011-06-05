@@ -1,3 +1,12 @@
+2011-06-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[inst] Zonk useless $(pkglibdir) if ‘USE_CMOD’.
+
+	Probably better would be to teach Automake to DTRT.
+
+	* Makefile.am (install-data-hook) [USE_CMOD]:
+	Delete useless ‘$(DESTDIR)$(pkglibdir)’.
+
 2011-06-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[C] For consistency, use ‘unsigned long int’ for sepo tag.
