@@ -117,8 +117,8 @@ if USE_CMOD
 	  $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
 	$(MAKE) $(AM_MAKEFLAGS) update-libsite-module-catalog
 endif USE_CMOD
-	-rmdir $(ddir)
-	-rmdir $(pkglibdir)
+	-rmdir '$(DESTDIR)$(ddir)'
+	-rmdir '$(DESTDIR)$(pkglibdir)'
 
 DISTCLEANFILES = *.x postgres.exports
 
