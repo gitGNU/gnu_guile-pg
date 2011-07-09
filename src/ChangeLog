@@ -1,3 +1,10 @@
+2011-07-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[int] Move macro ‘DEFSMOB’ to gi.h.
+
+	* gi.h (DEFSMOB): New macro.
+	* libpq.c (init_module DEFSMOB): Delete macro.
+
 2011-06-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.40 (tag v0.40)

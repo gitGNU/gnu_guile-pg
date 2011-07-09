@@ -3240,9 +3240,6 @@ static
 void
 init_module (void)
 {
-#define DEFSMOB(tagvar,name,m,f,p)                              \
-  tagvar = scm_make_smob_type_mfpe (name, 0, m, f, p, NULL)
-
   DEFSMOB (pg_conn_tag, xc_name,
            xc_mark,
            xc_free,
@@ -3257,7 +3254,6 @@ init_module (void)
            NULL,
            sepo_free,
            sepo_display);
-#undef DEFSMOB
 
 #include "libpq.x"
 

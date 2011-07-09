@@ -53,6 +53,9 @@
 #define APPLY             gh_apply
 #define LISTIFY           gh_list
 
+#define DEFSMOB(tagvar,name,m,f,p)                              \
+  tagvar = scm_make_smob_type_mfpe (name, 0, m, f, p, NULL)
+
 /*
  * backward (sometimes foresight was incomplete)
  */
