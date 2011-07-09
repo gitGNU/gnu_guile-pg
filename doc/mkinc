@@ -35,8 +35,7 @@ exec ${GUILE-guile} -s $0 "$@" # -*- scheme -*-
 
 (define-module (database postgres-qcons))
 
-(define (fln s . args)
-  (apply simple-format #t (string-append s "\n") args))
+(use-modules ((ice-9 rdelim) #:select ((write-line . fln))))
 
 (define (symbol->texi sym)
   (let loop ((ls (reverse! (string->list (symbol->string sym)))) (acc '()))
@@ -49,7 +48,7 @@ exec ${GUILE-guile} -s $0 "$@" # -*- scheme -*-
                     (cons c acc)))))))
 
 (define (pp-ls ls blurb)
-  (fln blurb)
+  (fln (symbol->string blurb))
   (fln "@example")
   (let loop ((col 0) (ls ls))
     (if (null? ls)
