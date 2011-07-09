@@ -79,9 +79,6 @@ scm_init_ ## fname_frag ## _module (void)                               \
   scm_register_module_xxx (1 + modname, module_init_func);              \
 }
 
-#define GH_STONED(obj) \
-  scm_permanent_object (obj)
-
 #endif  /* !defined HAVE_GUILE_MODSUP_H */
 
 /*
@@ -143,7 +140,7 @@ scm_init_ ## fname_frag ## _module (void)                               \
 #define WBPORT(scmport,cp,clen)  scm_lfwrite (cp, clen, scmport)
 
 #define PRIMPROC             GH_DEFPROC
-#define PERMANENT            GH_STONED
+#define PERMANENT            scm_permanent_object
 #define MOD_INIT_LINK_THUNK  GH_MODULE_LINK_FUNC
 
 #endif /* _GI_H_ */

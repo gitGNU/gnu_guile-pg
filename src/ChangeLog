@@ -1,5 +1,12 @@
 2011-07-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[int] Elide macro ‘GH_STONED’.
+
+	* gi.h [!HAVE_GUILE_MODSUP_H] (GH_STONED): Delete macro.
+	(PERMANENT): Use ‘scm_permanent_object’.
+
+2011-07-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Move macro ‘DEFSMOB’ to gi.h.
 
 	* gi.h (DEFSMOB): New macro.
