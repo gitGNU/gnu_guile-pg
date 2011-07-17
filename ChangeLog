@@ -1,3 +1,10 @@
+2011-07-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[boot int] Use ‘DETERMINE_GUILE_LIBSITE_DIR’.
+
+	* build-aux/determine-guile-libsite-dir.m4: New file.
+	* configure.ac: Use ‘DETERMINE_GUILE_LIBSITE_DIR’.
+
 2011-07-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc int] Portability fix: Avoid ‘string-append’ on symbols.
