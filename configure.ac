@@ -74,13 +74,8 @@ GUILE_FLAGS
 
 DETERMINE_GUILE_LIBSITE_DIR([pg])
 
-AS_IF([test xyes = x$enable_cmod],[
-AC_CACHE_CHECK([for "guile-tools make-module-catalog"],[pg_cv_mkmodcat],[
-if $GUILE_TOOLS make-module-catalog --version >/dev/null 2>&1
-then pg_cv_mkmodcat=yes
-else pg_cv_mkmodcat=no
-fi
-])])
+AS_IF([test xyes = x$enable_cmod],
+[GUILE_TOOLS_EXISTSP([pg_cv_mkmodcat],[make-module-catalog])])
 AM_CONDITIONAL([USE_CMOD],
 [test yes = $enable_cmod && test xyes = x"$pg_cv_mkmodcat"])
 

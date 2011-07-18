@@ -1,3 +1,10 @@
+2011-07-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[boot int] Use ‘GUILE_TOOLS_EXISTSP’.
+
+	* build-aux/guile-tools-existsp.m4: New file.
+	* configure.ac: Use ‘GUILE_TOOLS_EXISTSP’.
+
 2011-07-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[boot int] Use ‘DETERMINE_GUILE_LIBSITE_DIR’.
