@@ -1,3 +1,9 @@
+2011-07-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[boot] Disable dependency tracking support in Automake by default.
+
+	* configure.ac (AM_INIT_AUTOMAKE): Add ‘no-dependencies’.
+
 2011-07-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[boot int] Use ‘GUILE_TOOLS_EXISTSP’.
