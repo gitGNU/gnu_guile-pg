@@ -84,7 +84,7 @@ translation approved by the Free Software Foundation.
 @top  The (database postgres*) Modules
 
 Guile-PG is a collection of modules for Guile allowing access to the
-PostgreSQL RDBMS (@url{http://www.postgresql.org}) from Scheme programs.
+@uref{http://www.postgresql.org, PostgreSQL RDBMS} from Scheme programs.
 
 The low-level module @code{(database postgres)} provides an almost one-to-one
 correspondence with the PostgreSQL @code{libpq} C library interface.  Other

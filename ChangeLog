@@ -1,3 +1,9 @@
+2011-08-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc int] Use @uref more.
+
+	* doc/guile-pg.texi (Top): Use @uref instead of @url.
+
 2011-07-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[boot] Disable dependency tracking support in Automake by default.
