@@ -69,13 +69,13 @@ AC_CHECK_HEADERS_ONCE([postgresql/libpq-fe.h postgresql/libpq/libpq-fs.h])
 
 AC_MSG_NOTICE([checking Guile particulars])
 
-GUILE_PROGS
-GUILE_FLAGS
+SNUGGLE_PROGS
+SNUGGLE_FLAGS
 
-DETERMINE_GUILE_LIBSITE_DIR([pg])
+SNUGGLE_GUILE_LIBSITE_DIR([pg])
 
 AS_IF([test xyes = x$enable_cmod],
-[GUILE_TOOLS_EXISTSP([pg_cv_mkmodcat],[make-module-catalog])])
+[SNUGGLE_GUILE_TOOLS_EXISTSP([pg_cv_mkmodcat],[make-module-catalog])])
 AM_CONDITIONAL([USE_CMOD],
 [test yes = $enable_cmod && test xyes = x"$pg_cv_mkmodcat"])
 

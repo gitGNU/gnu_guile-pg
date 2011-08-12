@@ -1,3 +1,15 @@
+2011-08-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build int] Use snuggle.m4 more.
+
+	* build-aux/snuggle.m4: New file.
+	* configure.ac: Do ‘s/GUILE_PROGS/SNUGGLE_PROGS/’,
+	‘s/GUILE_FLAGS/SNUGGLE_FLAGS/’,
+	‘s/DETERMINE_GUILE_LIBSITE_DIR/SNUGGLE_GUILE_LIBSITE_DIR/’,
+	‘s/GUILE_TOOLS_EXISTSP/SNUGGLE_GUILE_TOOLS_EXISTSP/’.
+	* build-aux/determine-guile-libsite-dir.m4: Delete file.
+	* build-aux/guile-tools-existsp.m4: Likewise.
+
 2011-07-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[boot] Bump Automake required version to 1.11.1.
