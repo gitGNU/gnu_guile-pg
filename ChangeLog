@@ -1,3 +1,12 @@
+2011-09-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[boot] Re-enable dependency tracking support in Automake.
+
+	This undoes 2011-07-21, "Disable dependency tracking support in
+	Automake by default", a misguided premature optimization.
+
+	* configure.ac (AM_INIT_AUTOMAKE): Remove ‘no-dependencies’.
+
 2011-08-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build int] Use snuggle.m4 more.
