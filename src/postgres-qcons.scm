@@ -251,6 +251,9 @@
 ;; (try 'ab.cd)      @print{} "ab"."cd"
 ;; (try 'abcd[xyz])  @print{} "abcd"[xyz]
 ;; (try 'ab.cd[xyz]) @print{} "ab"."cd"[xyz]
+;;
+;; ;; Special case: only * after dot.
+;; (try 'ab.*)       @print{} "ab".*
 ;; @end lisp
 ;;
 ;; Note that PostgreSQL case-folding for non-quoted identifiers
@@ -276,11 +279,14 @@
       ;; Fast path; no complications.
       ((not (or ra dot))
        (object->string s))
-      ;; Just dot (ab.cd => "ab"."cd").
+      ;; Just dot (ab.cd => "ab"."cd", but ab.* => "ab".*).
       ((and dot (not ra))
        (fs "~S.~S"
            (substring s 0 dot)
-           (substring s (1+ dot))))
+           (let ((after (substring s (1+ dot))))
+             (if (string=? "*" after)
+                 '*
+                 after))))
       ;; Just array (abcd[xyz] => "abcd"[xyz]).
       ((and ra (not dot))
        (fs "~S~A"

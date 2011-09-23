@@ -1,3 +1,10 @@
+2011-09-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[qcons] Fix bug: Special case ‘idquote’ handling of ‘a.*’.
+
+	* postgres-qcons.scm (idquote): If the id has a dot, no array
+	notation and the part after the dot is ‘*’, don't double-quote that.
+
 2011-07-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[int] Elide macro ‘GH_STONED’.
