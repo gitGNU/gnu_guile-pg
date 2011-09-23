@@ -26,6 +26,14 @@
 #define _GI_H_
 
 #include <libguile.h>
+
+#if defined SCM_MAJOR_VERSION && defined SCM_MINOR_VERSION
+#define GI_LEVEL  ((SCM_MAJOR_VERSION << 8) + SCM_MINOR_VERSION)
+#else
+#define GI_LEVEL  0x0104                /* Guile 1.4.x */
+#endif
+#define GI_LEVEL_NOT_YET_1_8  (GI_LEVEL < 0x0108)
+
 #include <guile/gh.h>
 #define BOOLEANP          gh_boolean_p
 #define EXACTP            gh_exact_p
@@ -85,8 +93,13 @@ scm_init_ ## fname_frag ## _module (void)                               \
  * abstractions
  */
 
+#if GI_LEVEL_NOT_YET_1_8
 #define NOINTS()   SCM_DEFER_INTS
 #define INTSOK()   SCM_ALLOW_INTS
+#else
+#define NOINTS()
+#define INTSOK()
+#endif
 
 #define GIVENP(x)          (! SCM_UNBNDP (x))
 #define NOT_FALSEP(x)      (SCM_NFALSEP (x))
