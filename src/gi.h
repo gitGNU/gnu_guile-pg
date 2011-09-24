@@ -34,6 +34,7 @@
 #endif
 #define GI_LEVEL_NOT_YET_1_8  (GI_LEVEL < 0x0108)
 
+#if GI_LEVEL_NOT_YET_1_8
 #include <guile/gh.h>
 #define BOOLEANP          gh_boolean_p
 #define EXACTP            gh_exact_p
@@ -51,6 +52,7 @@
 #define CHARACTER         gh_char2scm
 #define C_INT             gh_scm2int
 #define VECTOR_LEN        gh_vector_length
+#define VREF(v,i)         (SCM_VELTS (v)[i])
 #define EQ                gh_eq_p
 #define CONS              gh_cons
 #define CAR               gh_car
@@ -60,6 +62,34 @@
 #define EVAL_STRING       gh_eval_str
 #define APPLY             gh_apply
 #define LISTIFY           gh_list
+#else  /* !GI_LEVEL_NOT_YET_1_8 */
+#define BOOLEANP          scm_is_bool
+#define EXACTP(x)         scm_is_true (scm_exact_p (x))
+#define NULLP             scm_is_null
+#define PAIRP             scm_is_pair
+#define STRINGP           scm_is_string
+#define SYMBOLP           scm_is_symbol
+#define PROCEDUREP(x)     scm_is_true (scm_procedure_p (x))
+#define BOOLEAN           scm_from_bool
+#define NUM_INT           scm_from_int
+#define NUM_ULONG         scm_from_ulong
+#define SYMBOL            scm_from_locale_symbol
+#define STRING            scm_from_locale_string
+#define BSTRING           scm_from_locale_stringn
+#define CHARACTER         SCM_MAKE_CHAR
+#define C_INT             scm_to_int
+#define VECTOR_LEN        scm_c_vector_length
+#define VREF              SCM_SIMPLE_VECTOR_REF
+#define EQ                scm_is_eq
+#define CONS              scm_cons
+#define CAR               scm_car
+#define CDR               scm_cdr
+#define SETCAR            scm_set_car_x
+#define SETCDR            scm_set_cdr_x
+#define EVAL_STRING       scm_c_eval_string
+#define APPLY             scm_apply_0
+#define LISTIFY           scm_list_n
+#endif /* !GI_LEVEL_NOT_YET_1_8 */
 
 #define DEFSMOB(tagvar,name,m,f,p)                              \
   tagvar = scm_make_smob_type_mfpe (name, 0, m, f, p, NULL)

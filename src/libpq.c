@@ -897,8 +897,6 @@ struct paramspecs
     SCM_VALIDATE_VECTOR (3, parms);                     \
   } while (0)
 
-#define VREF(v,i)  (SCM_VELTS (v)[i])
-
 static void
 prep_paramspecs (const char *FUNC_NAME, struct paramspecs *ps, SCM v)
 {
