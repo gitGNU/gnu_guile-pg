@@ -1,3 +1,9 @@
+2011-09-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[gi] Use ‘STRINGP’ more.
+
+	* gi.h (ASSERT_STRING): Use ‘STRINGP’.
+
 2011-09-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[pq] Don't do "defer/allow ints" for Guile 1.8+.
