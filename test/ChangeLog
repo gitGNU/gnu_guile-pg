@@ -1,3 +1,10 @@
+2011-09-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v int] Don't use non-existent operator ‘!’ in request-cancel test.
+
+	* basic.scm (test:request-cancel): Use a valid rhs expression
+	for the ‘UPDATE’ command; drop ‘!’, which does not exist!
+
 2011-06-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.40 (tag v0.40)

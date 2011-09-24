@@ -790,7 +790,7 @@
        (not (pg-is-busy? *C*))
        ;; Start a transaction that's easy to cancel.
        ;; [Insert cynical comparison to inept manglement/politicos here.]
-       (pg-send-query *C* "BEGIN; UPDATE async SET a = ! a * sqrt (a);")
+       (pg-send-query *C* "BEGIN; UPDATE async SET a = a * sqrt (a);")
        ;; Dispatch goes through.
        (pg-request-cancel *C*)
        ;; Result handling, however, may finish, or may signal error.
