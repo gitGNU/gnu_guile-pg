@@ -1,5 +1,11 @@
 2011-09-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq int] Assume the system provides <string.h>.
+
+	* libpq.c: #include <string.h> unconditionally.
+
+2011-09-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[gi] Move ‘VREF’ to gi.h; bifurcate on ‘GI_LEVEL_NOT_YET_1_8’.
 
 	* gi.h [GI_LEVEL_NOT_YET_1_8]: Move into
