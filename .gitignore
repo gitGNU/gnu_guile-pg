@@ -44,9 +44,24 @@ Makefile.in
 /src/*.lo
 /src/*.x
 /src/.libs
+/src/all.tsar
 /src/config.h
 /src/config.h.in
+/src/libpq.tsar
+/src/postgres
+/src/postgres-col-defs
+/src/postgres-gxrepl
+/src/postgres-meta
+/src/postgres-qcons
+/src/postgres-resdisp
+/src/postgres-resx
+/src/postgres-table
+/src/postgres-types
+/src/postgres.exports
+/src/scheme.tsar
+/src/stamp-all
 /src/stamp-h1
+
 
 /test/*.log
 /test/config.scm
@@ -55,3 +70,5 @@ Makefile.in
 /test/lo-tests-data-*
 /test/runtest
 /test/show-platform
+
+/test/fake-install
