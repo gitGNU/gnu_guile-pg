@@ -3076,8 +3076,9 @@ is out of range.  If @var{start} is exactly the length of
 {
 #define FUNC_NAME s_pg_mblen
   SCM as_string, cell;
-  int cenc;
-  size_t cstart = 0, clen;
+  range_t cstring;
+  int cenc, rv;
+  size_t cstart = 0;
 
   if (STRINGP (encoding))
     encoding = scm_string_to_symbol (encoding);
@@ -3100,20 +3101,22 @@ is out of range.  If @var{start} is exactly the length of
     }
 
   ASSERT_STRING (2, string);
-  clen = SCM_ROLENGTH (string);
+  FINANGLE (string);
   if (GIVENP (start))
     {
       ASSERT_EXACT (3, start);
       cstart = C_INT (start);
-      if (clen < cstart)
+      if (RLEN (string) < cstart)
         ERROR ("String start index out of range: ~A", start);
     }
-  return NUM_INT ((clen == cstart)
-                  ? 0
-                  /* Somewhere around PostgreSQL 8.1 the first arg type
-                     changed from ‘const unsigned char *’ to ‘const char *’.
-                     This ‘void *’ papers over that wart.  */
-                  : PQmblen ((void *) (ROZT (string) + cstart), cenc));
+  rv = (RLEN (string) == cstart
+        ? 0
+        /* Somewhere around PostgreSQL 8.1 the first arg type
+           changed from ‘const unsigned char *’ to ‘const char *’.
+           This ‘void *’ papers over that wart.  */
+        : PQmblen ((void *) (RS (string) + cstart), cenc));
+  UNFINANGLE (string);
+  return NUM_INT (rv);
 #undef FUNC_NAME
 }
 
