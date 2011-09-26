@@ -1,5 +1,13 @@
 2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq slog] Add abstraction: VALIDATE_EXACT_0_UP_TO_N_COPY
+
+	* gi.h (VALIDATE_EXACT_0_UP_TO_N_COPY): New macro.
+	* libpq.c (VALIDATE_FIELD_NUMBER_COPY):
+	Use ‘VALIDATE_EXACT_0_UP_TO_N_COPY’.
+
+2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq slog] Add abstraction: ASSERT_EXACT_NON_NEGATIVE_COPY
 
 	* gi.h (ASSERT_EXACT_NON_NEGATIVE_COPY): New macro.

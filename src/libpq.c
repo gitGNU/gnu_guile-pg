@@ -995,7 +995,7 @@ drop_paramspecs (struct paramspecs *ps)
  */
 
 #define VALIDATE_FIELD_NUMBER_COPY(pos,num,res,cvar)                    \
-  SCM_VALIDATE_INUM_RANGE_COPY (pos, num, 0, PQnfields (res), cvar)
+  VALIDATE_EXACT_0_UP_TO_N_COPY (pos, num, PQnfields (res), cvar)
 
 
 /*

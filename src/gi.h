@@ -146,6 +146,8 @@ scm_init_ ## fname_frag ## _module (void)                               \
 #if GI_LEVEL_NOT_YET_1_8
 #define ASSERT_EXACT_NON_NEGATIVE_COPY(n,svar,cvar)     \
   SCM_VALIDATE_INUM_MIN_COPY (n, svar, 0, cvar)
+#define VALIDATE_EXACT_0_UP_TO_N_COPY(n,svar,hi,cvar)   \
+  SCM_VALIDATE_INUM_RANGE_COPY (n, svar, 0, hi, cvar)
 #else
 #define ASSERT_EXACT_NON_NEGATIVE_COPY(n,svar,cvar)  do \
     {                                                   \
@@ -153,6 +155,13 @@ scm_init_ ## fname_frag ## _module (void)                               \
       cvar = C_INT (svar);                              \
       SCM_ASSERT_RANGE (n, svar, !PROB (cvar));         \
     }                                                   \
+  while (0)
+#define VALIDATE_EXACT_0_UP_TO_N_COPY(n,svar,hi,cvar)  do       \
+    {                                                           \
+      ASSERT_EXACT (n, svar);                                   \
+      cvar = C_INT (svar);                                      \
+      SCM_ASSERT_RANGE (n, svar, !PROB (cvar) && hi > cvar);    \
+    }                                                           \
   while (0)
 #endif
 
