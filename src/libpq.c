@@ -49,6 +49,37 @@
 #define PROB(x)  (0 > (x))
 
 
+/* Abstractions for Scheme objects to C string conversion.  */
+
+typedef struct {
+  char *s;
+  size_t len;
+} range_t;
+
+#define RS(svar)    c ## svar .s
+#define RLEN(svar)  c ## svar .len
+
+#define FINANGLABLE_SCHEME_STRING_FROM_SYMBOL(sym)      \
+  scm_string_copy (scm_symbol_to_string (sym))
+
+#define _FINANGLE(svar,p1)  do                  \
+    {                                           \
+      if (p1)                                   \
+        ROZT_X (svar);                          \
+      RS (svar) = SCM_ROCHARS (svar);           \
+      RLEN (svar) = SCM_ROLENGTH (svar);        \
+    }                                           \
+  while (0)
+
+#define UNFINANGLE(svar)
+
+/* Use ‘FINANGLE_RAW’ when the consumer of the C string takes full range
+   (start address plus length) info.  Otherwise, ‘FINANGLE’.  */
+
+#define FINANGLE_RAW(svar)  _FINANGLE (svar, 0)
+#define FINANGLE(svar)      _FINANGLE (svar, 1)
+
+
 /*
  * smob: connection
  */
@@ -171,12 +202,14 @@ typedef struct
 static long
 extract_mode_bits (SCM modes, int *appendp)
 {
+  range_t cmodes;
   long rv;
 
-  ROZT_X (modes);
-  rv = scm_mode_bits (ROZT (modes));
+  FINANGLE (modes);
+  rv = scm_mode_bits (RS (modes));
   if (appendp)
-    *appendp = strchr (ROZT (modes), 'a') ? 1 : 0;
+    *appendp = strchr (RS (modes), 'a') ? 1 : 0;
+  UNFINANGLE (modes);
   return rv;
 }
 
@@ -729,14 +762,16 @@ the failure.  */)
 {
 #define FUNC_NAME s_pg_lo_import
   PGconn *dbconn;
+  range_t cfilename;
   Oid ret;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   ASSERT_STRING (2, filename);
-  ROZT_X (filename);
 
   NOINTS ();
-  ret = lo_import (dbconn, ROZT (filename));
+  FINANGLE (filename);
+  ret = lo_import (dbconn, RS (filename));
+  UNFINANGLE (filename);
   INTSOK ();
 
   return DEFAULT_FALSE (InvalidOid != ret,
@@ -758,15 +793,17 @@ of the failure.  */)
 #define FUNC_NAME s_pg_lo_export
   PGconn *dbconn;
   Oid pg_oid;
+  range_t cfilename;
   int ret;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_ULONG_COPY (2, oid, pg_oid);
   ASSERT_STRING (3, filename);
-  ROZT_X (filename);
 
   NOINTS ();
-  ret = lo_export (dbconn, pg_oid, ROZT (filename));
+  FINANGLE (filename);
+  ret = lo_export (dbconn, pg_oid, RS (filename));
+  UNFINANGLE (filename);
   INTSOK ();
 
   return BOOLEAN (! PROB (ret));
@@ -904,8 +941,9 @@ struct paramspecs
 #define VALIDATE_PARAM_RELATED_ARGS(what)               \
   do {                                                  \
     VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn); \
-    ROZT_X (what);                                      \
+    SCM_VALIDATE_STRING (2, what);                      \
     SCM_VALIDATE_VECTOR (3, parms);                     \
+    FINANGLE (what);                                    \
   } while (0)
 
 static void
@@ -931,7 +969,14 @@ prep_paramspecs (const char *FUNC_NAME, struct paramspecs *ps, SCM v)
   if (! ps->values)
     MEMORY_ERROR ();
   for (i = 0; i < len; i++)
-    ps->values[i] = ROZT (VREF (v, i));
+    {
+      range_t celem;
+
+      elem = VREF (v, i);
+      FINANGLE (elem);
+      ps->values[i] = strdup (RS (elem));
+      UNFINANGLE (elem);
+    }
   ps->lengths = NULL;
   ps->formats = NULL;
 }
@@ -1166,12 +1211,14 @@ need to be escaped a second time.  */)
 #define FUNC_NAME s_pg_connectdb
   xc_t *xc;
   PGconn *dbconn;
+  range_t cconstr;
 
   ASSERT_STRING (1, constr);
-  ROZT_X (constr);
 
   NOINTS ();
-  dbconn = PQconnectdb (ROZT (constr));
+  FINANGLE (constr);
+  dbconn = PQconnectdb (RS (constr));
+  UNFINANGLE (constr);
 
   if (CONNECTION_BAD == PQstatus (dbconn))
     {
@@ -1305,23 +1352,27 @@ If there is an error, return @code{#f}.  */)
 {
 #define FUNC_NAME s_pg_escape_string_conn
   PGconn *dbconn;
+  range_t cstring;
   char *answer;
-  size_t ilen, olen;
+  size_t olen;
   int errcode;
   SCM rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   ASSERT_STRING (2, string);
-  ROZT_X (string);
 
-  ilen = SCM_ROLENGTH (string);
-  if (! (answer = malloc (1 + 2 * ilen)))
-    SYSTEM_ERROR ();
+  FINANGLE_RAW (string);
+  if (! (answer = malloc (1 + 2 * RLEN (string))))
+    {
+      UNFINANGLE (string);
+      SYSTEM_ERROR ();
+    }
 
-  olen = PQescapeStringConn (dbconn, answer, ROZT (string), ilen, &errcode);
+  olen = PQescapeStringConn (dbconn, answer, RS (string), RLEN (string), &errcode);
   rv = DEFAULT_FALSE (! errcode,
                       STRING (answer));
   free (answer);
+  UNFINANGLE (string);
   return rv;
 #undef FUNC_NAME
 }
@@ -1338,18 +1389,21 @@ The returned bytea does not have surrounding single-quote chars.
 If there is an error, return @code{#f}.  */)
 {
 #define FUNC_NAME s_pg_escape_bytea_conn
+  void *ucbytea; range_t cbytea;
   PGconn *dbconn;
   unsigned char *answer;
-  size_t ilen, olen;
+  size_t olen;
   SCM rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   ASSERT_STRING (2, bytea);
 
-  ilen = SCM_ROLENGTH (bytea);
+  FINANGLE_RAW (bytea);
+  ucbytea = RS (bytea);
   rv = DEFAULT_FALSE
-    (answer = PQescapeByteaConn (dbconn, SCM_ROUCHARS (bytea), ilen, &olen),
+    (answer = PQescapeByteaConn (dbconn, ucbytea, RLEN (bytea), &olen),
      BSTRING ((char *) answer, olen ? olen - 1 : 0));
+  UNFINANGLE (bytea);
   PQfreemem (answer);
   return rv;
 #undef FUNC_NAME
@@ -1364,15 +1418,18 @@ If there is an error, return @code{#f}.  */)
 {
 #define FUNC_NAME s_pg_unescape_bytea
   unsigned char *answer;
+  void *ucbytea; range_t cbytea;
   size_t olen;
   SCM rv;
 
   ASSERT_STRING (1, bytea);
-
+  FINANGLE_RAW (bytea);
+  ucbytea = RS (bytea);
   rv = DEFAULT_FALSE
-    (answer = PQunescapeBytea (SCM_ROUCHARS (bytea), &olen),
+    (answer = PQunescapeBytea (ucbytea, &olen),
      BSTRING ((char *) answer, olen));
   PQfreemem (answer);
+  UNFINANGLE (bytea);
   return rv;
 #undef FUNC_NAME
 }
@@ -1402,16 +1459,18 @@ message is available only until the next call to @code{pg-exec}
 on this connection.  */)
 {
 #define FUNC_NAME s_pg_exec
+  range_t cstatement;
   SCM z;
   PGconn *dbconn;
   PGresult *result;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   ASSERT_STRING (2, statement);
-  ROZT_X (statement);
 
   NOINTS ();
-  result = PQexec (dbconn, ROZT (statement));
+  FINANGLE (statement);
+  result = PQexec (dbconn, RS (statement));
+  UNFINANGLE (statement);
 
   z = res_box (result);
   INTSOK ();
@@ -1429,6 +1488,7 @@ parameterized string, and @var{parms} is a parameter-vector.  */)
 #define FUNC_NAME s_pg_exec_params
   SCM z;
   PGconn *dbconn;
+  range_t cstatement;
   PGresult *result;
   struct paramspecs ps;
 
@@ -1436,9 +1496,10 @@ parameterized string, and @var{parms} is a parameter-vector.  */)
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
   NOINTS ();
-  result = PQexecParams (dbconn, ROZT (statement), ps.len,
+  result = PQexecParams (dbconn, RS (statement), ps.len,
                          ps.types, ps.values, ps.lengths, ps.formats,
                          RESFMT_TEXT);
+  UNFINANGLE (statement);
   z = res_box (result);
   INTSOK ();
   drop_paramspecs (&ps);
@@ -1459,6 +1520,7 @@ name specified in some prior SQL @code{PREPARE} statement.
 #define FUNC_NAME s_pg_exec_prepared
   SCM z;
   PGconn *dbconn;
+  range_t cstname;
   PGresult *result;
   struct paramspecs ps;
 
@@ -1466,9 +1528,10 @@ name specified in some prior SQL @code{PREPARE} statement.
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
   NOINTS ();
-  result = PQexecPrepared (dbconn, ROZT (stname), ps.len,
+  result = PQexecPrepared (dbconn, RS (stname), ps.len,
                            ps.values, ps.lengths, ps.formats,
                            RESFMT_TEXT);
+  UNFINANGLE (stname);
   z = res_box (result);
   INTSOK ();
   drop_paramspecs (&ps);
@@ -1831,12 +1894,16 @@ or @code{#f} if there is no such parameter.
 {
 #define FUNC_NAME s_pg_parameter_status
   PGconn *dbconn;
+  range_t cparm;
   const char *cstatus = NULL;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_SYMBOL (2, parm);
+  parm = FINANGLABLE_SCHEME_STRING_FROM_SYMBOL (parm);
 
-  cstatus = PQparameterStatus (dbconn, ROZT (parm));
+  FINANGLE (parm);
+  cstatus = PQparameterStatus (dbconn, RS (parm));
+  UNFINANGLE (parm);
   return DEFAULT_FALSE (cstatus, STRING (cstatus));
 #undef FUNC_NAME
 }
@@ -1981,14 +2048,16 @@ otherwise.  */)
 {
 #define FUNC_NAME s_pg_fnumber
   PGresult *res;
+  range_t cfname;
   int fnum;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
   ASSERT_STRING (2, fname);
-  ROZT_X (fname);
 
   NOINTS ();
-  fnum = PQfnumber (res, ROZT (fname));
+  FINANGLE (fname);
+  fnum = PQfnumber (res, RS (fname));
+  UNFINANGLE (fname);
   INTSOK ();
 
   return NUM_INT (fnum);
@@ -2233,14 +2302,16 @@ and the attempt would block; and @code{-1} if an error occurred.  */)
 {
 #define FUNC_NAME s_pg_put_copy_data
   PGconn *dbconn;
+  range_t cdata;
+  int rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_STRING (2, data);
 
-  ROZT_X (data);
-  return NUM_INT (PQputCopyData (dbconn,
-                                 ROZT (data),
-                                 SCM_ROLENGTH (data)));
+  FINANGLE_RAW (data);
+  rv = PQputCopyData (dbconn, RS (data), RLEN (data));
+  UNFINANGLE (data);
+  return NUM_INT (rv);
 #undef FUNC_NAME
 }
 
@@ -2257,17 +2328,20 @@ and the attempt would block; and @code{-1} if an error occurred.  */)
 {
 #define FUNC_NAME s_pg_put_copy_end
   PGconn *dbconn;
-  char *cerrmsg = NULL;
+  range_t cerrmsg;
+  int rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+  RS (errmsg) = NULL;
   if (GIVENP (errmsg))
     {
       SCM_VALIDATE_STRING (2, errmsg);
-      ROZT_X (errmsg);
-      cerrmsg = ROZT (errmsg);
+      FINANGLE (errmsg);
     }
 
-  return NUM_INT (PQputCopyEnd (dbconn, cerrmsg));
+  rv = PQputCopyEnd (dbconn, RS (errmsg));
+  UNFINANGLE (errmsg);
+  return NUM_INT (rv);
 #undef FUNC_NAME
 }
 
@@ -2388,11 +2462,14 @@ Return @code{#t} if successful.  */)
 #define FUNC_NAME s_pg_putline
   PGconn *dbconn;
   int status;
+  range_t cstr;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   ASSERT_STRING (2, str);
   NOINTS ();
-  status = PQputnbytes (dbconn, SCM_ROCHARS (str), SCM_ROLENGTH (str));
+  FINANGLE_RAW (str);
+  status = PQputnbytes (dbconn, RS (str), RLEN (str));
+  UNFINANGLE (str);
   INTSOK ();
   return BOOLEAN (! status);
 #undef FUNC_NAME
@@ -2637,7 +2714,15 @@ option_as_string (SCM alist, SCM key, const char *def)
   SCM maybe = scm_assq_ref (alist, key);
 
   if (NOT_FALSEP (maybe))
-    return strdup (SCM_ROCHARS (maybe));
+    {
+      range_t cmaybe;
+      char *rv;
+
+      FINANGLE (maybe);
+      rv = strdup (RS (maybe));
+      UNFINANGLE (maybe);
+      return rv;
+    }
 
   if (def)
     return strdup (def);
@@ -2762,7 +2847,12 @@ List of replacement field names, each a string.
       po->fieldName[count] = NULL;
       for (i = 0; i < count; i++)
         {
-          po->fieldName[i] = strdup (SCM_ROCHARS (CAR (substnames)));
+          SCM name = CAR (substnames);
+          range_t cname;
+
+          FINANGLE (name);
+          po->fieldName[i] = strdup (RS (name));
+          UNFINANGLE (name);
           substnames = CDR (substnames);
         }
     }
@@ -2952,19 +3042,25 @@ is out of range.  If @var{start} is exactly the length of
 @var{string}, return zero.  */)
 {
 #define FUNC_NAME s_pg_mblen
-  SCM cell;
+  SCM as_string, cell;
   int cenc;
   size_t cstart = 0, clen;
 
   if (STRINGP (encoding))
-    encoding = SYMBOL (ROZT (encoding));
+    encoding = scm_string_to_symbol (encoding);
   ASSERT (encoding, SYMBOLP (encoding), 1);
+  as_string = FINANGLABLE_SCHEME_STRING_FROM_SYMBOL (encoding);
   cell = scm_assq (encoding, CDR (encoding_alist));
   if (NOT_FALSEP (cell))
     cenc = C_INT (CDR (cell));
   else
     {
-      if (PROB (cenc = pg_char_to_encoding (ROZT (encoding))))
+      range_t cas_string;
+
+      FINANGLE (as_string);
+      cenc = pg_char_to_encoding (RS (as_string));
+      UNFINANGLE (as_string);
+      if (PROB (cenc))
         ERROR ("No such encoding: ~A", encoding);
       cell = CONS (encoding, NUM_INT (cenc));
       SETCDR (encoding_alist, CONS (cell, CDR (encoding_alist)));
@@ -3013,12 +3109,16 @@ Return @code{#t} if successful, @code{#f} otherwise.  */)
 {
 #define FUNC_NAME s_pg_set_client_encoding_x
   PGconn *dbconn;
+  range_t cencoding;
+  int rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   ASSERT_STRING (2, encoding);
-  ROZT_X (encoding);
 
-  return BOOLEAN (! PQsetClientEncoding (dbconn, ROZT (encoding)));
+  FINANGLE (encoding);
+  rv = PQsetClientEncoding (dbconn, RS (encoding));
+  UNFINANGLE (encoding);
+  return BOOLEAN (! rv);
 #undef FUNC_NAME
 }
 
@@ -3074,12 +3174,16 @@ message is retrievable with @code{pg-error-message}.  */)
 {
 #define FUNC_NAME s_pg_send_query
   PGconn *dbconn;
+  range_t cquery;
+  int rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   ASSERT_STRING (2, query);
-  ROZT_X (query);
 
-  return BOOLEAN (PQsendQuery (dbconn, ROZT (query)));
+  FINANGLE (query);
+  rv = PQsendQuery (dbconn, RS (query));
+  UNFINANGLE (query);
+  return BOOLEAN (rv);
 #undef FUNC_NAME
 }
 
@@ -3092,6 +3196,7 @@ parameterized string, and @var{parms} is a parameter-vector.  */)
 {
 #define FUNC_NAME s_pg_send_query_params
   PGconn *dbconn;
+  range_t cquery;
   struct paramspecs ps;
   int result;
 
@@ -3099,9 +3204,10 @@ parameterized string, and @var{parms} is a parameter-vector.  */)
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
   NOINTS ();
-  result = PQsendQueryParams (dbconn, ROZT (query), ps.len,
+  result = PQsendQueryParams (dbconn, RS (query), ps.len,
                               ps.types, ps.values, ps.lengths, ps.formats,
                               RESFMT_TEXT);
+  UNFINANGLE (query);
   INTSOK ();
   drop_paramspecs (&ps);
   return BOOLEAN (result);
@@ -3117,6 +3223,7 @@ Also, return @code{#t} if successful.  */)
 {
 #define FUNC_NAME s_pg_send_query_prepared
   PGconn *dbconn;
+  range_t cstname;
   struct paramspecs ps;
   int result;
 
@@ -3124,9 +3231,10 @@ Also, return @code{#t} if successful.  */)
 
   prep_paramspecs (FUNC_NAME, &ps, parms);
   NOINTS ();
-  result = PQsendQueryPrepared (dbconn, ROZT (stname), ps.len,
+  result = PQsendQueryPrepared (dbconn, RS (stname), ps.len,
                                 ps.values, ps.lengths, ps.formats,
                                 RESFMT_TEXT);
+  UNFINANGLE (stname);
   INTSOK ();
   drop_paramspecs (&ps);
   return BOOLEAN (result);

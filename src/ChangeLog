@@ -1,5 +1,21 @@
 2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq int] Add abstractions to grok Scheme symbol/string as C byte range.
+
+	* libpq.c (range_t): New typedef.
+	(RS, RLEN, FINANGLABLE_SCHEME_STRING_FROM_SYMBOL, _FINANGLE)
+	(UNFINANGLE, FINANGLE_RAW, FINANGLE): New macros.
+	(extract_mode_bits, pg_lo_import, pg_lo_export)
+	(VALIDATE_PARAM_RELATED_ARGS, prep_paramspecs, pg_connectdb)
+	(pg_escape_string_conn, pg_escape_bytea_conn, pg_unescape_bytea)
+	(pg_exec, pg_exec_params, pg_exec_prepared, pg_parameter_status)
+	(pg_fnumber, pg_put_copy_data, pg_put_copy_end, pg_putline)
+	(option_as_string, pg_make_print_options, pg_mblen)
+	(pg_set_client_encoding_x, pg_send_query, pg_send_query_params)
+	(pg_send_query_prepared): Use new macros variously.
+
+2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq int] Add abstraction: option_as_string
 
 	* libpq.c (option_as_string): New static func.
