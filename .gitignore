@@ -62,7 +62,6 @@ Makefile.in
 /src/stamp-all
 /src/stamp-h1
 
-
 /test/*.log
 /test/config.scm
 /test/create.sh
