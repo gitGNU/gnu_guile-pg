@@ -1,5 +1,11 @@
 2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq slog] Avoid ‘SCM_VALIDATE_INUM_COPY’.
+
+	* libpq.c (pg_lo_seek): Use ‘EXACTP’ and ‘C_INT’, instead.
+
+2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq int] Add abstractions to grok Scheme symbol/string as C byte range.
 
 	* libpq.c (range_t): New typedef.
