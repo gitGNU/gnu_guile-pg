@@ -1596,7 +1596,7 @@ A symbol.
   char *s;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
-  SCM_VALIDATE_KEYWORD (2, fieldcode);
+  VALIDATE_KEYWORD (2, fieldcode);
 
 #define CHKFC(x,y)                              \
   if (EQ (fieldcode, (x)))                 \
@@ -2513,7 +2513,7 @@ verbosity.  */)
   PGconn *dbconn;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  SCM_VALIDATE_KEYWORD (2, verbosity);
+  VALIDATE_KEYWORD (2, verbosity);
 
   {
     PGVerbosity now = PQERRORS_DEFAULT;

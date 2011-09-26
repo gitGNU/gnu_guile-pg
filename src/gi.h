@@ -148,6 +148,8 @@ scm_init_ ## fname_frag ## _module (void)                               \
   SCM_VALIDATE_INUM_MIN_COPY (n, svar, 0, cvar)
 #define VALIDATE_EXACT_0_UP_TO_N_COPY(n,svar,hi,cvar)   \
   SCM_VALIDATE_INUM_RANGE_COPY (n, svar, 0, hi, cvar)
+#define VALIDATE_KEYWORD(n,svar)                \
+  SCM_VALIDATE_KEYWORD (n, svar)
 #else
 #define ASSERT_EXACT_NON_NEGATIVE_COPY(n,svar,cvar)  do \
     {                                                   \
@@ -163,6 +165,8 @@ scm_init_ ## fname_frag ## _module (void)                               \
       SCM_ASSERT_RANGE (n, svar, !PROB (cvar) && hi > cvar);    \
     }                                                           \
   while (0)
+#define VALIDATE_KEYWORD(n,svar)                        \
+  ASSERT (svar, scm_is_keyword (svar), SCM_ARG ## n)
 #endif
 
 /* These are provisionary.  We need a better way for Guile 2.x.  */

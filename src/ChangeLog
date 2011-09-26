@@ -1,5 +1,13 @@
 2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq slog] Add abstraction: VALIDATE_KEYWORD
+
+	* gi.h (VALIDATE_KEYWORD): New macro.
+	* libpq.c (pg_result_error_field)
+	(pg_set_error_verbosity): Use ‘VALIDATE_KEYWORD’.
+
+2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq slog] Add abstraction: VALIDATE_EXACT_0_UP_TO_N_COPY
 
 	* gi.h (VALIDATE_EXACT_0_UP_TO_N_COPY): New macro.
