@@ -1,3 +1,9 @@
+2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v] For ‘make check DEBUG=1’, display the guile(1) invocation.
+
+	* runtest.in: If env var ‘DEBUG’ is set, do ‘set -x’.
+
 2011-09-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v int] Don't use non-existent operator ‘!’ in request-cancel test.
