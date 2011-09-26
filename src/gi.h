@@ -141,6 +141,7 @@ scm_init_ ## fname_frag ## _module (void)                               \
 
 #define ASSERT(what,expr,msg)  SCM_ASSERT ((expr), what, msg, FUNC_NAME)
 #define ASSERT_STRING(n,arg)  ASSERT (arg, STRINGP (arg), SCM_ARG ## n)
+#define ASSERT_EXACT(n,arg)  ASSERT (arg, EXACTP (arg), SCM_ARG ## n)
 
 /* These are provisionary.  We need a better way for Guile 2.x.  */
 #ifndef SCM_ROCHARS

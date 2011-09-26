@@ -1,5 +1,12 @@
 2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq int] Add abstraction: ASSERT_EXACT
+
+	* gi.h (ASSERT_EXACT): New macro.
+	* libpq.c (pg_lo_seek, pg_mblen): Use ‘ASSERT_EXACT’.
+
+2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq slog] Avoid ‘SCM_VALIDATE_INUM_COPY’.
 
 	* libpq.c (pg_lo_seek): Use ‘EXACTP’ and ‘C_INT’, instead.

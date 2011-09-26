@@ -597,8 +597,8 @@ zero if an error occurred.  */)
 {
 #define FUNC_NAME s_pg_lo_seek
   ASSERT_PORT (1, port, OPLOBPORTP);
-  ASSERT (where, EXACTP (where), 2);
-  ASSERT (whence, EXACTP (whence), 3);
+  ASSERT_EXACT (2, where);
+  ASSERT_EXACT (3, whence);
 
   lob_flush (port);
 
@@ -3069,7 +3069,7 @@ is out of range.  If @var{start} is exactly the length of
   clen = SCM_ROLENGTH (string);
   if (GIVENP (start))
     {
-      ASSERT (start, EXACTP (start), 3);
+      ASSERT_EXACT (3, start);
       cstart = C_INT (start);
       if (clen < cstart)
         ERROR ("String start index out of range: ~A", start);
