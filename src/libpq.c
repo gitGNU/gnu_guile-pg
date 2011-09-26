@@ -2631,6 +2631,20 @@ SCM_SYMBOL (pg_sym_field_names, "field-names");
 static SCM valid_print_option_flags;
 static SCM valid_print_option_keys;
 
+static char *
+option_as_string (SCM alist, SCM key, const char *def)
+{
+  SCM maybe = scm_assq_ref (alist, key);
+
+  if (NOT_FALSEP (maybe))
+    return strdup (SCM_ROCHARS (maybe));
+
+  if (def)
+    return strdup (def);
+
+  return NULL;
+}
+
 PRIMPROC
 (pg_make_print_options, "pg-make-print-options", 1, 0, 0,
  (SCM spec),
@@ -2730,14 +2744,8 @@ List of replacement field names, each a string.
 #undef _FLAG_CHECK
 
 #define _STRING_CHECK_SETX(k,m)                         \
-  do {                                                  \
-    SCM stemp = scm_assq_ref (keys, pg_sym_ ## k);      \
-    po->m = (NOT_FALSEP (stemp)                         \
-             ? strdup (SCM_ROCHARS (stemp))             \
-             : (default_print_options.m                 \
-                ? strdup (default_print_options.m)      \
-                : NULL));                               \
-  } while (0)
+  po->m = option_as_string                              \
+    (keys, pg_sym_ ## k, default_print_options.m)
 
   _STRING_CHECK_SETX (field_sep, fieldSep);
   _STRING_CHECK_SETX (table_opt, tableOpt);
