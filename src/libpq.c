@@ -692,8 +692,8 @@ Return a string containing the data read from the port or
   char *stage, *wp;
   int csiz, cnum, len, c;
 
-  SCM_VALIDATE_INUM_MIN_COPY (1, siz, 0, csiz);
-  SCM_VALIDATE_INUM_MIN_COPY (2, num, 0, cnum);
+  ASSERT_EXACT_NON_NEGATIVE_COPY (1, siz, csiz);
+  ASSERT_EXACT_NON_NEGATIVE_COPY (2, num, cnum);
   ASSERT_PORT (3, port, OPINLOBPORTP);
 
   if (0 > (len = csiz * cnum)
@@ -2185,8 +2185,8 @@ up to the caller to convert this to the required type.  */)
   SCM rv;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
-  SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, ctuple);
-  SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, cfield);
+  ASSERT_EXACT_NON_NEGATIVE_COPY (2, stuple, ctuple);
+  ASSERT_EXACT_NON_NEGATIVE_COPY (3, sfield, cfield);
   CHECK_TUPLE_COORDS ();
 
   NOINTS ();
@@ -2213,8 +2213,8 @@ Return the size in bytes of the value of the attribute
   SCM ret;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
-  SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, ctuple);
-  SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, cfield);
+  ASSERT_EXACT_NON_NEGATIVE_COPY (2, stuple, ctuple);
+  ASSERT_EXACT_NON_NEGATIVE_COPY (3, sfield, cfield);
   CHECK_TUPLE_COORDS ();
 
   NOINTS ();
@@ -2239,8 +2239,8 @@ Return @code{#t} if the value of the attribute @var{sfield}, tuple
   SCM rv;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
-  SCM_VALIDATE_INUM_MIN_COPY (2, stuple, 0, ctuple);
-  SCM_VALIDATE_INUM_MIN_COPY (3, sfield, 0, cfield);
+  ASSERT_EXACT_NON_NEGATIVE_COPY (2, stuple, ctuple);
+  ASSERT_EXACT_NON_NEGATIVE_COPY (3, sfield, cfield);
   CHECK_TUPLE_COORDS ();
 
   NOINTS ();

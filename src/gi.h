@@ -143,6 +143,19 @@ scm_init_ ## fname_frag ## _module (void)                               \
 #define ASSERT_STRING(n,arg)  ASSERT (arg, STRINGP (arg), SCM_ARG ## n)
 #define ASSERT_EXACT(n,arg)  ASSERT (arg, EXACTP (arg), SCM_ARG ## n)
 
+#if GI_LEVEL_NOT_YET_1_8
+#define ASSERT_EXACT_NON_NEGATIVE_COPY(n,svar,cvar)     \
+  SCM_VALIDATE_INUM_MIN_COPY (n, svar, 0, cvar)
+#else
+#define ASSERT_EXACT_NON_NEGATIVE_COPY(n,svar,cvar)  do \
+    {                                                   \
+      ASSERT_EXACT (n, svar);                           \
+      cvar = C_INT (svar);                              \
+      SCM_ASSERT_RANGE (n, svar, !PROB (cvar));         \
+    }                                                   \
+  while (0)
+#endif
+
 /* These are provisionary.  We need a better way for Guile 2.x.  */
 #ifndef SCM_ROCHARS
 #define SCM_ROCHARS(x)   SCM_CHARS (x)

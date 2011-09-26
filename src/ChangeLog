@@ -1,5 +1,13 @@
 2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq slog] Add abstraction: ASSERT_EXACT_NON_NEGATIVE_COPY
+
+	* gi.h (ASSERT_EXACT_NON_NEGATIVE_COPY): New macro.
+	* libpq.c (pg_lo_read): Use ‘ASSERT_EXACT_NON_NEGATIVE_COPY’.
+	(pg_getvalue, pg_getlength, pg_getisnull): Likewise.
+
+2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq int] Add abstraction: ASSERT_EXACT
 
 	* gi.h (ASSERT_EXACT): New macro.
