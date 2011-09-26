@@ -64,6 +64,8 @@ AC_HEADER_STDC
 
 AC_CHECK_HEADERS_ONCE([postgresql/libpq-fe.h postgresql/libpq/libpq-fs.h])
 
+AC_FUNC_ALLOCA
+
 ##----------------------------------------------------------------------------
 ## Guile
 
