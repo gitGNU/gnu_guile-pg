@@ -168,6 +168,25 @@ typedef struct
 #define OPLOBPORTP(x)    (LOBPORT_WITH_FLAGS_P (x, SCM_OPN))
 #define OPINLOBPORTP(x)  (LOBPORT_WITH_FLAGS_P (x, SCM_OPN | SCM_RDNG))
 
+static long
+extract_mode_bits (SCM modes, int *appendp)
+{
+  long rv;
+
+  ROZT_X (modes);
+  rv = scm_mode_bits (ROZT (modes));
+  if (appendp)
+    *appendp = strchr (ROZT (modes), 'a') ? 1 : 0;
+  return rv;
+}
+
+#define ASSERT_MODES_COPY(pos,svar,cvar,ap)  do \
+    {                                           \
+      ASSERT_STRING (pos, svar);                \
+      cvar = extract_mode_bits (svar, ap);      \
+    }                                           \
+  while (0)
+
 static SCM
 lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *FUNC_NAME)
 {
@@ -250,10 +269,7 @@ throws a @code{misc-error} if the @code{modes} string is invalid.  */)
   int pg_modes = 0;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  ASSERT_STRING (2, modes);
-  ROZT_X (modes);
-
-  mode_bits = scm_mode_bits (ROZT (modes));
+  ASSERT_MODES_COPY (2, modes, mode_bits, NULL);
 
   if (mode_bits & SCM_RDNG)
     pg_modes |= INV_READ;
@@ -305,7 +321,7 @@ some idea of what happened.
 Throw @code{misc-error} if the @code{modes} is invalid.  */)
 {
 #define FUNC_NAME s_pg_lo_open
-  long mode_bits;
+  long mode_bits; int appendp;
   PGconn *dbconn;
   int alod;
   Oid pg_oid;
@@ -313,10 +329,7 @@ Throw @code{misc-error} if the @code{modes} is invalid.  */)
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   SCM_VALIDATE_ULONG_COPY (2, oid, pg_oid);
-  ASSERT_STRING (3, modes);
-  ROZT_X (modes);
-
-  mode_bits = scm_mode_bits (ROZT (modes));
+  ASSERT_MODES_COPY (3, modes, mode_bits, &appendp);
 
   if (mode_bits & SCM_RDNG)
     pg_modes |= INV_READ;
@@ -332,7 +345,7 @@ Throw @code{misc-error} if the @code{modes} is invalid.  */)
   if (PROB (alod))
     RETURN_FALSE ();
 
-  if (strchr (ROZT (modes), 'a'))
+  if (appendp)
     {
       NOINTS ();
       if (PROB (lo_lseek (dbconn, alod, 0, SEEK_END)))

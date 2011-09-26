@@ -1,3 +1,11 @@
+2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[pq int] Add abstraction: ASSERT_MODES_COPY
+
+	* libpq.c (extract_mode_bits): New static func.
+	(ASSERT_MODES_COPY): New macro.
+	(pg_lo_creat, pg_lo_open): Use ‘ASSERT_MODES_COPY’.
+
 2011-09-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[pq int] Assume the system provides <string.h>.
