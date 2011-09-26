@@ -1,5 +1,17 @@
 2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq int] Construct ‘pg-guile-pg-loaded’ rv dynamically; reduce linking.
+
+	* libpq.c (goodies): Delete var.
+	(pg_guile_pg_loaded): Rewrite.
+	(SIMPLE_SYMBOL, SYM): Delete macros.
+	(PQPROTOCOLVERSION, PQRESULTERRORMESSAGE, PQPASS)
+	(PQBACKENDPID, PQOIDVALUE, PQBINARYTUPLES, PQFMOD)
+	(PQSETNONBLOCKING, PQISNONBLOCKING): Delete SIMPLE_SYMBOLs.
+	(init_module): Don't init ‘goodies’.
+
+2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq slog] Add abstraction: VALIDATE_KEYWORD
 
 	* gi.h (VALIDATE_KEYWORD): New macro.

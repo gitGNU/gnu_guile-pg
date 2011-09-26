@@ -1002,8 +1002,6 @@ drop_paramspecs (struct paramspecs *ps)
  * meta and connection
  */
 
-static SCM goodies;
-
 PRIMPROC
 (pg_guile_pg_loaded, "pg-guile-pg-loaded", 0, 0, 0,
  (void),
@@ -1019,7 +1017,43 @@ available.  You can test this like so:
 (false-if-exception (pg-guile-pg-loaded))
 @end lisp  */)
 {
-  return goodies;
+  SCM rv = SCM_EOL;
+  /* $ ttn-do generate-C-symbol-set     \
+     PQPROTOCOLVERSION                  \
+     PQRESULTERRORMESSAGE               \
+     PQPASS                             \
+     PQBACKENDPID                       \
+     PQOIDVALUE                         \
+     PQBINARYTUPLES                     \
+     PQFMOD                             \
+     PQSETNONBLOCKING                   \
+     PQISNONBLOCKING                    \
+     -b char  */
+  static const char symbolpool[126] =
+    {
+      9 /* count */,
+      17,'P','Q','P','R','O','T','O','C','O','L','V','E','R','S','I','O','N',
+      20,'P','Q','R','E','S','U','L','T','E','R','R','O','R','M','E','S','S','A','G','E',
+      6,'P','Q','P','A','S','S',
+      12,'P','Q','B','A','C','K','E','N','D','P','I','D',
+      10,'P','Q','O','I','D','V','A','L','U','E',
+      14,'P','Q','B','I','N','A','R','Y','T','U','P','L','E','S',
+      6,'P','Q','F','M','O','D',
+      16,'P','Q','S','E','T','N','O','N','B','L','O','C','K','I','N','G',
+      15,'P','Q','I','S','N','O','N','B','L','O','C','K','I','N','G'
+    };
+  const char *p = symbolpool;
+  int count = *p++;
+
+  while (count--)
+    {
+      int len = *p++;
+      SCM sym = scm_string_to_symbol (BSTRING (p, len));
+
+      rv = CONS (sym, rv);
+      p += len;
+    }
+  return rv;
 }
 
 PRIMPROC
@@ -3337,26 +3371,6 @@ data was sent (only possible for a non-blocking connection).  */)
 
 
 /*
- * installation features
- */
-
-#define SIMPLE_SYMBOL(s)                        \
-  SCM_SYMBOL (pg_sym_ ## s, # s)
-
-#define SYM(s)  (pg_sym_ ## s)
-
-SIMPLE_SYMBOL (PQPROTOCOLVERSION);
-SIMPLE_SYMBOL (PQRESULTERRORMESSAGE);
-SIMPLE_SYMBOL (PQPASS);
-SIMPLE_SYMBOL (PQBACKENDPID);
-SIMPLE_SYMBOL (PQOIDVALUE);
-SIMPLE_SYMBOL (PQBINARYTUPLES);
-SIMPLE_SYMBOL (PQFMOD);
-SIMPLE_SYMBOL (PQSETNONBLOCKING);
-SIMPLE_SYMBOL (PQISNONBLOCKING);
-
-
-/*
  * init
  */
 
@@ -3419,17 +3433,6 @@ init_module (void)
   scm_set_port_seek          (lobp_tag, lob_seek);
   scm_set_port_truncate      (lobp_tag, NULL);
   scm_set_port_input_waiting (lobp_tag, lob_input_waiting_p);
-
-  goodies
-    = KLIST (SYM (PQPROTOCOLVERSION),
-             SYM (PQRESULTERRORMESSAGE),
-             SYM (PQPASS),
-             SYM (PQBACKENDPID),
-             SYM (PQOIDVALUE),
-             SYM (PQBINARYTUPLES),
-             SYM (PQFMOD),
-             SYM (PQSETNONBLOCKING),
-             SYM (PQISNONBLOCKING));
 
 #undef KLIST
 }
