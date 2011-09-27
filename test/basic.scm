@@ -267,7 +267,7 @@
 (define test:parameter-status
   (add-test #t
     (lambda ()
-      (or (not (memq 'PQPROTOCOLVERSION (pg-guile-pg-loaded)))
+      (or (= 2 (pg-protocol-version *C*))
           (and-map (lambda (k)
                      (let ((v (pg-parameter-status *C* k)))
                        (format #t "INFO: parameter ~S => ~S\n" k v)
@@ -302,7 +302,7 @@
   (add-test #:default
     (lambda ()
       (and (pg-set-error-verbosity *C* #:terse)
-           (eq? (if (memq 'PQPROTOCOLVERSION (pg-guile-pg-loaded))
+           (eq? (if (< 2 (pg-protocol-version *C*))
                     #:terse
                     #:default)
                 (pg-set-error-verbosity *C* #:default))
@@ -504,7 +504,7 @@
              (eq? (pg-fnumber res "col1") 0)
              (eq? (pg-fnumber res "col2") 1)
              (eq? (pg-fnumber res "invalid_column_name") -1)
-             (or (not (memq 'PQPROTOCOLVERSION (pg-guile-pg-loaded)))
+             (or (= 2 (pg-protocol-version *C*))
                  (and (integer? (pg-ftable res 0))
                       (integer? (pg-ftablecol res 0))
                       (= 0 (pg-fformat res 0)))))))))
@@ -619,7 +619,7 @@
 (define test:get-copy-data
   (add-test #t
     (lambda ()
-      (or (not (memq 'PQPROTOCOLVERSION (pg-guile-pg-loaded)))
+      (or (= 2 (pg-protocol-version *C*))
           (and (command-ok?
                 (cexec "SELECT * INTO t1 FROM test WHERE col1 = 1"))
                (let ((res (cexec "COPY t1 TO STDOUT"))
@@ -746,7 +746,7 @@
        (command-ok? (cexec "CREATE TABLE async (a numeric (20, 10))"))
        ((ok? 'PGRES_COPY_IN) (cexec "COPY async FROM STDIN"))
        (begin
-         (and (memq 'PQPROTOCOLVERSION (pg-guile-pg-loaded))
+         (and (< 2 (pg-protocol-version *C*))
               ;; Test fails for PostgreSQL 7.4.12 at ‘pg-endcopy’ if omitted.
               ;; This needs to be done prior to ‘pg-putline’, as well.
               (pg-set-nonblocking! *C* #f))

@@ -1,3 +1,12 @@
+2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v basic] Check protocol version directly.
+
+	* basic.scm (test:parameter-status, test:set-error-verbosity)
+	(test:fnumber-and-friends, test:pg-exec-prepared)
+	(test:asynchronous-retrieval): Don't check for feature
+	‘PQPROTOCOLVERSION’; instead check protocol version directly.
+
 2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v] For ‘make check DEBUG=1’, display the guile(1) invocation.
