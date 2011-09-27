@@ -120,7 +120,7 @@
     (define (display-row sep producer padding)
       (do ((fn 0 (1+ fn)))
           ((= ftot fn))
-        (and (if (= 0 fn) L? #t)
+        (and (if (zero? fn) L? #t)
              (display sep))
         (let ((s (producer fn)))
           (display s)

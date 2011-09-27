@@ -1,5 +1,12 @@
 2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[scheme int] Use ‘zero?’ more.
+
+	* postgres-gxrepl.scm (gxrepl -read): Use ‘zero?’.
+	* postgres-resdisp.scm (display-result display-row): Likewise.
+
+2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[qcons int] Cons less in ‘sql-quote’.
 
 	* postgres-qcons.scm (sql-quote): Accumulate a list of

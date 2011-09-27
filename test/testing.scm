@@ -167,7 +167,7 @@
     (cond (*log-file*
            (close-output-port *log-file*)
            (set! *log-file* #f)))
-    (and rv (= 0 xpass-count fail-count))))
+    (and rv (zero? xpass-count) (zero? fail-count))))
 
 
 ;;; Accountants eventually rule the world,

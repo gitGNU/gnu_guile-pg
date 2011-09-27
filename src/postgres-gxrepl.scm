@@ -388,9 +388,9 @@ specified by \",fix\".  Keywords without related expressions are ignored."
                               in)))
                  (line (string-append so-far input))
                  (len (string-length line)))
-            (cond ((and (= 0 len) (string-null? so-far))
+            (cond ((and (zero? len) (string-null? so-far))
                    (loop so-far prompt))
-                  ((= 0 len)
+                  ((zero? len)
                    (loop line (make-prompt #:ellipse)))
                   ((char=? #\, (string-ref line 0))
                    (let ((cmd (with-input-from-string

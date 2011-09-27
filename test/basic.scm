@@ -506,7 +506,7 @@
              (or (= 2 (pg-protocol-version *C*))
                  (and (integer? (pg-ftable res 0))
                       (integer? (pg-ftablecol res 0))
-                      (= 0 (pg-fformat res 0)))))))))
+                      (zero? (pg-fformat res 0)))))))))
 
 (define test:getvalue
   (add-test #t
@@ -750,7 +750,7 @@
               ;; This needs to be done prior to ‘pg-putline’, as well.
               (pg-set-nonblocking! *C* #f))
          (do ((i 4224 (1- i)))
-             ((= i 0))
+             ((zero? i))
            (pg-putline *C* (format #f "~A.~A\n" i i)))
          (pg-putline *C* "\\.\n")
          (pg-endcopy *C*))
