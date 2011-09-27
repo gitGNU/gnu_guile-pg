@@ -194,10 +194,10 @@ xc_free (SCM obj)
 
   if (xc->dbconn)
     PQfinish (xc->dbconn);
-  free (xc);
+  GCFREE (xc, xc_name);
   SCM_SET_SMOB_DATA (obj, NULL);
 
-  return sizeof (xc_t);
+  return GCRV (xc);
 }
 
 #define CONN_NOTICE(conn)   (xc_unbox (conn)->notice)
@@ -258,6 +258,8 @@ extract_mode_bits (SCM modes, int *appendp)
     }                                           \
   while (0)
 
+static char lob_name[] = "PG-LO-PORT";
+
 static SCM
 lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *FUNC_NAME)
 {
@@ -265,7 +267,7 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *FUNC_NAME)
   lob_stream *lobp;
   scm_port *pt;
 
-  lobp = (lob_stream *) scm_must_malloc (sizeof (lob_stream), "PG-LO-PORT");
+  lobp = GCMALLOC (sizeof (lob_stream), lob_name);
 
   NEWCELL_X (port);
 
@@ -781,8 +783,8 @@ lob_free (SCM port)
 
   if (SCM_OPENP (port))
     ret = lob_close (port);
-  free (lobp);
-  return 0;
+  GCFREE (lobp, lob_name);
+  return GCRV (lobp);
 }
 
 PRIMPROC
@@ -1302,7 +1304,7 @@ need to be escaped a second time.  */)
     }
   INTSOK ();
 
-  xc = ((xc_t *) scm_must_malloc (sizeof (xc_t), xc_name));
+  xc = GCMALLOC (sizeof (xc_t), xc_name);
 
   xc->dbconn = dbconn;
   xc->notice = SCM_BOOL_T;
@@ -2711,46 +2713,33 @@ sepo_unbox (SCM obj)
   return SMOBDATA (obj);
 }
 
+static char sepo_name[] = "PG-PRINT-OPTION";
+
 static size_t
 sepo_free (SCM obj)
 {
   PQprintOpt *po = sepo_unbox (obj);
-  size_t size = 0;
 
-#define _FREE_STRING(p)                         \
-  do {                                          \
-    if (p)                                      \
-      {                                         \
-        size += 1 + strlen (p);                 \
-        free (p);                               \
-      }                                         \
-  } while (0)
-
-  _FREE_STRING (po->fieldSep);
-  _FREE_STRING (po->tableOpt);
-  _FREE_STRING (po->caption);
+  free (po->fieldSep);
+  free (po->tableOpt);
+  free (po->caption);
 
   if (po->fieldName)
     {
       int i = 0;
       while (po->fieldName[i])
         {
-          _FREE_STRING (po->fieldName[i]);
+          free (po->fieldName[i]);
           i++;
         }
-      size += i * sizeof (char *);
       free (po->fieldName);
     }
-#undef _FREE_STRING
 
-  size += sizeof (PQprintOpt);
-  free (po);
+  GCFREE (po, sepo_name);
   SCM_SET_SMOB_DATA (obj, NULL);
 
-  return size;
+  return GCRV (po);
 }
-
-static char sepo_name[] = "PG-PRINT-OPTION";
 
 static int
 sepo_display (UNUSED SCM sepo, SCM port, UNUSED scm_print_state *pstate)
@@ -2901,7 +2890,7 @@ List of replacement field names, each a string.
 #undef CHECK_HEAD
     }
 
-  po = scm_must_malloc (sizeof (PQprintOpt), sepo_name);
+  po = GCMALLOC (sizeof (PQprintOpt), sepo_name);
 
 #define _FLAG_CHECK(m)                                  \
   (MEMQ (pg_sym_no_ ## m, flags)                        \
@@ -2930,8 +2919,7 @@ List of replacement field names, each a string.
   else
     {
       int i;
-      po->fieldName = (char **) scm_must_malloc ((1 + count) * sizeof (char *),
-                                                 sepo_name);
+      po->fieldName = GCMALLOC ((1 + count) * sizeof (char *), sepo_name);
       po->fieldName[count] = NULL;
       for (i = 0; i < count; i++)
         {

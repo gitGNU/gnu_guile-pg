@@ -1,5 +1,20 @@
 2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq slog] Add abstractions: GCMALLOC, GCFREE, GCRV
+
+	* gi.h (GCMALLOC, GCFREE, GCRV): New macros.
+	* libpq.c (xc_free): Use ‘GCFREE’, ‘GCRV’.
+	(lob_name): New static var.
+	(lob_mklobport): Use ‘GCMALLOC’, ‘lob_name’.
+	(lob_free): Use ‘GCFREE’, ‘GCRV’.
+	(pg_connectdb): Use ‘GCMALLOC’.
+	(sepo_name): Move earlier in file, before ‘sepo_free’; nfc.
+	(sepo_free): Don't keep track of size; use ‘free’ directly for
+	internal strings; use ‘GCFREE’, ‘sepo_name’, ‘GCRV’.
+	(pg_make_print_options): Use ‘GCMALLOC’.
+
+2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Decruft: (Re)move some obsoleted macros.
 
 	This undoes, in part, the sloggy 2011-06-02, "If
