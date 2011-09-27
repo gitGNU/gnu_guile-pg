@@ -1,3 +1,11 @@
+2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[pq slog] Specialize C-byte-range finangling for Guile 1.8+.
+
+	* libpq.c [!GI_LEVEL_NOT_YET_1_8] (REND, NUL_AT_END_X): New macros.
+	(FINANGLABLE_SCHEME_STRING_FROM_SYMBOL, _FINANGLE, UNFINANGLE):
+	Bifurcate macros, based on ‘GI_LEVEL_NOT_YET_1_8’.
+
 2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[pq int] Use ‘FINANGLE’, ‘UNFINANGLE’ more.
