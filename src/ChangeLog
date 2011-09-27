@@ -1,5 +1,12 @@
 2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq slog] Specialize ‘pg-getlineasync’ internals for 1.8+.
+
+	* libpq.c (pg_getlineasync) [!GI_LEVEL_NOT_YET_1_8]:
+	Fill a temporary buffer then bytewise copy into the Scheme string.
+
+2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq slog] Specialize C-byte-range finangling for Guile 1.8+.
 
 	* libpq.c [!GI_LEVEL_NOT_YET_1_8] (REND, NUL_AT_END_X): New macros.

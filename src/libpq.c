@@ -2493,6 +2493,7 @@ Optional arg @var{tickle} non-@code{#f} means to do a
 {
 #define FUNC_NAME s_pg_getlineasync
   PGconn *dbconn;
+  int rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   ASSERT_STRING (2, buf);
@@ -2503,9 +2504,25 @@ Optional arg @var{tickle} non-@code{#f} means to do a
        the first place.  */
     PQconsumeInput (dbconn);
 
-  return NUM_INT (PQgetlineAsync (dbconn,
-                                  SCM_ROCHARS (buf),
-                                  SCM_ROLENGTH (buf)));
+#if GI_LEVEL_NOT_YET_1_8
+  rv = PQgetlineAsync (dbconn, SCM_ROCHARS (buf), SCM_ROLENGTH (buf));
+#else  /* !GI_LEVEL_NOT_YET_1_8 */
+  /* Fill a temporary C buffer then copy into the Scheme string.
+     Totally gross!  */
+  {
+    size_t sz = scm_c_string_length (buf);
+    char *cbuf = malloc (sz);
+
+    if (! cbuf)
+      SYSTEM_ERROR ();
+    rv = PQgetlineAsync (dbconn, cbuf, sz);
+    while (sz--)
+      scm_c_string_set_x (buf, sz, CHARACTER (cbuf[sz]));
+    free (cbuf);
+  }
+#endif /* !GI_LEVEL_NOT_YET_1_8 */
+
+  return NUM_INT (rv);
 #undef FUNC_NAME
 }
 
