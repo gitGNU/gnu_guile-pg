@@ -1,5 +1,12 @@
 2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq slog] Add abstraction: NEWCELL_X
+
+	* gi.h (NEWCELL_X): New macro.
+	* libpq.c (lob_mklobport): Use ‘NEWCELL_X’.
+
+2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq slog] Specialize ‘pg-getlineasync’ internals for 1.8+.
 
 	* libpq.c (pg_getlineasync) [!GI_LEVEL_NOT_YET_1_8]:

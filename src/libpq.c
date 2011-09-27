@@ -258,7 +258,7 @@ lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *FUNC_NAME)
 
   lobp = (lob_stream *) scm_must_malloc (sizeof (lob_stream), "PG-LO-PORT");
 
-  SCM_NEWCELL (port);
+  NEWCELL_X (port);
 
   NOINTS ();
   lobp->conn = conn;

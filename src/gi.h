@@ -62,6 +62,7 @@
 #define EVAL_STRING       gh_eval_str
 #define APPLY             gh_apply
 #define LISTIFY           gh_list
+#define NEWCELL_X(svar)   SCM_NEWCELL (svar)
 #else  /* !GI_LEVEL_NOT_YET_1_8 */
 #define BOOLEANP          scm_is_bool
 #define EXACTP(x)         scm_is_true (scm_exact_p (x))
@@ -89,6 +90,7 @@
 #define EVAL_STRING       scm_c_eval_string
 #define APPLY             scm_apply_0
 #define LISTIFY           scm_list_n
+#define NEWCELL_X(svar)   svar = scm_cell (0, 0)
 #endif /* !GI_LEVEL_NOT_YET_1_8 */
 
 #define DEFSMOB(tagvar,name,m,f,p)                              \
