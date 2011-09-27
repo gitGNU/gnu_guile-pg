@@ -93,17 +93,30 @@
 #define NEWCELL_X(svar)   svar = scm_cell (0, 0)
 #endif /* !GI_LEVEL_NOT_YET_1_8 */
 
+#if GI_LEVEL_NOT_YET_1_8
+
 #define DEFSMOB(tagvar,name,m,f,p)                              \
   tagvar = scm_make_smob_type_mfpe (name, 0, m, f, p, NULL)
 
-#if GI_LEVEL_NOT_YET_1_8
 #define GCMALLOC(sz,what)    scm_must_malloc (sz, what)
 #define GCFREE(ptr,what)     scm_must_free (ptr)
 #define GCRV(ptr)            sizeof (*ptr)
+
 #else  /* !GI_LEVEL_NOT_YET_1_8 */
+
+#define DEFSMOB(tagvar,name,m,f,p)  do          \
+    {                                           \
+      tagvar = scm_make_smob_type (name, 0);    \
+      scm_set_smob_mark (tagvar, m);            \
+      scm_set_smob_free (tagvar, f);            \
+      scm_set_smob_print (tagvar, p);           \
+    }                                           \
+  while (0)
+
 #define GCMALLOC(sz,what)    scm_gc_malloc (sz, what)
 #define GCFREE(ptr,what)     scm_gc_free (ptr, sizeof (*ptr), what)
 #define GCRV(ptr)            0
+
 #endif  /* !GI_LEVEL_NOT_YET_1_8 */
 
 /*

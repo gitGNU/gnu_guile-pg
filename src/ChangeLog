@@ -1,5 +1,11 @@
 2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq slog] Specialize ‘DEFSMOB’ for Guile 1.8+.
+
+	* gi.h (DEFSMOB) [!GI_LEVEL_NOT_YET_1_8]: New macro.
+
+2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq slog] Add abstractions: GCMALLOC, GCFREE, GCRV
 
 	* gi.h (GCMALLOC, GCFREE, GCRV): New macros.
