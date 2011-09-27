@@ -64,6 +64,15 @@ typedef struct {
 #define FINANGLABLE_SCHEME_STRING_FROM_SYMBOL(sym)      \
   scm_string_copy (scm_symbol_to_string (sym))
 
+/* Coerce a Scheme (sub)string that is to be used in contexts where the
+   extracted C string is expected to be read-only and zero-terminated.  We
+   check this condition precisely instead of simply coercing all (sub)strings,
+   to avoid waste for those substrings that may in fact (by lucky accident)
+   already satisfy the condition.  */
+#define ROZT_X(x)                                       \
+  if (SCM_ROCHARS (x) [SCM_ROLENGTH (x)])               \
+    x = BSTRING (SCM_ROCHARS (x), SCM_ROLENGTH (x))
+
 #define _FINANGLE(svar,p1)  do                  \
     {                                           \
       if (p1)                                   \

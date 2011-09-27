@@ -171,28 +171,6 @@ scm_init_ ## fname_frag ## _module (void)                               \
   ASSERT (svar, scm_is_keyword (svar), SCM_ARG ## n)
 #endif
 
-/* These are provisionary.  We need a better way for Guile 2.x.  */
-#ifndef SCM_ROCHARS
-#define SCM_ROCHARS(x)   SCM_CHARS (x)
-#endif
-#ifndef SCM_ROLENGTH
-#define SCM_ROLENGTH(x)  SCM_LENGTH (x)
-#endif
-#ifndef SCM_ROUCHARS
-#define SCM_ROUCHARS(x)  ((unsigned char *) SCM_ROCHARS (x))
-#endif
-
-/* Coerce a string that is to be used in contexts where the extracted C
-   string is expected to be zero-terminated and is read-only.  We check
-   this condition precisely instead of simply coercing all substrings,
-   to avoid waste for those substrings that may in fact already satisfy
-   the condition.  Callers should extract w/ ROZT.  */
-#define ROZT_X(x)                                       \
-  if (SCM_ROCHARS (x) [SCM_ROLENGTH (x)])               \
-    x = BSTRING (SCM_ROCHARS (x), SCM_ROLENGTH (x))
-
-#define ROZT(x)  (SCM_ROCHARS (x))
-
 /* For some versions of Guile, (make-string (ash 1 24)) => "".
 
    That is, ‘make-string’ doesn't fail, but lengths past (1- (ash 1 24))

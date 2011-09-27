@@ -1,5 +1,17 @@
 2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[int] Decruft: (Re)move some obsoleted macros.
+
+	This undoes, in part, the sloggy 2011-06-02, "If
+	necessary, #define SCM_{ROCHARS,ROLENGTH,ROUCHARS}".
+
+	* gi.h (SCM_ROCHARS, SCM_ROLENGTH, SCM_ROUCHARS): Delete macros.
+	(ROZT_X): Move from here...
+	(ROZT): Delete macro.
+	* libpq.c [GI_LEVEL_NOT_YET_1_8] (ROZT_X): ...to here.
+
+2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq slog] Add abstraction: NEWCELL_X
 
 	* gi.h (NEWCELL_X): New macro.
