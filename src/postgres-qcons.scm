@@ -46,6 +46,7 @@
             sql-pre
             sql-pre?
             sql-unpre
+            sql-quote-auto-E?
             sql-quote
             idquote
             make-comma-separated-tree
@@ -191,6 +192,31 @@
   (set! (--preformatted string) #f)
   string)
 
+;; When non-@code{#f}, @code{sql-quote} will prefix a @samp{E}
+;; if it detects any @samp{\} (backslash) characters in its arg.
+;; For example:
+;;
+;; @example
+;; (define (e.g.)
+;;   (display (sql-quote "a\\b")))
+;;
+;; (fluid-ref sql-quote-auto-E?)
+;; @result{} #f
+;;
+;; (e.g.)
+;; @print{} 'a\b'
+;;
+;; (with-fluids ((sql-quote-auto-E? #t))
+;;   (e.g.))
+;; @print{} E'a\b'
+;; @end example
+;;
+;; If there are no backslash characters, this has no effect.
+;;
+;;-category: fluid
+;;
+(define sql-quote-auto-E? (make-fluid))
+
 ;; Return a new string made by doubling each single-quote in string
 ;; @var{s}, and prefixing and suffixing with single-quote.
 ;; The returned string is marked by @code{sql-pre}.  For example:
@@ -213,7 +239,10 @@
 (define (sql-quote s)
   (or (string? s) (error "not a string:" s))
   (let* ((olen (string-length s))
-         (len (+ 2 olen))
+         (E? (and (fluid-ref sql-quote-auto-E?)
+                  (string-index s #\\)))
+         (left-pos (if E? 1 0))
+         (len (+ left-pos 2 olen))
          (cuts (let loop ((stop olen) (acc (list olen)))
                  (define (with x)
                    (acons x (car acc) (cdr acc)))
@@ -223,9 +252,10 @@
                              (loop hit (cons hit (with hit)))))
                        (else (with 0)))))
          (rv (make-string len)))
-    (string-set! rv 0 #\')
+    (and E? (string-set! rv 0 #\E))
+    (string-set! rv left-pos #\')
     (string-set! rv (1- len) #\')
-    (let loop ((put 1) (ls cuts))
+    (let loop ((put (1+ left-pos)) (ls cuts))
       (if (null? ls)
           (sql-pre rv)                  ; rv
           (let* ((pair (car ls))

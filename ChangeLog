@@ -1,3 +1,10 @@
+2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	New (database postgres-qcons) fluid: sql-quote-auto-E?
+
+	* doc/ref.texh (qcons quoting): Add section "Standard Conforming
+	Strings"; add intro text; add @tsin for ‘sql-quote-auto-E?’.
+
 2011-09-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build] Check for ‘alloca’ support at configure time.
