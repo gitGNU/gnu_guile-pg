@@ -1,5 +1,13 @@
 2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v int] Simplify expression in basic.scm.
+
+	* basic.scm (test:protocol-version): Don't bother
+	checking that a number is not zero since the later check,
+	that the number is greater than 1, covers that case.
+
+2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v basic] Check protocol version directly.
 
 	* basic.scm (test:parameter-status, test:set-error-verbosity)

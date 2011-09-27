@@ -177,7 +177,6 @@
     (lambda ()
       (let ((v (pg-protocol-version *C*)))
         (and (number? v)
-             (not (= 0 v))
              (< 1 v))))))
 
 (define test:tracing-traced-connection
