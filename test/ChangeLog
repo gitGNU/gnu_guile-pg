@@ -1,5 +1,14 @@
 2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v mgr] Set ‘sql-quote-auto-E?’ on pgtable-manager creation, maybe.
+
+	* types-table.scm: Import (database postgres-qcons) procs.
+	(mgr): If the connection recognizes the runtime parameter
+	‘standard_conforming_strings’, display its value and set
+	‘sql-quote-auto-E?’.
+
+2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[scheme int] Use ‘zero?’ more.
 
 	* basic.scm (test:fnumber-and-friends): Use ‘zero?’.

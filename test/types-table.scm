@@ -25,6 +25,7 @@
            (exit #f)))
 
 (use-modules (database postgres)
+             (database postgres-qcons)
              (database postgres-types)
              (database postgres-table)
              (ice-9 common-list))
@@ -36,8 +37,14 @@
 
 (define (mgr . args)
   (let ((rv (apply pgtable-manager args)))
-    (and rv (procedure? rv) (getenv "DEBUG")
-         ((rv #:trace-exec) *log-file*))
+    (cond ((procedure? rv)
+           (and (getenv "DEBUG")
+                ((rv #:trace-exec) *log-file*))
+           (let ((scs 'standard_conforming_strings))
+             (cond ((pg-parameter-status ((rv #:k) #:connection) scs)
+                    => (lambda (v)
+                         (simple-format #t "INFO: ~S => ~S~%" scs v)
+                         (fluid-set! sql-quote-auto-E? #t)))))))
     rv))
 
 ;; The table manager and some global commands.
