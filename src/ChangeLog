@@ -1,3 +1,10 @@
+2011-09-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Spiff ‘pg-make-print-options’ doc comment.
+
+	* libpq.c (pg_make_print_options): In doc comment,
+	use @t around symbols and "---" to separate name from blurb.
+
 2011-09-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	New (database postgres-qcons) fluid: sql-quote-auto-E?

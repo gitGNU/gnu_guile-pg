@@ -2817,28 +2817,21 @@ of elements, each either a flag (symbol) or a key-value pair
 (with the key being a symbol).  Recognized flags:
 
 @itemize
-@item header: Print output field headings and row count.
-@item align: Fill align the fields.
-@item standard: Old brain-dead format.
-@item html3: Output HTML tables.
-@item expanded: Expand tables.
+@item @t{header} --- Print output field headings and row count.
+@item @t{align} --- Fill align the fields.
+@item @t{standard} --- Old brain-dead format.
+@item @t{html3} --- Output HTML tables.
+@item @t{expanded} --- Expand tables.
 @end itemize
 
 To specify a disabled flag, use @dfn{no-FLAG}, e.g.,
 @code{no-header}.  Recognized keys:
 
 @itemize
-@item field-sep
-String specifying field separator.
-
-@item table-opt
-String specifying HTML table attributes.
-
-@item caption
-String specifying caption to use in HTML table.
-
-@item field-names
-List of replacement field names, each a string.
+@item @t{field-sep} --- String specifying field separator.
+@item @t{table-opt} --- String specifying HTML table attributes.
+@item @t{caption} --- String specifying caption to use in HTML table.
+@item @t{field-names} --- List of replacement field names, each a string.
 @end itemize  */)
 {
 #define FUNC_NAME s_pg_make_print_options
