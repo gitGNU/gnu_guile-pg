@@ -349,24 +349,46 @@
                   ((<= #o10 n #o77) (out! "0" n))
                   (else             (out! "" n))))))))
   (lambda (s)
-    (with-output-to-string
-      (lambda ()
-        (let ((len (string-length s))
-              (b #f))
-          (let loop ((i 0))
-            (set! b (string-index s #\\ i))
-            (cond ((not b)
-                   (display (substring s i)))
-                  ((char=? #\\ (string-ref s (1+ b)))
-                   (display (substring s i (1+ b)))
-                   (loop (+ 2 b)))
-                  (else
-                   (display (substring s i b))
-                   (display (integer->char
-                             (string->number
-                              (substring s (1+ b) (+ 4 b))
-                              8)))
-                   (loop (+ 4 b))))))))))
+    (if (and (<= 4 (string-length s))
+             (char=? #\\ (string-ref s 0))
+             (char=? #\x (string-ref s 1)))
+        ;; Handle "hex format", introduced in PostgreSQL 9.0.
+        (let* ((from-a (- (char->integer #\a) 10))
+               (from-0 (char->integer #\0))
+               (end (string-length s))
+               (ans (make-string (ash (- end 2) -1) #\nul)))
+          (define (n<- idx)
+            (let ((c (string-ref s idx)))
+              (- (char->integer c)
+                 (case c
+                   ((#\a #\b #\c #\d #\e #\f) from-a)
+                   (else from-0)))))
+          (do ((i 2 (+ 2 i))
+               (o 0 (1+ o)))
+              ((= end i))
+            (string-set! ans o (integer->char
+                                (logior (ash (n<- i) 4)
+                                        (n<- (1+ i))))))
+          ans)
+        ;; Handle the traditional "escape format".
+        (with-output-to-string
+          (lambda ()
+            (let ((len (string-length s))
+                  (b #f))
+              (let loop ((i 0))
+                (set! b (string-index s #\\ i))
+                (cond ((not b)
+                       (display (substring s i)))
+                      ((char=? #\\ (string-ref s (1+ b)))
+                       (display (substring s i (1+ b)))
+                       (loop (+ 2 b)))
+                      (else
+                       (display (substring s i b))
+                       (display (integer->char
+                                 (string->number
+                                  (substring s (1+ b) (+ 4 b))
+                                  8)))
+                       (loop (+ 4 b)))))))))))
 
 ;; -- date/time types
 

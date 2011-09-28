@@ -1,5 +1,14 @@
 2011-09-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[types] Handle "hex format" for ‘bytea’ objectifier.
+
+	* postgres-types.scm (bytea): In this db-col-type
+	objectifier, if the input begins with "\x", take it to be in
+	"hex format" and parse it appropriately.  For other input,
+	fall back to the traditional "escape format" handling.
+
+2011-09-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Spiff ‘pg-make-print-options’ doc comment.
 
 	* libpq.c (pg_make_print_options): In doc comment,
