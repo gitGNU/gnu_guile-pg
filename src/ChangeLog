@@ -1,5 +1,9 @@
 2011-09-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.41 (tag v0.41)
+
+2011-09-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq doc] Fix bug: Include ‘pg-get-copy-data’ arg ‘async?’ in docstring.
 
 	* libpq.c (pg_get_copy_data): Describe ‘asyncp’ in

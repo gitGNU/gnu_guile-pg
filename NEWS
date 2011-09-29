@@ -3,6 +3,70 @@ Copyright (C) 2002-2011 Thien-Thi Nguyen
 See the end for copying conditions.
 
 
+- 0.41 | 2011-09-29
+
+  - Bugs fixed
+
+    - Make ‘idquote’ special-case ‘*’ in second part.
+
+	was: (display (idquote 'a.*)) |= "a"."*"
+	now: (display (idquote 'a.*)) |= "a".*
+
+    - Call ‘string-append’ with strings, not symbols.
+
+	We no longer rely on this particular Guile 1.4 slack.
+
+  - Portability fixes (tested w/ Guile 1.8.7)
+
+	With the following (and other, non-user-visible) changes, "make
+	check" no longer displays "foo is deprecated" messages with
+	Guile 1.8.7.  If you see them for your system, for either "make
+	check" or subsequent Guile-PG use, please report that as a bug.
+
+    - Don't do "defer/allow ints" for Guile 1.8+.
+
+    - Revamped Scheme object to C byte range for Guile 1.8+
+
+	Access to Scheme string representation was curtailed in Guile
+	1.8 (API available but deprecated), so all operations that pass
+	a C byte range to libpq functions now incur an extra conversion
+	step.  The unfortunate user-visible result is performance loss.
+
+  - Planned retirement
+    - procedure ‘(database postgres) pg-getline’
+    - procedure ‘(database postgres) pg-getlineasync’
+
+	These procedures are obsoleted by ‘pg-get-copy-data’ and
+	WILL BE REMOVED by 2012-12-31.
+
+  - New fluid to control ‘(database postgres-qcons) sql-quote’
+
+	The fluid ‘sql-quote-auto-E?’ controls whether or not
+	‘sql-quote’ should check for ‘\’ (backslash) characters and
+	prefix an "E" in that case.  This is relevant if you use
+	PostgreSQL 8.2+.
+
+  - New support for "hex format" in ‘bytea’ objectifier
+
+	PostgreSQL 9.0 introduces a more efficient "hex format" for
+	‘bytea’ output.  This is now recognized and parsed, falling back
+	to handling the traditional "escape format" if not recognized.
+
+  - Doc improvements
+    - Fix omission: Document ‘pg-get-copy-data’ arg ‘async?’.
+    - Indices merged into one
+    - Builtin type converters listed and indexed
+    - Builtin type converter array variants listed
+
+  - For ‘make check DEBUG=1’, display the guile(1) invocation.
+
+  - Tested w/ latest server versions: 8.[01234], 9.[01]
+
+	Additionally, the entries in file test/OK now include the
+	associated Guile-PG version, and some include a subheading
+	"other pg" to list the precise server version numbers.
+
+
 - 0.40 | 2011-06-05
   - Changes to configuration
     - Bug fixed in finding ‘pg_encoding_to_char’, ‘pg_char_to_encoding’
