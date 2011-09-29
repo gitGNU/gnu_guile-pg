@@ -25,6 +25,7 @@ include $(top_srcdir)/build-aux/common.mk
 
 info_TEXINFOS = guile-pg.texi
 guile_pg_TEXINFOS = guile-pg.texi relinfo.texi ref.texi qcons-tables.texi
+guile_pg_TEXINFOS += coltypes.texi
 
 relinfo.texi: $(top_srcdir)/configure
 	@echo Creating $@
@@ -35,6 +36,7 @@ qcons-tables.texi: $(top_srcdir)/src/postgres-qcons.scm
 	$(srcdir)/mkinc $< > $@
 
 EXTRA_DIST = ref.texh mkinc guile-pg.html
+EXTRA_DIST += coltypes.texi
 
 if MAINTAINER_MODE
 
@@ -46,6 +48,17 @@ snippets = ../src/all.tsar
 	$(gx) tsin -f $(snippets) -c utf-8 $<
 
 ref.texi: $(snippets)
+
+coltypes.texi: $(top_srcdir)/src/postgres-types.scm
+	{ echo '@example' ;				\
+	  < $<						\
+	  sed -e "/^.define-db-col-type '/!d"		\
+	      -e 's///'					\
+	  | while read name rest ; do			\
+	      printf '%-20s  %s\n' "$$name" "$$rest" ;	\
+	    done ;					\
+	  echo '@end example' ;				\
+	} > $@
 
 endif # MAINTAINER_MODE
 

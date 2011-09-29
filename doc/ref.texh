@@ -1148,6 +1148,13 @@ PostgreSQL: dimensionality is not stored for array types, so the conversion
 cannot be done in a random-access manner.  Perhaps this will change in the
 future.
 
+@heading Builtin Converters
+Here is the set of builtin converters and their default values.
+
+@example
+@include coltypes.texi
+@end example
+
 @node    Selected Notes About Some Types
 @section Selected Notes About Some Types
 
