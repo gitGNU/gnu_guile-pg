@@ -3,11 +3,42 @@ test/OK                                                       -*- org -*-
 The platforms listed here successfully "make" and pass "make check".
 Information is from ‘$(top_builddir)/config.log’ and other places.
 
+The heading "other pg" lists backend versions (aside from the matching
+frontend) which also passed "make check".
+
 Please send new entries to maintainer.  Include few details if things
 went smoothly, more (such as tricky configuration / compilation flags,
 or suspicious warnings) otherwise.
 
-* ttn's computer in 32-bit mode -- 2011-06-05
+* ttn's computer in 32-bit mode -- 2011-09-28 (Guile-PG 0.41)
+*** i686-pc-linux-gnu
+    uname -m = i686
+    uname -r = 2.6.26-2-686
+    uname -s = Linux
+    uname -v = #1 SMP Thu Jan 27 00:28:05 UTC 2011
+*** software
+    guile (Unofficial Guile) 1.4.1.124
+    psql (PostgreSQL) 7.4.30
+    gcc (Debian 4.3.2-1.1) 4.3.2
+*** other pg
+    8.0.26
+    8.1.23
+    8.2.22
+    8.3.16
+    8.4.9
+    9.0.5
+    9.1.1
+* ttn's computer in 64-bit mode -- 2011-09-28 (Guile-PG 0.41)
+*** x86_64-unknown-linux-gnu
+    uname -m = x86_64
+    uname -r = 2.6.32-5-amd64
+    uname -s = Linux
+    uname -v = #1 SMP Wed May 18 23:13:22 UTC 2011
+*** software
+    Guile 1.8.7
+    psql (PostgreSQL) 8.4.7
+    gcc (Debian 4.4.5-8) 4.4.5
+* ttn's computer in 32-bit mode -- 2011-06-05 (Guile-PG 0.40)
 *** i686-pc-linux-gnu
     uname -m = i686
     uname -r = 2.6.26-2-686
@@ -17,7 +48,7 @@ or suspicious warnings) otherwise.
     guile (Unofficial Guile) 1.4.1.123
     psql (PostgreSQL) 7.4.30
     gcc (Debian 4.3.2-1.1) 4.3.2
-* ttn's computer in 64-bit mode -- 2011-06-05
+* ttn's computer in 64-bit mode -- 2011-06-05 (Guile-PG 0.40)
 *** x86_64-unknown-linux-gnu
     uname -m = x86_64
     uname -r = 2.6.32-5-amd64
@@ -28,7 +59,7 @@ or suspicious warnings) otherwise.
     psql (PostgreSQL) 8.4.7
     gcc-4.3 (Debian 4.3.5-4) 4.3.5
 *** configure CC=gcc-4.3
-* ttn's computer in 64-bit mode -- 2011-06-05
+* ttn's computer in 64-bit mode -- 2011-06-05 (Guile-PG 0.40)
 *** x86_64-unknown-linux-gnu
     uname -m = x86_64
     uname -r = 2.6.32-5-amd64
