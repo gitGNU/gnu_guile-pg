@@ -36,6 +36,7 @@ Makefile.in
 /build-aux/uninstall-sofixed
 
 /doc/*.info*
+/doc/coltypes.texi
 /doc/qcons-tables.texi
 /doc/ref.texi
 /doc/relinfo.texi
