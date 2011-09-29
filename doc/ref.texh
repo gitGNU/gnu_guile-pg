@@ -1151,9 +1151,7 @@ future.
 @heading Builtin Converters
 Here is the set of builtin converters and their default values.
 
-@example
 @include coltypes.texi
-@end example
 
 @node    Selected Notes About Some Types
 @section Selected Notes About Some Types

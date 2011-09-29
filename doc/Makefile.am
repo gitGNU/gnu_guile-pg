@@ -50,15 +50,27 @@ snippets = ../src/all.tsar
 ref.texi: $(snippets)
 
 coltypes.texi: $(top_srcdir)/src/postgres-types.scm
-	{ echo '@example' ;				\
-	  < $<						\
+	{ < $<						\
 	  sed -e "/^.define-db-col-type '/!d"		\
 	      -e 's///'					\
 	  | while read name rest ; do			\
-	      printf '%-20s  %s\n' "$$name" "$$rest" ;	\
+	      printf '%-11s  %s\n' "$$name" "$$rest" ;	\
 	    done ;					\
-	  echo '@end example' ;				\
+	} > $@T
+	{ sed 's/ .*//;s/^/@converter /' $@T ;	\
+	  echo '@example' ;			\
+	  pr -2Tt -s' ' -W 72 $@T | expand ;	\
+	  echo '@end example' ;			\
+	  printf '\n%s\n%s\n\n'			\
+	    '@noindent'				\
+	    'Here are the array variants:' ;	\
+	  echo '@example' ;			\
+	  < $< sed				\
+	    -e "/^.def.*-array-variant '/!d"	\
+	    -e 's///' -e 's/ .*//' ;		\
+	  echo '@end example' ;			\
 	} > $@
+	rm -f $@T
 
 endif # MAINTAINER_MODE
 

@@ -1,5 +1,16 @@
 2011-09-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Index type converters; include array variants.
+
+	* doc/Makefile.am (coltypes.texi): Output ‘@converter NAME’
+	for each line; reformat the table into four columns; generate
+	blurb for array variants; output list of array variants as well.
+	* doc/guile-pg.texi (converter): New @macro.
+	* doc/ref.texh (Consulting Existing Type Converters):
+	Remove superfluous @example / @end example.
+
+2011-09-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Combine indices; spiff ‘er’ entries.
 
 	* doc/guile-pg.texi (er): Use ‘@defindex’,

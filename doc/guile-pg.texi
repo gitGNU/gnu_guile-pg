@@ -20,6 +20,10 @@
 @erindex \x\ (error)
 @end macro
 
+@macro converter{x}
+@cindex @code{\x\} (type converter)
+@end macro
+
 @dircategory Guile modules
 @direntry
 * Guile-PG: (guile-pg).           Access to PostgreSQL databases from Guile.
