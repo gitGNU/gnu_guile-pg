@@ -2425,10 +2425,16 @@ PRIMPROC
 Get a line of @code{COPY} data from @var{conn}, writing it to
 output @var{port}.  If @var{port} is a pair, construct
 a new string and set its @sc{car} to the new string.
+Optional arg @var{async?} non-@code{#f} means don't block
+if there is no data available yet.
 Return the number of data bytes in the row (always greater
 than zero); zero to mean the @code{COPY} is still in progress
 and no data is yet available; @code{-1} to mean the @code{COPY} is
-done; or @code{-2} to mean an error occurred.  */)
+done; or @code{-2} to mean an error occurred.
+
+-args: (- 1 0 async?)
+
+*/)
 {
 #define FUNC_NAME s_pg_get_copy_data
   PGconn *dbconn;

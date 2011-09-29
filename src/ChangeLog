@@ -1,5 +1,12 @@
 2011-09-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq doc] Fix bug: Include ‘pg-get-copy-data’ arg ‘async?’ in docstring.
+
+	* libpq.c (pg_get_copy_data): Describe ‘asyncp’ in
+	docstring; add docstring option to display it as "async?".
+
+2011-09-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq doc] Add "WILL BE REMOVED" to some docstrings.
 
 	* libpq.c (pg_getline, pg_getlineasync):
