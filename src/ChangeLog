@@ -1,3 +1,10 @@
+2011-09-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[pq doc] Add "WILL BE REMOVED" to some docstrings.
+
+	* libpq.c (pg_getline, pg_getlineasync):
+	Mention planned retirement in docstring.
+
 2011-09-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[types] Handle "hex format" for ‘bytea’ objectifier.

@@ -2467,7 +2467,10 @@ PRIMPROC
 Read a line from @var{conn} on which a @code{COPY <table> TO
 STDOUT} has been issued.  Return a string from the connection.
 A returned string consisting of a backslash followed by a full
-stop signifies an end-of-copy marker.  */)
+stop signifies an end-of-copy marker.
+
+This procedure is obsolete and @strong{WILL BE REMOVED}
+by 2012-12-31.  */)
 {
 #define FUNC_NAME s_pg_getline
   PGconn *dbconn;
@@ -2500,7 +2503,10 @@ Return @code{-1} to mean end-of-copy marker recognized, or a number
 The returned data may contain at most one newline (in the last
 byte position).
 Optional arg @var{tickle} non-@code{#f} means to do a
-``consume input'' operation prior to the read.  */)
+``consume input'' operation prior to the read.
+
+This procedure is obsolete and @strong{WILL BE REMOVED}
+by 2012-12-31.  */)
 {
 #define FUNC_NAME s_pg_getlineasync
   PGconn *dbconn;
