@@ -1,5 +1,12 @@
 2011-09-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Use "PostgreSQL 8.2" as ‘standard_conforming_strings’ inception.
+
+	* doc/ref.texh (qcons quoting): For ‘standard_conforming_strings’
+	inception and blurb, change imprecise "8.x" to "8.2" throughout.
+
+2011-09-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Index type converters; include array variants.
 
 	* doc/Makefile.am (coltypes.texi): Output ‘@converter NAME’

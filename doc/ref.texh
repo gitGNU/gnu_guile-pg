@@ -997,7 +997,7 @@ known prosaically as @dfn{quoting}.
 
 @section Standard Conforming Strings
 
-Starting with PostgreSQL 8.x, there is a configuration file and runtime
+Starting with PostgreSQL 8.2, there is a configuration file and runtime
 parameter @code{standard_conforming_strings} that controls how strictly the
 server parses SQL string syntax.  When its value is @code{on}, strings that
 include the @samp{\} (backslash) character must be prefixed with @samp{E}.
@@ -1021,7 +1021,7 @@ connection and forget about it:
 @noindent
 This can get hairy if you maintain more than one connection at a time to
 servers with mixed support for @code{standard_conforming_strings}, however
-(i.e., pre-8.x and 8.x together).  In that case, it is better to use
+(i.e., pre-8.2 and 8.2+ together).  In that case, it is better to use
 @code{with-fluids} to enable the functionality completely dynamically.
 
 @c ---------------------------------------------------------------------------
