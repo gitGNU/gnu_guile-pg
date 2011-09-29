@@ -31,7 +31,7 @@ Everything else appears literally as shown here.  It is very strange to have
 PostgreSQL.
 
 @tsin i pg-connection?
-@erindex due to bad connection
+@bummer due to bad connection
 @tsin i pg-connectdb
 @tsin i pg-conndefaults
 
@@ -156,7 +156,7 @@ command or statement (parameterized string), a vector of parameters,
 conventionally named @var{parms}.
 
 @heading Restrictions
-@erindex bad parameter-vector element
+@bummer bad parameter-vector element
 Guile-PG support for parameters is in its infancy.  All elements of
 @var{parms} @strong{must} be strings otherwise a ``bad parameter-vector
 element'' error is signalled.  Relatedly, the @dfn{binary parameters}
@@ -338,7 +338,7 @@ The procedure could be called as follows
 
 @tsin i pg-binary-tuples?
 
-@erindex Invalid field number
+@bummer Invalid field number
 The procedures @code{pg-fmod}, @code{pg-ftype}, @code{pg-fname},
 @code{pg-ftable}, @code{pg-ftablecol}, @code{pg-fformat}, @code{pg-ftype}
 and @code{pg-fsize} can all throw an @dfn{Argument out of range} error
@@ -527,7 +527,7 @@ the @code{PQprint} functionality provided by libpq.
 
 @tsin i pg-make-print-options
 
-@erindex due to @code{tmpfile(3)} failure
+@bummer due to @code{tmpfile(3)} failure
 @tsin i pg-print
 
 @c ---------------------------------------------------------------------------
@@ -541,10 +541,10 @@ will result in a loss of synchronization between the back-end and the
 @code{libpq} library, resulting in an unusable connection to the
 database, and possible corruption of data.
 
-@erindex lob flush
-@erindex Error seeking on lo port
-@erindex Error reading from lo port
-@erindex fport_write
+@bummer lob flush
+@bummer seeking on lo port
+@bummer reading from lo port
+@bummer @code{fport_write}
 To keep things running smoothly, certain read and write operations flush their
 internal buffers every once in a while.  If there are problems, they throw a
 @dfn{lob flush} error.  In the case where an error occurs during the process
@@ -552,8 +552,8 @@ internal buffers every once in a while.  If there are problems, they throw a
 are also @dfn{Error seeking on lo port}, @dfn{Error reading from lo port}
 and @dfn{fport_write}; these are normal (scheme world) errors.
 
-@erindex Invalid mode specification
-@erindex memory error
+@bummer Invalid mode specification
+@bummer memory
 Additionally, both @code{pg-lo-creat} and @code{pg-lo-open} can throw
 @dfn{Invalid mode specification} and @dfn{memory} errors.
 
@@ -596,14 +596,14 @@ necessarily belong in the other chapters.
 
 @tsin i pg-guile-pg-loaded
 
-@erindex Invalid verbosity
+@bummer Invalid verbosity
 @tsin i pg-set-error-verbosity
 
-@erindex due to @code{dup(3)} failure
-@erindex due to @code{fopen(3)} failure
+@bummer due to @code{dup(3)} failure
+@bummer due to @code{fopen(3)} failure
 @tsin i pg-trace
 
-@erindex due to @code{fclose(3)} failure
+@bummer due to @code{fclose(3)} failure
 @tsin i pg-untrace
 
 @heading Example
@@ -1004,7 +1004,7 @@ include the @samp{\} (backslash) character must be prefixed with @samp{E}.
 Even when it is off, the server may emit a warning, anyway.  To avoid such
 unpleasantness, Guile-PG provides @code{sql-quote-auto-E?}.
 
-@findex sql-quote-auto-E?
+@vindex sql-quote-auto-E?
 @tsin i sql-quote-auto-E?
 
 @noindent

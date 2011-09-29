@@ -11,7 +11,14 @@
 @setchapternewpage odd
 
 @c Error index.
-@defcodeindex er
+@defindex er
+@synindex er cp
+@syncodeindex vr cp
+@syncodeindex fn cp
+
+@macro bummer{x}
+@erindex \x\ (error)
+@end macro
 
 @dircategory Guile modules
 @direntry
@@ -113,8 +120,7 @@ abstractions and convenience procedures.
 * Introspection::               Module: (database postgres-meta).
 * Easy Interaction::            Module: (database postgres-gxrepl).
 
-* Procedure Index::
-* Error Index::
+* Index::
 @end menu
 
 @c ---------------------------------------------------------------------------
@@ -240,18 +246,10 @@ bindings so the connection will usually be closed soon after the body of the
 
 @c ---------------------------------------------------------------------------
 @c ---------------------------------------------------------------------------
-@node       Procedure Index
-@unnumbered Procedure Index
+@node       Index
+@unnumbered Index
 
-@printindex fn
-
-@node       Error Index
-@unnumbered Error Index
-
-@xref{Retrieving Data}, for info on @code{pg-error-message}.
-These errors, on the other hand, are not handled by that mechanism.
-
-@printindex er
+@printindex cp
 
 @c ---------------------------------------------------------------------------
 @c ---------------------------------------------------------------------------

@@ -1,5 +1,21 @@
 2011-09-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Combine indices; spiff ‘er’ entries.
+
+	* doc/guile-pg.texi (er): Use ‘@defindex’,
+	not ‘@defcodeindex’; combine into concept index.
+	(vr, fn): Combine into concept index.
+	(bummer): New @macro.
+	(Top): Combine index menu entries into simply "Index".
+	(Procedure Index, Error Index): Delete.
+	(Index): New node/unnumbered.
+	* doc/ref.texh: Do ‘s/@erindex/@bummer/g’.
+	(Large Objects): Add ‘@code’ around ‘fport_write’ @bummer;
+	omit now-redundant "error" from "memory" @bummer.
+	(qcons quoting): Use ‘@vindex’ for ‘sql-quote-auto-E?’.
+
+2011-09-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Document builtin type converters.
 
 	* doc/Makefile.am (guile_pg_TEXINFOS): Add coltypes.texi.
