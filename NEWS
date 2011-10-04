@@ -3,6 +3,35 @@ Copyright (C) 2002-2011 Thien-Thi Nguyen
 See the end for copying conditions.
 
 
+- 0.42 | 2011-10-04
+
+  - bugfix: "make check" no longer clobbers installed file
+
+	For Guile versions that require a Scheme wrapper for .so loading
+	(i.e., Guile 1.8 and later), "make check" does a fake install w/
+	a ‘prefix’ in the build tree.  Unfortunately, in Guile-PG 0.41,
+	that dir was not specified to the Scheme wrapper, resulting in
+	its installation under the "real" (as determined / set by the
+	configure script) ‘prefix’.
+
+	The system would reamin in this inconsistent state, with the
+	wrapper pointing into the build tree, until "make install", at
+	which point everything was resynchronized.  Obviously, if you
+	never do "make install", the problem persists (silently, until
+	the build tree is deleted).
+
+	This has now been fixed.  If you did a "make check" but NOT
+	"make install" of Guile-PG 0.41, the best way forward is to
+	configure Guile-PG 0.42 and then "make install; make uninstall".
+
+  - ‘pg-print’ now does ‘fflush’ after each operation
+
+	This probably kills performance, but it is safer, given Guile's
+	direct use of ‘write(2)’ et al.
+
+  - ‘pg-set-client-encoding!’ also accepts symbolic encoding
+
+
 - 0.41 | 2011-09-29
 
   - Bugs fixed

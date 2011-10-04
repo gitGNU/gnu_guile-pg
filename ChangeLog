@@ -1,5 +1,11 @@
 2011-10-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.42 (tag v0.42)
+
+	* configure.ac (AC_INIT): Bump version to "0.42" for release.
+
+2011-10-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Fix bug: Make sure ‘GUILE_LIBSITE’ is properly re-prefixed.
 
 	This is tagged ‘v’ because the bug manifests as a side-effect

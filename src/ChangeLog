@@ -1,5 +1,9 @@
 2011-10-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.42 (tag v0.42)
+
+2011-10-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq] Make ‘pg-set-client-encoding!’ also accept a symbol.
 
 	* libpq.c (pg_set_client_encoding_x): If ENCODING
