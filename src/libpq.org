@@ -67,5 +67,15 @@ This file lives in the repo but is not included in the distribution.
     systems that do not have ‘PQconnectdbParams’.
 *** pg-escape-literal
 *** pg-escape-identifier
+* 9.1
+  | func         | status |
+  | PQlibVersion |        |
+  | PQping       |        |
+  | PQpingParams |        |
+*** pg-lib-version
+*** pg-ping
+*** new connection params
+***** client_encoding
+***** requirepeer
 * etc
 #+STARTUP: odd

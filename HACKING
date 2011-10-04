@@ -3,20 +3,9 @@ HACKING Guile-PG                                                -*- org -*-
 This file is both a guide for newcomers and a todo list for oldstayers.
 It lives in the repo but is not included in the distribution.
 
-* 0.40
-*** DONE transition maintenance support from 1.4-fu to Guile-BAUX
-***** doc extraction / mogrification
-***** init extraction
-***** compilation
-******* C: two deployment modes
-******* Scheme: punify
-*** TODO requisite futzing to pass "make check" under Guile 1.8.x
 * other stuff to do
-*** fully [[file:src/libpq.org][support]] PostgreSQL 8.x
+*** fully [[file:src/libpq.org][support]] PostgreSQL 8.x, 9.x
 *** add UPDATE (as comma-command ‘fup’) to gxrepl
-*** make ‘pg-set-client-encoding!’ accept symbol, too
-
-*** fully [[file:src/libpq.org][support]] PostgreSQL 9.x
 *** comment code (audience: intermediate scheme programmer)
 *** extend (database postgres-qcons) to handle subquery expressions
     Particularly: IN (scalar form) and NOT IN (scalar form).  It would
@@ -55,13 +44,7 @@ It lives in the repo but is not included in the distribution.
     implementation.  However, the least we can do is understand it
     better.
 
-* portability
-  bbr ≡ boot build run
-  |     guile |     pg | b | b | r |
-  | 1.4.1.118 | 7.4.30 | x | x | x |
-  | 1.4.1.119 | 7.4.30 | x | x | x |
-  | 1.4.1.122 | 7.4.30 | x | x | x |
-  | 1.4.1.122 |  8.4.1 | x | x | x |
+* portability (see [[file:test/OK][test/OK]])
 
 * coding standards
 *** C code: indent -nut
@@ -86,6 +69,6 @@ It lives in the repo but is not included in the distribution.
     This branch is where largely-stable changes intended for the next release
     live.  It's very unlikely to undergo rebase, but not entirely impossible.
     Guile-PG hackers probably want to start here.
-*** q/TOPIC -- "questionably", "querulously"
+*** q-TOPIC -- "questionably", "querulously"
     These are experimental, exploring the particular TOPIC.  They are intended
     to be ephemeral, undergoing rebase, amendment, and ultimately removal.
