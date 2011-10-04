@@ -2986,6 +2986,8 @@ specifies various parameters of the output format.  */)
   if (! fout)
     SYSTEM_ERROR ();
   PQprint (fout, res, sepo_unbox (options));
+  /* This probably kills performance, but we want to be safe.  */
+  fflush (fout);
 
   if (PROB (fd))
     {
