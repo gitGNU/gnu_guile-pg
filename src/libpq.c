@@ -3190,7 +3190,7 @@ PRIMPROC
 (pg_set_client_encoding_x, "pg-set-client-encoding!", 2, 0, 0,
  (SCM conn, SCM encoding),
  doc: /***********
-Set the client encoding for @var{conn} to @var{encoding} (a string).
+Set the client encoding for @var{conn} to @var{encoding} (a symbol or string).
 Return @code{#t} if successful, @code{#f} otherwise.  */)
 {
 #define FUNC_NAME s_pg_set_client_encoding_x
@@ -3199,6 +3199,8 @@ Return @code{#t} if successful, @code{#f} otherwise.  */)
   int rv;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
+  if (SYMBOLP (encoding))
+    encoding = FINANGLABLE_SCHEME_STRING_FROM_SYMBOL (encoding);
   ASSERT_STRING (2, encoding);
 
   FINANGLE (encoding);

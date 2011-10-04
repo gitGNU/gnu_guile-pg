@@ -1,5 +1,12 @@
 2011-10-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq] Make ‘pg-set-client-encoding!’ also accept a symbol.
+
+	* libpq.c (pg_set_client_encoding_x): If ENCODING
+	is a symbol, convert it to a string internally.
+
+2011-10-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq] Make ‘pq-print’ flush its output stream.
 
 	* libpq.c (pg_print): Call ‘fflush’ right after calling ‘PQprint’.
