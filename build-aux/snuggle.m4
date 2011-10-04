@@ -1,4 +1,4 @@
-## snuggle.m4 (serial 4)
+## snuggle.m4 (serial 5)
 ##
 ## Copyright (C) 2011 Thien-Thi Nguyen
 ##
@@ -16,6 +16,21 @@
 ## License along with this program; see the file COPYING.  If not,
 ## write to the Free Software Foundation, Inc., 51 Franklin
 ## Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+# SNUGGLE_SET_SOFIXFLAGS
+#
+# Set shell var @code{SOFIXFLAGS} and mark it for
+# substitution, as by @code{AC_SUBST}.
+#
+AC_DEFUN([SNUGGLE_SET_SOFIXFLAGS],[
+AC_REQUIRE([AC_CANONICAL_HOST])
+AC_CACHE_CHECK([sofix flags],[host_cv_sofixflags],
+[AS_CASE([$host_os],
+  [linux-gnu],[host_cv_sofixflags=no-la,no-symlinks],
+  [host_cv_sofixflags=ln-s-lib])])
+SOFIXFLAGS="$host_cv_sofixflags"
+AC_SUBST([SOFIXFLAGS])
+])
 
 # SNUGGLE_PROGS -- set paths to Guile interpreter, config and tool programs
 #
@@ -81,9 +96,13 @@ dnl
 AC_DEFUN([SNUGGLE_GUILE_LIBSITE_DIR],[
 AC_REQUIRE([SNUGGLE_PROGS])
 AC_CACHE_CHECK([module installation root dir],[$1_cv_minstroot],[
+saved_GUILE_LOAD_PATH="$GUILE_LOAD_PATH"
+GUILE_LOAD_PATH=
 eval `GUILE="$GUILE" \
       $ac_aux_dir/guile-baux/gbaux-do \
       re-prefixed-site-dirs "$GUILE_CONFIG" $1`
+GUILE_LOAD_PATH="$saved_GUILE_LOAD_PATH"
+AS_UNSET([saved_GUILE_LOAD_PATH])
 ])
 GUILE_LIBSITE="$][$1_cv_minstroot"
 AC_SUBST([GUILE_LIBSITE])

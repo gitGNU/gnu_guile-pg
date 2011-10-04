@@ -1,3 +1,12 @@
+2011-10-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v] Fix bug: Make sure ‘GUILE_LIBSITE’ is properly re-prefixed.
+
+	This is tagged ‘v’ because the bug manifests as a side-effect
+	of "make check", clobbering the install-dir file.  Argh!
+
+	* build-aux/snuggle.m4: Sync w/ upstream serial 5.
+
 2011-09-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.41 (tag v0.41)
