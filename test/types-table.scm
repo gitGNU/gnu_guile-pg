@@ -28,6 +28,7 @@
              (database postgres-qcons)
              (database postgres-types)
              (database postgres-table)
+             (ice-9 regex)
              (ice-9 common-list))
 
 (fresh!)
@@ -63,6 +64,25 @@
   `(let ((proc (lambda () ,exp)))
      (set-procedure-property! proc 'name ,explanation)
      (test #t proc)))
+
+(define (handle-exception-proc why)
+  (lambda (key . rest)
+    (case key
+      ((misc-error)
+       (and (string-match why (apply simple-format #f (cdr rest)))
+            why))
+      (else
+       (cons key rest)))))
+
+(define-macro (pass-if-exception explanation weirdness exp)
+  `(let* ((key (car ,weirdness))
+          (why (cdr ,weirdness))
+          (proc (lambda ()
+                  (catch key
+                         (lambda () ,exp #t)
+                         (handle-exception-proc why)))))
+     (set-procedure-property! proc 'name ,explanation)
+     (test why proc)))
 
 (define-macro (sel/check sel . body)
   `(let ((tupres ,sel))
@@ -221,27 +241,27 @@
 
 ;;; now do some specific checks
 
-;;+ (define pgtable:exception:malformed-defs
-;;+   (cons 'misc-error "malformed def"))
-;;+
-;;+ (define-macro (expect-bad-defs defs)
-;;+   `(pass-if-exception (format #f "~S" ,defs)
-;;+        pgtable:exception:malformed-defs
-;;+      (pgtable-manager db-name "dontcare" ,defs)))
-;;+
-;;+ (with-test-prefix "bad defs"
-;;+   (expect-bad-defs #f)
-;;+   (expect-bad-defs #t)
-;;+   (expect-bad-defs 1)
-;;+   (expect-bad-defs 'symbol)
-;;+   (expect-bad-defs "string")
-;;+   (expect-bad-defs '())
-;;+   (expect-bad-defs '(bad))
-;;+   (expect-bad-defs '(text))
-;;+   (expect-bad-defs '(bad defs bad defs bad defs))
-;;+   (expect-bad-defs '(a text b text c text))
-;;+   (expect-bad-defs '((text a) (text b) (text c)))
-;;+   (expect-bad-defs '((text . a) (text . b) (text . c))))
+(define pgtable:exception:malformed-defs
+  (cons 'misc-error "malformed def"))
+
+(define-macro (expect-bad-defs defs)
+  `(pass-if-exception (format #f "~S" ,defs)
+       pgtable:exception:malformed-defs
+     (pgtable-manager db-name "dontcare" ,defs)))
+
+(define (test-bad-defs)
+  (expect-bad-defs #f)
+  (expect-bad-defs #t)
+  (expect-bad-defs 1)
+  (expect-bad-defs 'symbol)
+  (expect-bad-defs "string")
+  (expect-bad-defs '())
+  (expect-bad-defs '(bad))
+  (expect-bad-defs '(text))
+  (expect-bad-defs '(bad defs bad defs bad defs))
+  (expect-bad-defs '(a text b text c text))
+  (expect-bad-defs '((text a) (text b) (text c)))
+  (expect-bad-defs '((text . a) (text . b) (text . c))))
 
 ;;; ok, now do some real checks (although still simple)
 
@@ -369,6 +389,7 @@
                   (+ (length count)
                      (apply + count)))
                 1
+                12                        ; bad defs
                 (+ 6 1 9)                 ; m2
                 (+ 1 (* 2 1) 2 (* 2 4)))) ; m3
   (test #t test:query-oid/type-name)
@@ -386,6 +407,7 @@
   (mtest:select-files/etc)
   (mtest:any/all--OP)
   (test #t test:mtest-cleanup)
+  (test-bad-defs)
   (test-m2)
   (test-m3)
   (cleanup!)

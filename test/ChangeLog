@@ -1,3 +1,15 @@
+2012-01-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v mgr] Add tests for malformed defs.
+
+	* types-table.scm: Import ‘(ice-9 regex)’ procs.
+	(handle-exception-proc): New proc.
+	(pass-if-exception): New macro.
+	(pgtable:exception:malformed-defs): New "exception object".
+	(expect-bad-defs): New macro.
+	(test-bad-defs): New proc.
+	(main): Update expected-count and call ‘test-bad-defs’.
+
 2011-09-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.41 (tag v0.41)
