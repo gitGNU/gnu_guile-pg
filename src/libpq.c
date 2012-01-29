@@ -91,21 +91,23 @@ typedef struct {
 #define REND(svar)          RS (svar) [RLEN (svar)]
 #define NUL_AT_END_X(svar)  REND (svar) = '\0'
 
-#define _FINANGLE(svar,p1)  do                                  \
-    {                                                           \
-      RS (svar) = scm_to_locale_stringn (svar, &RLEN (svar));   \
-      if (RS (svar))                                            \
-        {                                                       \
-          if (p1 && REND (svar))                                \
-            {                                                   \
-              RS (svar) = realloc (RS (svar), 1 + RLEN (svar)); \
-              NUL_AT_END_X (svar);                              \
-            }                                                   \
-        }                                                       \
-      else                                                      \
-        RS (svar) = strdup ("");                                \
-    }                                                           \
-  while (0)
+static void
+_finangle (SCM svar, range_t *r, int p1)
+{
+  r->s = scm_to_locale_stringn (svar, &r->len);
+  if (r->s)
+    {
+      if (p1 && r->s[r->len])
+        {
+          r->s = realloc (r->s, 1 + r->len);
+          r->s[r->len] = '\0';
+        }
+    }
+  else
+    r->s = strdup ("");
+}
+
+#define _FINANGLE(svar,p1)  _finangle (svar, &c ## svar, p1)
 
 #define UNFINANGLE(svar)  free (RS (svar))
 
