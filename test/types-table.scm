@@ -65,7 +65,12 @@
 ;; support
 
 (define (command-ok? raw)
-  (eq? 'PGRES_COMMAND_OK (pg-result-status raw)))
+  (let ((sym (pg-result-status raw)))
+    (case sym
+      ((PGRES_COMMAND_OK) #t)
+      (else (and (equal? "1" (getenv "DEBUG"))
+                 (fso "~A: ~A~%" sym (pg-result-error-message raw)))
+            #f))))
 
 (define-macro (pass-if explanation exp)
   `(let ((proc (lambda () ,exp)))

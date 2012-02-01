@@ -1,5 +1,13 @@
 2012-02-01  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v] Display error if DEBUG for failing commands.
+
+	* types-table.scm (command-ok?): If the
+	result status is not ‘PGRES_COMMAND_OK’, display it
+	and the error message as per ‘pg-result-error-message’.
+
+2012-02-01  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v int] Add abstractions: -fs, fs, fso
 
 	* types-table.scm (-fs, fs, fso): New procs.
