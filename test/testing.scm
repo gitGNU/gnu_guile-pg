@@ -189,7 +189,11 @@
   (let* ((dbname (or (getenv "PGDATABASE")
                      (error "Env var PGDATABASE not set.")))
          (conn (pg-connectdb "dbname=template1"))
-         (res (pg-exec conn (fs "~A DATABASE ~A;" action dbname)))
+         (res (pg-exec conn (fs "~A DATABASE ~A~A;"
+                                action dbname
+                                (if (equal? "CREATE" action)
+                                    " WITH ENCODING = 'UTF8'"
+                                    ""))))
          (ok? (eq? 'PGRES_COMMAND_OK (pg-result-status res))))
     (and (equal? "1" (getenv "DEBUG"))
          (display (fs "~A: ~A ~A\n"

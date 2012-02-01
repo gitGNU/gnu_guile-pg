@@ -1,5 +1,11 @@
 2012-02-01  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v] Explicitly use UTF-8 for test database encoding.
+
+	* testing.scm (d/c): For action "create", specify encoding ‘UTF8’.
+
+2012-02-01  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Manage cluster creation and daemon bring-{up,down}.
 
 	* fake-cluster-control: New file.
