@@ -24,6 +24,13 @@
            (newline)
            (exit #f)))
 
+(define (-fs dest)
+  (lambda (s . args)
+    (apply simple-format dest s args)))
+
+(define fs (-fs #f))
+(define fso (-fs #t))
+
 (use-modules (database postgres)
              (database postgres-qcons)
              (database postgres-types)
@@ -69,7 +76,7 @@
   (lambda (key . rest)
     (case key
       ((misc-error)
-       (and (string-match why (apply simple-format #f (cdr rest)))
+       (and (string-match why (apply fs (cdr rest)))
             why))
       (else
        (cons key rest)))))
@@ -106,7 +113,7 @@
 ;;
 (define (test:query-oid/type-name)
   (->bool (oid-type-name-cache
-           (pg-connectdb (simple-format #f "dbname=~A" db-name)))))
+           (pg-connectdb (fs "dbname=~A" db-name)))))
 
 ;; Test pgtable-manager
 ;; expect #t
@@ -335,7 +342,7 @@
 
     (define (check-1 name expected expr)
       (sel/check ((m3 #:select) `((#f #f ,expr)))
-                 (pass-if (simple-format #f "~A ~A" name expected)
+                 (pass-if (fs "~A ~A" name expected)
                    (and (check-dim 1 1)
                         (string=? expected (tref 0 0))))))
 
