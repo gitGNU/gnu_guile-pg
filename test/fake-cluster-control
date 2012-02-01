@@ -1,0 +1,137 @@
+#!/bin/sh
+# fake-cluster-control
+#
+# Copyright (C) 2012 Thien-Thi Nguyen
+#
+# This file is part of Guile-PG.
+#
+# Guile-PG is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 3, or
+# (at your option) any later version.
+#
+# Guile-PG is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public
+# License along with Guile-PG; see the file COPYING.  If not,
+# write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA  02110-1301  USA
+
+LANG=C
+export LANG
+
+i=`basename $0`
+fc=fake-cluster
+log=$fc.log
+full=`pwd`/$fc
+pidfile=$fc/postmaster.pid
+initdb=${INITDB-initdb}
+
+drat ()
+{
+    echo 1>&2 ${i}: ERROR: "$@"
+    exit 1
+}
+
+trycommand ()
+{
+    # $1 -- generic name
+    # $2 -- actual command
+    test -n "$2"                                \
+        || drat "Undefined $1 command"
+    "$2" --version 1>>$log 2>&1                         \
+        || drat "Bad $1 command: '$2' (see '$log')"
+}
+
+hopefully ()
+{
+    # $1 = direction
+    if [ up = $1 ]
+    then expected=0 ; patience='sleep 2'
+    else expected=1 ; patience=:
+    fi
+    count=15
+    while sleep 1 && [ ! 0 = $count ] ; do
+        test -f $pidfile
+        result=$?
+        if [ $expected = $result ] ; then
+            echo ${i}: daemon now $1
+            $patience
+            exit 0
+        fi
+        count=`expr $count - 1`
+    done
+    drat "Could not bring $1 daemon within 15 seconds"
+}
+
+test x"$1" = x && drat 'Missing arg COMMAND'
+
+if [ x1 = x"$DEBUG" ] ; then
+    hey=:
+    set -x
+else
+    hey="echo ${i}:"
+fi
+
+case "$1" in
+
+    1) # up
+        date +'============================================== %F %H:%M' 1>>$log
+        trycommand initdb "$initdb"
+        eval `$initdb --show $fc 2>&1 | sed '/PGPATH=/!d'`
+        pgctl="$PGPATH/pg_ctl"
+        trycommand pg_ctl "$pgctl"
+        if [ ! -d $fc ] ; then
+            $hey creating cluster...
+            # Hmm, ‘initdb --no-locale’ seems to be undocumented.
+            $initdb --locale C --encoding UTF8 $fc 1>>$log 2>&1         \
+                || drat "Could not create cluster '$full' (see '$log')"
+            $hey tweaking configuration...
+            cfg=$fc/postgresql.conf
+            sed -e "/^.*\(listen_addresses\).*$/s||\1 = ''|"            \
+                -e "/^.*\(unix_socket_directory\).*/s||\1 = '$full'|"   \
+                $cfg > ${cfg}T                                          \
+                && mv ${cfg}T $cfg                                      \
+                || drat "Could not tweak '$cfg'"
+        fi
+        test -f $pidfile && exit 0
+        $hey kicking daemon...
+        # TODO: When 7.4 support is dropped, use ‘pg_ctl --silent’.
+        "$pgctl" start -D $fc -l $log 1>/dev/null
+        # Unfortunately, ‘pg_ctl -w’ loses for Unix-domain sockets.
+        hopefully up
+        ;;
+
+    0) # down
+        test -f $pidfile || exit 0
+        $hey killing daemon...
+        kill `head -n 1 $pidfile`
+        hopefully down
+        ;;
+
+    q) # query-status
+        if [ -f $pidfile ] ; then
+            echo ${i}: daemon running
+            echo pidfile:
+            sed 's/^/|/' $pidfile
+            echo 'log: (tail)'
+            tail $log | sed 's/^/|/'
+        else
+            echo ${i}: daemon not running
+        fi
+        ;;
+
+    z) # zonk-forcefully
+        sh $0 0 2>/dev/null || rm -f $pidfile
+        ;;
+
+    *)
+        drat "Bad command: '$1'"
+        ;;
+esac
+exit 0
+
+# fake-cluster-control ends here

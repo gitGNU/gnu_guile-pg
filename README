@@ -90,37 +90,29 @@ Testing
 -------
 
 	If configuration and "make" are successful, you can now run the
-	tests.  These need to be run as a user with permissions to
-	create databases.  They also need permissions to write to the
-	Guile-PG build directory.  You could do this by unpacking and
-	building Guile-PG as the Postgres superuser, or by making
-	yourself a user with permissions to create databases.  To do the
-	latter use the PostgreSQL ‘createuser’ command.
+	tests.  To run the tests type:
 
-	The tests assume that the postmaster is either running on the
-	local host or on the host pointed to by the PGHOST environment
-	variable.
+            make check [DEBUG=1] [INITDB=/path/to/initdb]
 
-	The tests will destroy any existing database named
-	"guile_pg_test", create it anew, and upon completion of the
-	tests, destroy it again.  This means that the uid running
-	the tests has to be a PostgreSQL user that additionally must
-	be able to create databases.  If you should find the database
-	hanging around afterwards for some reason, you can use the
-	command:
+	This creates a temporary installation dir test/fake-install/,
+	creates a cluster test/fake-cluster/, kicks the daemon, runs the
+	tests, and kills the daemon afterwards.
 
-	    dropdb guile_pg_test
-
-	to get rid of it decisively.  To run the tests type:
-
-            make check [DEBUG=1]
-
-	This creates a temporary installation dir test/fake-install/
-	and runs the tests, arranging to use the modules therein.
+	Cluster creation uses initdb(1) to do the work.  If that program
+	is not in ‘PATH’, you need to specify it.  (Kicking the daemon
+	uses pg_ctl(1) from the ‘PGPATH’ var output by ‘initdb --show’,
+	so there is no need to specify that directly.)
 
 	The basic tests should all pass.  The large-object tests might
 	fail because of bugs in PostgreSQL.  The abstraction tests are
-	not supposed to fail, but you never know.
+	not supposed to fail, but you never know.  If a test fails, the
+	daemon might persist; to kill it "manually", use command:
+
+           cd test/ && make kill-daemon
+
+	In any case, the cluster persists, which reduces startup time
+	for subsequent "make check" invocations (if you are in the mood).
+	Use "make clean" to remove it and test/fake-install/ as well.
 
 	The DEBUG=1 is optional.  If "make check" fails, please re-run
 	it with DEBUG=1 and see "Reporting Bugs" below.

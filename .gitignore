@@ -71,4 +71,6 @@ Makefile.in
 /test/runtest
 /test/show-platform
 
+/test/fake-cluster.log
+/test/fake-cluster/
 /test/fake-install

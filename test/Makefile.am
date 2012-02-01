@@ -21,6 +21,8 @@
 # write to the Free Software Foundation, Inc., 51 Franklin Street,
 # Fifth Floor, Boston, MA  02110-1301  USA
 
+CTL = $(srcdir)/fake-cluster-control
+
 TESTS_ENVIRONMENT = sh runtest
 
 TESTS = alive.scm basic.scm large.scm types-table.scm meta.scm
@@ -45,7 +47,22 @@ fake-install: ../src/stamp-all
 	  FOR_MAKE_CHECK=1			\
 	  prefix="$$top"
 
-clean-local:
+EXTRA_DIST += fake-cluster-control
+check_DATA += fake-cluster/postmaster.pid
+CLEANFILES += fake-cluster.log
+
+fake-cluster/postmaster.pid:
+	@$(CTL) 1
+	@if [ x1 = x'$(DEBUG)' ] ; then $(CTL) q ; fi
+
+check-local:
+	@$(CTL) 0
+
+kill-daemon:
+	$(CTL) z
+
+clean-local: kill-daemon
+	rm -rf fake-cluster
 	-rm -rf fake-install
 
 # Makefile.am ends here

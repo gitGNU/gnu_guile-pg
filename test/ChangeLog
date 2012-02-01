@@ -1,3 +1,16 @@
+2012-02-01  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v] Manage cluster creation and daemon bring-{up,down}.
+
+	* fake-cluster-control: New file.
+	* Makefile.am (CTL): New var.
+	(EXTRA_DIST): Add fake-cluster-control.
+	(check_DATA): Add fake-cluster/postmaster.pid.
+	(CLEANFILES): Add fake-cluster.log.
+	(fake-cluster/postmaster.pid, check-local, kill-daemon): New targets.
+	(clean-local): Depend on ‘kill-daemon’; also, "rm -rf fake-cluster".
+	* runtest.in (PGHOST): New var, exported.
+
 2012-01-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v mgr] Add tests for malformed defs.
