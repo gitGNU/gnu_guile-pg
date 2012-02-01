@@ -157,7 +157,7 @@ Reporting Bugs
 	failed): The sourceforge folks don't want to update their site
 	to point to the new Guile-PG homepage:
 
-	    http://www.gnuvola.org/software/guile-pg/
+	    http://www.nongnu.org/guile-pg/
 
 	But if there are enough links to the new page, perhaps the
 	relevancy of sourceforge's obstinance will decline over time.
