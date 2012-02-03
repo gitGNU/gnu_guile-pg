@@ -27,6 +27,8 @@ TESTS_ENVIRONMENT = sh runtest
 
 TESTS = alive.scm basic.scm large.scm types-table.scm meta.scm
 
+XFAIL_TESTS = types-table.scm
+
 CLEANFILES = $(TESTS:.scm=.log)                 \
              lo-tests-data-1                    \
              lo-tests-data-2                    \

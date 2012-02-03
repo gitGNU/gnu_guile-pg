@@ -1,5 +1,17 @@
 2012-02-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v] Expand ‘string’ round-trip test; mark xfail.
+
+	* types-table.scm (PESKY): Add U+5C REVERSE SOLIDUS,
+	U+22 QUOTATION MARK, U+7 BELL, U+C FORM FEED, U+A LINE FEED,
+	U+D CARRIAGE RETURN, U+9 CHARACTER TABULATION, U+B LINE
+	TABULATION, U+13 DEVICE CONTROL THREE, U+232C BENZENE RING,
+	U+18 CANCEL, U+20 SPACE, plus eight two-char sequences made
+	of ‘\’ followed by ‘[\"afnrtv]’.
+	* Makefile.am (XFAIL_TESTS): New var.
+
+2012-02-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Add test to validate ‘string’ round-trip integrity.
 
 	* types-table.scm: Add ‘coding:’ comment.

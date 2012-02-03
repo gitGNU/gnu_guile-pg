@@ -168,6 +168,11 @@
                        15.20 25 30.35 '(-1 2))))
 
 (define PESKY '((1 1 . "f")
+                (8 8 . "\\\"\a\f\n\r\t\v")
+                (4 6 . "⌬ ")        ; U+232C / UTF-8: E2 8C AC
+                (4 4 . "\\\\\\\"")
+                (6 6 . "\\a\\f\\n")
+                (6 6 . "\\r\\t\\v")
                 (2 2 . "oo")))
 
 (define POISON (apply string-append
