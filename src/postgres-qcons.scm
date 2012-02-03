@@ -60,7 +60,10 @@
             parse+make-SELECT/tail-tree
             parse+make-SELECT-tree
             sql<-trees
-            sql-command<-trees))
+            sql-command<-trees)
+  #:use-module ((srfi srfi-13) #:select (string-index
+                                         string-concatenate-reverse
+                                         substring/shared)))
 
 
 ;;; mirroring bootstrap
@@ -204,11 +207,11 @@
 ;; @result{} #f
 ;;
 ;; (e.g.)
-;; @print{} 'a\b'
+;; @print{} 'a\134b'
 ;;
 ;; (with-fluids ((sql-quote-auto-E? #t))
 ;;   (e.g.))
-;; @print{} E'a\b'
+;; @print{} E'a\134b'
 ;; @end example
 ;;
 ;; If there are no backslash characters, this has no effect.
@@ -217,16 +220,22 @@
 ;;
 (define sql-quote-auto-E? (make-fluid))
 
-;; Return a new string made by doubling each single-quote in string
-;; @var{s}, and prefixing and suffixing with single-quote.
+;; Return a new string made by doubling each single-quote in
+;; @var{string}, and prefixing and suffixing with single-quote.
+;; The returned string will also have backslash characters @code{#\\}
+;; replaced with @code{\134} (i.e., the string of four characters:
+;; @code{#\\}, @code{#\1}, @code{#\3}, @code{#\4}).
 ;; The returned string is marked by @code{sql-pre}.  For example:
 ;;
 ;; @lisp
-;; (define bef "ab'cd")
+;; (define bef "ab'c\\d")
 ;; (define aft (sql-quote bef))
-;; aft @result{} "'ab''cd'"
-;; (map string-length (list bef aft)) @result{} (5 8)
-;; (map sql-pre? (list bef aft)) @result{} (#f #t)
+;; (define (both proc)
+;;   (map proc (list bef aft)))
+;;
+;; (display aft)        @print{} 'ab''c\134d'
+;; (both string-length) @result{} (6 12)
+;; (both sql-pre?)      @result{} (#f #t)
 ;; @end lisp
 ;;
 ;; Note that this procedure used to return internal single-quote
@@ -236,9 +245,20 @@
 ;; is standards-conforming, upward compatible, and avoids futzing with
 ;; the runtime parameters.
 ;;
-(define (sql-quote s)
-  (or (string? s) (error "not a string:" s))
-  (let* ((olen (string-length s))
+(define (sql-quote string)
+  (or (string? string) (error "not a string:" string))
+  ;; Normalize before ‘E’ processing to handle introduced ‘#\\’ chars.
+  (let* ((s (let loop ((acc '()) (start 0))
+              (cond ((string-index string #\\ start)
+                     => (lambda (idx)
+                          (loop (cons* "\\134"
+                                       (substring/shared string start idx)
+                                       acc)
+                                (1+ idx))))
+                    ((null? acc) string)
+                    (else (string-concatenate-reverse
+                           acc (substring/shared string start))))))
+         (olen (string-length s))
          (E? (and (fluid-ref sql-quote-auto-E?)
                   (string-index s #\\)))
          (left-pos (if E? 1 0))

@@ -1,3 +1,12 @@
+2012-02-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[qcons] Fix bug: Make ‘sql-quote’ do backslash octal substitution.
+
+	* postgres-qcons.scm: Import some SRFI 13 procs.
+	(sql-quote): Rename arg to ‘string’; prior to ‘E’ processing,
+	replace all ‘#\\’ with the string ‘x#\\’, ‘#\1’, ‘#\3’, ‘#\4’.
+	* postgres-types.scm (bytea) <stringifier>: Output single ‘#\\’.
+
 2012-01-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[pq int] Tweak implementation of 1.8+ C->Scheme conversion.

@@ -333,7 +333,7 @@
     (with-output-to-string
       (lambda ()
         (define (out! zeroes n)
-          (display "\\\\")
+          (display "\\")
           (display zeroes)
           (display (number->string n 8)))
         (let ((len (string-length s))

@@ -1,5 +1,11 @@
 2012-02-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[qcons] Fix bug: Make ‘sql-quote’ do backslash octal substitution.
+
+	* Makefile.am (XFAIL_TESTS): Remove types-table.scm.
+
+2012-02-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Expand ‘string’ round-trip test; mark xfail.
 
 	* types-table.scm (PESKY): Add U+5C REVERSE SOLIDUS,
