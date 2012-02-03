@@ -1,4 +1,4 @@
-;;; types-table.scm
+;;; types-table.scm                             -*- coding: utf-8 -*-
 
 ;; Copyright (C) 2002, 2003, 2004, 2005, 2006,
 ;;   2007, 2008, 2009, 2011 Thien-Thi Nguyen
@@ -167,11 +167,24 @@
                        '((",b" "") ("," "c") ("" "d,"))
                        15.20 25 30.35 '(-1 2))))
 
+(define PESKY '((1 1 . "f")
+                (2 2 . "oo")))
+
+(define POISON (apply string-append
+                      (map cddr PESKY)))
+
+(define POISON-COUNTS (let ((sum (lambda (sel)
+                                   (apply + (map sel PESKY)))))
+                        (fs "~A ~A" (sum car) (sum cadr))))
+
+(and (getenv "DEBUG")
+     (fso "POISON: ~A |~A|~%" POISON-COUNTS POISON))
+
 ;; Test pgtable-manager insert 2
 ;; expect #t
 ;;
 (define (test:m-insert-2)
-  (command-ok? (insert (current-time) "foo" '("d" "e" "f") 105
+  (command-ok? (insert (current-time) POISON '("d" "e" "f") 105
                        '((",x" "") ("y" ",") ("" "z,"))
                        115.120 125 130.135
                        '(3 -4))))
@@ -194,9 +207,21 @@
              (pass-if "130.135" (string=? "130.135" (tref 1 7)))
              (pass-if "{}" (string=? "{}" (tref 2 2)))))
 
-(define (mtest:select-*-error_condition) ; 3
-  (sel/check (select #t #:where '(= error_condition "foo"))
-             (pass-if "size" (check-dim 1 9))
+(define (mtest:select-*-error_condition) ; 4
+  (sel/check (select '(time
+                       error_condition files
+                       wrote read rate total speedup etc
+                       (#f "ec counts" (|| (char_length error_condition)
+                                           " "
+                                           (octet_length error_condition))))
+                     #:where `(= error_condition ,POISON))
+             (pass-if "size" (check-dim 1 10))
+             (pass-if "ec" (let ((counts (tref 0 9))
+                                 (string (tref 0 1)))
+                             (and (getenv "DEBUG")
+                                  (fso "ec: ~A |~A|~%" counts string))
+                             (and (string=? POISON-COUNTS counts)
+                                  (string=? POISON string))))
              (pass-if "files"
                (let ((val (tref 0 2)))
                  (or
@@ -397,7 +422,7 @@
              ;; manularity sucks
              (+ 1
                 6
-                (let ((count '(5 3 3 2 2 3 1 2))) ; multiples
+                (let ((count '(5 4 3 2 2 3 1 2))) ; multiples
                   (+ (length count)
                      (apply + count)))
                 1

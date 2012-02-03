@@ -1,3 +1,15 @@
+2012-02-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v] Add test to validate ‘string’ round-trip integrity.
+
+	* types-table.scm: Add ‘coding:’ comment.
+	(PESKY, POISON, POISON-COUNTS): New data structures;
+	if ‘DEBUG’, display ‘POISON-COUNTS’ and ‘POISON’.
+	(test:m-insert-1): Replace literal string "foo" with ‘POISON’.
+	(mtest:select-*-error_condition): Select also "ec counts";
+	add check to validate against ‘POISON-COUNTS’ and ‘POISON’.
+	(main): Update expected-pass expression.
+
 2012-02-01  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v] Display error if DEBUG for failing commands.
