@@ -341,7 +341,7 @@
 
 (define (test-m2)
 
-  (let ((m2 (mgr db-name "abstrActions_2" '((n int4 "primary key")
+  (let ((m2 (mgr db-name "abstrActions_2" '((∑╌ int4 "primary key")
                                             (desc text)))))
 
     (pass-if "m2" (procedure? m2))
@@ -366,7 +366,7 @@
              (= 2 (pg-nfields res)))))
 
     (pass-if "m2 insert-col-values 1"
-      (command-ok? ((m2 'insert-col-values) '(n) 31)))
+      (command-ok? ((m2 'insert-col-values) '(∑╌) 31)))
 
     (pass-if "m2 insert-col-values 2"
       (not (command-ok? ((m2 'insert-col-values)
@@ -374,25 +374,25 @@
 
     (pass-if "m2 insert-col-values 3"
       (command-ok? ((m2 'insert-col-values)
-                    '(n desc) 343 "a nice prime")))
+                    '(∑╌ desc) 343 "a nice prime")))
 
     (pass-if "m2 delete-rows"
-      (command-ok? ((m2 'delete-rows) '(= 13 n))))
+      (command-ok? ((m2 'delete-rows) '(= 13 ∑╌))))
 
     (pass-if "m2 update-col"
-      (command-ok? ((m2 'update-col) '(desc) '("almost 2^5, eh?") '(= 31 n))))
+      (command-ok? ((m2 'update-col) '(desc) '("almost 2^5, eh?") '(= 31 ∑╌))))
 
     (let ((res ((m2 'select) '(desc))))
       (pass-if "m2 select"
         (eq? 'PGRES_TUPLES_OK (pg-result-status res))))
 
-    (let ((res ((m2 'select) '(desc n))))
+    (let ((res ((m2 'select) '(desc ∑╌))))
       (pass-if "objectifier-hints: list of col names"
         (equal? ((m2 'tuples-result->object-alist) res)
                 '((desc "the answer to the big question"
                         "a nice prime"
                         "almost 2^5, eh?")
-                  (n 42 343 31))))
+                  (∑╌ 42 343 31))))
       (pass-if "m2 result as rows"
         (equal? ((m2 'tuples-result->rows) res)
                 '(("the answer to the big question" 42)

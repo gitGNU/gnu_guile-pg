@@ -1,5 +1,12 @@
 2012-02-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v] Use a funky column name to exercise ‘validate-def’ a bit.
+
+	* types-table.scm (test-m2): Change
+	name of first column from ‘n’ to ‘∑╌’.
+
+2012-02-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Set client encoding to UTF-8 explicitly for types/table tests.
 
 	* types-table.scm (mgr try!): New proc.
