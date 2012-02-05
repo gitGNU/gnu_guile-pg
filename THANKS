@@ -26,3 +26,12 @@ Thanks go to these people for their help in improving Guile-PG.
 
 - Paolo Bonzini
   - libtool help
+
+- Andy Wingo
+  - string xrep info
+
+- Mike Gran
+  - string xrep info
+
+- David Pirotte
+  - string xrep info
