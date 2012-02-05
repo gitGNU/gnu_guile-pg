@@ -414,29 +414,34 @@
                  id))
           (ra (string-index s #\[))
           (dot (string-index s #\.)))
+     (define (from beg)
+       (substring/shared s beg))
+     (define (xsub beg end)
+       (string-xrep (substring/shared s beg end)))
      (cond
       ;; Fast path; no complications.
       ((not (or ra dot))
-       (object->string s))
+       (string-xrep s))
       ;; Just dot (ab.cd => "ab"."cd", but ab.* => "ab".*).
       ((and dot (not ra))
-       (fs "~S.~S"
-           (substring s 0 dot)
-           (let ((after (substring s (1+ dot))))
-             (if (string=? "*" after)
-                 '*
-                 after))))
+       (string-append (xsub 0 dot)
+                      "."
+                      (let ((after (1+ dot)))
+                        ((if (and (= (1- (string-length s)) after)
+                                  (char=? #\* (string-ref s after)))
+                             identity
+                             string-xrep)
+                         (from after)))))
       ;; Just array (abcd[xyz] => "abcd"[xyz]).
       ((and ra (not dot))
-       (fs "~S~A"
-           (substring s 0 ra)
-           (substring s ra)))
+       (string-append (xsub 0 ra)
+                      (from ra)))
       ;; Both dot and array (ab.cd[xyz] => "ab"."cd"[xyz]).
       (#t
-       (fs "~S.~S~A"
-           (substring s 0 dot)
-           (substring s (1+ dot) ra)
-           (substring s (ra))))))))
+       (string-append (xsub 0 dot)
+                      "."
+                      (xsub (1+ dot) ra)
+                      (from ra)))))))
 
 (define (maybe-dq sym)
   ;; Hmmm, why not use ‘idquote’ also for this?
@@ -618,7 +623,7 @@
                     ((symbol? x) (maybe-dq x))
                     ((and (pair? x) (string? (car x)))
                      (as (expr (cdr x))
-                         (sql-pre (fs "~S" (car x)))))
+                         (sql-pre (string-xrep (car x)))))
                     ((pair? x) (expr x))
                     (else (error "bad col spec:" x))))
             cols))

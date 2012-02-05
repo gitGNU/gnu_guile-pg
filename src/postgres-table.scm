@@ -59,6 +59,7 @@
                 #:select (sql-pre
                           sql-pre?
                           sql-quote
+                          string-xrep
                           (make-comma-separated-tree . cseptree)
                           make-WHERE-tree
                           make-SELECT/FROM/COLS-tree
@@ -259,7 +260,7 @@
     (apply simple-format #f args))
 
   (define (symbol->qstring symbol)
-    (object->string (symbol->string symbol)))
+    (string-xrep (symbol->string symbol)))
 
   (or (and (pair? defs) (not (null? defs)))
       (error "malformed defs:" defs))
@@ -281,7 +282,7 @@
                                   (cons name (symbol->qstring name)))
                                 (map def:column-name defs)))
          (objectifiers (def:objectifiers defs))
-         (dq-table-name (object->string table-name))
+         (dq-table-name (string-xrep table-name))
          ;; for do-insert
          (ncols (length defs))
          (typenames (map def:type-name defs))

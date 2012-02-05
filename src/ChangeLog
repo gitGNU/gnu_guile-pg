@@ -1,5 +1,17 @@
 2012-02-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[int] Use ‘string-xrep’ more.
+
+	* postgres-qcons.scm (idquote from): New proc.
+	(idquote xsub): Likewise.
+	(idquote): Use ‘from’, ‘xsub’, ‘string-xrep’.
+	(make-SELECT/COLS-tree): Use ‘string-xrep’.
+	* postgres-table.scm: Import ‘string-xrep’.
+	(pgtable-manager symbol->qstring): Use ‘string-xrep’.
+	(pgtable-manager): Likewise.
+
+2012-02-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	New (database postgres-qcons) proc: string-xrep
 
 	* postgres-qcons.scm: Import SRFI 13 ‘string-prefix?’; import SRFI 14
