@@ -1024,6 +1024,9 @@ servers with mixed support for @code{standard_conforming_strings}, however
 (i.e., pre-8.2 and 8.2+ together).  In that case, it is better to use
 @code{with-fluids} to enable the functionality completely dynamically.
 
+@tsin i "string external representation" - section
+@tsin i string-xrep
+
 @c ---------------------------------------------------------------------------
 @node qcons trees
 @section Tree Construction

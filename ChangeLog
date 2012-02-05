@@ -1,3 +1,10 @@
+2012-02-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	New (database postgres-qcons) proc: string-xrep
+
+	* doc/ref.texh (qcons quoting): Add @tsin for
+	"string external representation" and ‘string-xrep’.
+
 2011-10-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.42 (tag v0.42)

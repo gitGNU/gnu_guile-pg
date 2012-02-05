@@ -35,6 +35,8 @@
              (database postgres-qcons)
              (database postgres-types)
              (database postgres-table)
+             (srfi srfi-13)
+             (srfi srfi-14)
              (ice-9 regex)
              (ice-9 common-list))
 
@@ -176,10 +178,30 @@
                 (2 2 . "oo")))
 
 (define POISON (apply string-append
+                      (with-output-to-string
+                        (lambda ()
+                          (display "(")
+                          (let loop ((ls (map cddr PESKY)))
+                            (or (null? ls)
+                                (let ((next (cdr ls)))
+                                  (display (string-xrep (car ls)))
+                                  (or (null? next)
+                                      (display " "))
+                                  (loop next))))
+                          (display ")")))
                       (map cddr PESKY)))
 
-(define POISON-COUNTS (let ((sum (lambda (sel)
-                                   (apply + (map sel PESKY)))))
+(define POISON-COUNTS (let ((adj (+ (string-length
+                                     (object->string
+                                      (make-list (length PESKY)
+                                                 "")))
+                                    (string-length
+                                     (string-filter
+                                      POISON
+                                      (char-set #\\ #\")
+                                      (string-index POISON #\)))))))
+                        (define (sum sel)
+                          (+ adj (* 2 (apply + (map sel PESKY)))))
                         (fs "~A ~A" (sum car) (sum cadr))))
 
 (and (getenv "DEBUG")

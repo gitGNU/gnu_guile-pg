@@ -48,6 +48,7 @@
             sql-unpre
             sql-quote-auto-E?
             sql-quote
+            string-xrep
             idquote
             make-comma-separated-tree
             make-WHERE-tree
@@ -62,8 +63,15 @@
             sql<-trees
             sql-command<-trees)
   #:use-module ((srfi srfi-13) #:select (string-index
+                                         string-prefix?
                                          string-concatenate-reverse
-                                         substring/shared)))
+                                         substring/shared))
+  #:use-module ((srfi srfi-14) #:select (char-set:full
+                                         char-set-filter
+                                         char-set-size
+                                         char-set-union
+                                         char-set-for-each
+                                         ucs-range->char-set)))
 
 
 ;;; mirroring bootstrap
@@ -290,6 +298,84 @@
 
 (define (fs s . args)
   (apply simple-format #f s args))
+
+;; {string external representation}
+;;
+;; Guile 1.8 and later represent certain octets in the @dfn{xrep}, or
+;; external representation, of a string with @code{\xXX}, e.g.,
+;; @code{\x07} for @code{#\bel}.
+;; PostgreSQL 7.4 and 8.0 do not recognize @code{\xXX} as valid syntax
+;; in a literal string, which is a problem if you need to connect to
+;; them.
+;;
+;; But even for PostgreSQL 8.1 and later, which accepts @code{\xXX} as
+;; an octet with hex value @code{XX}, a problem arises when there is a
+;; mix of contiguous raw and @code{\x} representations, intended to
+;; represent (for instance) a UTF-8 encoded character.
+;; It seems@footnote{
+;; The survey and its results are in the @samp{guile-user} archive:@*
+;; @url{http://lists.gnu.org/archive/html/guile-user/2012-01/msg00114.html}.}
+;; Guile
+;;
+;; @format
+;;   - 1.4 DTRT by doing nothing (mu power!);
+;;   - 1.6 likewise is blissfully unperturbing;
+;;   - 1.8 fails by @code{\x}-escaping inconsistently;
+;;   - 2.0 doesn't have this problem.
+;; @end format
+;;
+;; @noindent
+;; To avoid both problems, use @code{string-xrep}.
+
+;; Return the external representation of @var{string},
+;; guaranteed to not have @code{\x}-escape sequences.
+;; Specifically, the first and last characters are double-quote @code{#\"},
+;; and internal @code{#\\} and @code{#\"} are backslash-escaped.
+;; Characters that normally have an xrep with @code{\x} are instead
+;; passed straight through.  For some Guile versions, this behavior
+;; is identical to @code{object->string}.
+;;
+;;-category: procedure
+;;-args: (1 0 0 string)
+;;
+(define string-xrep
+  (or (let ((dq (string #\"))
+            (ugh (char-set-filter
+                  (lambda (ch)
+                    (string-prefix? "\"\\x" (object->string (string ch))))
+                  char-set:full)))
+        (and (positive? (char-set-size ugh))
+             ;; Lame.
+             (let ((v (make-vector 256)))
+               (define (escape ch)
+                 (vector-ref v (char->integer ch)))
+               (set! ugh (ucs-range->char-set #o177 #o400 #t
+                                              (char-set-union
+                                               (char-set #\\ #\")
+                                               ugh)))
+               (char-set-for-each
+                (lambda (ch)
+                  (vector-set! v (char->integer ch)
+                               (case ch
+                                 ((#\\) "\\\\")
+                                 ((#\") "\\\"")
+                                 (else (string ch)))))
+                ugh)
+               ;; string-xrep
+               (lambda (s)
+                 (let loop ((acc (list dq)) (start 0))
+                   (cond ((string-index s ugh start)
+                          => (lambda (idx)
+                               (loop (cons* (escape (string-ref s idx))
+                                            (substring/shared s start idx)
+                                            acc)
+                                     (1+ idx))))
+                         ((zero? start) (object->string s))
+                         (else (string-concatenate-reverse
+                                (cons (substring/shared s start) acc)
+                                dq))))))))
+      ;; Cool.
+      object->string))
 
 ;; Return the @dfn{quoted identifier} form of @var{id}, a string
 ;; or symbol.  The returned string is marked by @code{sql-pre}.

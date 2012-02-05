@@ -1,3 +1,11 @@
+2012-02-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	New (database postgres-qcons) proc: string-xrep
+
+	* types-table.scm: Import SRFI 13, SRFI 14.
+	(POISON): Include the xrep of the ‘cddr’ slice of ‘PESKY’.
+	(POISON-COUNTS): Adjust char and byte counts.
+
 2012-02-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[qcons] Fix bug: Make ‘sql-quote’ do backslash octal substitution.

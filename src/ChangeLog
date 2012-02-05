@@ -1,3 +1,13 @@
+2012-02-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	New (database postgres-qcons) proc: string-xrep
+
+	* postgres-qcons.scm: Import SRFI 13 ‘string-prefix?’; import SRFI 14
+	‘char-set:full’, ‘char-set-filter’, ‘char-set-size’, ‘char-set-union’,
+	‘char-set-for-each’, ‘ucs-range->char-set’.
+	(string external representation): New titled comment block.
+	(string-xrep): New proc, exported.
+
 2012-02-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[qcons] Fix bug: Make ‘sql-quote’ do backslash octal substitution.
