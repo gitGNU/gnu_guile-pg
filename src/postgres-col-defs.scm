@@ -75,7 +75,7 @@
 ;; Check @var{obj} and signal error if it does not appear to be a well-formed
 ;; def.  Check that @var{obj} has a structure amenable to extraction of
 ;; components using @code{column-name} and @code{type-name}: The name must be
-;; a symbol using only alphanumeric characters and underscore; the type must
+;; a symbol using only non-whitespace characters; the type must
 ;; be a symbol.  Optional second arg @var{typecheck} is a procedure that takes
 ;; the type (a symbol) and can do further checks on it.  It should return
 ;; non-@code{#f} to indicate success.
@@ -89,10 +89,8 @@
                   (let ((s (symbol->string col-name)))
                     (= (string-length s)
                        (apply + (map (lambda (c)
-                                       (if (or (char-alphabetic? c)
-                                               (char-numeric? c)
-                                               (char=? c #\_))
-                                           1 0))
+                                       (if (char-whitespace? c)
+                                           0 1))
                                      (string->list s)))))))
            (pair? (cdr obj))
            (let ((col-type (type-name obj)))

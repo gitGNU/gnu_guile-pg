@@ -1,5 +1,13 @@
 2012-02-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[col-defs] Relax column name lexical rules to disallow whitespace only.
+
+	* postgres-col-defs.scm (validate-def):
+	Don't check for ‘char-alphabetic?’, ‘char-numeric?’ or ‘#\_’;
+	instead, check only that the character is not whitespace.
+
+2012-02-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Use ‘string-xrep’ more.
 
 	* postgres-qcons.scm (idquote from): New proc.
