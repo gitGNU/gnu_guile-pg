@@ -50,8 +50,18 @@
     (cond ((procedure? rv)
            (and (getenv "DEBUG")
                 ((rv #:trace-exec) *log-file*))
-           (let ((scs 'standard_conforming_strings))
-             (cond ((pg-parameter-status ((rv #:k) #:connection) scs)
+           (let ((scs 'standard_conforming_strings)
+                 (conn ((rv #:k) #:connection)))
+             (define (try! action value)
+               (or value
+                   (begin (fso "while trying to ~A, got error:~%~A~%"
+                               action (pg-error-message conn))
+                          (exit #f))))
+             (try! "set client encoding"
+                   (pg-set-client-encoding! conn "UTF8"))
+             (try! "verify client encoding is UTF8"
+                   (equal? "UTF8" (pg-client-encoding conn)))
+             (cond ((pg-parameter-status conn scs)
                     => (lambda (v)
                          (simple-format #t "INFO: ~S => ~S~%" scs v)
                          (fluid-set! sql-quote-auto-E? #t)))))))

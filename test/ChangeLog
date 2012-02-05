@@ -1,5 +1,13 @@
 2012-02-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v] Set client encoding to UTF-8 explicitly for types/table tests.
+
+	* types-table.scm (mgr try!): New proc.
+	(mgr): Set client encoding to UTF-8; if not successful
+	or if verification fails, exit failurefully.
+
+2012-02-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	New (database postgres-qcons) proc: string-xrep
 
 	* types-table.scm: Import SRFI 13, SRFI 14.
