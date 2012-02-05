@@ -37,6 +37,18 @@ Makefile.in
 
 /doc/*.info*
 /doc/coltypes.texi
+/doc/guile-pg.aux
+/doc/guile-pg.cp
+/doc/guile-pg.cps
+/doc/guile-pg.er
+/doc/guile-pg.fn
+/doc/guile-pg.ky
+/doc/guile-pg.log
+/doc/guile-pg.pdf
+/doc/guile-pg.pg
+/doc/guile-pg.toc
+/doc/guile-pg.tp
+/doc/guile-pg.vr
 /doc/qcons-tables.texi
 /doc/ref.texi
 /doc/relinfo.texi
