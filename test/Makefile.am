@@ -63,8 +63,10 @@ check-local:
 kill-daemon:
 	$(CTL) z
 
-clean-local: kill-daemon
+delete-cluster: kill-daemon
 	rm -rf fake-cluster
+
+clean-local: delete-cluster
 	-rm -rf fake-install
 
 # Makefile.am ends here

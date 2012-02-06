@@ -1,3 +1,11 @@
+2012-02-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v] Add support for ‘make delete-cluster’.
+
+	* Makefile.am (delete-cluster): New target.
+	(clean-local): Don't depend on ‘kill-daemon’; instead,
+	depend on ‘delete-cluster’ and remove rm(1) invocation.
+
 2012-02-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v] Use a funky column name to exercise ‘validate-def’ a bit.
