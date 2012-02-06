@@ -1,3 +1,7 @@
+2012-02-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Release: 0.43 (tag v0.43)
+
 2012-02-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[col-defs] Relax column name lexical rules to disallow whitespace only.

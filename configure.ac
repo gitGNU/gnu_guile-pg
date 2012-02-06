@@ -1,7 +1,7 @@
 dnl configure.ac
 dnl
-dnl Copyright (C) 2002, 2003, 2004, 2005, 2006,
-dnl   2007, 2008, 2009, 2010, 2011 Thien-Thi Nguyen
+dnl Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007,
+dnl   2008, 2009, 2010, 2011, 2012 Thien-Thi Nguyen
 dnl Portions Copyright (C) 1998 Ian Grant
 dnl
 dnl This file is part of Guile-PG.
@@ -21,7 +21,7 @@ dnl along with Guile-PG; see the file COPYING.  If not, write to the
 dnl Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 dnl Boston, MA  02110-1301  USA
 
-AC_INIT([Guile-PG],[0.42],[ttn@gnuvola.org])
+AC_INIT([Guile-PG],[0.43],[ttn@gnuvola.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([1.11.1 -Wall])
 

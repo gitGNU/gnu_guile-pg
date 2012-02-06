@@ -1,5 +1,9 @@
 2012-02-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.43 (tag v0.43)
+
+2012-02-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Use a funky table name to exercise ‘validate-def’ a bit.
 
 	* types-table.scm (test-m2): Change table name to ‘abstr∀ctions-2’.
