@@ -1,5 +1,5 @@
 NEWS for Guile-PG
-Copyright (C) 2002-2011 Thien-Thi Nguyen
+Copyright (C) 2002-2012 Thien-Thi Nguyen
 See the end for copying conditions.
 
 
@@ -1441,7 +1441,7 @@ See the end for copying conditions.
 
 
 - etc
-Copyright (C) 2002-2011 Thien-Thi Nguyen
+Copyright (C) 2002-2012 Thien-Thi Nguyen
 
 Copying and distribution of this file, with or without modification,
 are permitted provided the copyright notice and this notice are preserved.

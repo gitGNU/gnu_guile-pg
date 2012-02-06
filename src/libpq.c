@@ -1,7 +1,7 @@
 /* libpq.c
 
    Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009,
-     2010, 2011 Thien-Thi Nguyen
+     2010, 2011, 2012 Thien-Thi Nguyen
    Portions Copyright (C) 1999, 2000 Ian Grant
 
    This file is part of Guile-PG.
