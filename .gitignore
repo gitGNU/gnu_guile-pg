@@ -35,6 +35,7 @@ Makefile.in
 /build-aux/texinfo.tex
 /build-aux/uninstall-sofixed
 
+/doc/*.html
 /doc/*.info*
 /doc/coltypes.texi
 /doc/guile-pg.aux
