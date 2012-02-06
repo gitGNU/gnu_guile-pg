@@ -3,6 +3,86 @@ Copyright (C) 2002-2011 Thien-Thi Nguyen
 See the end for copying conditions.
 
 
+- 0.43 | 2012-02-06
+
+	[PBI] means "WARNING: potentially backward-incompatible".
+
+  - bugfix: ‘sql-quote’ translates backslash (#\\) to ‘\134’
+
+	Previously, backslash characters were passed through
+	unmodified.  Now, they are translated to the string "\134"
+	(i.e., the four characters ‘#\\’, ‘#\1’, ‘#\3’, ‘#\4’).
+
+  - [PBI] ‘bytea’ stringifier outputs only one backslash
+
+	If the ‘bytea’ stringifier from ‘(database postgres-types)’ is
+	used standalone, this represents a BACKWARD INCOMPATIBLE change.
+	In the normal case, however, where the stringifier is used in
+	conjunction with ‘sql-quote’, this change is transparent.
+
+  - new (database postgres-qcons) proc: string-xrep
+
+	Some versions of Guile emit ‘\xXX’ to represent the octet with
+	hex value XX when constructing the external representation of a
+	string, for certain octets.  Furthermore, some versions of
+	PostgreSQL cannot grok such escape sequences anyway.  The new
+	procedure ‘string-xrep’ is like ‘object->string’ (for a string
+	arg) except that it explicitly emits the octet itself, except
+	for ‘#\\’ and and ‘#\"’, which are backslash-escaped as normal.
+
+  - ‘(database postgres-qcons) idquote’ no longer emits ‘\xXX’
+
+	Before, ‘idquote’ used ‘object->string’ internally, and thus
+	suffered from the problems described in the preceding NEWS
+	entry.  Now, it uses ‘string-xrep’.
+
+  - ‘(database postgres-col-defs) validate-def’ more permissive
+
+	A column name may now be any symbol that does not contain
+	whitespace.  Previously it was restricted to a symbol whose
+	constituent characters were alphanumeric or underscore.
+
+	This change makes Guile-PG less strict (in some sense) than
+	PostgreSQL, which imposes other rules.  Overarching is the
+	recommendation from PostgreSQL to consistently use a "delimited
+	identifier" (aka "quoted identifier") rather than a naked name.
+	That's what ‘idquote’ and ‘string-xrep’, both used extensively
+	in Guile-PG, do.  See section "Identifiers and Key Words" in
+	chapter "SQL Syntax" in the PostgreSQL documentation, for more
+	information.
+
+  - ‘pgtable-manager’ and ‘pgtable-worker’ likewise relaxed
+
+	These use ‘(database postgres-col-defs)’ procs and new proc
+	‘string-xrep’ internally, and thus benefit from the changes
+	mentioned in the preceding NEWS entries.  Notably, table and
+	column names are less constrained.  For example, see file
+	test/types-table.scm, proc ‘test-m2’.
+
+	[Probably "relaxed" is not as good as "strictness relaxed and
+	multi-byte-fu enhanced", but that does not fit on one line.]
+
+  - fake cluster created on-demand for "make check"
+
+	In addition to a fake installation, "make check" now also
+	creates a cluster under test/fake-cluster/ configured for
+	Unix-domain connections, and kicks/kills the daemon around the
+	actual ‘runtest TEST’ invocations.  This means it is no longer
+	necessary to set env var ‘PGDATABASE’.  In fact, that and env
+	var ‘PGHOST’ are now silently ignored, since ‘runtest’ clobbers
+	them internally.
+
+	If you previously tested Guile-PG against different PostgreSQL
+	versions by varying ‘PGDATABASE’, you now need to vary env var
+	‘INITDB’ instead, and zonk the cluster before the "make check"
+	invocation.  Something like:
+
+	  $(MAKE) delete-cluster
+	  $(MAKE) check DEBUG=1 INITDB=/a/particular/initdb
+
+	in directory test/ would be fine.  See README section "Testing".
+
+
 - 0.42 | 2011-10-04
 
   - bugfix: "make check" no longer clobbers installed file
