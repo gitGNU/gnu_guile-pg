@@ -341,7 +341,7 @@
 
 (define (test-m2)
 
-  (let ((m2 (mgr db-name "abstrActions_2" '((∑╌ int4 "primary key")
+  (let ((m2 (mgr db-name "abstr∀ctions-2" '((∑╌ int4 "primary key")
                                             (desc text)))))
 
     (pass-if "m2" (procedure? m2))
