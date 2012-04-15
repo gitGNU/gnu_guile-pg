@@ -60,7 +60,12 @@
              (try! "set client encoding"
                    (pg-set-client-encoding! conn "UTF8"))
              (try! "verify client encoding is UTF8"
-                   (equal? "UTF8" (pg-client-encoding conn)))
+                   (member (pg-client-encoding conn)
+                           (list
+                            ;; before postgresql 8.1
+                            "UNICODE"
+                            ;; postgresql 8.1 and later
+                            "UTF8")))
              (cond ((pg-parameter-status conn scs)
                     => (lambda (v)
                          (simple-format #t "INFO: ~S => ~S~%" scs v)

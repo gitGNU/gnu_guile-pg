@@ -1,3 +1,10 @@
+2012-04-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[slog] Allow for pre-PostgreSQL 8.1 ‘pg-client-encoding’ rv.
+
+	* types-table.scm (mgr) <verify client encoding is UTF8>:
+	Accept "UNICODE" as well as "UTF-8".
+
 2012-02-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.43 (tag v0.43)
