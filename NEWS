@@ -3,6 +3,39 @@ Copyright (C) 2002-2012 Thien-Thi Nguyen
 See the end for copying conditions.
 
 
+- 0.44 | 2012-04-20
+
+  - distribution now .tar.xz
+
+	If you have GNU tar, you can use "tar xf" and it will DTRT.
+	If not, you can use "xz -dc TARBALL | tar xf -" to unpack.
+
+  - bugfix: ‘pg-get-copy-data’ handles unspecified ‘async?’
+
+	Previously, if ‘async?’ was unspecified, it was incorrectly
+	interpreted as true (i.e., "not false").  Now, if unspecified,
+	it is interpreted correctly as false.
+
+  - testing slack for pre-8.1 ‘pg-client-encoding’
+
+	Previously, the types-table test was too strict when checking
+	the ‘pg-client-encoding’ return value, expecting "UTF-8" only.
+	Now, it accepts also "UNICODE", which is the norm for PostgreSQL
+	prior to 8.1.
+
+  - support for ‘make check KEEPD=1’
+
+	If you run "make check" many times, you can avoid daemon bounce
+	overhead by specifying ‘KEEPD=1’, which inhibits daemon killing.
+
+  - maintenance tools
+    - GNU Autoconf 2.68
+    - GNU Automake 1.11.5
+    - GNU Libtool 2.4.2
+    - Guile-BAUX 20120309.1509.1c4bb92
+    - SNUGGLE 0.1
+
+
 - 0.43 | 2012-02-06
 
 	[PBI] means "WARNING: potentially backward-incompatible".

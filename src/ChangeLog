@@ -1,5 +1,9 @@
 2012-04-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.44 (tag v0.44)
+
+2012-04-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq] Fix bug: Correctly handle ‘async?’ to ‘pg-get-copy-data’.
 
 	* libpq.c (pg_get_copy_data): Use ‘TRUE_ENOUGH’ for ‘asyncp’.

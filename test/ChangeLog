@@ -1,5 +1,9 @@
 2012-04-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.44 (tag v0.44)
+
+2012-04-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Add support for "make check KEEPD=1".
 
 	* Makefile.am (check-local): If ‘KEEPD’ is 1, don't kill the daemon.

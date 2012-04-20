@@ -1,5 +1,11 @@
 2012-04-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.44 (tag v0.44)
+
+	* configure.ac (AC_INIT): Bump version to "0.44" for release.
+
+2012-04-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[dist] Create .xz tarball instead of .gz on "make dist".
 
 	* configure.ac (AM_INIT_AUTOMAKE): Add options ‘no-dist-gzip’, ‘dist-xz’.
