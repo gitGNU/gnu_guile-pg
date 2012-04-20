@@ -58,7 +58,7 @@ fake-cluster/postmaster.pid:
 	@if [ x1 = x'$(DEBUG)' ] ; then $(CTL) q ; fi
 
 check-local:
-	@$(CTL) 0
+	@test x1 = 'x$(KEEPD)' || $(CTL) 0
 
 kill-daemon:
 	$(CTL) z

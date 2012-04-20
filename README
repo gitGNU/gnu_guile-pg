@@ -92,7 +92,7 @@ Testing
 	If configuration and "make" are successful, you can now run the
 	tests.  To run the tests type:
 
-            make check [DEBUG=1] [INITDB=/path/to/initdb]
+            make check [DEBUG=1] [KEEPD=1] [INITDB=/path/to/initdb]
 
 	This creates a temporary installation dir test/fake-install/,
 	creates a cluster test/fake-cluster/, kicks the daemon, runs the
@@ -116,6 +116,9 @@ Testing
 
 	The DEBUG=1 is optional.  If "make check" fails, please re-run
 	it with DEBUG=1 and see "Reporting Bugs" below.
+
+	Likewise, ‘KEEPD=1’ is optional.  If specified, the daemon is
+	not killed, reducing startup time for subsequent runs.
 
 
 What Goes Where
