@@ -48,6 +48,8 @@
 
 #define PROB(x)  (0 > (x))
 
+#define TRUE_ENOUGH(svar)   (GIVENP (svar) && NOT_FALSEP (svar))
+
 
 /* Abstractions for Scheme objects to C string conversion.  */
 
@@ -2523,7 +2525,7 @@ by 2012-12-31.  */)
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
   ASSERT_STRING (2, buf);
 
-  if (GIVENP (tickle) && NOT_FALSEP (tickle))
+  if (TRUE_ENOUGH (tickle))
     /* We don't care if there was an error consuming input; caller can use
        ‘pg_error_message’ to find out afterwards, or simply avoid tickling in
        the first place.  */
@@ -3070,7 +3072,7 @@ Optional arg @var{tickle} non-@code{#f} means to do a
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
 
-  if (GIVENP (tickle) && NOT_FALSEP (tickle))
+  if (TRUE_ENOUGH (tickle))
     /* We don't care if there was an error consuming input; caller can use
        ‘pg_error_message’ to find out afterwards, or simply avoid tickling in
        the first place.  */

@@ -1,3 +1,10 @@
+2012-04-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[pq int] Add abstraction: TRUE_ENOUGH
+
+	* libpq.c (TRUE_ENOUGH): New macro.
+	(pg_getlineasync, pg_notifies): Use ‘TRUE_ENOUGH’.
+
 2012-02-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.43 (tag v0.43)
