@@ -2455,7 +2455,7 @@ done; or @code{-2} to mean an error occurred.
     }
 
   NOINTS ();
-  rv = PQgetCopyData (dbconn, &newbuf, NOT_FALSEP (asyncp));
+  rv = PQgetCopyData (dbconn, &newbuf, TRUE_ENOUGH (asyncp));
   if (0 < rv)
     {
       if (pwritep)
