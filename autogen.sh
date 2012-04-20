@@ -3,10 +3,9 @@
 #
 # The distribution was made w/ these tools:
 #  - autoconf (GNU Autoconf) 2.68
-#  - automake (GNU automake) 1.11.1
-#  - libtool (GNU libtool) 2.4
-#  - guile (Unofficial Guile) 1.4.1.123
-#  - guile-baux-tool (Guile-BAUX) 20110605.1656.d20c8e3
+#  - automake (GNU automake) 1.11.5
+#  - libtool (GNU libtool) 2.4.2
+#  - guile-baux-tool (Guile-BAUX) 20120309.1509.1c4bb92
 
 set -e
 
