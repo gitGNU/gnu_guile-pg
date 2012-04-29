@@ -161,6 +161,7 @@ scm_init_ ## fname_frag ## _module (void)                               \
 #define MEMQ(k,l)          (NOT_FALSEP (scm_memq ((k), (l))))
 
 #define DEFAULT_FALSE(maybe,yes)  ((maybe) ? (yes) : SCM_BOOL_F)
+#define RETURN_TRUE()                         return SCM_BOOL_T
 #define RETURN_FALSE()                        return SCM_BOOL_F
 #define RETURN_UNSPECIFIED()                  return SCM_UNSPECIFIED
 
