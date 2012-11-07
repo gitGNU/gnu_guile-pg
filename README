@@ -38,6 +38,7 @@ Building and Installing Guile-PG
 	  make
 	  make check
 	  make install
+	  make installcheck
 
 	Each of the above steps is explained in detail below.
 
@@ -139,6 +140,11 @@ What Goes Where
 
 	Additionally, if the system supports it, "make install" updates
 	each site dir's module catalog.
+
+	After installation, you may wish to "make installcheck", which
+	is essentially "make check" modified to look for the modules in
+	the install tree instead of the build tree.  Use ‘DEBUG=1’ and
+	look for ";;; loading" lines to verify proper operation.
 
 
 Reporting Bugs
