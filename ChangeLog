@@ -1,3 +1,11 @@
+2012-11-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[boot] Use ‘AM_PROG_AR’.
+
+	Suggested by autoreconf.
+
+	* configure.ac (AM_PROG_AR): New.
+
 2012-04-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.44 (tag v0.44)

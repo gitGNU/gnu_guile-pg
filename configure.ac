@@ -55,6 +55,9 @@ AC_ARG_WITH([libpq-includes],[AS_HELP_STRING([--with-libpq-includes=DIR],
 AC_ARG_WITH([libpq-lib],[AS_HELP_STRING([--with-libpq-lib=DIR],
  [look for libpq libraries in DIR])],[PG_CHECK_DIR([libpq-lib])])
 
+dnl This needs to go before ‘LT_INIT’ else autoreconf complains.  :-/
+AM_PROG_AR
+
 LT_PREREQ([2.2.6])
 LT_INIT([dlopen disable-static]) dnl module only
 
