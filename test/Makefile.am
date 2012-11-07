@@ -69,4 +69,7 @@ delete-cluster: kill-daemon
 clean-local: delete-cluster
 	-rm -rf fake-install
 
+installcheck-local:
+	$(MAKE) check prefix='$(prefix)'
+
 # Makefile.am ends here

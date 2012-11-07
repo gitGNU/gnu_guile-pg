@@ -27,7 +27,8 @@ export PGDATABASE
 
 test x"$DEBUG" = x || dopt=--debug
 
-prefix=`pwd`/fake-install
+# env override to support "make installcheck"
+test x"$prefix" = x && prefix=`pwd`/fake-install
 exec_prefix="@exec_prefix@"
 libdir="@libdir@"
 
