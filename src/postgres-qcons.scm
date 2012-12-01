@@ -68,6 +68,7 @@
                                          string-concatenate-reverse
                                          substring/shared))
   #:use-module ((srfi srfi-14) #:select (char-set:full
+                                         ucs-range->char-set
                                          char-set-filter
                                          char-set-size
                                          char-set-union
@@ -344,7 +345,9 @@
             (ugh (char-set-filter
                   (lambda (ch)
                     (string-prefix? "\"\\x" (object->string (string ch))))
-                  char-set:full)))
+                  (if (< 256 (char-set-size char-set:full))
+                      (ucs-range->char-set 0 256)
+                      char-set:full))))
         (and (positive? (char-set-size ugh))
              ;; Lame.
              (let ((v (make-vector 256)))
