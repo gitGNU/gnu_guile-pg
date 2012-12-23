@@ -36,6 +36,8 @@
 ;; verbose:  If true, all tests are wroitten to standard output,
 ;; not just to the log file.
 
+(setlocale LC_ALL "")
+
 (define verbose #f)
 
 (define pass-count 0)
