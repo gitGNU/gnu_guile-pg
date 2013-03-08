@@ -23,7 +23,7 @@ dnl Boston, MA  02110-1301  USA
 
 AC_INIT([Guile-PG],[0.44],[ttn@gnuvola.org])
 AC_CONFIG_AUX_DIR([build-aux])
-AM_INIT_AUTOMAKE([1.11.1 -Wall no-dist-gzip dist-xz])
+AM_INIT_AUTOMAKE([1.12.2 -Wall no-dist-gzip dist-xz])
 
 AC_CONFIG_HEADERS([src/config.h])
 
