@@ -832,6 +832,7 @@ flattening them to a string on output.
 * Special Operators: qcons special operators.
 * Lookup Tables Extension: qcons extension.
 * Quoting: qcons quoting.
+* Strings: qcons strings.
 * Tree Construction: qcons trees.
 * Output: qcons output.
 @end menu
@@ -1052,7 +1053,20 @@ known prosaically as @dfn{quoting}.
 
 @tsin i idquote
 
-@section Standard Conforming Strings
+@c ---------------------------------------------------------------------------
+@node qcons strings
+@section Strings
+
+Strings are very complicated!
+
+@menu
+* standard conforming strings: std strings.
+* string external representation: string xrep.
+@end menu
+
+@c ---------------------------------------------------------------------------
+@node std strings
+@subsection standard conforming strings
 
 Starting with PostgreSQL 8.2, there is a configuration file and runtime
 parameter @code{standard_conforming_strings} that controls how strictly the
@@ -1081,7 +1095,9 @@ servers with mixed support for @code{standard_conforming_strings}, however
 (i.e., pre-8.2 and 8.2+ together).  In that case, it is better to use
 @code{with-fluids} to enable the functionality completely dynamically.
 
-@tsin i "string external representation" - section
+@c ---------------------------------------------------------------------------
+@node string xrep
+@tsin i "string external representation" - subsection
 
 @tsin i string-xrep
 

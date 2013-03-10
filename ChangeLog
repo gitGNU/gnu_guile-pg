@@ -1,5 +1,18 @@
 2013-03-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Synch node layout w/ sectioning.
+
+	This avoids a warning from Texinfo 5.0.
+
+	* doc/ref.texh (Query Construction): Add "Strings" to menu.
+	(qcons quoting): Move sections "Standard Conforming Strings"
+	and "string external representation"...
+	(qcons strings): New node, a section named "Strings".
+	(std strings): ...here, as a new node/subsection.
+	(string xrep): ...and here, as a new node/subsection.
+
+2013-03-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc slog] Add blank lines around @tsin directives.
 
 	Apparently, makeinfo 5.0 doesn't automagically add blank
