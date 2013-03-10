@@ -1,5 +1,11 @@
 2013-03-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.45 (tag v0.45)
+
+	* configure.ac (AC_INIT): Bump version to "0.45" for release.
+
+2013-03-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Synch node layout w/ sectioning.
 
 	This avoids a warning from Texinfo 5.0.
