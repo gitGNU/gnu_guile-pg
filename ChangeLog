@@ -1,3 +1,9 @@
+2013-03-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v int] Make sure "tests" are run serially.
+
+	* configure.ac (AM_INIT_AUTOMAKE): Add option ‘serial-tests’.
+
 2013-03-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[boot] Bump Automake min vers to 1.12.2.
