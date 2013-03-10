@@ -31,8 +31,10 @@ Everything else appears literally as shown here.  It is very strange to have
 PostgreSQL.
 
 @tsin i pg-connection?
+
 @bummer due to bad connection
 @tsin i pg-connectdb
+
 @tsin i pg-conndefaults
 
 @heading Example
@@ -65,17 +67,29 @@ with the word @code{NOTICE}, and always followed by a trailing newline.  By
 default, they are sent to the current output port.
 
 @tsin i pg-set-notice-out!
+
 @tsin i pg-reset
+
 @tsin i pg-server-version
+
 @tsin i pg-get-db
+
 @tsin i pg-get-user
+
 @tsin i pg-get-pass
+
 @tsin i pg-get-host
+
 @tsin i pg-get-port
+
 @tsin i pg-get-tty
+
 @tsin i pg-get-options
+
 @tsin i pg-backend-pid
+
 @tsin i pg-transaction-status
+
 @tsin i pg-parameter-status
 
 @section Asynchronous Notifications
@@ -93,11 +107,13 @@ The client's character encoding, represented by a string such as
 "UNICODE", can be queried and set.
 
 @tsin i pg-client-encoding
+
 @tsin i pg-set-client-encoding!
 
 @section Non-Blocking Mode
 
 @tsin i pg-set-nonblocking!
+
 @tsin i pg-is-nonblocking?
 
 @c ---------------------------------------------------------------------------
@@ -202,7 +218,9 @@ and @code{pg-exec-prepared}.  @xref{Parameters}, for background info on the
 latter two.
 
 @tsin i pg-exec
+
 @tsin i pg-exec-params
+
 @tsin i pg-exec-prepared
 
 @heading Example
@@ -242,12 +260,19 @@ query altogether.
 @code{pg-send-query-prepared}.
 
 @tsin i pg-send-query
+
 @tsin i pg-send-query-params
+
 @tsin i pg-send-query-prepared
+
 @tsin i pg-get-result
+
 @tsin i pg-consume-input
+
 @tsin i pg-is-busy?
+
 @tsin i pg-request-cancel
+
 @tsin i pg-flush
 
 @c ---------------------------------------------------------------------------
@@ -272,9 +297,13 @@ the same as would be returned by @code{pg-ntuples} and @code{pg-nfields},
 respectively.  Everything else appears literally as shown here.
 
 @tsin i pg-result?
+
 @tsin i pg-result-error-field
+
 @tsin i pg-result-error-message
+
 @tsin i pg-error-message
+
 @tsin i pg-result-status
 
 @heading Result Status Values
@@ -345,15 +374,25 @@ and @code{pg-fsize} can all throw an @dfn{Argument out of range} error
 if the specified field does not exist in the result.
 
 @tsin i pg-fmod
+
 @tsin i pg-ntuples
+
 @tsin i pg-nfields
+
 @tsin i pg-cmdtuples
+
 @tsin i pg-oid-value
+
 @tsin i pg-fname
+
 @tsin i pg-fnumber
+
 @tsin i pg-ftable
+
 @tsin i pg-ftablecol
+
 @tsin i pg-fformat
+
 @tsin i pg-getvalue
 
 This example defines a procedure @code{tuple->alist} which returns a given
@@ -407,6 +446,7 @@ The @code{pg-getvalue} procedure throws
 arguments are out of range.
 
 @tsin i pg-getisnull
+
 @tsin i pg-ftype
 
 @heading Example
@@ -434,6 +474,7 @@ then be associated with each connection for faster subsequent access.
 @end lisp
 
 @tsin i pg-fsize
+
 @tsin i pg-getlength
 
 @c ---------------------------------------------------------------------------
@@ -446,7 +487,9 @@ receive (with the @code{COPY <table> TO STDOUT} command) paths can be
 performed asynchronously.  See below for the older (obsolete) interface.
 
 @tsin i pg-put-copy-data
+
 @tsin i pg-put-copy-end
+
 @tsin i pg-get-copy-data
 
 @heading Obsolete functions for COPY
@@ -458,6 +501,7 @@ have all been read and @code{pg-endcopy} should be called to resynchronize the
 connection before any further calls to @code{pg-exec} on this connection.
 
 @tsin i pg-getline
+
 @tsin i pg-getlineasync
 
 @heading Example
@@ -573,10 +617,15 @@ space in front of @var{alod}, unfortunately).  This format will likely change
 by the time Guile-PG 1.0 is released.
 
 @tsin i pg-lo-creat
+
 @tsin i pg-lo-open
+
 @tsin i pg-lo-unlink
+
 @tsin i pg-lo-get-oid
+
 @tsin i pg-lo-tell
+
 @tsin i pg-lo-seek
 
 @heading Note
@@ -584,7 +633,9 @@ It is possible to seek beyond the end of file opened only for reading, in
 which case subsequent reads of the port will return an EOF object.
 
 @tsin i pg-lo-read
+
 @tsin i pg-lo-import
+
 @tsin i pg-lo-export
 
 @c ---------------------------------------------------------------------------
@@ -634,7 +685,9 @@ server.  If there are problems (when they return @code{#f}), you can use
 @code{pg-error-message} to find out what happened.
 
 @tsin i pg-escape-string-conn
+
 @tsin i pg-escape-bytea-conn
+
 @tsin i pg-unescape-bytea
 
 For example:
@@ -990,9 +1043,13 @@ need it.  This selective use of varying expression construction approaches is
 known prosaically as @dfn{quoting}.
 
 @tsin i sql-pre
+
 @tsin i sql-pre?
+
 @tsin i sql-unpre
+
 @tsin i sql-quote
+
 @tsin i idquote
 
 @section Standard Conforming Strings
@@ -1025,6 +1082,7 @@ servers with mixed support for @code{standard_conforming_strings}, however
 @code{with-fluids} to enable the functionality completely dynamically.
 
 @tsin i "string external representation" - section
+
 @tsin i string-xrep
 
 @c ---------------------------------------------------------------------------
@@ -1037,14 +1095,23 @@ take this as an invitation to @strong{experiment} and share your observations w/
 the Guile-PG maintainer so that we can refine them nicely for the 1.0 release.
 
 @tsin i make-comma-separated-tree
+
 @tsin i make-WHERE-tree
+
 @tsin i make-GROUP-BY-tree
+
 @tsin i make-HAVING-tree
+
 @tsin i make-ORDER-BY-tree
+
 @tsin i make-SELECT/COLS-tree
+
 @tsin i make-FROM-tree
+
 @tsin i make-SELECT/FROM/COLS-tree
+
 @tsin i parse+make-SELECT/tail-tree
+
 @tsin i parse+make-SELECT-tree
 
 @c ---------------------------------------------------------------------------
@@ -1054,6 +1121,7 @@ the Guile-PG maintainer so that we can refine them nicely for the 1.0 release.
 To get SQL once the tree is constructed, you have to flatten it.
 
 @tsin i sql<-trees
+
 @tsin i sql-command<-trees
 
 @c ---------------------------------------------------------------------------
@@ -1126,9 +1194,13 @@ the procedure
 using the @code{dbcoltype:FOO} procedures.
 
 @tsin i dbcoltypes
+
 @tsin i dbcoltype-lookup
+
 @tsin i dbcoltype:stringifier
+
 @tsin i dbcoltype:objectifier
+
 @tsin i dbcoltype:default
 
 Here is a simple example that uses @code{dbcoltype-lookup} and
@@ -1388,8 +1460,11 @@ In this example, we use the @code{#:renamer} clause to systematically prefix
 @code{def:column-name} and so on).
 
 @tsin i column-name
+
 @tsin i type-name
+
 @tsin i type-options
+
 @tsin i validate-def
 
 There are two more convenience procedures, the first one useful in
@@ -1397,6 +1472,7 @@ transforming the results of a query into Scheme objects (@pxref{Result
 Transforms}):
 
 @tsin i objectifiers
+
 @tsin i stringifiers
 
 @c ---------------------------------------------------------------------------
@@ -1478,7 +1554,9 @@ The @code{result->object-FOO} procedures
 have the same signature but return the data in different ways.
 
 @tsin i result->object-alist
+
 @tsin i result->object-alists
+
 @tsin i result->object-rows
 
 @heading Example
@@ -1519,7 +1597,9 @@ query and mutation (including create/delete) of a PostgreSQL table; and the
 @code{pgtable-worker} procedure encapsulates @code{pgtable-manager}.
 
 @tsin i pgtable-manager
+
 @tsin i compile-outspec
+
 @tsin i pgtable-worker
 
 The other procedures are useful for succinctly codifying queries, and
@@ -1619,6 +1699,7 @@ This section describes Guile-PG support for querying the information schema.
 For PostgreSQL-specific features, @xref{Funky Introspection}.
 
 @tsin i information-schema-names
+
 @tsin i information-schema-coldefs
 
 To see everything about everything, for example, you can try:
@@ -1642,13 +1723,16 @@ by the @code{defs-from-psql}, @code{infer-defs} and @code{describe-table!}
 procedures, the last one also displaying details on field/column innards.
 
 @tsin i defs-from-psql
+
 @tsin i infer-defs
+
 @tsin i describe-table!
 
 Once you have a set of defs, you can verify that their types are supported by
 Guile-PG with the following procedures.
 
 @tsin i check-type/elaborate
+
 @tsin i strictly-check-types/elaborate!
 
 @heading Example
