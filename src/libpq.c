@@ -2480,7 +2480,7 @@ A returned string consisting of a backslash followed by a full
 stop signifies an end-of-copy marker.
 
 This procedure is obsolete and @strong{WILL BE REMOVED}
-by 2012-12-31.  */)
+by 2013-12-31.  */)
 {
 #define FUNC_NAME s_pg_getline
   PGconn *dbconn;
@@ -2516,7 +2516,7 @@ Optional arg @var{tickle} non-@code{#f} means to do a
 ``consume input'' operation prior to the read.
 
 This procedure is obsolete and @strong{WILL BE REMOVED}
-by 2012-12-31.  */)
+by 2013-12-31.  */)
 {
 #define FUNC_NAME s_pg_getlineasync
   PGconn *dbconn;
@@ -2563,7 +2563,10 @@ the final newline characters.  The last line should be a
 backslash, followed by a @samp{.} (full-stop).  After this, the
 @code{pg-endcopy} procedure should be called for this
 connection before any further @code{pg-exec} call is made.
-Return @code{#t} if successful.  */)
+Return @code{#t} if successful.
+
+This procedure is obsolete and @strong{WILL BE REMOVED}
+by 2013-12-31.  */)
 {
 #define FUNC_NAME s_pg_putline
   PGconn *dbconn;
@@ -2588,7 +2591,10 @@ PRIMPROC
 Resynchronize with the backend process on @var{conn}.  This procedure
 must be called after the last line of a table has been
 transferred using @code{pg-getline}, @code{pg-getlineasync}
-or @code{pg-putline}.  Return @code{#t} if successful.  */)
+or @code{pg-putline}.  Return @code{#t} if successful.
+
+This procedure is obsolete and @strong{WILL BE REMOVED}
+by 2013-12-31.  */)
 {
 #define FUNC_NAME s_pg_endcopy
   PGconn *dbconn;

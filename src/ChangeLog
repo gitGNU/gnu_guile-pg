@@ -1,5 +1,15 @@
 2013-03-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq doc] Add "WILL BE REMOVED" to some docstrings; update others.
+
+	These four should all go at the same time.
+
+	* libpq.c (pg_getline, pg_getlineasync): Move
+	planned retirement date back to 2013-12-31 in docstring.
+	(pg_putline, pg_endcopy): Mention planned retirement in docstring.
+
+2013-03-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq] Fix bug: Don't presume backup env var for all connection options.
 
 	PostgreSQL 9.1 no longer supports a backup env var for every
