@@ -1,3 +1,13 @@
+2013-03-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[pq] Fix bug: Don't presume backup env var for all connection options.
+
+	PostgreSQL 9.1 no longer supports a backup env var for every
+	connection option.  This results in a segfault under NetBSD.
+	Reported by Greg Troxel.
+
+	* libpq.c (pg_conndefaults): Use ‘#f’ for options w/o ‘envvar’.
+
 2013-03-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.45 (tag v0.45)

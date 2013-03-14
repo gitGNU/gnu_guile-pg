@@ -1174,7 +1174,7 @@ presenting this option in the first place.  */)
   for (head = opt = PQconndefaults (); opt && opt->keyword; opt++)
     rv = CONS
       (PCHAIN (scm_c_make_keyword (opt->keyword),
-               PAIRX (envvar,   STRING (opt->envvar)),
+               PAIRM (envvar,   STRING (opt->envvar)),
                PAIRM (compiled, STRING (opt->compiled)),
                PAIRM (val,      STRING (opt->val)),
                PAIRM (label,    STRING (opt->label)),
