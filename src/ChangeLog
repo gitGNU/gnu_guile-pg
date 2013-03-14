@@ -1,5 +1,9 @@
 2013-03-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.46 (tag v0.46)
+
+2013-03-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq doc] Add "WILL BE REMOVED" to some docstrings; update others.
 
 	These four should all go at the same time.

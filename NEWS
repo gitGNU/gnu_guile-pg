@@ -2,6 +2,35 @@ NEWS for Guile-PG
 See the end for copying conditions.
 
 
+- 0.46 | 2013-03-14
+
+  - bugfix: handle connection options w/o "backup" env var
+
+	Previously, ‘pg-conndefaults’ expected every option to have a
+	backup env var (e.g., option ‘#:host’ and env var ‘PGHOST’).
+	For later versions of PostgreSQL which no longer maintain this
+	1:1 correspondance, Guile-PG would segfault.
+
+	Now, in such cases, the value associated w/ the key ‘#:envvar’
+	in the alist returned by ‘pg-conndefaults’ is ‘#f’.
+
+  - planned retirement
+    - procedure ‘(database postgres) pg-getline’
+    - procedure ‘(database postgres) pg-getlineasync’
+    - procedure ‘(database postgres) pg-putline’
+    - procedure ‘(database postgres) pg-endcopy’
+
+	These procedures are obsoleted by ‘pg-get-copy-data’ and
+	‘pg-put-copy-data’.  They WILL BE REMOVED by 2013-12-31.
+
+	Actually, the first two were originally -- in Guile-PG 0.41
+	(2011-09-29) -- planned to be removed by 2012-12-31.
+	Support has been extended for solidarity w/ the latter two.
+
+  - bootstrap tools upgraded
+    - GNU Texinfo 5.1
+
+
 - 0.45 | 2013-03-10
 
   - support for "make installcheck"
