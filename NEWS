@@ -6,13 +6,13 @@ See the end for copying conditions.
 
   - bugfix: handle connection options w/o "backup" env var
 
-	Previously, ‘pg-conndefaults’ expected every option to have a
-	backup env var (e.g., option ‘#:host’ and env var ‘PGHOST’).
-	For later versions of PostgreSQL which no longer maintain this
-	1:1 correspondance, Guile-PG would segfault.
+    Previously, ‘pg-conndefaults’ expected every option to have a
+    backup env var (e.g., option ‘#:host’ and env var ‘PGHOST’).
+    For later versions of PostgreSQL which no longer maintain this
+    1:1 correspondance, Guile-PG would segfault.
 
-	Now, in such cases, the value associated w/ the key ‘#:envvar’
-	in the alist returned by ‘pg-conndefaults’ is ‘#f’.
+    Now, in such cases, the value associated w/ the key ‘#:envvar’
+    in the alist returned by ‘pg-conndefaults’ is ‘#f’.
 
   - planned retirement
     - procedure ‘(database postgres) pg-getline’
@@ -20,12 +20,12 @@ See the end for copying conditions.
     - procedure ‘(database postgres) pg-putline’
     - procedure ‘(database postgres) pg-endcopy’
 
-	These procedures are obsoleted by ‘pg-get-copy-data’ and
-	‘pg-put-copy-data’.  They WILL BE REMOVED by 2013-12-31.
+      These procedures are obsoleted by ‘pg-get-copy-data’ and
+      ‘pg-put-copy-data’.  They WILL BE REMOVED by 2013-12-31.
 
-	Actually, the first two were originally -- in Guile-PG 0.41
-	(2011-09-29) -- planned to be removed by 2012-12-31.
-	Support has been extended for solidarity w/ the latter two.
+      Actually, the first two were originally -- in Guile-PG 0.41
+      (2011-09-29) -- planned to be removed by 2012-12-31.
+      Support has been extended for solidarity w/ the latter two.
 
   - bootstrap tools upgraded
     - GNU Texinfo 5.1
@@ -35,8 +35,8 @@ See the end for copying conditions.
 
   - support for "make installcheck"
 
-	This does "make check" at its core, so the same env vars apply.
-	Obviously, you should do "make install" first for sane results.
+    This does "make check" at its core, so the same env vars apply.
+    Obviously, you should do "make install" first for sane results.
 
   - bootstrap tools upgraded
     - GNU Autoconf 2.69
@@ -50,26 +50,26 @@ See the end for copying conditions.
 
   - distribution now .tar.xz
 
-	If you have GNU tar, you can use "tar xf" and it will DTRT.
-	If not, you can use "xz -dc TARBALL | tar xf -" to unpack.
+    If you have GNU tar, you can use "tar xf" and it will DTRT.
+    If not, you can use "xz -dc TARBALL | tar xf -" to unpack.
 
   - bugfix: ‘pg-get-copy-data’ handles unspecified ‘async?’
 
-	Previously, if ‘async?’ was unspecified, it was incorrectly
-	interpreted as true (i.e., "not false").  Now, if unspecified,
-	it is interpreted correctly as false.
+    Previously, if ‘async?’ was unspecified, it was incorrectly
+    interpreted as true (i.e., "not false").  Now, if unspecified,
+    it is interpreted correctly as false.
 
   - testing slack for pre-8.1 ‘pg-client-encoding’
 
-	Previously, the types-table test was too strict when checking
-	the ‘pg-client-encoding’ return value, expecting "UTF-8" only.
-	Now, it accepts also "UNICODE", which is the norm for PostgreSQL
-	prior to 8.1.
+    Previously, the types-table test was too strict when checking
+    the ‘pg-client-encoding’ return value, expecting "UTF-8" only.
+    Now, it accepts also "UNICODE", which is the norm for PostgreSQL
+    prior to 8.1.
 
   - support for ‘make check KEEPD=1’
 
-	If you run "make check" many times, you can avoid daemon bounce
-	overhead by specifying ‘KEEPD=1’, which inhibits daemon killing.
+    If you run "make check" many times, you can avoid daemon bounce
+    overhead by specifying ‘KEEPD=1’, which inhibits daemon killing.
 
   - maintenance tools
     - GNU Autoconf 2.68
@@ -81,109 +81,109 @@ See the end for copying conditions.
 
 - 0.43 | 2012-02-06
 
-	[PBI] means "WARNING: potentially backward-incompatible".
+  [PBI] means "WARNING: potentially backward-incompatible".
 
   - bugfix: ‘sql-quote’ translates backslash (#\\) to ‘\134’
 
-	Previously, backslash characters were passed through
-	unmodified.  Now, they are translated to the string "\134"
-	(i.e., the four characters ‘#\\’, ‘#\1’, ‘#\3’, ‘#\4’).
+    Previously, backslash characters were passed through
+    unmodified.  Now, they are translated to the string "\134"
+    (i.e., the four characters ‘#\\’, ‘#\1’, ‘#\3’, ‘#\4’).
 
   - [PBI] ‘bytea’ stringifier outputs only one backslash
 
-	If the ‘bytea’ stringifier from ‘(database postgres-types)’ is
-	used standalone, this represents a BACKWARD INCOMPATIBLE change.
-	In the normal case, however, where the stringifier is used in
-	conjunction with ‘sql-quote’, this change is transparent.
+    If the ‘bytea’ stringifier from ‘(database postgres-types)’ is
+    used standalone, this represents a BACKWARD INCOMPATIBLE change.
+    In the normal case, however, where the stringifier is used in
+    conjunction with ‘sql-quote’, this change is transparent.
 
   - new (database postgres-qcons) proc: string-xrep
 
-	Some versions of Guile emit ‘\xXX’ to represent the octet with
-	hex value XX when constructing the external representation of a
-	string, for certain octets.  Furthermore, some versions of
-	PostgreSQL cannot grok such escape sequences anyway.  The new
-	procedure ‘string-xrep’ is like ‘object->string’ (for a string
-	arg) except that it explicitly emits the octet itself, except
-	for ‘#\\’ and and ‘#\"’, which are backslash-escaped as normal.
+    Some versions of Guile emit ‘\xXX’ to represent the octet with
+    hex value XX when constructing the external representation of a
+    string, for certain octets.  Furthermore, some versions of
+    PostgreSQL cannot grok such escape sequences anyway.  The new
+    procedure ‘string-xrep’ is like ‘object->string’ (for a string
+    arg) except that it explicitly emits the octet itself, except
+    for ‘#\\’ and and ‘#\"’, which are backslash-escaped as normal.
 
   - ‘(database postgres-qcons) idquote’ no longer emits ‘\xXX’
 
-	Before, ‘idquote’ used ‘object->string’ internally, and thus
-	suffered from the problems described in the preceding NEWS
-	entry.  Now, it uses ‘string-xrep’.
+    Before, ‘idquote’ used ‘object->string’ internally, and thus
+    suffered from the problems described in the preceding NEWS
+    entry.  Now, it uses ‘string-xrep’.
 
   - ‘(database postgres-col-defs) validate-def’ more permissive
 
-	A column name may now be any symbol that does not contain
-	whitespace.  Previously it was restricted to a symbol whose
-	constituent characters were alphanumeric or underscore.
+    A column name may now be any symbol that does not contain
+    whitespace.  Previously it was restricted to a symbol whose
+    constituent characters were alphanumeric or underscore.
 
-	This change makes Guile-PG less strict (in some sense) than
-	PostgreSQL, which imposes other rules.  Overarching is the
-	recommendation from PostgreSQL to consistently use a "delimited
-	identifier" (aka "quoted identifier") rather than a naked name.
-	That's what ‘idquote’ and ‘string-xrep’, both used extensively
-	in Guile-PG, do.  See section "Identifiers and Key Words" in
-	chapter "SQL Syntax" in the PostgreSQL documentation, for more
-	information.
+    This change makes Guile-PG less strict (in some sense) than
+    PostgreSQL, which imposes other rules.  Overarching is the
+    recommendation from PostgreSQL to consistently use a "delimited
+    identifier" (aka "quoted identifier") rather than a naked name.
+    That's what ‘idquote’ and ‘string-xrep’, both used extensively
+    in Guile-PG, do.  See section "Identifiers and Key Words" in
+    chapter "SQL Syntax" in the PostgreSQL documentation, for more
+    information.
 
   - ‘pgtable-manager’ and ‘pgtable-worker’ likewise relaxed
 
-	These use ‘(database postgres-col-defs)’ procs and new proc
-	‘string-xrep’ internally, and thus benefit from the changes
-	mentioned in the preceding NEWS entries.  Notably, table and
-	column names are less constrained.  For example, see file
-	test/types-table.scm, proc ‘test-m2’.
+    These use ‘(database postgres-col-defs)’ procs and new proc
+    ‘string-xrep’ internally, and thus benefit from the changes
+    mentioned in the preceding NEWS entries.  Notably, table and
+    column names are less constrained.  For example, see file
+    test/types-table.scm, proc ‘test-m2’.
 
-	[Probably "relaxed" is not as good as "strictness relaxed and
-	multi-byte-fu enhanced", but that does not fit on one line.]
+    [Probably "relaxed" is not as good as "strictness relaxed and
+    multi-byte-fu enhanced", but that does not fit on one line.]
 
   - fake cluster created on-demand for "make check"
 
-	In addition to a fake installation, "make check" now also
-	creates a cluster under test/fake-cluster/ configured for
-	Unix-domain connections, and kicks/kills the daemon around the
-	actual ‘runtest TEST’ invocations.  This means it is no longer
-	necessary to set env var ‘PGDATABASE’.  In fact, that and env
-	var ‘PGHOST’ are now silently ignored, since ‘runtest’ clobbers
-	them internally.
+    In addition to a fake installation, "make check" now also
+    creates a cluster under test/fake-cluster/ configured for
+    Unix-domain connections, and kicks/kills the daemon around the
+    actual ‘runtest TEST’ invocations.  This means it is no longer
+    necessary to set env var ‘PGDATABASE’.  In fact, that and env
+    var ‘PGHOST’ are now silently ignored, since ‘runtest’ clobbers
+    them internally.
 
-	If you previously tested Guile-PG against different PostgreSQL
-	versions by varying ‘PGDATABASE’, you now need to vary env var
-	‘INITDB’ instead, and zonk the cluster before the "make check"
-	invocation.  Something like:
+    If you previously tested Guile-PG against different PostgreSQL
+    versions by varying ‘PGDATABASE’, you now need to vary env var
+    ‘INITDB’ instead, and zonk the cluster before the "make check"
+    invocation.  Something like:
 
-	  $(MAKE) delete-cluster
-	  $(MAKE) check DEBUG=1 INITDB=/a/particular/initdb
+      $(MAKE) delete-cluster
+      $(MAKE) check DEBUG=1 INITDB=/a/particular/initdb
 
-	in directory test/ would be fine.  See README section "Testing".
+    in directory test/ would be fine.  See README section "Testing".
 
 
 - 0.42 | 2011-10-04
 
   - bugfix: "make check" no longer clobbers installed file
 
-	For Guile versions that require a Scheme wrapper for .so loading
-	(i.e., Guile 1.8 and later), "make check" does a fake install w/
-	a ‘prefix’ in the build tree.  Unfortunately, in Guile-PG 0.41,
-	that dir was not specified to the Scheme wrapper, resulting in
-	its installation under the "real" (as determined / set by the
-	configure script) ‘prefix’.
+    For Guile versions that require a Scheme wrapper for .so loading
+    (i.e., Guile 1.8 and later), "make check" does a fake install w/
+    a ‘prefix’ in the build tree.  Unfortunately, in Guile-PG 0.41,
+    that dir was not specified to the Scheme wrapper, resulting in
+    its installation under the "real" (as determined / set by the
+    configure script) ‘prefix’.
 
-	The system would reamin in this inconsistent state, with the
-	wrapper pointing into the build tree, until "make install", at
-	which point everything was resynchronized.  Obviously, if you
-	never do "make install", the problem persists (silently, until
-	the build tree is deleted).
+    The system would reamin in this inconsistent state, with the
+    wrapper pointing into the build tree, until "make install", at
+    which point everything was resynchronized.  Obviously, if you
+    never do "make install", the problem persists (silently, until
+    the build tree is deleted).
 
-	This has now been fixed.  If you did a "make check" but NOT
-	"make install" of Guile-PG 0.41, the best way forward is to
-	configure Guile-PG 0.42 and then "make install; make uninstall".
+    This has now been fixed.  If you did a "make check" but NOT
+    "make install" of Guile-PG 0.41, the best way forward is to
+    configure Guile-PG 0.42 and then "make install; make uninstall".
 
   - ‘pg-print’ now does ‘fflush’ after each operation
 
-	This probably kills performance, but it is safer, given Guile's
-	direct use of ‘write(2)’ et al.
+    This probably kills performance, but it is safer, given Guile's
+    direct use of ‘write(2)’ et al.
 
   - ‘pg-set-client-encoding!’ also accepts symbolic encoding
 
@@ -194,48 +194,48 @@ See the end for copying conditions.
 
     - Make ‘idquote’ special-case ‘*’ in second part.
 
-	was: (display (idquote 'a.*)) |= "a"."*"
-	now: (display (idquote 'a.*)) |= "a".*
+      was: (display (idquote 'a.*)) |= "a"."*"
+      now: (display (idquote 'a.*)) |= "a".*
 
     - Call ‘string-append’ with strings, not symbols.
 
-	We no longer rely on this particular Guile 1.4 slack.
+      We no longer rely on this particular Guile 1.4 slack.
 
   - Portability fixes (tested w/ Guile 1.8.7)
 
-	With the following (and other, non-user-visible) changes, "make
-	check" no longer displays "foo is deprecated" messages with
-	Guile 1.8.7.  If you see them for your system, for either "make
-	check" or subsequent Guile-PG use, please report that as a bug.
+    With the following (and other, non-user-visible) changes, "make
+    check" no longer displays "foo is deprecated" messages with
+    Guile 1.8.7.  If you see them for your system, for either "make
+    check" or subsequent Guile-PG use, please report that as a bug.
 
     - Don't do "defer/allow ints" for Guile 1.8+.
 
     - Revamped Scheme object to C byte range for Guile 1.8+
 
-	Access to Scheme string representation was curtailed in Guile
-	1.8 (API available but deprecated), so all operations that pass
-	a C byte range to libpq functions now incur an extra conversion
-	step.  The unfortunate user-visible result is performance loss.
+      Access to Scheme string representation was curtailed in Guile
+      1.8 (API available but deprecated), so all operations that pass
+      a C byte range to libpq functions now incur an extra conversion
+      step.  The unfortunate user-visible result is performance loss.
 
   - Planned retirement
     - procedure ‘(database postgres) pg-getline’
     - procedure ‘(database postgres) pg-getlineasync’
 
-	These procedures are obsoleted by ‘pg-get-copy-data’ and
-	WILL BE REMOVED by 2012-12-31.
+      These procedures are obsoleted by ‘pg-get-copy-data’ and
+      WILL BE REMOVED by 2012-12-31.
 
   - New fluid to control ‘(database postgres-qcons) sql-quote’
 
-	The fluid ‘sql-quote-auto-E?’ controls whether or not
-	‘sql-quote’ should check for ‘\’ (backslash) characters and
-	prefix an "E" in that case.  This is relevant if you use
-	PostgreSQL 8.2+.
+    The fluid ‘sql-quote-auto-E?’ controls whether or not
+    ‘sql-quote’ should check for ‘\’ (backslash) characters and
+    prefix an "E" in that case.  This is relevant if you use
+    PostgreSQL 8.2+.
 
   - New support for "hex format" in ‘bytea’ objectifier
 
-	PostgreSQL 9.0 introduces a more efficient "hex format" for
-	‘bytea’ output.  This is now recognized and parsed, falling back
-	to handling the traditional "escape format" if not recognized.
+    PostgreSQL 9.0 introduces a more efficient "hex format" for
+    ‘bytea’ output.  This is now recognized and parsed, falling back
+    to handling the traditional "escape format" if not recognized.
 
   - Doc improvements
     - Fix omission: Document ‘pg-get-copy-data’ arg ‘async?’.
@@ -247,9 +247,9 @@ See the end for copying conditions.
 
   - Tested w/ latest server versions: 8.[01234], 9.[01]
 
-	Additionally, the entries in file test/OK now include the
-	associated Guile-PG version, and some include a subheading
-	"other pg" to list the precise server version numbers.
+    Additionally, the entries in file test/OK now include the
+    associated Guile-PG version, and some include a subheading
+    "other pg" to list the precise server version numbers.
 
 
 - 0.40 | 2011-06-05
@@ -278,11 +278,11 @@ See the end for copying conditions.
     - pg-get-client-data
     - pg-set-client-data!
 
-	These were pre-announced in Guile-PG 0.38 (2009-06-22) NEWS.
+      These were pre-announced in Guile-PG 0.38 (2009-06-22) NEWS.
 
   - Proc ‘(database postgres) pg-parameter-status’ no longer takes keyword
 
-	This was pre-announced in Guile-PG 0.38 (2009-06-22) NEWS.
+    This was pre-announced in Guile-PG 0.38 (2009-06-22) NEWS.
 
   - Maintenance uses autoconf 2.65, automake 1.11, libtool 2.2.6b
 
@@ -291,103 +291,103 @@ See the end for copying conditions.
 
   - Support for PostgreSQL 7.3 and earlier dropped
 
-	Sorry, this was not pre-announced.  Note that the subsequent
-	version, i.e. PostgreSQL 7.4, was released 2003-11-17, over five
-	years ago.
+    Sorry, this was not pre-announced.  Note that the subsequent
+    version, i.e. PostgreSQL 7.4, was released 2003-11-17, over five
+    years ago.
 
   - Dropped (database postgres) proc: pg-get-connection
 
-	This was pre-announced in 0.37 (2008-05-24) NEWS.
+    This was pre-announced in 0.37 (2008-05-24) NEWS.
 
   - External rep no longer includes "serial number"
     - Connection
     - Result
 
-	These were pre-announced in 0.37 (2008-05-24) NEWS.
+      These were pre-announced in 0.37 (2008-05-24) NEWS.
 
   - Planned retirement
     - pg-lo-get-connection
     - pg-get-client-data
     - pg-set-client-data!
 
-	These (database postgres) procs provide or rely on associations
-	that can better be expressed using normal Scheme facilities such
-	as object properties, hash tables, etc, and thus are deemed a
-	redundant maintenance burden; they WILL BE REMOVED by 2009-12-31.
+      These (database postgres) procs provide or rely on associations
+      that can better be expressed using normal Scheme facilities such
+      as object properties, hash tables, etc, and thus are deemed a
+      redundant maintenance burden; they WILL BE REMOVED by 2009-12-31.
 
   - Proc ‘(database postgres) pg-parameter-status’ takes symbol ‘parm’
 
-	These are equivalent:
-	(pg-parameter-status CONN #:session_authorization)
-	(pg-parameter-status CONN  'session_authorization)
+    These are equivalent:
+    (pg-parameter-status CONN #:session_authorization)
+    (pg-parameter-status CONN  'session_authorization)
 
-	Note, however, that support for keyword ‘parm’ is a misfeature,
-	and WILL BE REMOVED by 2009-12-31.
+    Note, however, that support for keyword ‘parm’ is a misfeature,
+    and WILL BE REMOVED by 2009-12-31.
 
   - Proc ‘(database postgres-qcons) sql-quote’ more standards compliant
 
-	Previously, this did single-quote escaping by inserting a
-	backslash character prior to every single-quote.  The result is
-	acceptable by PostgreSQL, but is not standards compliant.  Now,
-	it does the escaping by doubling each single-quote, which is
-	standards compliant and less prone to trigger warnings from the
-	more recent PostgreSQL versions (8.2 and later).
+    Previously, this did single-quote escaping by inserting a
+    backslash character prior to every single-quote.  The result is
+    acceptable by PostgreSQL, but is not standards compliant.  Now,
+    it does the escaping by doubling each single-quote, which is
+    standards compliant and less prone to trigger warnings from the
+    more recent PostgreSQL versions (8.2 and later).
 
-	bef: (sql-quote "a'b") => "'a\\'b'"
-	now: (sql-quote "a'b") => "'a''b'"
+    bef: (sql-quote "a'b") => "'a\\'b'"
+    now: (sql-quote "a'b") => "'a''b'"
 
   - Changes to ‘pgtable-manager’ (and thus ‘pgtable-worker’)
 
     - Support for DEFAULT
 
-	You can now use the keyword #:DEFAULT to specify DEFAULT as the
-	value to insert into a table, or to update a column.  Indeed, for
-	column values, any keyword now expands to its name (sans ‘#:’).
+      You can now use the keyword #:DEFAULT to specify DEFAULT as the
+      value to insert into a table, or to update a column.  Indeed, for
+      column values, any keyword now expands to its name (sans ‘#:’).
 
     - #:insert-values no longer filters "serial"
 
-	Previously, columns with "serial" type were filtered, so that it
-	was possible to #:insert-values specifying only values for the
-	other columns.  Now, such usage raises a "column count mismatch"
-	error; you must explicitly use #:DEFAULT.  For example, given a
-	table with column types "text", "serial", "text":
+      Previously, columns with "serial" type were filtered, so that it
+      was possible to #:insert-values specifying only values for the
+      other columns.  Now, such usage raises a "column count mismatch"
+      error; you must explicitly use #:DEFAULT.  For example, given a
+      table with column types "text", "serial", "text":
 
-	bef: (W #:insert-values "foo" "bar") => ok
-	now: (W #:insert-values "foo" "bar") => error
-	     (W #:insert-values "foo" #:DEFAULT "bar") => ok
+      bef: (W #:insert-values "foo" "bar") => ok
+      now: (W #:insert-values "foo" "bar") => error
+           (W #:insert-values "foo" #:DEFAULT "bar") => ok
 
-	Although technically speaking the new behavior is incompatible,
-	the previous behavior was never documented (secret misfeature),
-	so the impact on your code is likely to be zero (no worries).
+      Although technically speaking the new behavior is incompatible,
+      the previous behavior was never documented (secret misfeature),
+      so the impact on your code is likely to be zero (no worries).
 
   - Connection object xrep omits "port" if "host" is a socket dir
 
-	When the connection is Unix-domain (i.e., the "host" is a string
-	that begins with slash that names a directory), the concept of
-	"port" makes no sense.
+    When the connection is Unix-domain (i.e., the "host" is a string
+    that begins with slash that names a directory), the concept of
+    "port" makes no sense.
 
   - Manual table-of-contents moved forward
 
-	It used to be (strangely but perhaps following some outdated
-	convention) at the end of the document.
+    It used to be (strangely but perhaps following some outdated
+    convention) at the end of the document.
 
   - New (database postgres) procs
 
     - pg-mblen
 
-	While we wait for Guile to go multibyte (and stay there), this
-	is a small building-block that eases "mostly ignorant" string
-	processing.
+      While we wait for Guile to go multibyte (and stay there), this
+      is a small building-block that eases "mostly ignorant" string
+      processing.
 
     - pg-server-version
 
-	This returns an integer representation of the server version of
-	a connection, or ‘#f’ if the connection is closed.
+      This returns an integer representation of the server version of
+      a connection, or ‘#f’ if the connection is closed.
 
   - New (database postgres-resx) proc: object<-result
 
-	This is useful for ‘SELECT EXPR;’ where the result tuple
-	consists of one row and one column.
+    This is useful for ‘SELECT EXPR;’ where the result tuple
+    consists of one row and one column.
 
   - Maintenance uses autoconf 2.63, automake 1.11, libtool 2.2.6
 
@@ -396,101 +396,101 @@ See the end for copying conditions.
 
   - Configuration change: search $prefix for PostgreSQL headers/libs
 
-	Previously, the configure script would look in the "normal"
-	system directories (e.g., /usr/include and /usr/lib) for
-	PostgreSQL headers and libraries, by default.  Now, it looks
-	under $prefix/include and $prefix/lib, respectively.
+    Previously, the configure script would look in the "normal"
+    system directories (e.g., /usr/include and /usr/lib) for
+    PostgreSQL headers and libraries, by default.  Now, it looks
+    under $prefix/include and $prefix/lib, respectively.
 
-	This means that the common (for ttn) case where all three packages
-	(Guile, PostgreSQL, Guile-PG) are installed under the same prefix
-	(e.g., ~/local) requires one less command-line option to the
-	configure script.  In any case, ‘--with-libpq’ and friends are
-	still available for specifying dirs directly (see README).
+    This means that the common (for ttn) case where all three packages
+    (Guile, PostgreSQL, Guile-PG) are installed under the same prefix
+    (e.g., ~/local) requires one less command-line option to the
+    configure script.  In any case, ‘--with-libpq’ and friends are
+    still available for specifying dirs directly (see README).
 
   - Change to pg-get-connection
 
-	This proc now returns #f if its arg's connection is no longer live.
-	You should probably avoid it altogether; see following NEWS item.
+    This proc now returns #f if its arg's connection is no longer live.
+    You should probably avoid it altogether; see following NEWS item.
 
   - Planned modesty
 
-	Currently, Guile-PG exposes some accounting (implementation) details
-	that it shouldn't.  These are the "serial number" of connection and
-	result objects, and the link between a result object the connection
-	object where it originated.  These details WILL BE REMOVED after
-	2008-10-01; do NOT rely on them.  Practically speaking, this means
-	‘pg-get-connection’ will be deleted and the external representation
-	for the objects will drop the "N" field:
+    Currently, Guile-PG exposes some accounting (implementation) details
+    that it shouldn't.  These are the "serial number" of connection and
+    result objects, and the link between a result object the connection
+    object where it originated.  These details WILL BE REMOVED after
+    2008-10-01; do NOT rely on them.  Practically speaking, this means
+    ‘pg-get-connection’ will be deleted and the external representation
+    for the objects will drop the "N" field:
 
-	until 2008-10-01:   #<PG-CONN:N:...>   and   #<PG-RESULT:N:...>
-	after 2008-10-01:   #<PG-CONN:...>     and   #<PG-RESULT:...>
+    until 2008-10-01:   #<PG-CONN:N:...>   and   #<PG-RESULT:N:...>
+    after 2008-10-01:   #<PG-CONN:...>     and   #<PG-RESULT:...>
 
-	To achieve ‘pg-get-connection’ functionality, in most cases, it's
-	enough to simply save the connection object used to make the request
-	in the first place.
+    To achieve ‘pg-get-connection’ functionality, in most cases, it's
+    enough to simply save the connection object used to make the request
+    in the first place.
 
-	;; migration strategy: use connection object directly
-	(define RES (pg-exec CONN ...))
+    ;; migration strategy: use connection object directly
+    (define RES (pg-exec CONN ...))
 
-	(eq? (pg-get-connection RES) CONN)
-	=> #t
+    (eq? (pg-get-connection RES) CONN)
+    => #t
 
-	In other cases, probably the next best solution is to define an
-	object property for the association.
+    In other cases, probably the next best solution is to define an
+    object property for the association.
 
-	;; migration strategy: define/maintain/consult object property
-	(define res-conns (make-object-property))
+    ;; migration strategy: define/maintain/consult object property
+    (define res-conns (make-object-property))
 
-	(define (conn-saving-exec conn query)
-	  (let ((res (pg-exec conn query)))
-	    (set! (res-conns res) conn)
-	    res))
+    (define (conn-saving-exec conn query)
+      (let ((res (pg-exec conn query)))
+        (set! (res-conns res) conn)
+        res))
 
-	(define RES (conn-saving-exec CONN ...))
+    (define RES (conn-saving-exec CONN ...))
 
-	(eq? (pg-get-connection RES) (res-conns RES))
-	=> #t
+    (eq? (pg-get-connection RES) (res-conns RES))
+    => #t
 
   - Tests issue SQL commands directly to CREATE and DROP the test database
 
-	Previously "make check" required the commands createdb(1) and
-	dropdb(1) (or destroydb(1) for older PostgreSQL versions) to be
-	installed on the system.  Now, the test infrastructure uses Guile-PG
-	module (database postgres) to connect to "template1" and issues SQL
-	commands "CREATE DATABASE" and "DROP DATABASE" directly.
+    Previously "make check" required the commands createdb(1) and
+    dropdb(1) (or destroydb(1) for older PostgreSQL versions) to be
+    installed on the system.  Now, the test infrastructure uses Guile-PG
+    module (database postgres) to connect to "template1" and issues SQL
+    commands "CREATE DATABASE" and "DROP DATABASE" directly.
 
-	[ttn musing ...] This change unfortunately does not remove a long-
-	standing unexplained phenomenon: although the procs for doing the
-	create/drop (now) take care to ‘pg-finish’ the connection to
-	template1 (see test/testing.scm, last page), it seems PostgreSQL
-	does not synchronously "finish" internally using template1.  This
-	explains the (previously one ‘sleep’ and now) two ‘usleep’ calls,
-	which ideally would not be necessary.  Perhaps after the planned
-	modesty occurs (see above), things will be more deterministic?
+    [ttn musing ...] This change unfortunately does not remove a long-
+    standing unexplained phenomenon: although the procs for doing the
+    create/drop (now) take care to ‘pg-finish’ the connection to
+    template1 (see test/testing.scm, last page), it seems PostgreSQL
+    does not synchronously "finish" internally using template1.  This
+    explains the (previously one ‘sleep’ and now) two ‘usleep’ calls,
+    which ideally would not be necessary.  Perhaps after the planned
+    modesty occurs (see above), things will be more deterministic?
 
   - New (database postgres-meta) proc: information-schema-names
   - New (database postgres-meta) proc: information-schema-coldefs
 
-	These procs describe Guile-PG's "standard introspection" support,
-	as specified in the PostgreSQL 7.4.19 documentation (chapter 32,
-	"The Information Schema").
+    These procs describe Guile-PG's "standard introspection" support,
+    as specified in the PostgreSQL 7.4.19 documentation (chapter 32,
+    "The Information Schema").
 
-	Additionally, loading the module defines type converters for
-	‘cardinal_number’, ‘character_data’ and ‘sql_identifier’.  The
-	‘time_stamp’ type converter does not seem to be used and is not
-	provided.
+    Additionally, loading the module defines type converters for
+    ‘cardinal_number’, ‘character_data’ and ‘sql_identifier’.  The
+    ‘time_stamp’ type converter does not seem to be used and is not
+    provided.
 
   - New pgtable-manager (and -worker) command: #:finish
 
-	This closes the (internal) connection and arranges for all future
-	invocations of the closure to signal a "dead connection" error.
+    This closes the (internal) connection and arranges for all future
+    invocations of the closure to signal a "dead connection" error.
 
   - Proc ‘gxrepl’ closes connection when done
 
   - New support for #:FOO-all combiners in ‘parse+make-SELECT-tree’
 
-	This (database postgres-qcons) proc now supports #:union-all,
-	#:intersect-all and #:except-all, as combiners.
+    This (database postgres-qcons) proc now supports #:union-all,
+    #:intersect-all and #:except-all, as combiners.
 
   - Maintenance uses autoconf 2.62, automake 1.10.1, libtool 2.2.2
 
@@ -499,25 +499,25 @@ See the end for copying conditions.
 
   - Test fix: Avoid requiring procs from module (ice-9 regex)
 
-	The test guile-pg-basic-tests.scm used to use ‘string-match’
-	but now it uses ‘make-regexp’ and ‘regexp-exec’ directly.
-	We call this a fix because some Guile versions do not autoload
-	‘string-match’.  However, it is a fix to the test infrastructure
-	and not to the functionality of Guile-PG.
+    The test guile-pg-basic-tests.scm used to use ‘string-match’
+    but now it uses ‘make-regexp’ and ‘regexp-exec’ directly.
+    We call this a fix because some Guile versions do not autoload
+    ‘string-match’.  However, it is a fix to the test infrastructure
+    and not to the functionality of Guile-PG.
 
   - Dropped subdir: contrib/
 
-	Some of the ideas in the files under contrib/ have already been
-	incorporated into Guile-PG.  Others were Not So Important.
+    Some of the ideas in the files under contrib/ have already been
+    incorporated into Guile-PG.  Others were Not So Important.
 
 
 - 0.35 | 2008-02-13
 
   - Bugfix: composition INTERSECT in ‘parse+make-SELECT-tree’
 
-	This proc, in module (database postgres-qcons), used to
-	erroneously accept #:intersection and emit "INTERSECTION".
-	Now, it accepts #:intersect and emits "INTERSECT".
+    This proc, in module (database postgres-qcons), used to
+    erroneously accept #:intersection and emit "INTERSECTION".
+    Now, it accepts #:intersect and emits "INTERSECT".
 
   - New (database postgres) procs
     - pg-escape-string-conn
@@ -533,9 +533,9 @@ See the end for copying conditions.
 
   - Installation cleanup
 
-	If the host Guile supports module catalogs, the configure script
-	arranges for "make install" to delete the .la file and symlinks,
-	and do ‘chmod -x’ on the compiled module (.so file).
+    If the host Guile supports module catalogs, the configure script
+    arranges for "make install" to delete the .la file and symlinks,
+    and do ‘chmod -x’ on the compiled module (.so file).
 
   - New (database postgres) procs
     - pg-finish
@@ -543,9 +543,9 @@ See the end for copying conditions.
 
   - New chapter in manual: Not Included
 
-	This chapter lists libpq interface elements that are NOT
-	provided by module (database postgres) and explains why they
-	are omitted.
+    This chapter lists libpq interface elements that are NOT
+    provided by module (database postgres) and explains why they
+    are omitted.
 
   - Tested against PostgreSQL 7.4.18
 
@@ -554,29 +554,29 @@ See the end for copying conditions.
 
   - Bugfix: ‘pgtable-manager’ handles mixed-case table names
 
-	Previously, ‘pgtable-manager’ (and ‘pgtable-worker’) would
-	render the table name in an SQL command to ‘pg-exec’ without
-	quoting.  PostgreSQL would case-smash it, and subsequently not
-	recognize the table, causing an error.  For example:
+    Previously, ‘pgtable-manager’ (and ‘pgtable-worker’) would
+    render the table name in an SQL command to ‘pg-exec’ without
+    quoting.  PostgreSQL would case-smash it, and subsequently not
+    recognize the table, causing an error.  For example:
 
-	(define w (pgtable-worker CONN "oOpAcK" ...))
-	(w #:drop)
-	before: => DROP TABLE oOpAcK; => FATAL (no relation "oopack").
-	   now: => DROP TABLE "oOpAcK"; => OK.
+    (define w (pgtable-worker CONN "oOpAcK" ...))
+    (w #:drop)
+    before: => DROP TABLE oOpAcK; => FATAL (no relation "oopack").
+       now: => DROP TABLE "oOpAcK"; => OK.
 
   - New type converters in module (database postgres-types)
 
-	int  decimal  numeric  varchar  character  bytea
+    int  decimal  numeric  varchar  character  bytea
 
   - New support for special constructs in (database postgres-qcons)
 
-	(in/set A B...) => A IN ( B, ... )
-	(between A B C) => ( A BETWEEN B AND C )
-	(any--OP A B)   => ( A OP ANY B )
-	(all--OP A B)   => ( A OP ALL B )
+    (in/set A B...) => A IN ( B, ... )
+    (between A B C) => ( A BETWEEN B AND C )
+    (any--OP A B)   => ( A OP ANY B )
+    (all--OP A B)   => ( A OP ALL B )
 
-	For the latter two, OP is a comparison operator, e.g ‘=’.
-	Parentheses and commas are added automatically.
+    For the latter two, OP is a comparison operator, e.g ‘=’.
+    Parentheses and commas are added automatically.
 
   - Tested against PostgreSQL 7.4.17
 
@@ -585,29 +585,29 @@ See the end for copying conditions.
 
   - New command for ‘pgtable-manager’: #:tuples-result->rows
 
-	This uses ‘(database postgres-resx) result->object-rows’.
-	For example:
+    This uses ‘(database postgres-resx) result->object-rows’.
+    For example:
 
-	(define T (pgtable-worker ...))
-	(define R (T #:select ...))
-	(equal? (T #:tuples-result->rows R)
-	        (map (lambda (x)
-	               (map cdr x))
-	             (T #:tuples-result->alists R)))
-	=> #t
+    (define T (pgtable-worker ...))
+    (define R (T #:select ...))
+    (equal? (T #:tuples-result->rows R)
+            (map (lambda (x)
+                   (map cdr x))
+                 (T #:tuples-result->alists R)))
+    => #t
 
 
 - 0.31 | 2007-04-03
 
   - Opaque string support removed
 
-	Opaque string support in modules (database postgres-table) and
-	(database postgres-qcons) has been removed.  This was announced
-	in NEWS below for Guile-PG 0.30 (2006-04-04).
+    Opaque string support in modules (database postgres-table) and
+    (database postgres-qcons) has been removed.  This was announced
+    in NEWS below for Guile-PG 0.30 (2006-04-04).
 
   - Support for ‘pgtable-manager’ "data commands" removed
 
-	Announced in NEWS below for Guile-PG 0.30 (2006-04-04).
+    Announced in NEWS below for Guile-PG 0.30 (2006-04-04).
 
   - Tested against PostgreSQL 7.4.16
 
@@ -618,92 +618,92 @@ See the end for copying conditions.
 
   - Expiration date extended for opaque string support
 
-	Opaque string support in modules (database postgres-table) and
-	(database postgres-qcons) will be removed after 2006-12-31; DO
-	NOT rely on it.  This represents a consolidation of disparate
-	expiration dates, including the one announced in NEWS below for
-	Guile-PG 0.26 (2005-02-24).  The lack of central announcement
-	(comments in the source and documentation don't count) caused
-	some confusion -- sorry about that.
+    Opaque string support in modules (database postgres-table) and
+    (database postgres-qcons) will be removed after 2006-12-31; DO
+    NOT rely on it.  This represents a consolidation of disparate
+    expiration dates, including the one announced in NEWS below for
+    Guile-PG 0.26 (2005-02-24).  The lack of central announcement
+    (comments in the source and documentation don't count) caused
+    some confusion -- sorry about that.
 
-	Generally, the replacement for opaque strings is some kind of
-	form that either is a prefix-style expression or includes one.
-	Note: such expressions do not preclude strings, only opaque
-	ones.  See "Query Construction" in the manual for details.
+    Generally, the replacement for opaque strings is some kind of
+    form that either is a prefix-style expression or includes one.
+    Note: such expressions do not preclude strings, only opaque
+    ones.  See "Query Construction" in the manual for details.
 
-	Here are the areas that will be affected (i.e., where you will
-	want to avoid opaque strings and instead use prefix-style exprs):
-	- module (database postgres-table)
-	  - ‘pgtable-manger’ and ‘pgtable-worker’ commands
-	    - #:select (both OUTSPEC and REST-CLAUSES)
-	    - #:update-col and #:delete-rows WHERE-CONDITION
-	  - EXPR in ‘compile-outspec’ DEFS
-	- module (database postgres-qcons) proc ‘make-SELECT/COLS-tree’
-	  - specifically, EXPR in COLS
-	  - other procs that call ‘make-SELECT/COLS-tree’
-	    - ‘make-SELECT/FROM/COLS-tree’
-	    - ‘parse+make-SELECT-tree’
+    Here are the areas that will be affected (i.e., where you will
+    want to avoid opaque strings and instead use prefix-style exprs):
+    - module (database postgres-table)
+      - ‘pgtable-manger’ and ‘pgtable-worker’ commands
+        - #:select (both OUTSPEC and REST-CLAUSES)
+        - #:update-col and #:delete-rows WHERE-CONDITION
+      - EXPR in ‘compile-outspec’ DEFS
+    - module (database postgres-qcons) proc ‘make-SELECT/COLS-tree’
+      - specifically, EXPR in COLS
+      - other procs that call ‘make-SELECT/COLS-tree’
+        - ‘make-SELECT/FROM/COLS-tree’
+        - ‘parse+make-SELECT-tree’
 
   - Expiration date extended for ‘pgtable-manager’ "data commands"
 
-	Similar to parts of the opaque string support (above), the
-	expiration for ‘pgtable-manager’ "data commands" (i.e.,
-	#:table-name, #:defs and #:pgdb, all which return a non-
-	procedure value), was mentioned in source and documentation
-	but not in NEWS.  So now here it is (with an extension).
+    Similar to parts of the opaque string support (above), the
+    expiration for ‘pgtable-manager’ "data commands" (i.e.,
+    #:table-name, #:defs and #:pgdb, all which return a non-
+    procedure value), was mentioned in source and documentation
+    but not in NEWS.  So now here it is (with an extension).
 
-	These commands will be removed after 2006-12-31; DO NOT rely on
-	them.  Instead, you can use the #:k command specifying, with a
-	keyword, the info you'd like returned: #:table-name, #:col-defs
-	or #:connection, respectively.  For example:
+    These commands will be removed after 2006-12-31; DO NOT rely on
+    them.  Instead, you can use the #:k command specifying, with a
+    keyword, the info you'd like returned: #:table-name, #:col-defs
+    or #:connection, respectively.  For example:
 
-	(define M (pgtable-manager ...))
-	(eq? (M #:defs)			; old way
- 	     ((M #:k) #:col-defs))	; new way
-	=> #t
+    (define M (pgtable-manager ...))
+    (eq? (M #:defs)             ; old way
+         ((M #:k) #:col-defs))  ; new way
+    => #t
 
-	The following example shows the contrast w/ ‘pgtable-worker’,
-	which never accepted "data commands" anyway:
+    The following example shows the contrast w/ ‘pgtable-worker’,
+    which never accepted "data commands" anyway:
 
-	(define W (pgtable-worker ...))
-	(eq? (W #:k #:col-defs)
-	     ((M #:k) #:col-defs))
-	=> #t
+    (define W (pgtable-worker ...))
+    (eq? (W #:k #:col-defs)
+         ((M #:k) #:col-defs))
+    => #t
 
   - New support for keyword args in module (database postgres-qcons)
 
-	Previously, it was not possible to straightforwardly (without
-	bletcherous ‘sql-pre’ strings) render SQL with keywords in the
-	args, such as:
+    Previously, it was not possible to straightforwardly (without
+    bletcherous ‘sql-pre’ strings) render SQL with keywords in the
+    args, such as:
 
-	substring ('gnufoo' FROM position ('foo' IN 'gnufoo'))
+    substring ('gnufoo' FROM position ('foo' IN 'gnufoo'))
 
-	Now, this can be done with the prefix-style expression:
+    Now, this can be done with the prefix-style expression:
 
-	(substring "gnufoo" #:FROM (position "foo" #:IN "gnufoo"))
+    (substring "gnufoo" #:FROM (position "foo" #:IN "gnufoo"))
 
-	Along with this, ‘qcons-declare!’ now handles a new category:
-	#:keyword-args-ok, and the manual lists the handful of functions
-	for which this declaration is builtin.
+    Along with this, ‘qcons-declare!’ now handles a new category:
+    #:keyword-args-ok, and the manual lists the handful of functions
+    for which this declaration is builtin.
 
   - New stuff for ‘pgtable-manager’ (and by extension ‘pgtable-worker’)
 
     - Support for NULL
 
-	You can now use the keyword #:NULL to specify NULL as the value
-	to insert into a table, or to update a column.
+      You can now use the keyword #:NULL to specify NULL as the value
+      to insert into a table, or to update a column.
 
     - New command: #:update-col-alist
 
-	This is like #:update-col, except that the COLS and DATA are
-	specified as a single alist arg, not separately.
+      This is like #:update-col, except that the COLS and DATA are
+      specified as a single alist arg, not separately.
 
   - New (database postgres) procs
 
-	The following procs are associated with the ‘PQPROTOCOLVERSION’
-	feature in the ‘pg-guile-pg-loaded’ return value.  Note that
-	this is in contrast to the one-to-one correspondance between
-	feature and libpq function for previous Guile-PG releases.
+    The following procs are associated with the ‘PQPROTOCOLVERSION’
+    feature in the ‘pg-guile-pg-loaded’ return value.  Note that
+    this is in contrast to the one-to-one correspondance between
+    feature and libpq function for previous Guile-PG releases.
 
     - pg-protocol-version
     - pg-transaction-status
@@ -714,37 +714,37 @@ See the end for copying conditions.
     - pg-ftablecol
     - pg-fformat
 
-	These adhere closely to the C functions in the libpq interface.
-	Here is a table listing the functions and their behavior for
-	installations prior to PostgreSQL 7.4.
+      These adhere closely to the C functions in the libpq interface.
+      Here is a table listing the functions and their behavior for
+      installations prior to PostgreSQL 7.4.
 
-	libpq func            behavior: do nothing and return
-	 PQprotocolVersion     2
-	 PQtransactionStatus   #:unknown
-	 PQparameterStatus     #f
-	 PQsetErrorVerbosity   #:default
-	 PQresultErrorField    #f
-	 PQftable              #f
-	 PQftablecol           #f
-	 PQfformat             #f
+      libpq func            behavior: do nothing and return
+       PQprotocolVersion     2
+       PQtransactionStatus   #:unknown
+       PQparameterStatus     #f
+       PQsetErrorVerbosity   #:default
+       PQresultErrorField    #f
+       PQftable              #f
+       PQftablecol           #f
+       PQfformat             #f
 
     - pg-put-copy-data
     - pg-put-copy-end
     - pg-get-copy-data
 
-	These have a simplified, "more Schemey", interface.  They cannot
-	be used when connected to a "Protocol 2.0" (PostgreSQL 7.3.x and
-	prior) server.
+      These have a simplified, "more Schemey", interface.  They cannot
+      be used when connected to a "Protocol 2.0" (PostgreSQL 7.3.x and
+      prior) server.
 
     - pg-exec-params
     - pg-exec-prepared
     - pg-send-query-params
     - pg-send-query-prepared
 
-	These have a simplified, "more Schemey", interface, and some
-	serious (though provisionary) restrictions.  They cannot be used
-	when connected to a "Protocol 2.0" (PostgreSQL 7.3.x and prior)
-	server.  See new section "Parameters" in the manual for details.
+      These have a simplified, "more Schemey", interface, and some
+      serious (though provisionary) restrictions.  They cannot be used
+      when connected to a "Protocol 2.0" (PostgreSQL 7.3.x and prior)
+      server.  See new section "Parameters" in the manual for details.
 
   - Tested against PostgreSQL 7.4.12 and Guile 1.4.1.107
 
@@ -756,28 +756,28 @@ See the end for copying conditions.
   - Dropped proc: where-clausifier
   - Dropped proc: tuples-result->table
 
-	These used to be in module (database postgres-table); see NEWS
-	entry for version 0.26 (2005-02-24).  The first proc can be
-	emulated with ‘string-append’, and the latter with a combination
-	of #:tuples-result->alists (or #:tuples-result->object-alist)
-	commands to a ‘pgtable-manager’ closure followed by a mapping
-	into a two-dimensional array.
+    These used to be in module (database postgres-table); see NEWS
+    entry for version 0.26 (2005-02-24).  The first proc can be
+    emulated with ‘string-append’, and the latter with a combination
+    of #:tuples-result->alists (or #:tuples-result->object-alist)
+    commands to a ‘pgtable-manager’ closure followed by a mapping
+    into a two-dimensional array.
 
-	As a side effect of dropping ‘tuples-result->table’, the closure
-	returned by ‘pgtable-manager’ no longer recognizes the commands
-	#:t-obj-walk, #:table->object-alist and #:table->alists.
+    As a side effect of dropping ‘tuples-result->table’, the closure
+    returned by ‘pgtable-manager’ no longer recognizes the commands
+    #:t-obj-walk, #:table->object-alist and #:table->alists.
 
   - For ‘gxrepl’, results are now printed with " | " field separator
 
-	That is, space-pipe-space, instead of simply pipe, as before.
-	The result is that gxrepl in an Emacs buffer (preferred env :-)
-	is much more friendly to ‘dabbrev-expand’.
+    That is, space-pipe-space, instead of simply pipe, as before.
+    The result is that gxrepl in an Emacs buffer (preferred env :-)
+    is much more friendly to ‘dabbrev-expand’.
 
   - All (database postgres) procs now tested
 
-	The ‘XFAIL_TESTS’ in tests/Makefile.am has been removed.  This
-	means that we don't expect any tests to fail now; a failing test
-	indicates a bug.  Note that coverage does not imply good coverage!
+    The ‘XFAIL_TESTS’ in tests/Makefile.am has been removed.  This
+    means that we don't expect any tests to fail now; a failing test
+    indicates a bug.  Note that coverage does not imply good coverage!
 
   - Support files guile.m4 and modsup.h synched with Guile 1.4.1.106
 
@@ -786,19 +786,19 @@ See the end for copying conditions.
 
   - Bugfix: array reference handling in (database postgres-qcons)
 
-	To guard against column names that might also be SQL keywords
-	(for example "desc") confusing the PostgreSQL parser, symbols
-	are normally double-quoted.  Previously, the unique exception
-	was for symbols that include a table name.  Now, quoting is also
-	inhibited when array reference syntax is detected.  For example,
-	for the expression:
+    To guard against column names that might also be SQL keywords
+    (for example "desc") confusing the PostgreSQL parser, symbols
+    are normally double-quoted.  Previously, the unique exception
+    was for symbols that include a table name.  Now, quoting is also
+    inhibited when array reference syntax is detected.  For example,
+    for the expression:
 
-	(or (= state "ok")
-	    (= my.state "ok")
-	    (= states[1] "ok"))
+    (or (= state "ok")
+        (= my.state "ok")
+        (= states[1] "ok"))
 
-	Before: "state" = 'ok' OR my.state = 'ok' OR "states[1]" = 'ok'
-	Now:    "state" = 'ok' OR my.state = 'ok' OR states[1] = 'ok'
+    Before: "state" = 'ok' OR my.state = 'ok' OR "states[1]" = 'ok'
+    Now:    "state" = 'ok' OR my.state = 'ok' OR states[1] = 'ok'
 
   - FSF street address updated in copyright notices
 
@@ -807,14 +807,14 @@ See the end for copying conditions.
 
   - Result objects print without redundant "PGRES_" prefix
 
-	For example, before: #<PG-RESULT:4:PGRES_TUPLES_OK:23:8>
-	                now: #<PG-RESULT:4:TUPLES_OK:23:8>
+    For example, before: #<PG-RESULT:4:PGRES_TUPLES_OK:23:8>
+                    now: #<PG-RESULT:4:TUPLES_OK:23:8>
 
   - New command for (database postgres-table) proc ‘pgtable-manager’
 
-	#:trace-exec OPORT -- OPORT specifies an output port to write
-	the ‘pg-exec’ command to immediately prior to executing it, or
-	#f to disable tracing.
+    #:trace-exec OPORT -- OPORT specifies an output port to write
+    the ‘pg-exec’ command to immediately prior to executing it, or
+    #f to disable tracing.
 
   - New (database postgres-resx) proc: result->object-rows
 
@@ -839,67 +839,67 @@ See the end for copying conditions.
 
   - Expiration date set for opaque string support
 
-	With the introduction of module (database postgres-qcons),
-	Guile-PG continues moving towards fully symbolic schema and SQL
-	functions/operations mirroring, and away from requiring (and
-	thus accepting) SQL expressions to be "pre-rendered" as strings
-	in its higher-abstraction convenience procedures.  The low-level
-	‘pg-exec’ still requires a string, of course; the trick is how
-	to derive that string from other non-string components.
+    With the introduction of module (database postgres-qcons),
+    Guile-PG continues moving towards fully symbolic schema and SQL
+    functions/operations mirroring, and away from requiring (and
+    thus accepting) SQL expressions to be "pre-rendered" as strings
+    in its higher-abstraction convenience procedures.  The low-level
+    ‘pg-exec’ still requires a string, of course; the trick is how
+    to derive that string from other non-string components.
 
-	More concretely: ‘compile-outspec’, used by the ‘#:select’
-	message in ‘pgtable-manager’, presently accepts a string as the
-	SQL expression to compute for a particular column.  This support
-	WILL BE REMOVED after 2005-12-31; DO NOT rely on it.
+    More concretely: ‘compile-outspec’, used by the ‘#:select’
+    message in ‘pgtable-manager’, presently accepts a string as the
+    SQL expression to compute for a particular column.  This support
+    WILL BE REMOVED after 2005-12-31; DO NOT rely on it.
 
-	Following are some examples of how to migrate away from using
-	strings as SQL expressions.  We focus on the EXPR in:
+    Following are some examples of how to migrate away from using
+    strings as SQL expressions.  We focus on the EXPR in:
 
-	(((pgtable-manager ...) #:select) EXPR ...)
+    (((pgtable-manager ...) #:select) EXPR ...)
 
-	string: "*"
-	symbol: #t
-	result: SELECT * ...
+    string: "*"
+    symbol: #t
+    result: SELECT * ...
 
-	string: "a,b,c.d"
-	symbol: (a b c.d)
-	result: SELECT "a", "b", c.d ...
+    string: "a,b,c.d"
+    symbol: (a b c.d)
+    result: SELECT "a", "b", c.d ...
 
-	string: "count(*),avg(*)"
-	symbol: ((integer #f (count *)) (real "average" (avg *)))
-	result: SELECT count(*), avg(*) AS "average" ...
+    string: "count(*),avg(*)"
+    symbol: ((integer #f (count *)) (real "average" (avg *)))
+    result: SELECT count(*), avg(*) AS "average" ...
 
-	string: "(6 * 6 + 6) AS obvious"
-	symbol: ((integer "obvious" (+ 6 (* 6 6))))
-	result: SELECT (6 + (6 * 6)) AS "obvious" ...
+    string: "(6 * 6 + 6) AS obvious"
+    symbol: ((integer "obvious" (+ 6 (* 6 6))))
+    result: SELECT (6 + (6 * 6)) AS "obvious" ...
 
-	string: ((integer #f "6 * 6 + 6"))
-	symbol: ((integer #f (+ 6 (* 6 6))))
-	result: SELECT (6 + (6 * 6)) ...
+    string: ((integer #f "6 * 6 + 6"))
+    symbol: ((integer #f (+ 6 (* 6 6))))
+    result: SELECT (6 + (6 * 6)) ...
 
-	Note that for the most part the result is the same as you would
-	achieve using a string (if not, that's a bug, please report it!).
+    Note that for the most part the result is the same as you would
+    achieve using a string (if not, that's a bug, please report it!).
 
   - Expiration date set for two (database postegres-table) procs
 
-	The procs ‘tuples-result->table’ and ‘where-clausifier’
-	WILL BE REMOVED after 2005-08-13; DO NOT rely on them.
+    The procs ‘tuples-result->table’ and ‘where-clausifier’
+    WILL BE REMOVED after 2005-08-13; DO NOT rely on them.
 
   - Dropped (database postgres-types) proc: dbcoltype:name
 
-	This proc takes a column-type object returned from calling
-	‘dbcoltype-lookup’, which takes the type name.  Thus, it is
-	redundant.  Removing it increases encapsulation.
+    This proc takes a column-type object returned from calling
+    ‘dbcoltype-lookup’, which takes the type name.  Thus, it is
+    redundant.  Removing it increases encapsulation.
 
   - New type converters in module (database postgres-types)
 
-	These are the new built-in type converters:
+    These are the new built-in type converters:
 
-	bigint int2 int8 double float8 bigserial serial4 serial8
-	inet cidr macaddr inet-host
+    bigint int2 int8 double float8 bigserial serial4 serial8
+    inet cidr macaddr inet-host
 
-	Additionally, the manual now has a section on the type
-	converters in chapter "Types Conversion".
+    Additionally, the manual now has a section on the type
+    converters in chapter "Types Conversion".
 
   - New module: (database postgres-qcons)
   - New module: (database postgres-resdisp)
@@ -910,15 +910,15 @@ See the end for copying conditions.
 
   - New (database postgres) proc: pg-result-error-message
 
-	The argument to this is a result object, which hangs onto its
-	error message (if there is one) for its lifetime.
+    The argument to this is a result object, which hangs onto its
+    error message (if there is one) for its lifetime.
 
-	The related proc ‘pg-error-message’ still takes a result object
-	for backward compatibility (in which case the call is delegated
-	to the new proc), but that capability will probably be dropped
-	by 1.0 release.  To ensure your programs are upward compatible,
-	pass only result objects to ‘pg-result-error-message’ and only
-	connection objects to ‘pg-error-message’.
+    The related proc ‘pg-error-message’ still takes a result object
+    for backward compatibility (in which case the call is delegated
+    to the new proc), but that capability will probably be dropped
+    by 1.0 release.  To ensure your programs are upward compatible,
+    pass only result objects to ‘pg-result-error-message’ and only
+    connection objects to ‘pg-error-message’.
 
 
 - 0.24 | 2004-11-24
@@ -926,9 +926,9 @@ See the end for copying conditions.
   - New (database postgres) proc: pg-set-nonblocking!
   - New (database postgres) proc: pg-is-nonblocking?
 
-	These track recent(ish) appearance of similarly-named libpq
-	functions.  Both do nothing and return #f if the underlying
-	libpq function is not available.
+    These track recent(ish) appearance of similarly-named libpq
+    functions.  Both do nothing and return #f if the underlying
+    libpq function is not available.
 
   - Tested against PostgreSQL 7.3.8
 
@@ -937,120 +937,120 @@ See the end for copying conditions.
 
   - Print representations of smobs now documented
 
-	Specifically, #<PG-CONN...>, #<PG-RESULT...> and
-	#<PG-LO-PORT...> fields are now described.
+    Specifically, #<PG-CONN...>, #<PG-RESULT...> and
+    #<PG-LO-PORT...> fields are now described.
 
   - Change to database connection print representation
 
-	Previously, for connections without host/port info (for example,
-	unix-domain connections), Guile-PG would display "localhost" and
-	the default port, anyway.  Now, those fields are empty.
+    Previously, for connections without host/port info (for example,
+    unix-domain connections), Guile-PG would display "localhost" and
+    the default port, anyway.  Now, those fields are empty.
 
-	Before: #<PG-CONN:1:ttn:localhost:5432:>
+    Before: #<PG-CONN:1:ttn:localhost:5432:>
         Now:    #<PG-CONN:1:ttn:::>
 
   - More verbosity for "make check DEBUG=1"
 
-	The database drop and create commands that surround some of the
-	tests now honor DEBUG=1, not sending their output to /dev/null
-	in that case.  Also, the README file explains uid preparations
-	required for "make check".
+    The database drop and create commands that surround some of the
+    tests now honor DEBUG=1, not sending their output to /dev/null
+    in that case.  Also, the README file explains uid preparations
+    required for "make check".
 
 
 - 0.22 | 2004-08-07
 
   - Experimental configure script option: --enable-pq-rpath
 
-	The configure script now recognizes ‘--enable-pq-rpath’ and
-	subsequently arranges to pass "-R DIR" to the link command,
-	where DIR is the directory in which libpq.a can be found
-	(typically by specifying --with-libpq or --with-libpq-lib).
+    The configure script now recognizes ‘--enable-pq-rpath’ and
+    subsequently arranges to pass "-R DIR" to the link command,
+    where DIR is the directory in which libpq.a can be found
+    (typically by specifying --with-libpq or --with-libpq-lib).
 
-	This facility is experimental; ‘--enable-pq-rpath’, along w/ all
-	the other --with-libpq-FOO cruft, may succumb to more general
-	methodology provided by GNU autotools (if / when discovered),
-	prior to the 1.0 release.
+    This facility is experimental; ‘--enable-pq-rpath’, along w/ all
+    the other --with-libpq-FOO cruft, may succumb to more general
+    methodology provided by GNU autotools (if / when discovered),
+    prior to the 1.0 release.
 
   - Backward-compatability installation bugfix: libFOO.la symlinks
 
-	To support the venerable "scm_init_FOO_BAR_module" method for
-	loading binary modules in versions of Guile that look for a
-	FOO/libBAR.la, and not simply FOO/BAR.la, appropriately named
-	symlinks are now created for each installed .la file.
+    To support the venerable "scm_init_FOO_BAR_module" method for
+    loading binary modules in versions of Guile that look for a
+    FOO/libBAR.la, and not simply FOO/BAR.la, appropriately named
+    symlinks are now created for each installed .la file.
 
   - Return-value changes for (database postgres) procs
 
-	The return value for ‘pg-putline’ used to be unspecified.  Now
-	it is non-#f if the operation was successful.
+    The return value for ‘pg-putline’ used to be unspecified.  Now
+    it is non-#f if the operation was successful.
 
-	The return value for ‘pg-endcopy’ used to be an integer (zero if
-	successful).  Now it is non-#f if successful.
+    The return value for ‘pg-endcopy’ used to be an integer (zero if
+    successful).  Now it is non-#f if successful.
 
 
 - 0.21 | 2004-07-03
 
   - Copyright clarification
 
-	The original author of Guile-PG, Ian Grant, has confirmed that
-	the copyright notices stating "Copyright (C) YEAR(S) Free
-	Software Foundation, Inc" were incorrect.  The notices have
-	been changed to use "Ian Grant" for years up through 2000, and
-	"Thien-Thi Nguyen" for years afterwards.
+    The original author of Guile-PG, Ian Grant, has confirmed that
+    the copyright notices stating "Copyright (C) YEAR(S) Free
+    Software Foundation, Inc" were incorrect.  The notices have
+    been changed to use "Ian Grant" for years up through 2000, and
+    "Thien-Thi Nguyen" for years afterwards.
 
   - Installation change: scheme wrappers eliminated
 
-	The module (database postgres) used to be a scheme wrapper for
-	compiled module (database postgres-sup).  Now it is the compiled
-	module itself.
+    The module (database postgres) used to be a scheme wrapper for
+    compiled module (database postgres-sup).  Now it is the compiled
+    module itself.
 
-	On "make install" files $(GUILE_LIBSITE)/database/postgres-sup.*
-	are unconditionally deleted.
+    On "make install" files $(GUILE_LIBSITE)/database/postgres-sup.*
+    are unconditionally deleted.
 
   - Installation change: all modules installed under $(GUILE_LIBSITE)
 
-	Both compiled (binary) and uncompiled (text) modules are now
-	installed in the same place.  See README.
+    Both compiled (binary) and uncompiled (text) modules are now
+    installed in the same place.  See README.
 
-	On "make install" if files $(GUILE_SITE)/database/postgres*
-	exist, they are deleted.  If the dir $(GUILE_SITE)/database is
-	empty as a result, it is also deleted.
+    On "make install" if files $(GUILE_SITE)/database/postgres*
+    exist, they are deleted.  If the dir $(GUILE_SITE)/database is
+    empty as a result, it is also deleted.
 
   - Proc removed: pg-oid-status
 
-	The first mention of imminent removal of ‘pg-oid-status’ was in
-	its docstring, available since Guile-PG 0.13, 2002-12-24.  The
-	following two constructs are equivalent and thus demonstrate how
-	to migrate code using ‘pg-oid-status’ to use ‘pg-oid-value’:
+    The first mention of imminent removal of ‘pg-oid-status’ was in
+    its docstring, available since Guile-PG 0.13, 2002-12-24.  The
+    following two constructs are equivalent and thus demonstrate how
+    to migrate code using ‘pg-oid-status’ to use ‘pg-oid-value’:
 
-	(let ((s (pg-oid-status RESULT)))
-	  (and (not (string-null? s))
-	       (string->number s)))
-	===
-	(pg-oid-value RESULT)
+    (let ((s (pg-oid-status RESULT)))
+      (and (not (string-null? s))
+           (string->number s)))
+    ===
+    (pg-oid-value RESULT)
 
   - Proc removed: pg-guile-pg-version
   - Proc removed: pg-guile-pg-module-version
   - Proc removed: pg-guile-pg-module-config-stamp
 
-	First mention for imminent removal of these procs occurred in
-	the info node "Miscellaneous", available since Guile-PG 0.17,
-	2004-02-02.  See ‘pg-guile-pg-loaded’ for a more direct way to
-	discern Guile-PG features than mapping time/version info.
+    First mention for imminent removal of these procs occurred in
+    the info node "Miscellaneous", available since Guile-PG 0.17,
+    2004-02-02.  See ‘pg-guile-pg-loaded’ for a more direct way to
+    discern Guile-PG features than mapping time/version info.
 
 
 - 0.20 | 2004-06-15
 
   - Bugfix: proc ‘defs-from-psql’ now parses comma as space
 
-	For example, if the column is specified as:
+    For example, if the column is specified as:
 
-		amount numeric(9,2) not null
+      amount numeric(9,2) not null
 
-	then ‘defs-from-psql’ would return (among other col defs):
+    then ‘defs-from-psql’ would return (among other col defs):
 
-		(amount numeric (9 2) "not null")
+      (amount numeric (9 2) "not null")
 
-	Previously, ‘defs-from-psql’ was not able to handle the comma.
+    Previously, ‘defs-from-psql’ was not able to handle the comma.
 
   - Bugfix: configure script uses Guile's prefix (see README)
 
@@ -1061,89 +1061,89 @@ See the end for copying conditions.
 
   - configure script checks c2x method
 
-	If "guile-tools c2x" is available, use it.
-	Otherwise, use "guile-snarf".
+    If "guile-tools c2x" is available, use it.
+    Otherwise, use "guile-snarf".
 
 
 - 0.18 | 2004-03-22
 
   - Variables removed from module (database postgres)
 
-	The following variables are obsolete; proc ‘pg-result-status’
-	started returning a symbolic value starting with Guile-PG 0.08
-	(2002-12-11).
+    The following variables are obsolete; proc ‘pg-result-status’
+    started returning a symbolic value starting with Guile-PG 0.08
+    (2002-12-11).
 
-	PGRES_EMPTY_QUERY
-	PGRES_COMMAND_OK
-	PGRES_TUPLES_OK
-	PGRES_COPY_OUT
-	PGRES_COPY_IN
-	PGRES_BAD_RESPONSE
-	PGRES_NONFATAL_ERROR
-	PGRES_FATAL_ERROR
+    PGRES_EMPTY_QUERY
+    PGRES_COMMAND_OK
+    PGRES_TUPLES_OK
+    PGRES_COPY_OUT
+    PGRES_COPY_IN
+    PGRES_BAD_RESPONSE
+    PGRES_NONFATAL_ERROR
+    PGRES_FATAL_ERROR
 
   - Procs deleted from (database postgres-table)
 
-	The following procs are in module (database postgres-col-defs),
-	but w/o the "def:" prefix, since Guile-PG 0.15 (2003-01-15).
+    The following procs are in module (database postgres-col-defs),
+    but w/o the "def:" prefix, since Guile-PG 0.15 (2003-01-15).
 
-	def:col-name
-	def:type-name
-	def:type-options
+    def:col-name
+    def:type-name
+    def:type-options
 
   - Bugfix: pg-lo-unlink returns #f only on error
 
-	This proc used to consider some non-error status cases as erroneous,
-	and return #f as a result.  Now the check is more precise.
+    This proc used to consider some non-error status cases as erroneous,
+    and return #f as a result.  Now the check is more precise.
 
   - Error output bugfix: Use ~S instead of %s
 
   - Build bugfix: pre-inst.merged-module-catalog conditionally built
 
-	The "make" step now checks if prerequisite tools are available
-	before attempting to create this file, and uses a fallback
-	method if the tools are unavailable.
+    The "make" step now checks if prerequisite tools are available
+    before attempting to create this file, and uses a fallback
+    method if the tools are unavailable.
 
   - Limitation lifted: ‘pg-exec’ query string size
 
-	The query string sent to ‘pg-exec’ used to be limited to 7999
-	bytes; larger queries were silently truncated.  Furthermore,
-	each ‘pg-exec’ call used to perform a string copy whether it
-	was needed or not.  Similarly, a 255-byte limit was silently
-	enforced for ‘pg-connectdb’, ‘pg-error-message’, ‘pg-fnumber’,
-	‘pg-putline’, and ‘pg-set-client-encoding!’.
+    The query string sent to ‘pg-exec’ used to be limited to 7999
+    bytes; larger queries were silently truncated.  Furthermore,
+    each ‘pg-exec’ call used to perform a string copy whether it
+    was needed or not.  Similarly, a 255-byte limit was silently
+    enforced for ‘pg-connectdb’, ‘pg-error-message’, ‘pg-fnumber’,
+    ‘pg-putline’, and ‘pg-set-client-encoding!’.
 
-	These procedures have been changed to use arbitrary-length input
-	strings in situ if possible, and only do a copy if necessary.
+    These procedures have been changed to use arbitrary-length input
+    strings in situ if possible, and only do a copy if necessary.
 
   - Conditional definitions now unconditional
 
-	The following procedures used to be conditionally defined
-	(compiled).  Now they are present unconditionally, although
-	their return values are still influenced by the condition:
+    The following procedures used to be conditionally defined
+    (compiled).  Now they are present unconditionally, although
+    their return values are still influenced by the condition:
 
-	Procedure          Conditional           Return value if
-	                                      conditional is not met
+    Procedure          Conditional           Return value if
+                                          conditional is not met
         ============================================================
-	pg-get-pass        HAVE_PQPASS                 #f
-	pg-backend-pid     HAVE_PQBACKENDPID           -1
-	pg-oid-value       HAVE_PQOIDVALUE             #f
-	pg-binary-tuples   HAVE_PQBINARYTUPLES         #f
-	pg-fmod            HAVE_PQFMOD                 -1
+    pg-get-pass        HAVE_PQPASS                 #f
+    pg-backend-pid     HAVE_PQBACKENDPID           -1
+    pg-oid-value       HAVE_PQOIDVALUE             #f
+    pg-binary-tuples   HAVE_PQBINARYTUPLES         #f
+    pg-fmod            HAVE_PQFMOD                 -1
 
-	The idiom for safely using these procs used to be:
+    The idiom for safely using these procs used to be:
 
-	(and (defined? 'PROC)
-	     (PROC ...))
+    (and (defined? 'PROC)
+         (PROC ...))
 
-	Now, ‘pg-guile-pg-loaded’ returns a list of symbols which
-	include the conditionals, sans "HAVE_" prefix, to check.  E.g.:
+    Now, ‘pg-guile-pg-loaded’ returns a list of symbols which
+    include the conditionals, sans "HAVE_" prefix, to check.  E.g.:
 
-	(and (memq 'PQFMOD (pg-guile-pg-loaded))
-	     (pg-fmod ...))
+    (and (memq 'PQFMOD (pg-guile-pg-loaded))
+         (pg-fmod ...))
 
-	Alternatively, you can use the procs without such a pre-check,
-	and instead check the return value.
+    Alternatively, you can use the procs without such a pre-check,
+    and instead check the return value.
 
   - New (database postgres-meta) proc: defs-from-psql
   - New (database postgres-meta) proc: check-type/elaborate
@@ -1155,104 +1155,104 @@ See the end for copying conditions.
 
   - New (database postgres) procs
 
-	See manual for details.
+    See manual for details.
 
     - support for non-blocking queries
 
-	(pg-send-query CONN QUERY) => bool
-	(pg-consume-input CONN) => bool
-	(pg-is-busy? CONN) => bool
-	(pg-request-cancel CONN) => bool
-	(pg-get-result CONN) => result
+      (pg-send-query CONN QUERY) => bool
+      (pg-consume-input CONN) => bool
+      (pg-is-busy? CONN) => bool
+      (pg-request-cancel CONN) => bool
+      (pg-get-result CONN) => result
 
     - asynchronous version of ‘pg-getline’
 
-	(pg-getlineasync CONN BUF [TICKLE]) => byte-count
+      (pg-getlineasync CONN BUF [TICKLE]) => byte-count
 
     - miscellaneous
 
-	(pg-conndefaults) => alist of alists
+      (pg-conndefaults) => alist of alists
 
   - ChangeLog for subdir test/ split out
 
   - Support for builddir!=srcdir
 
-	This means you can invoke the unpacked distribution's configure
-	script from another directory, and the "make", "make check" and
-	"make install" steps know how to cope.
+    This means you can invoke the unpacked distribution's configure
+    script from another directory, and the "make", "make check" and
+    "make install" steps know how to cope.
 
   - Untested procs shown by "make check"
 
-	There is a new test "coverage.sh" that displays the names of
-	pg-* procs that are defined but not tested by the "make check"
-	step.  This list must be empty for a 1.0 release.  To see full
-	status (both tested/untested), change directory to test/ and
-	invoke the script "cov".
+    There is a new test "coverage.sh" that displays the names of
+    pg-* procs that are defined but not tested by the "make check"
+    step.  This list must be empty for a 1.0 release.  To see full
+    status (both tested/untested), change directory to test/ and
+    invoke the script "cov".
 
-	Note that coverage does not imply good coverage!
+    Note that coverage does not imply good coverage!
 
 
 - 0.17 | 2004-02-02
 
   - Installation change: modules installed under site dirs
 
-	The compiled module (database postgres-sup) is now installed in
-	${GUILE_LIBSITE}/database, while the other non-compiled modules
-	are installed in ${GUILE_SITE}/database.  Both site dirs are
-	determined by the configure script, usually something like
-	${libdir}/guile/site and ${datadir}/guile/site, respectively.
+    The compiled module (database postgres-sup) is now installed in
+    ${GUILE_LIBSITE}/database, while the other non-compiled modules
+    are installed in ${GUILE_SITE}/database.  Both site dirs are
+    determined by the configure script, usually something like
+    ${libdir}/guile/site and ${datadir}/guile/site, respectively.
 
-	Additionally, if the system supports it, "make install" updates
-	each site dir's module catalog.
+    Additionally, if the system supports it, "make install" updates
+    each site dir's module catalog.
 
-	See also "Removing Misguided Prior Installations" in README.
+    See also "Removing Misguided Prior Installations" in README.
 
   - Distribution bugfix: .x files no longer included
 
-	The truth is out there, but you really don't want it cluttering
-	things, especially since it precludes build-time snarfing.
+    The truth is out there, but you really don't want it cluttering
+    things, especially since it precludes build-time snarfing.
 
   - Bugfix: incorrect objectifiers selection bug in pgtable-manager
 
-	For ‘tuples-result->object-alist’ and ‘tuples-result->alists’
-	sub-procs, the ‘objectifiers’ passed to ‘result->object-alist’
-	and ‘result->object-alists’, respectively, were not qualified to
-	match the selected columns.  Here is an example to demonstrate
-	the bug:
+    For ‘tuples-result->object-alist’ and ‘tuples-result->alists’
+    sub-procs, the ‘objectifiers’ passed to ‘result->object-alist’
+    and ‘result->object-alists’, respectively, were not qualified to
+    match the selected columns.  Here is an example to demonstrate
+    the bug:
 
-	(define DEFS '((a int4) (b text)))
-	(define M (pgtable-manager "ttn" "t42" DEFS))
-	(define SHOW (M 'tuples-result->object-alist))
-	(define SEL (M 'select))
+    (define DEFS '((a int4) (b text)))
+    (define M (pgtable-manager "ttn" "t42" DEFS))
+    (define SHOW (M 'tuples-result->object-alist))
+    (define SEL (M 'select))
 
-	(SHOW (SEL '(b a) "limit 2"))
-	=> ((b #f #f) (a "42" "19"))	; wrong
+    (SHOW (SEL '(b a) "limit 2"))
+    => ((b #f #f) (a "42" "19"))        ; wrong
 
-	Once corrected, we see the expected result:
+    Once corrected, we see the expected result:
 
-	(SHOW (SEL '(b a) "limit 2"))
-	=> ((b "nothing is real" "deadly") (a 42 19))
+    (SHOW (SEL '(b a) "limit 2"))
+    => ((b "nothing is real" "deadly") (a 42 19))
 
-	The implementation introduces a restriction: If you intend to
-	pass the result of SEL to either ‘tuples-result->object-alist’
-	or ‘tuples-result->alists’, the first arg to SEL cannot be a
-	string, since there is no outspec-as-string parsing support.
-	To ameliorate this restriction somewhat, ‘compile-outspec’ is
-	now exported (see below).
+    The implementation introduces a restriction: If you intend to
+    pass the result of SEL to either ‘tuples-result->object-alist’
+    or ‘tuples-result->alists’, the first arg to SEL cannot be a
+    string, since there is no outspec-as-string parsing support.
+    To ameliorate this restriction somewhat, ‘compile-outspec’ is
+    now exported (see below).
 
   - Error output bugfix: pg-fname, pg-ftype, pg-fsize, pg-fmod
 
-	For an invalid field number argument, these procs used to
-	display "Invalid field number %s".  They now display the
-	field number instead of the literal string "%s".
+    For an invalid field number argument, these procs used to
+    display "Invalid field number %s".  They now display the
+    field number instead of the literal string "%s".
 
   - Proc ‘pg-print’ no longer limited to stdout
 
-	It used to be that ‘pg-print’ output could only be sent to
-	stdout, ignoring the port returned by ‘current-output-port’.
-	Now, output is now completely controllable from Scheme code
-	using ‘with-output-to-port’ (or ‘call-with-output-string’,
-	‘call-with-output-file’, ‘set-current-output-port’, etc).
+    It used to be that ‘pg-print’ output could only be sent to
+    stdout, ignoring the port returned by ‘current-output-port’.
+    Now, output is now completely controllable from Scheme code
+    using ‘with-output-to-port’ (or ‘call-with-output-string’,
+    ‘call-with-output-file’, ‘set-current-output-port’, etc).
 
   - New (database postgres) procs
     - pg-set-notice-out!
@@ -1260,40 +1260,40 @@ See the end for copying conditions.
     - pg-client-encoding
     - pg-set-client-encoding!
 
-	These are documented in the manual under "Database Connections".
+      These are documented in the manual under "Database Connections".
 
   - New (database postgres-table) proc: ‘compile-outspec’
 
-	This is documented in the manual under "Single-Table Abstraction".
-	A continuation of the example above, using ‘compile-outspec’:
+    This is documented in the manual under "Single-Table Abstraction".
+    A continuation of the example above, using ‘compile-outspec’:
 
-	(define (CSHOW spec)
-	  (SHOW (SEL (compile-outspec spec DEFS) "limit 2")))
+    (define (CSHOW spec)
+      (SHOW (SEL (compile-outspec spec DEFS) "limit 2")))
 
-	(CSHOW '((#f "label" "upper(b)") (int4 "bella" "11 * a")))
-	=> ((label "NOTHING IS REAL" "DEADLY") (bella 462 209))
+    (CSHOW '((#f "label" "upper(b)") (int4 "bella" "11 * a")))
+    => ((label "NOTHING IS REAL" "DEADLY") (bella 462 209))
 
-	(CSHOW '((int4 "label" "upper(b)") ((#t . b) "bella" "11 * a")))
-	=> ((label #f #f) (bella "462" "209"))
+    (CSHOW '((int4 "label" "upper(b)") ((#t . b) "bella" "11 * a")))
+    => ((label #f #f) (bella "462" "209"))
 
-	(CSHOW #t)
-	=> ((a 42 19) (b "nothing is real" "deadly"))
+    (CSHOW #t)
+    => ((a 42 19) (b "nothing is real" "deadly"))
 
-	(CSHOW "*")
-	error--> ERROR: bad select part: "*"
-	         ABORT: (misc-error)
+    (CSHOW "*")
+    error--> ERROR: bad select part: "*"
+             ABORT: (misc-error)
 
   - "make check" fails on test failure
 
-	A bug was fixed in the "make check" flow whereby test failures
-	were reported but in fact did not cause "make check" to fail.
-	See README for info on how to clean up the db "make check" uses
-	should this situation arise.
+    A bug was fixed in the "make check" flow whereby test failures
+    were reported but in fact did not cause "make check" to fail.
+    See README for info on how to clean up the db "make check" uses
+    should this situation arise.
 
   - Info page title now "The (database postgres*) Modules"
 
-	This reflects the evolution of Guile-PG beyond its single
-	module origins into a collection of related modules.
+    This reflects the evolution of Guile-PG beyond its single
+    module origins into a collection of related modules.
 
 
 - 0.16 | 2003-08-13
@@ -1301,27 +1301,27 @@ See the end for copying conditions.
   - New (database postgres) proc: ‘pg-print’
   - New (database postgres) proc: ‘pg-make-print-options’
 
-	These are documented in the manual.
+    These are documented in the manual.
 
   - "make check" now passes for PostgreSQL 7.3.3
 
-	As of PostgreSQL 7.2, the output representation of arrays has
-	changed to conditionally use double-quotes (only when "needed").
-	Here is a short table using type ‘text[]’:
+    As of PostgreSQL 7.2, the output representation of arrays has
+    changed to conditionally use double-quotes (only when "needed").
+    Here is a short table using type ‘text[]’:
 
-	                   needed               unneeded
+                       needed               unneeded
         prior to 7.2       {",a","{}","c'c"}    {"d","e","f"}
         7.2 and later      {",a","{}","c'c"}    {d,e,f}
 
-	Although the module (database postgres-types) has been able to
-	handle these cases all along, one of the "make check" tests was
-	previously failing because it checked the representation before
-	the conversion to scheme objects.  This has now been corrected
-	and verified to work against a stock-install PostgreSQL 7.3.3.
+    Although the module (database postgres-types) has been able to
+    handle these cases all along, one of the "make check" tests was
+    previously failing because it checked the representation before
+    the conversion to scheme objects.  This has now been corrected
+    and verified to work against a stock-install PostgreSQL 7.3.3.
 
   - Script to share the good news publicized
 
-	The README now mentions the test/show-platform script.
+    The README now mentions the test/show-platform script.
 
 
 - 0.15 | 2003-01-15
@@ -1330,23 +1330,23 @@ See the end for copying conditions.
 
   - Extension to (database postgres-table) proc: ‘pgtable-manager’
 
-	The first arg of this proc used to be a string naming the
-	database to use.  Now it can additionally be an empty string,
-	a string of space-separated "var=val" pairs, or an already
-	existing connection object (satisfying ‘pg-connection?’).
+    The first arg of this proc used to be a string naming the
+    database to use.  Now it can additionally be an empty string,
+    a string of space-separated "var=val" pairs, or an already
+    existing connection object (satisfying ‘pg-connection?’).
 
   - New (database postgres-meta) proc: ‘infer-defs’
 
   - New module: (database postgres-col-defs)
   - New module: (database postgres-resx)
 
-	These provide procedures to handle column definitions and to
-	transform result objects in various ways, respectively.
+    These provide procedures to handle column definitions and to
+    transform result objects in various ways, respectively.
 
   - WARNING: column definition procs have moved
 
-	The following procedures continue to be exported from (database
-	postgres-table), but are now in (database postgres-col-defs):
+    The following procedures continue to be exported from (database
+    postgres-table), but are now in (database postgres-col-defs):
 
                 bye-bye                 hello
                 -------                 -----
@@ -1354,166 +1354,166 @@ See the end for copying conditions.
                 def:type-name           type-name
                 def:type-options        type-options
 
-	Sometime before 1.0 release they will no longer be exported from
-	the (database postgres-table) module.
+    Sometime before 1.0 release they will no longer be exported from
+    the (database postgres-table) module.
 
 
 - 0.14 | 2002-12-27
 
   - Configuration bugfix: twerp2texi invocation conditionalized
 
-	The configure script, when --enable-maintainer-mode, now checks
-	if "guile-tools twerp2texi" is available and displays a warning
-	if not.
+    The configure script, when --enable-maintainer-mode, now checks
+    if "guile-tools twerp2texi" is available and displays a warning
+    if not.
 
   - New (database postgres) proc: ‘pg-result?’
 
   - New (database postgres-types) built-in type converters
 
-	name
-	aclitem
-	aclitem[]
+    name
+    aclitem
+    aclitem[]
 
   - New experimental module: (database postgres-meta)
 
-	This module provides some table introspection capabilities,
-	currently exported as procedure ‘describe-table!’, q.v.
-	Interface design ideas welcome (post to mailing lists).
+    This module provides some table introspection capabilities,
+    currently exported as procedure ‘describe-table!’, q.v.
+    Interface design ideas welcome (post to mailing lists).
 
 
 - 0.13 | 2002-12-24
 
   - ‘terminating’ slack
 
-	The heuristic fallback when lacking ‘scm_terminating’ has been
-	replaced w/ a configure.in check for ‘terminating’ in libguile.
-	If neither is available, on lob flush error, Guile-PG writes to
-	stderr unconditionally.  This is safer than unconditionally
-	calling scm_syserror (the previous approach), which may crash
-	guile in some circumstances.
+    The heuristic fallback when lacking ‘scm_terminating’ has been
+    replaced w/ a configure.in check for ‘terminating’ in libguile.
+    If neither is available, on lob flush error, Guile-PG writes to
+    stderr unconditionally.  This is safer than unconditionally
+    calling scm_syserror (the previous approach), which may crash
+    guile in some circumstances.
 
   - New (database postgres-types) proc: oid-type-name-cache CONN [FRESH?]
 
-	Documented in the manual, which now sports full extracted
-	docstrings (cheesy Commentary snapshots removed, too).
+    Documented in the manual, which now sports full extracted
+    docstrings (cheesy Commentary snapshots removed, too).
 
 
 - 0.12 | 2002-12-21
 
   - PATH/configure where PATH != "./" supported
 
-	This is known as "vpath build" or "srcdir!=builddir build".
-	Previously, "make check" failed for such situations due to not
-	being able to find test/testing.scm.
+    This is known as "vpath build" or "srcdir!=builddir build".
+    Previously, "make check" failed for such situations due to not
+    being able to find test/testing.scm.
 
   - New module: (database postgres-types)
   - New module: (database postgres-table)
 
-	These scheme modules are documented in their respective chapters
-	(for now, see code for detailed documentation on each proc).
+    These scheme modules are documented in their respective chapters
+    (for now, see code for detailed documentation on each proc).
 
 
 - 0.11 | 2002-12-17
 
   - ‘InvalidOid’ declaration slack
 
-	This variable is expected to be declared by libpq-fe.h (or one
-	of its sub-#include files).  PostgreSQL 7.0.3, in particular,
-	fails to do this, but provides ‘InvalidOid’ in another header.
-	Configuration now attempts to include the appropriate additional
-	header.
+    This variable is expected to be declared by libpq-fe.h (or one
+    of its sub-#include files).  PostgreSQL 7.0.3, in particular,
+    fails to do this, but provides ‘InvalidOid’ in another header.
+    Configuration now attempts to include the appropriate additional
+    header.
 
   - ‘scm_terminating’ declaration slack
 
-	This variable is expected to be declared by libguile.h (or one
-	of its sub-#include files).  Some versions of Guile provide
-	"terminating" but not "scm_terminating".  Configuration now
-	detects lack of scm_terminating and arranges (heuristically) for
-	the latter to be an alias of the former.
+    This variable is expected to be declared by libguile.h (or one
+    of its sub-#include files).  Some versions of Guile provide
+    "terminating" but not "scm_terminating".  Configuration now
+    detects lack of scm_terminating and arranges (heuristically) for
+    the latter to be an alias of the former.
 
   - New file: THANKS
 
-	A good place to find fellow Guile-PG users!
+    A good place to find fellow Guile-PG users!
 
 
 - 0.10 | 2002-12-14
 
   - Bugfix: pg-lo-tell
 
-	This procedure, which does the equivalent of "seek 0 SEEK_CUR",
-	was not taking into account guile's port buffering conventions,
-	resulting in an incorrect value being returned (the position
-	indicated by the end of the port's read-buffer instead of the
-	actual position).  For example:
+    This procedure, which does the equivalent of "seek 0 SEEK_CUR",
+    was not taking into account guile's port buffering conventions,
+    resulting in an incorrect value being returned (the position
+    indicated by the end of the port's read-buffer instead of the
+    actual position).  For example:
 
-	  (pg-lo-tell port)	=> 0	; ok
-	  (pg-lo-read 4 2 port)         ; read two objects of four bytes
-          (pg-lo-tell port)     => 100	; wrong, should be 8
+      (pg-lo-tell port) => 0    ; ok
+      (pg-lo-read 4 2 port)     ; read two objects of four bytes
+      (pg-lo-tell port) => 100  ; wrong, should be 8
 
-	Test coverage for pg-lo-tell is still rather low.  Additional
-	interesting test cases are always welcome.
+    Test coverage for pg-lo-tell is still rather low.  Additional
+    interesting test cases are always welcome.
 
 
 - 0.09 | 2002-12-12
 
-	Docs spiffing: Info page organization now flattened.
+  Docs spiffing: Info page organization now flattened.
 
-	As a convenience for existing code, the vars:
-		PGRES_EMPTY_QUERY
-		PGRES_COMMAND_OK
-		PGRES_TUPLES_OK
-		PGRES_COPY_OUT
-		PGRES_COPY_IN
-		PGRES_BAD_RESPONSE
-		PGRES_NONFATAL_ERROR
-		PGRES_FATAL_ERROR
-	are now added back, but w/ symbolic values rather than
-	numerical.  However, this is temporary; these vars will go away
-	(and stay gone) as 1.0 release nears.  New code should use
-	symbols directly (see manual for examples).
+  As a convenience for existing code, the vars:
+    PGRES_EMPTY_QUERY
+    PGRES_COMMAND_OK
+    PGRES_TUPLES_OK
+    PGRES_COPY_OUT
+    PGRES_COPY_IN
+    PGRES_BAD_RESPONSE
+    PGRES_NONFATAL_ERROR
+    PGRES_FATAL_ERROR
+  are now added back, but w/ symbolic values rather than
+  numerical.  However, this is temporary; these vars will go away
+  (and stay gone) as 1.0 release nears.  New code should use
+  symbols directly (see manual for examples).
 
 
 - 0.08 | 2002-12-11
 
-	Maintenance for Guile-PG has passed from Ian Grant (original
-	author) to Thien-Thi Nguyen.  Thanks Ian!
+  Maintenance for Guile-PG has passed from Ian Grant (original
+  author) to Thien-Thi Nguyen.  Thanks Ian!
 
-	This release differs from 0.07 in that ‘pg-result-status’ values
-	are symbolic (rather than numerical), the Guile-PG integrated
-	interpreter is no longer included (neither built nor installed),
-	the "rcsid"-related procs/vars are no longer included, and "make
-	check" now works pre-install.
+  This release differs from 0.07 in that ‘pg-result-status’ values
+  are symbolic (rather than numerical), the Guile-PG integrated
+  interpreter is no longer included (neither built nor installed),
+  the "rcsid"-related procs/vars are no longer included, and "make
+  check" now works pre-install.
 
-	See http://www.glug.org/alt/ for latest anoncvs access info.
+  See http://www.glug.org/alt/ for latest anoncvs access info.
 
 
 - 0.07 | 2000-07-08
 
-	Released Version 0.07.  The primary reason for this release is
-	to fix a bug where 0.06 wouldn't build with the newly-released
-	guile-1.4 Also added pg-oid-value function.
+  Released Version 0.07.  The primary reason for this release is
+  to fix a bug where 0.06 wouldn't build with the newly-released
+  guile-1.4 Also added pg-oid-value function.
 
 
 - 0.06 | 2000-06-02
 
-	Released Version 0.06.  Builds with guile-1.3.4 and pre-release
-	guile-1.4.  Function names changed from pg:xxx to the more
-	schemely pg-xxx.  Minor documentation and bug fixes.
+  Released Version 0.06.  Builds with guile-1.3.4 and pre-release
+  guile-1.4.  Function names changed from pg:xxx to the more
+  schemely pg-xxx.  Minor documentation and bug fixes.
 
 
 - 0.05 | 1999-06-03
 
-	Second alpha release. Version 0.05
+  Second alpha release. Version 0.05
 
 
 - 0.04 | 1999-12-24
 
-	First alpha release.  Called Guile-PG 0.04.
+  First alpha release.  Called Guile-PG 0.04.
 
 
 - 1998-12-03
 
-	Initial build
+  Initial build
 
 
 
