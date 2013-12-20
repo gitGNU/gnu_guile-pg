@@ -21,7 +21,7 @@ dnl along with Guile-PG; see the file COPYING.  If not, write to the
 dnl Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 dnl Boston, MA  02110-1301  USA
 
-AC_INIT([Guile-PG],[0.46],[ttn@gnuvola.org])
+AC_INIT([Guile-PG],[0.46],[guile-user@gnu.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([1.12.2 -Wall no-dist-gzip dist-xz serial-tests])
 
