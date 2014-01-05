@@ -20,6 +20,7 @@ Makefile.in
 /build-aux/ar-lib
 /build-aux/config.guess
 /build-aux/config.sub
+/build-aux/compile
 /build-aux/depcomp
 /build-aux/guile-baux
 /build-aux/guile-baux.state
