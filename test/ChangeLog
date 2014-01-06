@@ -1,3 +1,15 @@
+2014-01-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v int] Stash validated protocol version.
+
+	* basic.scm (PVERS): New var.
+	(test:protocol-version): Set ‘PVERS’.
+	(test:transaction-status, test:set-error-verbosity)
+	(test:fnumber-and-friends, test:pg-exec-params)
+	(test:pg-exec-prepared, test:pg-exec-prepared)
+	(test:asynchronous-notification)
+	(test:asynchronous-retrieval): Use ‘PVERS’.
+
 2013-03-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.45 (tag v0.45)

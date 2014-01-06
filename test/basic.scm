@@ -1,7 +1,7 @@
 ;;; basic.scm
 
-;; Copyright (C) 2002, 2003, 2004, 2005, 2006,
-;;   2007, 2008, 2009, 2010, 2011 Thien-Thi Nguyen
+;; Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007,
+;;   2008, 2009, 2010, 2011, 2014 Thien-Thi Nguyen
 ;; Portions Copyright (C) 1999, 2000 Ian Grant
 ;;
 ;; This file is part of Guile-PG.
@@ -34,6 +34,7 @@
 ;; We use one connection for all the tests.
 
 (define *C* #f)
+(define PVERS #f)                       ; stashed protocol version
 
 (define (cexec s)
   (pg-exec *C* (string-append s ";")))
@@ -177,7 +178,9 @@
     (lambda ()
       (let ((v (pg-protocol-version *C*)))
         (and (number? v)
-             (< 1 v))))))
+             (< 1 v)
+             (begin (set! PVERS v)
+                    #t))))))
 
 (define test:tracing-traced-connection
   (add-test #f
@@ -266,7 +269,7 @@
 (define test:parameter-status
   (add-test #t
     (lambda ()
-      (or (= 2 (pg-protocol-version *C*))
+      (or (= 2 PVERS)
           (and-map (lambda (k)
                      (let ((v (pg-parameter-status *C* k)))
                        (format #t "INFO: parameter ~S => ~S\n" k v)
@@ -301,7 +304,7 @@
   (add-test #:default
     (lambda ()
       (and (pg-set-error-verbosity *C* #:terse)
-           (eq? (if (< 2 (pg-protocol-version *C*))
+           (eq? (if (< 2 PVERS)
                     #:terse
                     #:default)
                 (pg-set-error-verbosity *C* #:default))
@@ -503,7 +506,7 @@
              (eq? (pg-fnumber res "col1") 0)
              (eq? (pg-fnumber res "col2") 1)
              (eq? (pg-fnumber res "invalid_column_name") -1)
-             (or (= 2 (pg-protocol-version *C*))
+             (or (= 2 PVERS)
                  (and (integer? (pg-ftable res 0))
                       (integer? (pg-ftablecol res 0))
                       (zero? (pg-fformat res 0)))))))))
@@ -569,7 +572,7 @@
                   (single (pg-exec-params
                            *C* (sel 1)
                            (apply vector (cddr spec))))))
-      (or (= 2 (pg-protocol-version *C*))
+      (or (= 2 PVERS)
           (and-map spin
                    '(("42"     "$1::integer" "42")
                      ("'foo'"  "$1::text"    "foo")
@@ -601,7 +604,7 @@
                        (single (pg-exec-prepared
                                 *C* "plan"
                                 (apply vector (cdddr spec)))))))
-      (or (= 2 (pg-protocol-version *C*))
+      (or (= 2 PVERS)
           (and-map spin
                    '(("42"     "$1" "integer" "42")
                      ("'foo'"  "$1" "text"    "foo")
@@ -618,7 +621,7 @@
 (define test:get-copy-data
   (add-test #t
     (lambda ()
-      (or (= 2 (pg-protocol-version *C*))
+      (or (= 2 PVERS)
           (and (command-ok?
                 (cexec "SELECT * INTO t1 FROM test WHERE col1 = 1"))
                (let ((res (cexec "COPY t1 TO STDOUT"))
@@ -729,7 +732,7 @@
 (define test:send-query-param-variants  ; cleanup?
   (add-test #t
     (lambda ()
-      (or (= 2 (pg-protocol-version *C*))
+      (or (= 2 PVERS)
           (let ((v (vector "42")))
             (and (pg-send-query-params *C* "SELECT $1::integer;" v)
                  (begin (cexec "DEALLOCATE plan;")
@@ -745,7 +748,7 @@
        (command-ok? (cexec "CREATE TABLE async (a numeric (20, 10))"))
        ((ok? 'PGRES_COPY_IN) (cexec "COPY async FROM STDIN"))
        (begin
-         (and (< 2 (pg-protocol-version *C*))
+         (and (< 2 PVERS)
               ;; Test fails for PostgreSQL 7.4.12 at ‘pg-endcopy’ if omitted.
               ;; This needs to be done prior to ‘pg-putline’, as well.
               (pg-set-nonblocking! *C* #f))
