@@ -1,5 +1,11 @@
 2014-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v] Do/check ‘pg-get-result’ after ‘pg-put-copy-end’.
+
+	* basic.scm (test:put-copy-data/end): ...here.
+
+2014-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] No longer send "\\.\n" for COPY..STDIN.
 
 	* basic.scm (test:put-copy-data/end, test:putline)

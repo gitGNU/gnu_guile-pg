@@ -670,6 +670,7 @@
                (for-each (lambda (s) (pg-put-copy-data *C* s))
                          '("2\tColumn 2" "\n"))
                (and (= 1 (pg-put-copy-end *C*))
+                    (command-ok? (pg-get-result *C*))
                     (let ((res (cexec "SELECT * FROM t1 WHERE col1 = 2")))
                       (and res (tuples-ok? res)
                            (equal? (list (pg-getvalue res 0 0)
