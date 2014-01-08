@@ -750,14 +750,11 @@
        ;; Populate it.
        ((ok? 'PGRES_COPY_IN) (cexec "COPY async FROM STDIN"))
        (begin
-         (and (< 2 PVERS)
-              ;; Test fails for PostgreSQL 7.4.12 at ‘pg-endcopy’ if omitted.
-              ;; This needs to be done prior to ‘pg-putline’, as well.
-              (pg-set-nonblocking! *C* #f))
          (do ((i 4224 (1- i)))
              ((zero? i))
-           (pg-putline *C* (format #f "~A.~A\n" i i)))
-         (pg-endcopy *C*))
+           (pg-put-copy-data *C* (format #f "~A.~A\n" i i)))
+         (= 1 (pg-put-copy-end *C*)))
+       (command-ok? (pg-get-result *C*))
        ;; Flush until we're sure everything is sent.
        (let loop ()
          (case (pg-flush *C*)

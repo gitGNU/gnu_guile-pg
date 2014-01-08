@@ -1,5 +1,13 @@
 2014-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v] Use pg-put-copy-{data,end} for async retrieval test.
+
+	* basic.scm (test:asynchronous-retrieval): ...here,
+	instead of ‘pg-putline’ and ‘pg-endcopy’;
+	also, do/check ‘pg-get-result’ after ‘pg-put-copy-end’.
+
+2014-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v int] Rework loop to call ‘pg-flush’ inside.
 
 	* basic.scm (test:asynchronous-retrieval): ...here.
