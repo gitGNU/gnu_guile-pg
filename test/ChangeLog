@@ -1,3 +1,10 @@
+2014-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v] No longer send "\\.\n" for COPY..STDIN.
+
+	* basic.scm (test:put-copy-data/end, test:putline)
+	(test:asynchronous-retrieval): Don't send "\\.\n".
+
 2014-01-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v int] Stash validated protocol version.

@@ -668,7 +668,7 @@
         (and ((ok? 'PGRES_COPY_IN) res)
              (begin
                (for-each (lambda (s) (pg-put-copy-data *C* s))
-                         '("2\tColumn 2" "\n" "\\." "\n"))
+                         '("2\tColumn 2" "\n"))
                (and (= 1 (pg-put-copy-end *C*))
                     (let ((res (cexec "SELECT * FROM t1 WHERE col1 = 2")))
                       (and res (tuples-ok? res)
@@ -683,7 +683,7 @@
         (and ((ok? 'PGRES_COPY_IN) res)
              (begin
                (for-each (lambda (s) (pg-putline *C* s))
-                         '("2\tColumn 2" "\n" "\\." "\n"))
+                         '("2\tColumn 2" "\n"))
                (and (eq? #t (pg-endcopy *C*))
                     (let ((res (cexec "SELECT * FROM test2 WHERE col1 = 2")))
                       (and res (tuples-ok? res)
@@ -746,6 +746,7 @@
       (and
        ;; Create a table.
        (command-ok? (cexec "CREATE TABLE async (a numeric (20, 10))"))
+       ;; Populate it.
        ((ok? 'PGRES_COPY_IN) (cexec "COPY async FROM STDIN"))
        (begin
          (and (< 2 PVERS)
@@ -755,7 +756,6 @@
          (do ((i 4224 (1- i)))
              ((zero? i))
            (pg-putline *C* (format #f "~A.~A\n" i i)))
-         (pg-putline *C* "\\.\n")
          (pg-endcopy *C*))
        ;; Flush until we're sure everything is sent.
        (let loop ((rv (pg-flush *C*)))
