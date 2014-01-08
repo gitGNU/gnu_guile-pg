@@ -759,11 +759,11 @@
            (pg-putline *C* (format #f "~A.~A\n" i i)))
          (pg-endcopy *C*))
        ;; Flush until we're sure everything is sent.
-       (let loop ((rv (pg-flush *C*)))
-         (case rv
+       (let loop ()
+         (case (pg-flush *C*)
            ((-1) #f)
            ((0) #t)
-           ((1) (begin (sleep 1) (loop (pg-flush *C*))))
+           ((1) (sleep 1) (loop))
            (else #f)))
        ;; Perhaps usage protocol does not absolutely require this check, but
        ;; removing it causes the subsequent ‘pg-send-query’ to return #f, with
