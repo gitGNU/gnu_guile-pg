@@ -484,85 +484,13 @@ then be associated with each connection for faster subsequent access.
 As of PostgreSQL 7.4, you can send arbitrarily-sized chunks of data after
 issuing the @code{COPY <table> FROM STDIN} command.  Also, both send and
 receive (with the @code{COPY <table> TO STDOUT} command) paths can be
-performed asynchronously.  See below for the older (obsolete) interface.
+performed asynchronously.
 
 @tsin i pg-put-copy-data
 
 @tsin i pg-put-copy-end
 
 @tsin i pg-get-copy-data
-
-@heading Obsolete functions for COPY
-
-There are two procedures for reading a line of data associated with the
-command @code{COPY <table> TO STDOUT}.  For both, when the @dfn{end-of-copy
-marker} is recognized, that means the results from the @code{COPY} command
-have all been read and @code{pg-endcopy} should be called to resynchronize the
-connection before any further calls to @code{pg-exec} on this connection.
-
-@tsin i pg-getline
-
-@tsin i pg-getlineasync
-
-@heading Example
-This example defines two functionally identical procedures that can be used
-to retrieve the results of a @code{COPY <table> TO STDOUT} command.  The
-second procedure optionally displays a list of received chunk sizes, if
-passed a third argument.
-
-@lisp
-(define (copy-to-port conn port)
-  (let loop ((line (pg-getline conn)))
-    (if (string=? line "\\.")
-        (pg-endcopy conn)
-        (begin (format port "~A\n" line)
-               (loop (pg-getline conn))))))
-
-(define (copy-to-port-async conn port . show-chunk-sizes?)
-  (let ((buf (make-string 32)))
-    (let loop ((count (pg-getlineasync conn buf))
-               (chunks '()))
-      (if (< count 0)
-          (begin
-            (or (null? show-chunk-sizes?)
-                (format port "chunk sizes: ~S\n" chunks))
-            (pg-endcopy conn))
-          (begin
-            (display (substring buf 0 count) port)
-            (loop (pg-getlineasync conn buf #t)
-                  (cons count chunks)))))))
-@end lisp
-
-@heading Notes
-It is an error to call @code{pg-getline} on a connection without first
-executing a @code{COPY <table> TO STDOUT} command on that connection.
-It is also an error to call @code{pg-getline} after a terminating line has
-been received, without an intervening @code{COPY} command being issued on
-that connection.
-
-@tsin i pg-putline
-
-@heading Example
-This example defines a procedure @code{copy-from-port} which can be used
-to supply data to a @code{COPY <table> FROM STDIN} command.
-
-@lisp
-(use-modules (ice-9 rdelim))
-
-(define (copy-from-port conn port)
-  (let loop ((line (read-line port)))
-    (cond ((eof-object? line)
-           (pg-putline conn "\\.\n")
-           (pg-endcopy conn))
-          (else
-           (pg-putline conn line)
-           (pg-putline conn "\n")
-           (if (string=? line "\\.")
-               (pg-endcopy conn)
-               (loop (read-line port)))))))
-@end lisp
-
-@tsin i pg-endcopy
 
 Although not readily apparent, another form of data copying is @dfn{formatted
 output}, which is supported by Guile-PG via the @code{pg-print} procedure and

@@ -1,5 +1,13 @@
 2014-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Drop procs: pg-{getline,getlineasync,putline,endcopy}
+
+	* basic.scm (test:getline, test:getlineasync)
+	(test:putline): Delete procs.
+	(main): Update expected-pass number.
+
+2014-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Use pg-put-copy-{data,end} for async retrieval test.
 
 	* basic.scm (test:asynchronous-retrieval): ...here,

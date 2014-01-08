@@ -1,3 +1,11 @@
+2014-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Drop procs: pg-{getline,getlineasync,putline,endcopy}
+
+	* doc/ref.texh (Write/Reading Data): Remove heading
+	"Obsolete functions for COPY", blurbs, examples, and @tsin for
+	‘pg-getline’, ‘pg-getlineasync’, ‘pg-putline’, ‘pg-endcopy’.
+
 2013-12-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Change bug-report email address.

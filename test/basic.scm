@@ -633,34 +633,6 @@
                       (car box)
                       (string=? "1\tColumn 1\n" (car box)))))))))
 
-(define test:getline
-  (add-test #t
-    (lambda ()
-      (let ((res (cexec "SELECT * INTO test2 FROM test WHERE col1 = 1")))
-        (and (command-ok? res)
-             (let ((res (cexec "COPY test2 TO STDOUT")))
-               (and ((ok? 'PGRES_COPY_OUT) res)
-                    (let ((line (pg-getline *C*)))
-                      (and (string=? (pg-getline *C*) "\\.")
-                           (eq? #t (pg-endcopy *C*))
-                           (string=? line "1\tColumn 1"))))))))))
-
-(define test:getlineasync               ; needs test2
-  (add-test #t
-    (lambda ()
-      (let ((res (cexec "COPY test2 TO STDOUT")))
-        (and ((ok? 'PGRES_COPY_OUT) res)
-             (let ((buf (make-string 8)))
-               (let loop ((count (pg-getlineasync *C* buf)) (acc '()))
-                 (if (< count 0)
-                     (and (string=? "1\tColumn 1\n"
-                                    (apply string-append
-                                           (reverse acc)))
-                          (eq? #t (pg-endcopy *C*)))
-                     (let ((chunk (substring buf 0 count)))
-                       (loop (pg-getlineasync *C* buf)
-                             (cons chunk acc)))))))))))
-
 (define test:put-copy-data/end
   (add-test #t
     (lambda ()
@@ -676,20 +648,6 @@
                            (equal? (list (pg-getvalue res 0 0)
                                          (pg-getvalue res 0 1))
                                    '("2" "Column 2")))))))))))
-
-(define test:putline
-  (add-test #t
-    (lambda ()
-      (let ((res (cexec "COPY test2 FROM STDIN")))
-        (and ((ok? 'PGRES_COPY_IN) res)
-             (begin
-               (for-each (lambda (s) (pg-putline *C* s))
-                         '("2\tColumn 2" "\n"))
-               (and (eq? #t (pg-endcopy *C*))
-                    (let ((res (cexec "SELECT * FROM test2 WHERE col1 = 2")))
-                      (and res (tuples-ok? res)
-                           (string=? (pg-getvalue res 0 0) "2")
-                           (string=? (pg-getvalue res 0 1) "Column 2"))))))))))
 
 (define test:set-nonblocking!
   (add-test #t
@@ -824,7 +782,7 @@
 
 (define (main)
   (set! verbose #t)
-  (test-init "basic" 59)
+  (test-init "basic" 56)
   (test! test:pg-guile-pg-loaded
          test:pg-conndefaults
          test:protocol-version/bad-connection
@@ -866,10 +824,7 @@
          test:pg-exec-params
          test:pg-exec-prepared
          test:get-copy-data
-         test:getline
-         test:getlineasync
          test:put-copy-data/end
-         test:putline
          test:get-proc:pg-get-db
          test:get-proc:pg-get-user
          test:get-proc:pg-get-pass
