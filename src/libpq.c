@@ -783,10 +783,9 @@ static size_t
 lob_free (SCM port)
 {
   lob_stream *lobp = LOB_STREAM (port);
-  int ret;
 
   if (SCM_OPENP (port))
-    ret = lob_close (port);
+    lob_close (port);
   GCFREE (lobp, lob_name);
   return GCRV (lobp);
 }

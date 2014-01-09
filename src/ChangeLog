@@ -1,5 +1,11 @@
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[int] Don't bother w/ ‘lob_close’ rv.
+
+	* libpq.c (lob_free): ...here.
+
+2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Use ‘BSTRING’ more.
 
 	* libpq.c (pg_escape_string_conn): ...here.
