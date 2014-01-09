@@ -2390,7 +2390,7 @@ done; or @code{-2} to mean an error occurred.
       if (pwritep)
         WBPORT (port, newbuf, rv);
       if (swritep)
-        SETCAR (port, BSTRING (newbuf, rv));
+        scm_set_car_x (port, BSTRING (newbuf, rv));
     }
   INTSOK ();
   PQfreemem (newbuf);
@@ -2947,7 +2947,7 @@ is out of range.  If @var{start} is exactly the length of
       if (PROB (cenc))
         ERROR ("No such encoding: ~A", encoding);
       cell = CONS (encoding, NUM_INT (cenc));
-      SETCDR (encoding_alist, CONS (cell, CDR (encoding_alist)));
+      scm_set_cdr_x (encoding_alist, CONS (cell, CDR (encoding_alist)));
     }
 
   ASSERT_STRING (2, string);

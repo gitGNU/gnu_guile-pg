@@ -1,5 +1,13 @@
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq int] Use scm_set_c[ad]r_x directly.
+
+	* libpq.c (pg_get_copy_data): Use ‘scm_set_car_x’.
+	(pg_mblen): Use ‘scm_set_cdr_x’.
+	* gi.h (SETCAR, SETCDR): Delete #define:s.
+
+2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq int] Rename macro ‘VREF’ to ‘VECTOR_REF’.
 
 	* gi.h: ...here.

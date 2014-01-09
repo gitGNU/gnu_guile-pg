@@ -52,8 +52,6 @@
 #define CONS              gh_cons
 #define CAR               gh_car
 #define CDR               gh_cdr
-#define SETCAR            gh_set_car_x
-#define SETCDR            gh_set_cdr_x
 #define EVAL_STRING       gh_eval_str
 #define APPLY             gh_apply
 #define LISTIFY           gh_list
@@ -80,8 +78,6 @@
 #define CONS              scm_cons
 #define CAR               scm_car
 #define CDR               scm_cdr
-#define SETCAR            scm_set_car_x
-#define SETCDR            scm_set_cdr_x
 #define EVAL_STRING       scm_c_eval_string
 #define APPLY             scm_apply_0
 #define LISTIFY           scm_list_n
