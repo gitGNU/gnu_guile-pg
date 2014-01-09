@@ -1701,7 +1701,7 @@ A symbol.
         {
         case PG_DIAG_STATEMENT_POSITION:
         case PG_DIAG_SOURCE_LINE:
-          rv = EVAL_STRING (s);
+          rv = NUM_INT (atoi (s));
           break;
         case PG_DIAG_SOURCE_FUNCTION:
           rv = SYMBOL (s);

@@ -1,5 +1,11 @@
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq int] Avoid ‘EVAL_STRING’.
+
+	* libpq.c (pg_result_error_field): Use ‘NUM_INT’, ‘atoi’ instead.
+
+2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq] Fix bug: Make ‘pg-result-error-field’ DTRT.
 
 	* libpq.c (pg_result_error_field): Return the
