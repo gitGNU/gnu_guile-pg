@@ -47,7 +47,7 @@
 #define CHARACTER         gh_char2scm
 #define C_INT             gh_scm2int
 #define VECTOR_LEN        gh_vector_length
-#define VREF(v,i)         (SCM_VELTS (v)[i])
+#define VECTOR_REF(v,i)   (SCM_VELTS (v)[i])
 #define EQ                gh_eq_p
 #define CONS              gh_cons
 #define CAR               gh_car
@@ -75,7 +75,7 @@
 #define CHARACTER         SCM_MAKE_CHAR
 #define C_INT             scm_to_int
 #define VECTOR_LEN        scm_c_vector_length
-#define VREF              SCM_SIMPLE_VECTOR_REF
+#define VECTOR_REF        SCM_SIMPLE_VECTOR_REF
 #define EQ                scm_is_eq
 #define CONS              scm_cons
 #define CAR               scm_car

@@ -930,7 +930,7 @@ prep_paramspecs (const char *FUNC_NAME, struct paramspecs *ps, SCM v)
   ps->len = len = VECTOR_LEN (v);
   for (i = 0; i < len; i++)
     {
-      elem = VREF (v, i);
+      elem = VECTOR_REF (v, i);
       if (! STRINGP (elem))
         ERROR ("bad parameter-vector element: ~S", elem);
     }
@@ -942,7 +942,7 @@ prep_paramspecs (const char *FUNC_NAME, struct paramspecs *ps, SCM v)
     {
       range_t celem;
 
-      elem = VREF (v, i);
+      elem = VECTOR_REF (v, i);
       FINANGLE (elem);
       ps->values[i] = strdup (RS (elem));
       UNFINANGLE (elem);

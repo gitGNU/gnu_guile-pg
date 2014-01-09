@@ -1,5 +1,12 @@
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq int] Rename macro ‘VREF’ to ‘VECTOR_REF’.
+
+	* gi.h: ...here.
+	* libpq.c (prep_paramspecs): Update.
+
+2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[slog] Use "snuggle/finangle.h".
 
 	* libpq.c: #include "snuggle/finangle.h".
