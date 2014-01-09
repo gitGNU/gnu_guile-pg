@@ -247,9 +247,11 @@
                           (loop (+ start x) (cdr good)))))))))))
 
 (define test:known-bad-command
-  (add-test #f
+  (add-test "42601"                     ; syntax error
     (lambda ()
-      (command-ok? (cexec "LIKELY-TO-BE-INVALID-COMMAND;")))))
+      (pg-result-error-field
+       (cexec "LIKELY-TO-BE-INVALID-COMMAND;")
+       #:sqlstate))))
 
 (define test:transaction-status
   (add-test #t

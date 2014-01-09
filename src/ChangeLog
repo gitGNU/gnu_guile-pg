@@ -1,5 +1,12 @@
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq] Fix bug: Make ‘pg-result-error-field’ DTRT.
+
+	* libpq.c (pg_result_error_field): Return the
+	object created from non-‘NULL’ ‘PQresultErrorField’ rv!
+
+2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Don't bother w/ ‘lob_close’ rv.
 
 	* libpq.c (lob_free): ...here.

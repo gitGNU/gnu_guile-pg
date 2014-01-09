@@ -1709,6 +1709,8 @@ A symbol.
         default:
           rv = STRING (s);
         }
+
+      return rv;
     }
 
   RETURN_FALSE ();
