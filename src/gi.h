@@ -26,61 +26,18 @@
 
 #include <libguile.h>
 #include "snuggle/level.h"
+#include "snuggle/humdrum.h"
 
 #define GI_LEVEL_NOT_YET_1_8  ! GI_LEVEL (1, 8)
 
 #if GI_LEVEL_NOT_YET_1_8
 #include <guile/gh.h>
-#define BOOLEANP          gh_boolean_p
 #define EXACTP            gh_exact_p
-#define NULLP             gh_null_p
-#define PAIRP             gh_pair_p
-#define STRINGP           gh_string_p
-#define SYMBOLP           gh_symbol_p
-#define PROCEDUREP        gh_procedure_p
-#define BOOLEAN           gh_bool2scm
-#define NUM_INT           gh_int2scm
-#define NUM_ULONG         gh_ulong2scm
-#define SYMBOL            gh_symbol2scm
-#define STRING            gh_str02scm
-#define BSTRING           gh_str2scm
 #define CHARACTER         gh_char2scm
-#define C_INT             gh_scm2int
-#define VECTOR_LEN        gh_vector_length
-#define VECTOR_REF(v,i)   (SCM_VELTS (v)[i])
-#define EQ                gh_eq_p
-#define CONS              gh_cons
-#define CAR               gh_car
-#define CDR               gh_cdr
-#define EVAL_STRING       gh_eval_str
-#define APPLY             gh_apply
-#define LISTIFY           gh_list
 #define NEWCELL_X(svar)   SCM_NEWCELL (svar)
 #else  /* !GI_LEVEL_NOT_YET_1_8 */
-#define BOOLEANP          scm_is_bool
 #define EXACTP(x)         scm_is_true (scm_exact_p (x))
-#define NULLP             scm_is_null
-#define PAIRP             scm_is_pair
-#define STRINGP           scm_is_string
-#define SYMBOLP           scm_is_symbol
-#define PROCEDUREP(x)     scm_is_true (scm_procedure_p (x))
-#define BOOLEAN           scm_from_bool
-#define NUM_INT           scm_from_int
-#define NUM_ULONG         scm_from_ulong
-#define SYMBOL            scm_from_locale_symbol
-#define STRING            scm_from_locale_string
-#define BSTRING           scm_from_locale_stringn
 #define CHARACTER         SCM_MAKE_CHAR
-#define C_INT             scm_to_int
-#define VECTOR_LEN        scm_c_vector_length
-#define VECTOR_REF        SCM_SIMPLE_VECTOR_REF
-#define EQ                scm_is_eq
-#define CONS              scm_cons
-#define CAR               scm_car
-#define CDR               scm_cdr
-#define EVAL_STRING       scm_c_eval_string
-#define APPLY             scm_apply_0
-#define LISTIFY           scm_list_n
 #define NEWCELL_X(svar)   svar = scm_cell (0, 0)
 #endif /* !GI_LEVEL_NOT_YET_1_8 */
 

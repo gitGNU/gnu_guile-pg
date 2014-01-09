@@ -1,5 +1,15 @@
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[slog] Use "snuggle/humdrum.h".
+
+	* gi.h: #include "snuggle/humdrum.h".
+	(BOOLEANP, NULLP, PAIRP, STRINGP, SYMBOLP, PROCEDUREP)
+	(BOOLEAN, NUM_INT, NUM_ULONG, SYMBOL, STRING, BSTRING)
+	(C_INT, VECTOR_LEN, VECTOR_REF, EQ, CONS, CAR, CDR)
+	(EVAL_STRING, APPLY, LISTIFY): Delete.
+
+2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq int] Use scm_set_c[ad]r_x directly.
 
 	* libpq.c (pg_get_copy_data): Use ‘scm_set_car_x’.
