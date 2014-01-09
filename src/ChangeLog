@@ -1,3 +1,9 @@
+2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[int] Use ‘BSTRING’ more.
+
+	* libpq.c (pg_escape_string_conn): ...here.
+
 2014-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Drop procs: pg-{getline,getlineasync,putline,endcopy}

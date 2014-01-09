@@ -1447,7 +1447,7 @@ If there is an error, return @code{#f}.  */)
 
   olen = PQescapeStringConn (dbconn, answer, RS (string), RLEN (string), &errcode);
   rv = DEFAULT_FALSE (! errcode,
-                      STRING (answer));
+                      BSTRING (answer, olen));
   free (answer);
   UNFINANGLE (string);
   return rv;
