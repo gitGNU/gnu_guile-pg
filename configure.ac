@@ -17,9 +17,7 @@ dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 dnl General Public License for more details.
 dnl
 dnl You should have received a copy of the GNU General Public License
-dnl along with Guile-PG; see the file COPYING.  If not, write to the
-dnl Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-dnl Boston, MA  02110-1301  USA
+dnl along with Guile-PG.  If not, see <http://www.gnu.org/licenses/>.
 
 AC_INIT([Guile-PG],[0.46],[guile-user@gnu.org])
 AC_CONFIG_AUX_DIR([build-aux])
