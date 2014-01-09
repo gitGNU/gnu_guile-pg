@@ -1,5 +1,12 @@
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[slog] Use "snuggle/defsmob.h".
+
+	* gi.h: #include "snuggle/defsmob.h".
+	(DEFSMOB, GCMALLOC, GCFREE, GCRV): Delete macros.
+
+2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq] Work w/ "integer" instead of "exact".
 
 	* gi.h (EXACTP): Delete #define/macro.
