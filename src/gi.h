@@ -32,11 +32,9 @@
 
 #if GI_LEVEL_NOT_YET_1_8
 #include <guile/gh.h>
-#define EXACTP            gh_exact_p
 #define CHARACTER         gh_char2scm
 #define NEWCELL_X(svar)   SCM_NEWCELL (svar)
 #else  /* !GI_LEVEL_NOT_YET_1_8 */
-#define EXACTP(x)         scm_is_true (scm_exact_p (x))
 #define CHARACTER         SCM_MAKE_CHAR
 #define NEWCELL_X(svar)   svar = scm_cell (0, 0)
 #endif /* !GI_LEVEL_NOT_YET_1_8 */
@@ -115,30 +113,27 @@ scm_init_ ## fname_frag ## _module (void)                               \
 
 #define ASSERT(what,expr,msg)  SCM_ASSERT ((expr), what, msg, FUNC_NAME)
 #define ASSERT_STRING(n,arg)  ASSERT (arg, STRINGP (arg), SCM_ARG ## n)
-#define ASSERT_EXACT(n,arg)  ASSERT (arg, EXACTP (arg), SCM_ARG ## n)
+#define ASSERT_INTEGER(n,arg)  ASSERT (arg, INTEGERP (arg), SCM_ARG ## n)
 
 #if GI_LEVEL_NOT_YET_1_8
-#define ASSERT_EXACT_NON_NEGATIVE_COPY(n,svar,cvar)     \
+#define VALIDATE_NNINT_COPY(n,svar,cvar)     \
   SCM_VALIDATE_INUM_MIN_COPY (n, svar, 0, cvar)
-#define VALIDATE_EXACT_0_UP_TO_N_COPY(n,svar,hi,cvar)   \
+#define VALIDATE_NNINT_RANGE_COPY(n,svar,hi,cvar)   \
   SCM_VALIDATE_INUM_RANGE_COPY (n, svar, 0, hi, cvar)
 #define VALIDATE_KEYWORD(n,svar)                \
   SCM_VALIDATE_KEYWORD (n, svar)
 #else
-#define ASSERT_EXACT_NON_NEGATIVE_COPY(n,svar,cvar)  do \
+#define VALIDATE_NNINT_MORE_COPY(n,svar,cvar,more)      \
     {                                                   \
-      ASSERT_EXACT (n, svar);                           \
+      ASSERT_INTEGER (n, svar);                         \
       cvar = C_INT (svar);                              \
-      SCM_ASSERT_RANGE (n, svar, !PROB (cvar));         \
+      SCM_ASSERT_RANGE (n, svar, !PROB (cvar) && more); \
     }                                                   \
   while (0)
-#define VALIDATE_EXACT_0_UP_TO_N_COPY(n,svar,hi,cvar)  do       \
-    {                                                           \
-      ASSERT_EXACT (n, svar);                                   \
-      cvar = C_INT (svar);                                      \
-      SCM_ASSERT_RANGE (n, svar, !PROB (cvar) && hi > cvar);    \
-    }                                                           \
-  while (0)
+#define VALIDATE_NNINT_COPY(n,svar,cvar)        \
+  VALIDATE_NNINT_MORE_COPY (n, svar, cvar, 1)
+#define VALIDATE_NNINT_RANGE_COPY(n,svar,hi,cvar)       \
+  VALIDATE_NNINT_MORE_COPY (n, svar, cvar, hi > cvar)
 #define VALIDATE_KEYWORD(n,svar)                        \
   ASSERT (svar, scm_is_keyword (svar), SCM_ARG ## n)
 #endif

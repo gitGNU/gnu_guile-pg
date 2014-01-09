@@ -1,5 +1,23 @@
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq] Work w/ "integer" instead of "exact".
+
+	* gi.h (EXACTP): Delete #define/macro.
+	(ASSERT_EXACT): Delete macro.
+	(ASSERT_INTEGER): New macro.
+	(VALIDATE_NNINT_MORE_COPY) [!GI_LEVEL_NOT_YET_1_8]: New macro.
+	(VALIDATE_NNINT_COPY, VALIDATE_NNINT_RANGE_COPY)
+	[GI_LEVEL_NOT_YET_1_8]: Rename from
+	‘ASSERT_EXACT_NON_NEGATIVE_COPY’ and
+	‘VALIDATE_EXACT_0_UP_TO_N_COPY’, respectively.
+	(VALIDATE_NNINT_COPY, VALIDATE_NNINT_RANGE_COPY)
+	[GI_LEVEL_NOT_YET_1_8]: Likewise and also rewrite.
+	(pg_lo_seek, pg_mblen): Use ‘ASSERT_INTEGER’.
+	(pg_lo_read, VALIDATE_FIELD_NUMBER_COPY, pg_getvalue)
+	(pg_getlength, pg_getisnull): Update.
+
+2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[slog] Use "snuggle/humdrum.h".
 
 	* gi.h: #include "snuggle/humdrum.h".

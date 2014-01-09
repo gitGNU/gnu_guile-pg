@@ -569,8 +569,8 @@ zero if an error occurred.  */)
 {
 #define FUNC_NAME s_pg_lo_seek
   ASSERT_PORT (1, port, OPLOBPORTP);
-  ASSERT_EXACT (2, where);
-  ASSERT_EXACT (3, whence);
+  ASSERT_INTEGER (2, where);
+  ASSERT_INTEGER (3, whence);
 
   lob_flush (port);
 
@@ -664,8 +664,8 @@ Return a string containing the data read from the port or
   char *stage, *wp;
   int csiz, cnum, len, c;
 
-  ASSERT_EXACT_NON_NEGATIVE_COPY (1, siz, csiz);
-  ASSERT_EXACT_NON_NEGATIVE_COPY (2, num, cnum);
+  VALIDATE_NNINT_COPY (1, siz, csiz);
+  VALIDATE_NNINT_COPY (2, num, cnum);
   ASSERT_PORT (3, port, OPINLOBPORTP);
 
   if (0 > (len = csiz * cnum)
@@ -966,7 +966,7 @@ drop_paramspecs (struct paramspecs *ps)
  */
 
 #define VALIDATE_FIELD_NUMBER_COPY(pos,num,res,cvar)                    \
-  VALIDATE_EXACT_0_UP_TO_N_COPY (pos, num, PQnfields (res), cvar)
+  VALIDATE_NNINT_RANGE_COPY (pos, num, PQnfields (res), cvar)
 
 
 /*
@@ -2192,8 +2192,8 @@ up to the caller to convert this to the required type.  */)
   SCM rv;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
-  ASSERT_EXACT_NON_NEGATIVE_COPY (2, stuple, ctuple);
-  ASSERT_EXACT_NON_NEGATIVE_COPY (3, sfield, cfield);
+  VALIDATE_NNINT_COPY (2, stuple, ctuple);
+  VALIDATE_NNINT_COPY (3, sfield, cfield);
   CHECK_TUPLE_COORDS ();
 
   NOINTS ();
@@ -2220,8 +2220,8 @@ Return the size in bytes of the value of the attribute
   SCM ret;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
-  ASSERT_EXACT_NON_NEGATIVE_COPY (2, stuple, ctuple);
-  ASSERT_EXACT_NON_NEGATIVE_COPY (3, sfield, cfield);
+  VALIDATE_NNINT_COPY (2, stuple, ctuple);
+  VALIDATE_NNINT_COPY (3, sfield, cfield);
   CHECK_TUPLE_COORDS ();
 
   NOINTS ();
@@ -2246,8 +2246,8 @@ Return @code{#t} if the value of the attribute @var{sfield}, tuple
   SCM rv;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
-  ASSERT_EXACT_NON_NEGATIVE_COPY (2, stuple, ctuple);
-  ASSERT_EXACT_NON_NEGATIVE_COPY (3, sfield, cfield);
+  VALIDATE_NNINT_COPY (2, stuple, ctuple);
+  VALIDATE_NNINT_COPY (3, sfield, cfield);
   CHECK_TUPLE_COORDS ();
 
   NOINTS ();
@@ -2954,7 +2954,7 @@ is out of range.  If @var{start} is exactly the length of
   FINANGLE (string);
   if (GIVENP (start))
     {
-      ASSERT_EXACT (3, start);
+      ASSERT_INTEGER (3, start);
       cstart = C_INT (start);
       if (RLEN (string) < cstart)
         ERROR ("String start index out of range: ~A", start);
