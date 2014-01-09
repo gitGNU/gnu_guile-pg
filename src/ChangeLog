@@ -1,5 +1,13 @@
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[slog] Use "snuggle/level.h".
+
+	* gi.h: #include "snuggle/level.h".
+	(GI_LEVEL): Delete #define.
+	(GI_LEVEL_NOT_YET_1_8): Rewrite.
+
+2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Use Guile-BAUX for src/snuggle/*.h.
 
 	* Makefile.am (EXTRA_DIST): Add snuggle.

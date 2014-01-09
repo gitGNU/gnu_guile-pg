@@ -25,13 +25,9 @@
 #define _GI_H_
 
 #include <libguile.h>
+#include "snuggle/level.h"
 
-#if defined SCM_MAJOR_VERSION && defined SCM_MINOR_VERSION
-#define GI_LEVEL  ((SCM_MAJOR_VERSION << 8) + SCM_MINOR_VERSION)
-#else
-#define GI_LEVEL  0x0104                /* Guile 1.4.x */
-#endif
-#define GI_LEVEL_NOT_YET_1_8  (GI_LEVEL < 0x0108)
+#define GI_LEVEL_NOT_YET_1_8  ! GI_LEVEL (1, 8)
 
 #if GI_LEVEL_NOT_YET_1_8
 #include <guile/gh.h>
