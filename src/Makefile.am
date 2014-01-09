@@ -24,6 +24,8 @@ schemestems = $(schemefrags:%=postgres-%)
 schemesource = $(schemestems:=.scm)
 
 EXTRA_DIST = $(schemesource)
+EXTRA_DIST += snuggle
+
 BUILT_SOURCES = libpq.x
 
 AM_CPPFLAGS = $(SUBCPPFLAGS)

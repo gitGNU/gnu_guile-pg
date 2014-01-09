@@ -12,6 +12,7 @@ set -e
 #############################################################################
 # Guile-BAUX
 
+guile-baux-tool snuggle h src/snuggle/
 guile-baux-tool snuggle m4 build-aux/
 guile-baux-tool import \
     re-prefixed-site-dirs \

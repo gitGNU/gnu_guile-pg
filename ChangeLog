@@ -1,5 +1,11 @@
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Use Guile-BAUX for src/snuggle/*.h.
+
+	* autogen.sh: Invoke "guile-baux-tool snuggle".
+
+2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Use Guile-BAUX for snuggle.m4.
 
 	* build-aux/snuggle.m4: Delete file.

@@ -1,5 +1,11 @@
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Use Guile-BAUX for src/snuggle/*.h.
+
+	* Makefile.am (EXTRA_DIST): Add snuggle.
+
+2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq int] Avoid ‘EVAL_STRING’.
 
 	* libpq.c (pg_result_error_field): Use ‘NUM_INT’, ‘atoi’ instead.
