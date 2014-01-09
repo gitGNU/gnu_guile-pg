@@ -1,5 +1,16 @@
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[slog] Use "snuggle/finangle.h".
+
+	* libpq.c: #include "snuggle/finangle.h".
+	(range_t): Delete struct.
+	(RS, RLEN, FINANGLABLE_SCHEME_STRING_FROM_SYMBOL, ROZT_X)
+	(_FINANGLE, UNFINANGLE, REND, NUL_AT_END_X): Delete macros.
+	(_finangle) [!GI_LEVEL_NOT_YET_1_8]: Delete static func.
+	(FINANGLE_RAW, FINANGLE): Delete macros.
+
+2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[slog] Use "snuggle/level.h".
 
 	* gi.h: #include "snuggle/level.h".
