@@ -105,17 +105,7 @@ AS_IF([test no = $ac_cv_have_decl_scm_terminating],[
             [Define if libguile defines terminating.])])
 ])
 
-AC_DEFUN([PG_CHECK_GUILE_HEADER],[
-  AC_CHECK_HEADERS([guile/$1.h],,,[[
-#include <libguile.h>
-]$2])])
-
-PG_CHECK_GUILE_HEADER([gh])
-PG_CHECK_GUILE_HEADER([modsup],[[
-#if HAVE_GUILE_GH_H
-# include <guile/gh.h>
-#endif
-]])
+SNUGGLE_CHECK_CLASSIC_HEADERS
 
 CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"

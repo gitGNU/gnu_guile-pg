@@ -1,3 +1,11 @@
+2014-01-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[slog] Use ‘SNUGGLE_CHECK_CLASSIC_HEADERS’.
+
+	* configure.ac (SNUGGLE_CHECK_CLASSIC_HEADERS): New macro call.
+	(PG_CHECK_GUILE_HEADER): Delete AC_DEFUN.
+	(gh, modsup): Delete PG_CHECK_GUILE_HEADERs.
+
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build int] Use Guile-BAUX for src/snuggle/*.h.
