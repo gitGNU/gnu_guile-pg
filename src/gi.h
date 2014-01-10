@@ -30,22 +30,20 @@
 #include "snuggle/defsmob.h"
 #include "snuggle/modsup.h"
 
-#define GI_LEVEL_NOT_YET_1_8  ! GI_LEVEL (1, 8)
-
-#if GI_LEVEL_NOT_YET_1_8
+#if !GI_LEVEL_1_8
 #include <guile/gh.h>
 #define CHARACTER         gh_char2scm
 #define NEWCELL_X(svar)   SCM_NEWCELL (svar)
-#else  /* !GI_LEVEL_NOT_YET_1_8 */
+#else  /* GI_LEVEL_1_8 */
 #define CHARACTER         SCM_MAKE_CHAR
 #define NEWCELL_X(svar)   svar = scm_cell (0, 0)
-#endif /* !GI_LEVEL_NOT_YET_1_8 */
+#endif /* GI_LEVEL_1_8 */
 
 /*
  * abstractions
  */
 
-#if GI_LEVEL_NOT_YET_1_8
+#if !GI_LEVEL_1_8
 #define NOINTS()   SCM_DEFER_INTS
 #define INTSOK()   SCM_ALLOW_INTS
 #else
@@ -66,7 +64,7 @@
 #define ASSERT_STRING(n,arg)  ASSERT (arg, STRINGP (arg), SCM_ARG ## n)
 #define ASSERT_INTEGER(n,arg)  ASSERT (arg, INTEGERP (arg), SCM_ARG ## n)
 
-#if GI_LEVEL_NOT_YET_1_8
+#if !GI_LEVEL_1_8
 #define VALIDATE_NNINT_COPY(n,svar,cvar)     \
   SCM_VALIDATE_INUM_MIN_COPY (n, svar, 0, cvar)
 #define VALIDATE_NNINT_RANGE_COPY(n,svar,hi,cvar)   \

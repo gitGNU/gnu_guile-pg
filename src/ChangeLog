@@ -1,5 +1,12 @@
 2014-01-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[slog] Decruft: Use GI_LEVEL_1_8 directly.
+
+	* gi.h (GI_LEVEL_NOT_YET_1_8): Delete #define;
+	throughout, use ‘!GI_LEVEL_1_8’ and ‘GI_LEVEL_1_8’, instead.
+
+2014-01-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[slog] Use "snuggle/modsup.h".
 
 	* gi.h: #include "snuggle/modsup.h".
