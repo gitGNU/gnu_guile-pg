@@ -1,5 +1,13 @@
 2014-01-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[slog] Decruft: Don't #include <guile/gh.h> directly.
+
+	That's done by snuggle/humdrum.h, now.
+
+	* gi.h: ...here.
+
+2014-01-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[slog] Decruft: Use GI_LEVEL_1_8 directly.
 
 	* gi.h (GI_LEVEL_NOT_YET_1_8): Delete #define;

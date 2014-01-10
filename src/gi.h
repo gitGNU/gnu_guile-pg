@@ -31,7 +31,6 @@
 #include "snuggle/modsup.h"
 
 #if !GI_LEVEL_1_8
-#include <guile/gh.h>
 #define CHARACTER         gh_char2scm
 #define NEWCELL_X(svar)   SCM_NEWCELL (svar)
 #else  /* GI_LEVEL_1_8 */
