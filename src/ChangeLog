@@ -1,3 +1,11 @@
+2014-01-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[slog] Use "snuggle/modsup.h".
+
+	* gi.h: #include "snuggle/modsup.h".
+	(GH_DEFPROC, GH_MODULE_LINK_FUNC) [!HAVE_GUILE_MODSUP_H]:
+	(MOD_INIT_LINK_THUNK): Delete #define:s, macros.
+
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[slog] Use "snuggle/defsmob.h".

@@ -28,6 +28,7 @@
 #include "snuggle/level.h"
 #include "snuggle/humdrum.h"
 #include "snuggle/defsmob.h"
+#include "snuggle/modsup.h"
 
 #define GI_LEVEL_NOT_YET_1_8  ! GI_LEVEL (1, 8)
 
@@ -39,31 +40,6 @@
 #define CHARACTER         SCM_MAKE_CHAR
 #define NEWCELL_X(svar)   svar = scm_cell (0, 0)
 #endif /* !GI_LEVEL_NOT_YET_1_8 */
-
-/*
- * backward (sometimes foresight was incomplete)
- */
-
-#ifdef HAVE_GUILE_MODSUP_H
-#include <guile/modsup.h>
-#else  /* !defined HAVE_GUILE_MODSUP_H */
-
-#define GH_DEFPROC(fname, primname, req, opt, var, arglist, docstring) \
-  SCM_SNARF_HERE (static SCM fname arglist;)                           \
-  SCM_DEFINE (fname, primname, req, opt, var, arglist, docstring)
-
-#define GH_MODULE_LINK_FUNC(module_name, fname_frag, module_init_func)  \
-void                                                                    \
-scm_init_ ## fname_frag ## _module (void);                              \
-void                                                                    \
-scm_init_ ## fname_frag ## _module (void)                               \
-{                                                                       \
-  /* Make sure strings(1) finds module name at bol.  */                 \
-  static const char modname[] = "\n" module_name;                       \
-  scm_register_module_xxx (1 + modname, module_init_func);              \
-}
-
-#endif  /* !defined HAVE_GUILE_MODSUP_H */
 
 /*
  * abstractions
@@ -133,7 +109,6 @@ scm_init_ ## fname_frag ## _module (void)                               \
 
 #define PRIMPROC             GH_DEFPROC
 #define PERMANENT            scm_permanent_object
-#define MOD_INIT_LINK_THUNK  GH_MODULE_LINK_FUNC
 
 #endif /* _GI_H_ */
 
