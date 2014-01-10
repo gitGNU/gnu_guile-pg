@@ -1,5 +1,11 @@
 2014-01-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq int] Use ‘VALIDATE_NNINT_COPY’ more.
+
+	* libpq.c (pg_lo_seek): ...here.
+
+2014-01-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[slog] Decruft: Don't #include <guile/gh.h> directly.
 
 	That's done by snuggle/humdrum.h, now.

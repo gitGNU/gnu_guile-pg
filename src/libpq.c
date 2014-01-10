@@ -568,13 +568,15 @@ relative to the beginning of the object, or a number less than
 zero if an error occurred.  */)
 {
 #define FUNC_NAME s_pg_lo_seek
+  int cwhence;
+
   ASSERT_PORT (1, port, OPLOBPORTP);
   ASSERT_INTEGER (2, where);
-  ASSERT_INTEGER (3, whence);
+  VALIDATE_NNINT_COPY (3, whence, cwhence);
 
   lob_flush (port);
 
-  return NUM_INT (lob_seek (port, C_INT (where), C_INT (whence)));
+  return NUM_INT (lob_seek (port, C_INT (where), cwhence));
 #undef FUNC_NAME
 }
 
