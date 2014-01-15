@@ -1,3 +1,9 @@
+2014-01-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[pq int] Use ‘C_ULONG’ for conversion to ‘size_t’.
+
+	* libpq.c (pg_mblen): ...here, for ‘cstart’.
+
 2014-01-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[pq int] Use ‘VALIDATE_NNINT_COPY’ more.

@@ -2957,7 +2957,7 @@ is out of range.  If @var{start} is exactly the length of
   if (GIVENP (start))
     {
       ASSERT_INTEGER (3, start);
-      cstart = C_INT (start);
+      cstart = C_ULONG (start);
       if (RLEN (string) < cstart)
         ERROR ("String start index out of range: ~A", start);
     }
