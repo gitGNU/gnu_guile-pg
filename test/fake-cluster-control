@@ -1,7 +1,7 @@
 #!/bin/sh
 # fake-cluster-control
 #
-# Copyright (C) 2012 Thien-Thi Nguyen
+# Copyright (C) 2012, 2014 Thien-Thi Nguyen
 #
 # This file is part of Guile-PG.
 #
@@ -105,8 +105,10 @@ case "$1" in
 
     0) # down
         test -f $pidfile || exit 0
+        pid=`head -n 1 $pidfile`
+        ps $pid >/dev/null 2>&1 || exec rm $pidfile
         $hey killing daemon...
-        kill `head -n 1 $pidfile`
+        kill $pid
         hopefully down
         ;;
 

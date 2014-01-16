@@ -1,3 +1,10 @@
+2014-01-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v] Handle daemon-down case where pidfile exists but is stale.
+
+	* fake-cluster-control (0): If pidfile exists but "ps PID"
+	fails, don't try to kill PID; instead, simply remove pidfile.
+
 2014-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[pq] Fix bug: Make ‘pg-result-error-field’ DTRT.
