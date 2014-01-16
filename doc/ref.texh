@@ -708,7 +708,11 @@ function call.
 @end deffn
 
 @deffn {C Function} PQputnbytes
-This is in the section ``Obsolete Functions for COPY''.
+@deffnx {C Function} PQputline
+@deffnx {C Function} PQgetline
+@deffnx {C Function} PQgetlineAsync
+@deffnx {C Function} PQendcopy
+These are in the section ``Obsolete Functions for COPY''.
 @end deffn
 
 @deffn {C Function} PQsetNoticeReceiver

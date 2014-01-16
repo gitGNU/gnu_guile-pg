@@ -1,3 +1,10 @@
+2014-01-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Mention PQ funcs behind dropped procs.
+
+	* doc/ref.texh (Not Included): Add to "Obsolete Functions for COPY"
+	C funcs ‘PQputline’, ‘PQgetline’, ‘PQgetlineAsync’, ‘PQendcopy’.
+
 2014-01-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[slog] Use ‘SNUGGLE_CHECK_CLASSIC_HEADERS’.
