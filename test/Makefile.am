@@ -1,7 +1,7 @@
 # Makefile.am
 #
 # Copyright (C) 2002, 2003, 2004, 2005, 2006,
-#   2008, 2009, 2011, 2012 Thien-Thi Nguyen
+#   2008, 2009, 2011, 2012, 2014 Thien-Thi Nguyen
 # Portions Copyright (C) 1998 Ian Grant
 #
 # This file is part of Guile-PG.
@@ -59,7 +59,7 @@ check-local:
 	@test x1 = 'x$(KEEPD)' || $(CTL) 0
 
 kill-daemon:
-	$(CTL) z
+	$(CTL) 0
 
 delete-cluster: kill-daemon
 	rm -rf fake-cluster

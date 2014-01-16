@@ -124,10 +124,6 @@ case "$1" in
         fi
         ;;
 
-    z) # zonk-forcefully
-        sh $0 0 2>/dev/null || rm -f $pidfile
-        ;;
-
     *)
         drat "Bad command: '$1'"
         ;;

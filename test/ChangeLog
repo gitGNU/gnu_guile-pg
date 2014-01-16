@@ -1,5 +1,12 @@
 2014-01-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v int] Use "fake-cluster-control 0" more.
+
+	* Makefile.am (kill-daemon): Use ‘$(CTL) 0’.
+	* fake-cluster-control (z): Delete command.
+
+2014-01-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Handle daemon-down case where pidfile exists but is stale.
 
 	* fake-cluster-control (0): If pidfile exists but "ps PID"
