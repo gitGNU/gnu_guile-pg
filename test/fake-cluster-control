@@ -53,7 +53,7 @@ truly_up ()
 
 truly_down ()
 {
-    ! test -f $pidfile
+    ! truly_up
 }
 
 hopefully ()
@@ -104,7 +104,7 @@ case "$1" in
                 && mv ${cfg}T $cfg                                      \
                 || drat "Could not tweak '$cfg'"
         fi
-        test -f $pidfile && exit 0
+        truly_up && exit 0
         $hey kicking daemon...
         # TODO: When 7.4 support is dropped, use ‘pg_ctl --silent’.
         "$pgctl" start -D $fc -l $log 1>/dev/null

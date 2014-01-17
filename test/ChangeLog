@@ -1,5 +1,11 @@
 2014-01-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v int] Use ‘truly_up’ more.
+
+	* fake-cluster-control (truly_down, 1): ...here.
+
+2014-01-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v int] Use "DROP DATABASE IF EXISTS".
 
 	* testing.scm (d/c): Don't take 2nd arg SEVERITY; instead,
