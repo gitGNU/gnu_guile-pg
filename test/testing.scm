@@ -1,4 +1,4 @@
-;; Copyright (C) 2004, 2006, 2008, 2011, 2012 Thien-Thi Nguyen
+;; Copyright (C) 2004, 2006, 2008, 2011, 2012, 2014 Thien-Thi Nguyen
 ;; Copyright (C) 1996, 1997, 1998 Per Bothner.
 ;;
 ;; Usage:
@@ -187,19 +187,16 @@
 (define (fs s . args)
   (apply simple-format #f s args))
 
-(define (d/c action severity)
+(define (d/c action rest)
   (let* ((dbname (or (getenv "PGDATABASE")
                      (error "Env var PGDATABASE not set.")))
          (conn (pg-connectdb "dbname=template1"))
-         (res (pg-exec conn (fs "~A DATABASE ~A~A;"
-                                action dbname
-                                (case action
-                                  ((CREATE) " WITH ENCODING = 'UTF8'")
-                                  (else "")))))
+         (res (pg-exec conn (fs "~A DATABASE ~A;"
+                                action (fs rest dbname))))
          (ok? (eq? 'PGRES_COMMAND_OK (pg-result-status res))))
     (and (equal? "1" (getenv "DEBUG"))
          (display (fs "~A: ~A ~A\n"
-                      (if ok? "INFO" severity)
+                      (if ok? 'INFO 'FATAL)
                       action
                       (if ok? "ok" (pg-result-error-message res)))))
     (set! res #f)
@@ -209,12 +206,12 @@
     ok?))
 
 (define (drop! . no-worries)
-  (d/c 'DROP 'NO-WORRIES)
+  (d/c 'DROP "IF EXISTS ~A")
   #t)
 
 (define (fresh!)
   (drop!)
-  (cond ((d/c 'CREATE 'FATAL))
+  (cond ((d/c 'CREATE "~A WITH ENCODING = 'UTF8'"))
         (else (display "ERROR: fresh! failed. Giving up.\n")
               (exit #f))))
 
