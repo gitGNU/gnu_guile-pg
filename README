@@ -101,8 +101,8 @@ Testing
 
 	Cluster creation uses initdb(1) to do the work.  If that program
 	is not in ‘PATH’, you need to specify it.  (Kicking the daemon
-	uses pg_ctl(1) from the ‘PGPATH’ var output by ‘initdb --show’,
-	so there is no need to specify that directly.)
+	uses pg_ctl(1) and psql(1) from the ‘PGPATH’ var output by
+	‘initdb --show’, so there is no need to specify those directly.)
 
 	The basic tests should all pass.  The large-object tests might
 	fail because of bugs in PostgreSQL.  The abstraction tests are

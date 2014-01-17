@@ -209,17 +209,12 @@
     ok?))
 
 (define (drop! . no-worries)
-  ;; Give PostgreSQL some time to finish accessing (internally) template1.
-  (usleep 100000)
   (d/c "DROP" "NO-WORRIES")
   #t)
 
 (define (fresh!)
   (drop!)
-  ;; If PostgreSQL has not yet finished accessing (internally) template1
-  ;; (even though it should have), wait a little bit and try again.
-  (cond (                       (d/c "CREATE" "TOO-EAGER"))
-        ((begin (usleep 100000) (d/c "CREATE" "FATAL")))
+  (cond ((d/c "CREATE" "FATAL"))
         (else (display "ERROR: fresh! failed. Giving up.\n")
               (exit #f))))
 

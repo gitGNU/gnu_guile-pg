@@ -1,3 +1,13 @@
+2014-01-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v] Remove lame synchronization delays.
+
+	* fake-cluster-control (truly_up, truly_down): New funcs.
+	(hopefully): Use ‘truly_up’, ‘truly_down’; hardcode sleep time.
+	(PGPATH): New var; init via initdb + sed + ‘eval’; check sanity.
+	(1): Use global ‘PGPATH’.
+	* testing.scm (drop!, fresh!): Don't ‘usleep’.
+
 2014-01-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v int] Use "fake-cluster-control 0" more.

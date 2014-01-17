@@ -44,22 +44,28 @@ trycommand ()
         || drat "Bad $1 command: '$2' (see '$log')"
 }
 
+truly_up ()
+{
+    test -f $pidfile \
+        && ps `head -n 1 $pidfile` 1>/dev/null 2>&1 \
+        && "$PGPATH/psql" -h $full -l 1>/dev/null 2>&1
+}
+
+truly_down ()
+{
+    ! test -f $pidfile
+}
+
 hopefully ()
 {
     # $1 = direction
-    if [ up = $1 ]
-    then expected=0 ; patience='sleep 2'
-    else expected=1 ; patience=:
-    fi
     count=15
-    while sleep 1 && [ ! 0 = $count ] ; do
-        test -f $pidfile
-        result=$?
-        if [ $expected = $result ] ; then
+    while [ ! 0 = $count ] ; do
+        if truly_$1 ; then
             echo ${i}: daemon now $1
-            $patience
             exit 0
         fi
+        sleep 1
         count=`expr $count - 1`
     done
     drat "Could not bring $1 daemon within 15 seconds"
@@ -74,12 +80,15 @@ else
     hey="echo ${i}:"
 fi
 
+# Set PGPATH and check it.
+eval `$initdb --show $fc 2>&1 | sed '/PGPATH=/!d'`
+test -d "$PGPATH" || drat 'Could not determine PGPATH'
+
 case "$1" in
 
     1) # up
         date +'============================================== %F %H:%M' 1>>$log
         trycommand initdb "$initdb"
-        eval `$initdb --show $fc 2>&1 | sed '/PGPATH=/!d'`
         pgctl="$PGPATH/pg_ctl"
         trycommand pg_ctl "$pgctl"
         if [ ! -d $fc ] ; then
