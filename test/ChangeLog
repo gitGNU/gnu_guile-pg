@@ -1,5 +1,12 @@
 2014-01-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v int] Make ‘d/c’ take symbols, not strings.
+
+	* testing.scm (d/c): ...here.
+	(drop!, fresh!): Update calls to ‘d/c’.
+
+2014-01-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Remove lame synchronization delays.
 
 	* fake-cluster-control (truly_up, truly_down): New funcs.

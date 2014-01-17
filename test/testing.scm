@@ -193,9 +193,9 @@
          (conn (pg-connectdb "dbname=template1"))
          (res (pg-exec conn (fs "~A DATABASE ~A~A;"
                                 action dbname
-                                (if (equal? "CREATE" action)
-                                    " WITH ENCODING = 'UTF8'"
-                                    ""))))
+                                (case action
+                                  ((CREATE) " WITH ENCODING = 'UTF8'")
+                                  (else "")))))
          (ok? (eq? 'PGRES_COMMAND_OK (pg-result-status res))))
     (and (equal? "1" (getenv "DEBUG"))
          (display (fs "~A: ~A ~A\n"
@@ -209,12 +209,12 @@
     ok?))
 
 (define (drop! . no-worries)
-  (d/c "DROP" "NO-WORRIES")
+  (d/c 'DROP 'NO-WORRIES)
   #t)
 
 (define (fresh!)
   (drop!)
-  (cond ((d/c "CREATE" "FATAL"))
+  (cond ((d/c 'CREATE 'FATAL))
         (else (display "ERROR: fresh! failed. Giving up.\n")
               (exit #f))))
 
