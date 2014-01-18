@@ -772,7 +772,7 @@
                                (if (string-null? reason)
                                    "cancellation"
                                    reason)))
-                     #t)))))))
+                     (command-ok? (cexec "COMMIT TRANSACTION")))))))))
 
 (define test:close
   (add-test #t
