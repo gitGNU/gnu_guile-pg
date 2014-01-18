@@ -28,9 +28,14 @@ This file lives in the repo but is not included in the distribution.
   | [[elisp:(grep%20"grep%20-nH%20-e%20PQserverVersion%20libpq.c")][PQserverVersion]] |   0.38 |
   | [[elisp:(grep%20"grep%20-nH%20-e%20PQprepare%20libpq.c")][PQprepare]]       |        |
   | [[elisp:(grep%20"grep%20-nH%20-e%20PQsendPrepared%20libpq.c")][PQsendPrepared]]  |        |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQgetCancel%20libpq.c")][PQgetCancel]]     |        |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQfreeCancel%20libpq.c")][PQfreeCancel]]    |        |
+  | [[elisp:(grep%20"grep%20-nH%20-e%20PQcancel%20libpq.c")][PQcancel]]        |        |
 *** pg-mb-display-length
 *** DONE pg-server-version
 *** pg-prepare / pg-send-prepared
+*** pg-get-cancel (free automatic)
+*** pg-cancel
 * 8.1
   | func      | status |
   | [[elisp:(grep%20"grep%20-nH%20-e%20lo_create%20libpq.c")][lo_create]] |        |
