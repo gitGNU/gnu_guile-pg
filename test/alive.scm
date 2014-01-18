@@ -1,6 +1,6 @@
 ;;; alive.scm
 
-;; Copyright (C) 2008, 2009 Thien-Thi Nguyen
+;; Copyright (C) 2008, 2009, 2014 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;
@@ -22,8 +22,8 @@
            (newline)
            (exit #f)))
 
-(simple-format #t "PGHOST: ~A\n" (or (getenv "PGHOST")
-                                     '(unset)))
+(fso "PGHOST: ~A~%" (or (getenv "PGHOST")
+                        '(unset)))
 
 (use-modules (database postgres))
 

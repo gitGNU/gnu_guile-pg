@@ -1,7 +1,7 @@
 #!/bin/sh
 # runtest --- run "@GUILE@" w/ proper test environment
 #
-# Copyright (C) 2008, 2011, 2012 Thien-Thi Nguyen
+# Copyright (C) 2008, 2011, 2012, 2014 Thien-Thi Nguyen
 #
 # This file is part of Guile-PG.
 #
@@ -45,6 +45,7 @@ fi
 
 test x"$DEBUG" = x || set -x
 exec ${GUILE-@GUILE@} $dopt \
+    -L '@abs_top_srcdir@/build-aux' \
     -L "$d" \
     -l $srcdir/testing.scm \
     -s $1

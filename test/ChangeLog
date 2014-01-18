@@ -1,5 +1,32 @@
 2014-01-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v int] Use ‘(guile-baux common)’ procs.
+
+	* runtest.in: Arrange to add ‘@abs_top_srcdir@/build-aux’
+	to the ‘%load-path’ in the Guile invocation.
+	* testing.scm (fs): Delete proc.
+	(guile-baux common): Add ‘use-modules’ form.
+	(d/c): Use ‘fso’.
+	(fresh!): Use ‘die’.
+	* alive.scm: Use ‘fso’.
+	* basic.scm (ok?): Likewise.
+	(ftype-name): Use ‘fs’.
+	(test:pg-guile-pg-loaded, test:make-connection)
+	(test:parameter-status, test:server-version): Use ‘fso’.
+	(test:load-records): Use ‘fs’.
+	(test:pg-exec-params): Use ‘fso’, ‘fs’.
+	(test:pg-exec-prepared single): Use ‘fso’.
+	(test:pg-exec-prepared spin): Use ‘fs’.
+	(test:pg-exec-prepared): Likewise.
+	(test:asynchronous-retrieval): Likewise.
+	(test:request-cancel): Use ‘fso’.
+	* meta.scm (VIEWS): Use ‘fs’.
+	* types-table.scm (-fs, fs, fso): Delete procs.
+	(mgr, sel/check): Use ‘fso’.
+	(expect-bad-defs): Use ‘fs’.
+
+2014-01-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Fix bug: Do "COMMIT TRANSACTION" after cancel.
 
 	Long-standing omission from original 2005-08-24.

@@ -1,7 +1,7 @@
 ;;; types-table.scm                             -*- coding: utf-8 -*-
 
-;; Copyright (C) 2002, 2003, 2004, 2005, 2006,
-;;   2007, 2008, 2009, 2011, 2012 Thien-Thi Nguyen
+;; Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007,
+;;   2008, 2009, 2011, 2012, 2014 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;
@@ -22,13 +22,6 @@
     (begin (display "Bad env.")
            (newline)
            (exit #f)))
-
-(define (-fs dest)
-  (lambda (s . args)
-    (apply simple-format dest s args)))
-
-(define fs (-fs #f))
-(define fso (-fs #t))
 
 (use-modules (database postgres)
              (database postgres-qcons)
@@ -67,7 +60,7 @@
                             "UTF8")))
              (cond ((pg-parameter-status conn scs)
                     => (lambda (v)
-                         (simple-format #t "INFO: ~S => ~S~%" scs v)
+                         (fso "INFO: ~S => ~S~%" scs v)
                          (fluid-set! sql-quote-auto-E? #t)))))))
     rv))
 
@@ -122,8 +115,8 @@
      (pass-if "result status"
        (let ((s (pg-result-status tupres)))
          (cond ((eq? 'PGRES_TUPLES_OK s))
-               (else (format #t "EWHY: result status: ~A\n      ~A\n"
-                             s (pg-result-error-message tupres))
+               (else (fso "EWHY: result status: ~A~%      ~A~%"
+                          s (pg-result-error-message tupres))
                      #f))))
      ,@body))
 
@@ -323,7 +316,7 @@
   (cons 'misc-error "malformed def"))
 
 (define-macro (expect-bad-defs defs)
-  `(pass-if-exception (format #f "~S" ,defs)
+  `(pass-if-exception (fs "~S" ,defs)
        pgtable:exception:malformed-defs
      (pgtable-manager db-name "dontcare" ,defs)))
 

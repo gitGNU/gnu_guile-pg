@@ -184,8 +184,7 @@
 
 ;;; Common bits
 
-(define (fs s . args)
-  (apply simple-format #f s args))
+(use-modules (guile-baux common))
 
 (define (d/c action rest)
   (let* ((dbname (or (getenv "PGDATABASE")
@@ -195,10 +194,10 @@
                                 action (fs rest dbname))))
          (ok? (eq? 'PGRES_COMMAND_OK (pg-result-status res))))
     (and (equal? "1" (getenv "DEBUG"))
-         (display (fs "~A: ~A ~A\n"
-                      (if ok? 'INFO 'FATAL)
-                      action
-                      (if ok? "ok" (pg-result-error-message res)))))
+         (fso "~A: ~A ~A~%"
+              (if ok? 'INFO 'FATAL)
+              action
+              (if ok? "ok" (pg-result-error-message res))))
     (set! res #f)
     (pg-finish conn)
     (set! conn #f)
@@ -212,8 +211,7 @@
 (define (fresh!)
   (drop!)
   (cond ((d/c 'CREATE "~A WITH ENCODING = 'UTF8'"))
-        (else (display "ERROR: fresh! failed. Giving up.\n")
-              (exit #f))))
+        (else (die #f "ERROR: fresh! failed. Giving up.~%"))))
 
 
 ;;; load-time actions

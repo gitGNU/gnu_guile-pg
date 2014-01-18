@@ -50,7 +50,7 @@
                 (eq? expected-status (pg-result-status result))))
           ((pg-result-error-field result #:sqlstate)
            => (lambda (s)
-                (format #t "INFO: sqlstate is ~S\n" s)
+                (fso "INFO: sqlstate is ~S~%" s)
                 #f))
           (else
            #f))))
@@ -72,8 +72,8 @@
 (define field-names (field-info pg-fname))
 
 (define (ftype-name result fnum)
-  (let ((result (cexec (format #f "SELECT typname FROM pg_type WHERE oid = ~A"
-                               (pg-ftype result fnum)))))
+  (let ((result (cexec (fs "SELECT typname FROM pg_type WHERE oid = ~A"
+                           (pg-ftype result fnum)))))
     (and (tuples-ok? result)
          (> (pg-ntuples result) 0)
          (pg-getvalue result 0 0))))
@@ -134,7 +134,7 @@
              (and (list? x)
                   (begin
                     (for-each (lambda (s)
-                                (simple-format #t "FEATURE: ~A\n" s))
+                                (fso "FEATURE: ~A~%" s))
                               x)
                     #t)
                   (and-map symbol? x)))))))
@@ -169,7 +169,7 @@
       (let ((new (false-if-exception (pg-connectdb ""))))
         (and (pg-connection? new)
              (begin (set! *C* new)
-                    (simple-format #t "INFO: connection: ~S\n" *C*)
+                    (fso "INFO: connection: ~S~%" *C*)
                     #t))))))
 
 (define test:protocol-version
@@ -273,7 +273,7 @@
       (or (= 2 PVERS)
           (and-map (lambda (k)
                      (let ((v (pg-parameter-status *C* k)))
-                       (format #t "INFO: parameter ~S => ~S\n" k v)
+                       (fso "INFO: parameter ~S => ~S~%" k v)
                        (string? v)))
                    '(server_version
                      client_encoding
@@ -286,7 +286,7 @@
     (lambda ()
       (let ((s (pg-parameter-status *C* 'server_version))
             (v (pg-server-version *C*)))
-        (format #t "INFO: server version => ~S\n" v)
+        (fso "INFO: server version => ~S~%" v)
         (and s
              (string? s)
              (not (string-null? s))
@@ -379,8 +379,8 @@
     (lambda ()
       (run-cmd 100
                (lambda (n)
-                 (format #f "INSERT INTO test VALUES (~A, 'Column ~A')"
-                         n n))))))
+                 (fs "INSERT INTO test VALUES (~A, 'Column ~A')"
+                     n n))))))
 
 (define (count-records)
   (let* ((s (result->output-string
@@ -564,11 +564,11 @@
         (if (tuples-ok? res)
             (pg-getvalue res 0 0)
             (let ((msg (pg-result-error-message res)))
-              (format #t "EWHY: pg-exec-params ~A\n" msg)
+              (fso "EWHY: pg-exec-params ~A~%" msg)
               msg)))
       (define (spin spec)
         (define (sel pos)
-          (format #f "SELECT ~A;" (list-ref spec pos)))
+          (fs "SELECT ~A;" (list-ref spec pos)))
         (string=? (single (cexec (sel 0)))
                   (single (pg-exec-params
                            *C* (sel 1)
@@ -592,15 +592,15 @@
         (if (tuples-ok? res)
             (pg-getvalue res 0 0)
             (let ((msg (pg-result-error-message res)))
-              (format #t "EWHY: pg-exec-prepared ~A\n" msg)
+              (fso "EWHY: pg-exec-prepared ~A~%" msg)
               msg)))
       (define (spin spec)
         (define (sel pos)
-          (format #f "SELECT ~A;" (list-ref spec pos)))
+          (fs "SELECT ~A;" (list-ref spec pos)))
         (cexec "DEALLOCATE plan;")
-        (and (command-ok? (cexec (format #f "PREPARE plan (~A) AS ~A"
-                                         (list-ref spec 2) ; blech
-                                         (sel 1))))
+        (and (command-ok? (cexec (fs "PREPARE plan (~A) AS ~A"
+                                     (list-ref spec 2) ; blech
+                                     (sel 1))))
              (string=? (single (cexec (sel 0)))
                        (single (pg-exec-prepared
                                 *C* "plan"
@@ -711,7 +711,7 @@
        (begin
          (do ((i 4224 (1- i)))
              ((zero? i))
-           (pg-put-copy-data *C* (format #f "~A.~A\n" i i)))
+           (pg-put-copy-data *C* (fs "~A.~A~%" i i)))
          (= 1 (pg-put-copy-end *C*)))
        (command-ok? (pg-get-result *C*))
        ;; Flush until we're sure everything is sent.
@@ -767,11 +767,11 @@
                   (newline))))
          ;; Sync up with the cancellation.
          (and (not (tuples-ok? (pg-get-result *C*)))
-              (begin (format #t "INFO: (~A)\n"
-                             (let ((reason (pg-error-message *C*)))
-                               (if (string-null? reason)
-                                   "cancellation"
-                                   reason)))
+              (begin (fso "INFO: (~A)~%"
+                          (let ((reason (pg-error-message *C*)))
+                            (if (string-null? reason)
+                                "cancellation"
+                                reason)))
                      (command-ok? (cexec "COMMIT TRANSACTION")))))))))
 
 (define test:close

@@ -1,6 +1,6 @@
 ;;; meta.scm
 
-;; Copyright (C) 2008 Thien-Thi Nguyen
+;; Copyright (C) 2008, 2014 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;
@@ -31,9 +31,8 @@
 (define CONN (pg-connectdb ""))
 
 (define VIEWS (map (lambda (name)
-                     (simple-format
-                      #f "(SELECT count(*),'~A' AS view FROM ~A)"
-                      name name))
+                     (fs "(SELECT count(*),'~A' AS view FROM ~A)"
+                         name name))
                    (information-schema-names #t)))
 
 (define QUERY (apply string-append
