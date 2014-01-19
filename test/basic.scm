@@ -38,6 +38,9 @@
 (define (cexec s)
   (pg-exec *C* (string-append s ";")))
 
+(define (tmp-table name . col-defs)
+  (cexec (apply temp-table-command name col-defs)))
+
 (define (result->output-string result)
   (let ((po (pg-make-print-options '(no-header))))
     (with-output-to-string
@@ -317,7 +320,9 @@
       (let ((n (call-with-output-string
                 (lambda (port)
                   (pg-set-notice-out! *C* port)
-                  (cexec "CREATE TABLE unused (ser serial, a int)")))))
+                  (tmp-table 'unused
+                             '(ser "serial")
+                             '(a "int"))))))
         (and (string? n)
              (regexp-exec
               ;; The full message begins with:
@@ -343,7 +348,9 @@
     (lambda ()
       (let ((n (call-with-output-string
                 (lambda (port)
-                  (cexec "CREATE TABLE unused2 (ser serial, a int)")))))
+                  (tmp-table 'unused2
+                             '(ser "serial")
+                             '(a "int"))))))
         (and (string? n) (string-null? n))))))
 
 (define test:set-client-data
@@ -624,7 +631,7 @@
     (lambda ()
       (or (= 2 PVERS)
           (and (command-ok?
-                (cexec "SELECT * INTO t1 FROM test WHERE col1 = 1"))
+                (cexec "SELECT * INTO TEMP t1 FROM test WHERE col1 = 1"))
                (let ((res (cexec "COPY t1 TO STDOUT"))
                      (box (list #f)))
                  (and ((ok? 'PGRES_COPY_OUT) res)
@@ -705,7 +712,7 @@
     (lambda ()
       (and
        ;; Create a table.
-       (command-ok? (cexec "CREATE TABLE async (a numeric (20, 10))"))
+       (command-ok? (tmp-table 'async '(a "numeric (20, 10)")))
        ;; Populate it.
        ((ok? 'PGRES_COPY_IN) (cexec "COPY async FROM STDIN"))
        (begin

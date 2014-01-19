@@ -64,7 +64,9 @@
 (define test:make-table
   (add-test #t
     (lambda ()
-      (cexec "CREATE TABLE test (col1 int4, col2 oid)"))))
+      (cexec (temp-table-command 'test
+                                 '(col1 "int4")
+                                 '(col2 "oid"))))))
 
 (define some-test-data "
 ;; This is a data file for use by guile-pg-lo-tests.scm;

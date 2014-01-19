@@ -185,6 +185,17 @@
 ;;; Common bits
 
 (use-modules (guile-baux common))
+(use-modules (srfi srfi-13))
+
+(define (temp-table-command name . col-defs)
+  (fs "CREATE TEMP TABLE ~A (~A)"
+      name
+      (string-join (map (lambda (spec)
+                          (fs "~S ~A"
+                              (symbol->string (car spec))
+                              (cadr spec)))
+                        col-defs)
+                   ", ")))
 
 (define (d/c action rest)
   (let* ((dbname (or (getenv "PGDATABASE")

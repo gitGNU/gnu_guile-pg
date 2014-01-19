@@ -1,3 +1,15 @@
+2014-01-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v int] Use temporary tables.
+
+	* testing.scm: Import SRFI 13.
+	(temp-table-command): New proc.
+	* basic.scm (tmp-table): New proc.
+	(test:set-notice-out!-1, test:set-notice-out!-2): Use ‘tmp-table’.
+	(test:get-copy-data): Do "SELECT .. INTO TEMP".
+	(test:asynchronous-retrieval): Use ‘tmp-table’.
+	* large.scm (test:make-table): Use ‘temp-table-command’.
+
 2014-01-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v int] Use ‘(guile-baux common)’ procs.
