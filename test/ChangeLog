@@ -1,5 +1,12 @@
 2014-01-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v int] Add abstraction: frob
+
+	* fake-cluster-control (frob): New func.
+	(truly_up): Use ‘frob’.
+
+2014-01-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v int] Drop basic test table when done.
 
 	* basic.scm (test:close): Do "DROP TABLE test" and validate.

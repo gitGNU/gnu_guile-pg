@@ -44,11 +44,16 @@ trycommand ()
         || drat "Bad $1 command: '$2' (see '$log')"
 }
 
+frob ()
+{
+    "$PGPATH/psql" -h $full -d "$@"
+}
+
 truly_up ()
 {
     test -f $pidfile \
         && ps `head -n 1 $pidfile` 1>/dev/null 2>&1 \
-        && "$PGPATH/psql" -h $full -l 1>/dev/null 2>&1
+        && frob template1 -l 1>/dev/null 2>&1
 }
 
 truly_down ()
