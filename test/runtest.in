@@ -43,6 +43,10 @@ then
     exit 1
 fi
 
+if ! $srcdir/fake-cluster-control 1 ; then
+    echo 'runtest: Could not prepare cluster and test db.'
+    exit 1
+fi
 test x"$DEBUG" = x || set -x
 exec ${GUILE-@GUILE@} $dopt \
     -L '@abs_top_srcdir@/build-aux' \

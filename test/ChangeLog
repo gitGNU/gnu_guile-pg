@@ -1,5 +1,13 @@
 2014-01-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v int] Move "fake-cluster-control 1" invocation to runtest.
+
+	* runtest.in: Invoke "fake-cluster-control 1" here.
+	* Makefile.am (check_DATA): Remove fake-cluster/postmaster.pid.
+	(fake-cluster/postmaster.pid): Delete target.
+
+2014-01-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Add "make drop-database".
 
 	* fake-cluster-control (d): New.

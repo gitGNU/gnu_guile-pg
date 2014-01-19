@@ -48,12 +48,7 @@ fake-install: ../src/stamp-all
 	  prefix="$$top"
 
 EXTRA_DIST += fake-cluster-control
-check_DATA += fake-cluster/postmaster.pid
 CLEANFILES += fake-cluster.log
-
-fake-cluster/postmaster.pid:
-	@$(CTL) 1
-	@if [ x1 = x'$(DEBUG)' ] ; then $(CTL) q ; fi
 
 check-local:
 	@test x1 = 'x$(KEEPD)' || $(CTL) 0
