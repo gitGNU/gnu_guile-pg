@@ -32,8 +32,6 @@
              (ice-9 regex)
              (ice-9 common-list))
 
-(fresh!)
-
 (define db-name (or (getenv "PGDATABASE")
                     (error "don't know what database to use")))
 
@@ -482,7 +480,6 @@
   (test-m2)
   (test-m3)
   (cleanup!)
-  (drop!)
   (test-report))
 
 (exit (main))

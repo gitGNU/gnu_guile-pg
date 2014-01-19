@@ -68,7 +68,7 @@ hopefully ()
     while [ ! 0 = $count ] ; do
         if truly_$1 ; then
             echo ${i}: daemon now $1
-            exit 0
+            return 0
         fi
         sleep 1
         count=`expr $count - 1`
@@ -109,12 +109,19 @@ case "$1" in
                 && mv ${cfg}T $cfg                                      \
                 || drat "Could not tweak '$cfg'"
         fi
-        truly_up && exit 0
-        $hey kicking daemon...
-        # TODO: When 7.4 support is dropped, use ‘pg_ctl --silent’.
-        "$pgctl" start -D $fc -l $log 1>/dev/null
-        # Unfortunately, ‘pg_ctl -w’ loses for Unix-domain sockets.
-        hopefully up
+        if truly_down ; then
+            $hey kicking daemon...
+            # TODO: When 7.4 support is dropped, use ‘pg_ctl --silent’.
+            "$pgctl" start -D $fc -l $log 1>/dev/null
+            # Unfortunately, ‘pg_ctl -w’ loses for Unix-domain sockets.
+            hopefully up
+        fi
+        if ! frob guile_pg_test -c '' 1>/dev/null 2>&1 ; then
+            $hey creating database guile_pg_test
+            frob template1 -c \
+                "CREATE DATABASE guile_pg_test WITH ENCODING = 'UTF8';" \
+                || drat "Could not create database \"guile_pg_test\""
+        fi
         ;;
 
     0) # down

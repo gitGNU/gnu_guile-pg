@@ -24,8 +24,6 @@
 
 (use-modules (database postgres) (database postgres-meta))
 
-(fresh!)
-
 (define N-EXPECTED 39)                  ; maintain me
 
 (define CONN (pg-connectdb ""))
@@ -52,8 +50,6 @@
 (set! RES #f)
 (pg-finish CONN)
 (set! CONN #f)
-
-(drop!)
 
 (exit RV)
 

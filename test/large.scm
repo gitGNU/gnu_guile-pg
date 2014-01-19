@@ -28,8 +28,6 @@
 
 (use-modules (ice-9 rdelim) (database postgres))
 
-(fresh!)
-
 ;; We use one connection for all the tests.
 
 (define *C* #f)
@@ -237,7 +235,6 @@
   (for-each delete-file '("lo-tests-data-1" "lo-tests-data-2"))
   (pg-finish *C*)
   (set! *C* #f)
-  (drop!)
   (test-report))
 
 (exit (main))

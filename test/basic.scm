@@ -28,8 +28,6 @@
 
 (use-modules (database postgres))
 
-(fresh!)
-
 ;; We use one connection for all the tests.
 
 (define *C* #f)
@@ -850,7 +848,6 @@
          test:request-cancel
          test:close)
   (set! *C* #f)
-  (drop!)
   (test-report))
 
 (exit (main))

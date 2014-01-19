@@ -1,5 +1,20 @@
 2014-01-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v] Create database exactly once, after daemon up.
+
+	* fake-cluster-control (hopefully):
+	Use ‘return’, not ‘exit’ on success.
+	(1): Use ‘truly_down’ and convert early ‘exit’ to conditional
+	block around daemon up commands; add commands to check for,
+	and create if necessary, database ‘guile_pg_test’.
+	* basic.scm: Remove all calls to ‘fresh!’ and ‘drop!’.
+	* large.scm: Likewise.
+	* meta.scm: Likewise.
+	* types-table.scm: Likewise.
+	* testing.scm (d/c, drop!, fresh!): Delete procs.
+
+2014-01-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v int] Add abstraction: frob
 
 	* fake-cluster-control (frob): New func.
