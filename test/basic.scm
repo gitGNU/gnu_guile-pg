@@ -784,9 +784,11 @@
 (define test:close
   (add-test #t
     (lambda ()
-      (pg-finish *C*)
-      (pg-finish *C*)                   ; expect: no error
-      #t)))
+      (and (command-ok? (cexec "DROP TABLE test"))
+           (begin
+             (pg-finish *C*)
+             (pg-finish *C*)            ; expect: no error
+             #t)))))
 
 (define (main)
   (set! verbose #t)

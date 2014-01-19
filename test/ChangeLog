@@ -1,5 +1,11 @@
 2014-01-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v int] Drop basic test table when done.
+
+	* basic.scm (test:close): Do "DROP TABLE test" and validate.
+
+2014-01-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v int] Use temporary tables.
 
 	* testing.scm: Import SRFI 13.
