@@ -1,6 +1,10 @@
 libpq.org
 
 This file lives in the repo but is not included in the distribution.
+The ‘func’ is from libpq-fe.h, while ‘status’ is one of:
+| never | probably "obsolete" or "deprecated"              |
+| int   | (internal) not necessary for a Schemey interface |
+| VERS  | available from Guile-PG VERS onward              |
 
 * 7.4
   | func                | status |
