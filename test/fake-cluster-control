@@ -145,6 +145,11 @@ case "$1" in
         fi
         ;;
 
+    d) # drop-database
+        frob template1 -c 'DROP DATABASE IF EXISTS guile_pg_test' \
+            || drat "Could not drop database \"guile_pg_test\""
+        ;;
+
     *)
         drat "Bad command: '$1'"
         ;;

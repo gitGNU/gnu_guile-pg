@@ -61,6 +61,9 @@ check-local:
 kill-daemon:
 	$(CTL) 0
 
+drop-database:
+	$(CTL) d
+
 delete-cluster: kill-daemon
 	rm -rf fake-cluster
 

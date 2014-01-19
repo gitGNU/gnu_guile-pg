@@ -1,5 +1,12 @@
 2014-01-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v] Add "make drop-database".
+
+	* fake-cluster-control (d): New.
+	* Makefile.am (drop-database): New target.
+
+2014-01-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Create database exactly once, after daemon up.
 
 	* fake-cluster-control (hopefully):
