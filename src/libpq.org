@@ -7,84 +7,122 @@ The ‘func’ is from libpq-fe.h, while ‘status’ is one of:
 | VERS  | available from Guile-PG VERS onward              |
 
 * 7.4
-  | func                | status |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQtransactionStatus%20libpq.c")][PQtransactionStatus]] |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQparameterStatus%20libpq.c")][PQparameterStatus]]   |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQprotocolVersion%20libpq.c")][PQprotocolVersion]]   |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQsetErrorVerbosity%20libpq.c")][PQsetErrorVerbosity]] |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQsetNoticeReceiver%20libpq.c")][PQsetNoticeReceiver]] |  never |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQexecParams%20libpq.c")][PQexecParams]]        |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQexecPrepared%20libpq.c")][PQexecPrepared]]      |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQsendQueryParams%20libpq.c")][PQsendQueryParams]]   |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQsendQueryPrepared%20libpq.c")][PQsendQueryPrepared]] |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQputCopyData%20libpq.c")][PQputCopyData]]       |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQputCopyEnd%20libpq.c")][PQputCopyEnd]]        |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQgetCopyData%20libpq.c")][PQgetCopyData]]       |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQresultErrorField%20libpq.c")][PQresultErrorField]]  |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQftable%20libpq.c")][PQftable]]            |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQftablecol%20libpq.c")][PQftablecol]]         |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQfformat%20libpq.c")][PQfformat]]           |   0.30 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQfreemem%20libpq.c")][PQfreemem]]           |    int |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQmblen%20libpq.c")][PQmblen]]             |   0.38 |
+  | status | func                |
+  |   0.30 | PQtransactionStatus |
+  |   0.30 | PQparameterStatus   |
+  |   0.30 | PQprotocolVersion   |
+  |   0.30 | PQsetErrorVerbosity |
+  |  never | PQsetNoticeReceiver |
+  |   0.30 | PQexecParams        |
+  |   0.30 | PQexecPrepared      |
+  |   0.30 | PQsendQueryParams   |
+  |   0.30 | PQsendQueryPrepared |
+  |   0.30 | PQputCopyData       |
+  |   0.30 | PQputCopyEnd        |
+  |   0.30 | PQgetCopyData       |
+  |   0.30 | PQresultErrorField  |
+  |   0.30 | PQftable            |
+  |   0.30 | PQftablecol         |
+  |   0.30 | PQfformat           |
+  |    int | PQfreemem           |
+  |   0.38 | PQmblen             |
 * 8.0
-  | func            | status |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQdsplen%20libpq.c")][PQdsplen]]        |        |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQserverVersion%20libpq.c")][PQserverVersion]] |   0.38 |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQprepare%20libpq.c")][PQprepare]]       |        |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQsendPrepared%20libpq.c")][PQsendPrepared]]  |        |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQgetCancel%20libpq.c")][PQgetCancel]]     |        |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQfreeCancel%20libpq.c")][PQfreeCancel]]    |        |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQcancel%20libpq.c")][PQcancel]]        |        |
+  | status | func                 |
+  |        | PQdsplen             |
+  | 0.38   | PQserverVersion      |
+  |        | PQregisterThreadLock |
+  |        | PQprepare            |
+  |        | PQsendPrepared       |
+  |        | PQgetCancel          |
+  | int    | PQfreeCancel         |
+  |        | PQcancel             |
 *** pg-mb-display-length
 *** DONE pg-server-version
 *** pg-prepare / pg-send-prepared
 *** pg-get-cancel (free automatic)
 *** pg-cancel
+*** new typedef: PGcancel (opaque struct)
+*** new typedef: pgthreadlock_t (func ptr for PQregisterThreadLock)
 * 8.1
   | func      | status |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20lo_create%20libpq.c")][lo_create]] |        |
+  | lo_create |        |
 *** pg-lo-create
 * 8.2
-  | func               | status |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQencryptPassword%20libpq.c")][PQencryptPassword]]  |        |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQisthreadsafe%20libpq.c")][PQisthreadsafe]]     |        |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQdescribePrepared%20libpq.c")][PQdescribePrepared]] |        |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQdescribePortal%20libpq.c")][PQdescribePortal]]   |        |
-  | (others?)          |        |
-*** pg-encrypt-password
+  | status | func                   |
+  | int    | PQgetssl               |
+  |        | PQisthreadsafe         |
+  |        | PQnparams              |
+  |        | PQparamtype            |
+  |        | PQdescribePrepared     |
+  |        | PQdescribePortal       |
+  |        | PQsendDescribePrepared |
+  |        | PQsendDescribePortal   |
+  |        | PQencryptPassword      |
 *** pg-thread-safe?
-*** pg-describe-prepared / pg-describe-portal (+ related)
+*** pg-describe-prepared / pg-describe-portal
+*** pg-send-describe-prepared / pg-send-describe-portal
+*** pg-encrypt-password
 * 8.3
-  | func                      | status |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20lo_truncate%20libpq.c")][lo_truncate]]               |        |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQconnectionNeedsPassword%20libpq.c")][PQconnectionNeedsPassword]] |        |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQconnectionUsedPassword%20libpq.c")][PQconnectionUsedPassword]]  |        |
-*** pg-lo-truncate
+  | status | func                        |
+  |        | PQconnectionNeedsPassword   |
+  |        | PQconnectionUsedPassword    |
+  |        | lo_truncate                 |
+  |        | pg_char_to_encoding         |
+  |        | pg_encoding_to_char         |
+  |        | pg_valid_server_encoding_id |
 *** pg-connection-needs-password / pg-connection-used-password
+*** pg-lo-truncate
+*** pg-char->encoding
+*** pg-encoding->char
+*** pg-valid-server-encoding-id?
 * 8.4
-  | func               | status |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20lo_import_with_oid%20libpq.c")][lo_import_with_oid]] |        |
+  | status | func               |
+  |        | PQconninfoParse    |
+  |        | PQinitOpenSSL      |
+  |        | PQcopyResult       |
+  |        | PQsetResultAttrs   |
+  |        | PQresultAlloc      |
+  |        | PQsetvalue         |
+  |        | lo_import_with_oid |
 *** extend ‘pg-lo-import’ with optional arg ‘loid’
+*** new k: PG_COPYRES_{ATTRS,TUPLES,EVENTS,NOTICEHOOKS} (flags for PQcopyResult)
+*** new typedef: PGresAttDesc (struct pgresAttDesc)
 * 9.0
-  | func                 | status         |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQconnectdbParams%20libpq.c")][PQconnectdbParams]]    |                |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQconnectStartParams%20libpq.c")][PQconnectStartParams]] | probably never |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQescapeLiteral%20libpq.c")][PQescapeLiteral]]      |                |
-  | [[elisp:(grep%20"grep%20-nH%20-e%20PQescapeIdentifier%20libpq.c")][PQescapeIdentifier]]   |                |
+  | status         | func                 |
+  | probably never | PQconnectStartParams |
+  |                | PQconnectdbParams    |
+  |                | PQescapeLiteral      |
+  |                | PQescapeIdentifier   |
 *** extend ‘pg-connectdb’ to handle params
     This can be done immediately, composing NAME=VAL internally for those
     systems that do not have ‘PQconnectdbParams’.
 *** pg-escape-literal
 *** pg-escape-identifier
 * 9.1
-  | func         | status |
-  | PQlibVersion |        |
-  | PQping       |        |
-  | PQpingParams |        |
-*** pg-lib-version
+  | status | func         |
+  |        | PQping       |
+  |        | PQpingParams |
+  |        | PQlibVersion |
 *** pg-ping
+*** pg-lib-version
 *** new connection params
 ***** client_encoding
 ***** requirepeer
+*** new ExecStatusType: PGRES_COPY_BOTH
+*** new typedef: PGPing (enum: PQPING_{OK,REJECT,NO_RESPONSE,NO_ATTEMPT})
+* 9.2
+  | status | func               |
+  |        | PQsetSingleRowMode |
+*** pg-set-single-row-mode
+*** new ExecStatusType: PGRES_SINGLE_TUPLE
+* 9.3
+  | status | func          |
+  |        | PQconninfo    |
+  |        | lo_lseek64    |
+  |        | lo_tell64     |
+  |        | lo_truncate64 |
+*** pg-lo-seek64
+*** pg-lo-tell64
+*** pg-lo-truncate64
 * etc
 #+STARTUP: odd
