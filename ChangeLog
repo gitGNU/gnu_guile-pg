@@ -1,3 +1,9 @@
+2014-01-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[boot int] Use ‘m4_normalize’ in ‘AC_CHECK_FUNCS’ arg.
+
+	* configure.ac (PQserverVersion): ...here.
+
 2014-01-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc] Mention PQ funcs behind dropped procs.

@@ -183,8 +183,10 @@ AC_CHECK_DECLS([pg_encoding_to_char, pg_char_to_encoding],,,[
 #endif
 ])
 
-# 8.0
-AC_CHECK_FUNCS([PQserverVersion])
+AC_CHECK_FUNCS(m4_normalize(
+dnl 8.0
+    PQserverVersion
+))
 
 CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"
