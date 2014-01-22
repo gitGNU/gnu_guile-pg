@@ -315,23 +315,35 @@
 (define test:set-notice-out!-1
   (add-test #t
     (lambda ()
+
+      (define (cmm value)
+        (cexec (fs "SET client_min_messages TO ~A" value)))
+
       (let ((n (call-with-output-string
                 (lambda (port)
                   (pg-set-notice-out! *C* port)
+                  ;; PostgreSQL 9.3 doesn't emit the "implicit sequence"
+                  ;; message unless at DEBUG1 verbosity.  So we set it
+                  ;; and reset it around the ‘tmp-table’ call.  It's
+                  ;; no problem for other PostgreSQL versions, so we
+                  ;; don't conditionalize based on version.
+                  ;; TODO: Find a reliable NOTICE-evoking alternative.
+                  (cmm "'debug1'")
                   (tmp-table 'unused
                              '(ser "serial")
-                             '(a "int"))))))
+                             '(a "int"))
+                  (cmm "DEFAULT")))))
         (and (string? n)
              (regexp-exec
-              ;; The full message begins with:
-              ;; "NOTICE:  CREATE TABLE will create implicit sequence "
+              ;; The full message begins with "NOTICE" or "DEBUG",
+              ;; then ":  CREATE TABLE will create implicit sequence ",
               ;; and ends differently depending on PostgreSQL version.
               ;; Here are some format strings that match those versions:
               ;; - 6.x    -- "'~A' for SERIAL column '~A'"
               ;; - 7.4.5  -- "~S for \"serial\" column ~S"
               ;; - 8.1.0  -- "~S for serial column ~S"
               (make-regexp
-               "^NOTICE.+implicit.+unused_ser_seq.+unused.ser")
+               "^(NOTICE|DEBUG).+implicit.+unused_ser_seq.+unused.ser")
               n)
              #t)))))
 
