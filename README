@@ -109,8 +109,9 @@ Testing
 	not supposed to fail, but you never know.  If a test fails, the
 	daemon might persist; to kill it "manually", use command:
 
-           cd test/ && make kill-daemon
+           cd test/ && make kill-daemon [INITDB=/path/to/initdb]
 
+	Note that you may need to specify INITDB here, as well.
 	In any case, the cluster persists, which reduces startup time
 	for subsequent "make check" invocations (if you are in the mood).
 	Use "make clean" to remove it and test/fake-install/ as well.
