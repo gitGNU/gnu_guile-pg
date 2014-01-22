@@ -1,3 +1,9 @@
+2014-01-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v] Handle PostgreSQL 9.3 config var ‘unix_socket_directories’.
+
+	* fake-cluster-control (1): ...here, via regexp.
+
 2014-01-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v int] Move "fake-cluster-control 1" invocation to runtest.

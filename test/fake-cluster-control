@@ -103,8 +103,10 @@ case "$1" in
                 || drat "Could not create cluster '$full' (see '$log')"
             $hey tweaking configuration...
             cfg=$fc/postgresql.conf
+            # PostgreSQL 9.3 replaces ‘unix_socket_directory’ w/
+            # ‘unix_socket_directories’.  Handle both w/ a regexp -- DWR!
             sed -e "/^.*\(listen_addresses\).*$/s||\1 = ''|"            \
-                -e "/^.*\(unix_socket_directory\).*/s||\1 = '$full'|"   \
+                -e "/^.*\(unix_socket_dir[a-z]*\).*/s||\1 = '$full'|"   \
                 $cfg > ${cfg}T                                          \
                 && mv ${cfg}T $cfg                                      \
                 || drat "Could not tweak '$cfg'"
