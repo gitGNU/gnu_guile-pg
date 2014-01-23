@@ -160,16 +160,6 @@ PG_PQ_NOT_YET([
 AC_MSG_FAILURE([Cannot find libpq header and lib; see README])
 ])
 
-# Add rpath to link flags if requested by ‘--enable-pq-rpath’.
-AS_IF([test yes = "$enable_pq_rpath"],[
-more=`echo $PQ_LDFLAGS | sed s/^-L/-R/`
-PQ_LDFLAGS="$more $PQ_LDFLAGS"
-AS_UNSET([more])
-])
-
-# Finally!
-PQ_LDFLAGS="$PQ_LDFLAGS -lpq"
-
 saved_CPPFLAGS="$CPPFLAGS"                  # restoration below
 saved_LDFLAGS="$LDFLAGS"
 CPPFLAGS="$PQ_CPPFLAGS $CPPFLAGS"
@@ -190,6 +180,16 @@ dnl 8.0
 
 CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"
+
+# Add rpath to link flags if requested by ‘--enable-pq-rpath’.
+AS_IF([test yes = "$enable_pq_rpath"],[
+more=`echo $PQ_LDFLAGS | sed s/^-L/-R/`
+PQ_LDFLAGS="$more $PQ_LDFLAGS"
+AS_UNSET([more])
+])
+
+# Finally!
+PQ_LDFLAGS="$PQ_LDFLAGS -lpq"
 
 ##----------------------------------------------------------------------------
 ## Compose ‘SUBCPPFLAGS’ and ‘SUBLDFLAGS’, whose names are deliberately

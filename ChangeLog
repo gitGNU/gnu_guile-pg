@@ -1,3 +1,10 @@
+2014-01-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[boot int] Move ‘PQ_LDFLAGS’ munging after ‘LDFLAGS’ restoration.
+
+	* configure.ac: Move ‘-R’ prefixing and ‘-lpq’ suffixing
+	from before the ‘LDFLAGS’ saving to after its restoration.
+
 2014-01-21  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[boot int] Use ‘m4_normalize’ in ‘AC_CHECK_FUNCS’ arg.
