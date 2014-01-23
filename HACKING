@@ -33,7 +33,6 @@ It lives in the repo but is not included in the distribution.
     iterates over a set of tuples returned from a query.  Also provide
     a streams interface so that (pg:stream-cdr) and (pg:stream-car)
     return tuples.
-*** keep an eye out for methodology to replace --with-libpq*
 *** clean up port type-hackery in src/libpq.c
     The weirdness is probably unavoidably related to Guile's port
     implementation.  However, the least we can do is understand it
