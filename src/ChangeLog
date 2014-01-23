@@ -1,3 +1,12 @@
+2014-01-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[pq int] Don't bother w/ <postgresql/...> headers.
+
+	That's a Debian-specific weirdness, apparently.
+
+	* libpq.c: #include <libpq-fe.h> and <libpq/libpq-fs.h>
+	unconditionally.
+
 2014-01-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[pq int] Use ‘C_ULONG’ for conversion to ‘size_t’.

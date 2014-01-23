@@ -26,17 +26,8 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
-#include <postgresql/libpq-fe.h>
-#else
 #include <libpq-fe.h>
-#endif
-#ifdef HAVE_POSTGRESQL_LIBPQ_LIBPQ_FS_H
-#include <postgresql/libpq/libpq-fs.h>
-#else
 #include <libpq/libpq-fs.h>
-#endif
-
 #include "gi.h"                         /* Guile interface */
 #include "snuggle/finangle.h"
 
