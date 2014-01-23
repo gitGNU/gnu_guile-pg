@@ -163,7 +163,7 @@ AC_MSG_FAILURE([Cannot find libpq header and lib; see README])
 saved_CPPFLAGS="$CPPFLAGS"                  # restoration below
 saved_LDFLAGS="$LDFLAGS"
 CPPFLAGS="$PQ_CPPFLAGS $CPPFLAGS"
-LDFLAGS="$PQ_LDFLAGS $LDFLAGS"
+LDFLAGS="$PQ_LDFLAGS -lpq $LDFLAGS"
 
 AC_CHECK_DECLS([pg_encoding_to_char, pg_char_to_encoding],,,[
 #ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
@@ -174,9 +174,14 @@ AC_CHECK_DECLS([pg_encoding_to_char, pg_char_to_encoding],,,[
 ])
 
 AC_CHECK_FUNCS(m4_normalize(
+dnl 7.4 (earliest supported PostgreSQL)
+    PQfreemem
 dnl 8.0
     PQserverVersion
 ))
+
+AS_IF([! test xyes = x"$ac_cv_func_PQfreemem"],
+[AC_MSG_ERROR([could not find sane libpq -- see README])])
 
 CPPFLAGS="$saved_CPPFLAGS"
 LDFLAGS="$saved_LDFLAGS"

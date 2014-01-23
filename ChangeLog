@@ -1,5 +1,13 @@
 2014-01-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[boot] If configure cannot find sane libpq, error out.
+
+	* configure.ac: Include ‘-lpq’ in ‘LDFLAGS’ saving;
+	(AC_CHECK_FUNCS): Add ‘PQfreemem’.
+	(ac_cv_func_PQfreemem): Check and error out if not sane.
+
+2014-01-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[boot int] Move ‘PQ_LDFLAGS’ munging after ‘LDFLAGS’ restoration.
 
 	* configure.ac: Move ‘-R’ prefixing and ‘-lpq’ suffixing
