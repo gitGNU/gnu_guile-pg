@@ -1,5 +1,22 @@
 2014-01-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[boot] Revamp libpq configury.
+
+	* configure.ac (PG_CHECK_DIR): Delete AC_DEFUN.
+	(libpq, libpq-includes, libpq-lib): Delete AC_ARG_WITH.
+	(NOTE_ENVVAR): New AC_DEFUN.
+	(AC_CHECK_HEADERS_ONCE): Delete macro call.
+	(PG_PQ_NOT_YET): Delete AC_DEFUN and all callers.
+	(PQ_CPPFLAGS, PQ_LDFLAGS): New AC_ARG_VARs; call ‘NOTE_ENVVAR’
+	on them in "checking PostgreSQL particulars" section.
+	(AC_CHECK_HEADERS): Check for libpq-fe.h and
+	libpq/libpq-fs.h; if not found, error out.
+	(AC_CHECK_DECLS): #include <libpq-fe.h> unconditionally.
+	(PQ_LDFLAGS): Move ‘-lpq’ suffixing from here...
+	(SUBLDFLAGS): ...to here.
+
+2014-01-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[boot] If configure cannot find sane libpq, error out.
 
 	* configure.ac: Include ‘-lpq’ in ‘LDFLAGS’ saving;

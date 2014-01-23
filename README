@@ -52,19 +52,14 @@ Configuration
 	is to be installed there.
 
 	If the ./configure script failed because it couldn't find
-	libpq or the libpq headers then you can use the --with-libpq
-	option to direct configure to the appropriate directory.  E.g.,
-	if you installed PostgreSQL with the prefix ~/local/ix86, so that
-	the libpq headers are in ~/local/ix86/include and the library in
-	~/local/ix86/lib then you would configure Guile-PG using a line
-	like:
+	libpq or the libpq headers then you can use the ‘PQ_CPPFLAGS’
+	and ‘PQ_LDFLAGS’ vars to direct configure to the appropriate
+	directory.  For example, if you installed PostgreSQL with the
+	prefix $HOME/local, then you would invoke configure like so:
 
-           ./configure --with-libpq=~/local/ix86
-
-	If your libpq include directory is somewhere other than where
-	the lib dorectory is then you can use the more specific switches
-	--with-libpq-includes and --with-libpq-lib.  See the output of
-	"./configure --help" for details.
+           ./configure                          \
+	      PQ_CPPFLAGS=-I$HOME/local/include \
+	      PQ_LDFLAGS=-L$HOME/local/lib
 
 	If the configure script failed because it couldn't find
 	guile-config, then make sure that script is on your path.

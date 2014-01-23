@@ -38,20 +38,11 @@ enable_cmod=yes
 AC_ARG_ENABLE([pq-rpath],[AS_HELP_STRING([--enable-pq-rpath],
  [arrange to use "-R" when linking libpq])])
 
-AC_DEFUN([PG_CHECK_DIR],
-[AS_IF([test yes = $withval],
-       [AC_MSG_ERROR([--with-$1 requires argument DIR])])])
-
-AC_ARG_WITH([libpq],[AS_HELP_STRING([--with-libpq=DIR],
- [look for libpq headers in DIR/include and libpq.a in DIR/lib
-  @<:@default=$prefix@:>@; see also --with-libpq-includes and
-  --with-libpq-lib below])],[PG_CHECK_DIR([libpq])])
-
-AC_ARG_WITH([libpq-includes],[AS_HELP_STRING([--with-libpq-includes=DIR],
- [look for libpq includes in DIR])],[PG_CHECK_DIR([libpq-includes])])
-
-AC_ARG_WITH([libpq-lib],[AS_HELP_STRING([--with-libpq-lib=DIR],
- [look for libpq libraries in DIR])],[PG_CHECK_DIR([libpq-lib])])
+AC_DEFUN([NOTE_ENVVAR],[
+  AS_IF([test "[$]$1"],[val="= [$]$1"],[val='(empty)'])
+  AC_MSG_NOTICE([ $1 $val])
+  AS_UNSET([val])
+])
 
 dnl This needs to go before ‘LT_INIT’ else autoreconf complains.  :-/
 AM_PROG_AR
@@ -62,8 +53,6 @@ LT_INIT([dlopen disable-static]) dnl module only
 AC_PROG_CC
 
 AC_HEADER_STDC
-
-AC_CHECK_HEADERS_ONCE([postgresql/libpq-fe.h postgresql/libpq/libpq-fs.h])
 
 AC_FUNC_ALLOCA
 
@@ -113,64 +102,29 @@ LDFLAGS="$saved_LDFLAGS"
 ##----------------------------------------------------------------------------
 ## PostgreSQL
 
+AC_ARG_VAR([PQ_CPPFLAGS],[preprocessor flags to indicate where
+to find <libpq-fe.h> and <libpq/libpq-fs.h>,
+e.g. "-I/my/include/postgresql"])
+
+AC_ARG_VAR([PQ_LDFLAGS],[linker flags to indicate where to find the libpq
+shared-object library, without "-lpq", e.g. "-L/my/lib"])
+
 AC_MSG_NOTICE([checking PostgreSQL particulars])
-
-## This little hack allows the tests for libpq etc. to be overridden by
-## setting the environment variables PQ_CPPFLAGS and PQ_LDFLAGS.  This is
-## useful e.g. when running 'Make distcheck', which runs ./configure.
-
-AC_DEFUN([PG_PQ_NOT_YET],
-[AS_IF([test -z "$PQ_CPPFLAGS" && test -z "$PQ_LDFLAGS"],$1)])
-
-PG_PQ_NOT_YET([
-AS_IF([test yes = $ac_cv_header_postgresql_libpq_fe_h &&
-       test yes = $ac_cv_header_postgresql_libpq_libpq_fs_h],[
-AC_CHECK_LIB([pq],[PQconnectdb],[
-PQ_CPPFLAGS=' '
-PQ_LDFLAGS=' '
-])])])
-
-PG_PQ_NOT_YET([AS_IF([test set = "${with_libpq+set}"],[
-AC_CACHE_CHECK([for libpq-fe.h and libpq.a under $with_libpq],[pg_cv_w],
-[AS_IF([test -f "${with_libpq}/include/libpq-fe.h" &&
-        test -f "${with_libpq}/lib/libpq.a"],
-[pg_cv_w=yes],
-[pg_cv_w=no])])
-AS_IF([test yes = $pg_cv_w],[
-PQ_CPPFLAGS="-I${with_libpq}/include"
-PQ_LDFLAGS="-L${with_libpq}/lib"
-])])])
-
-PG_PQ_NOT_YET([AS_IF([test set = ${with_libpq_includes+set} &&
-                      test set = ${with_libpq_lib+set}],[
-AC_CACHE_CHECK([for ${with_libpq_includes}/libpq-fe.h],[pg_cv_wi],
-[AS_IF([test -f "${with_libpq_includes}/libpq-fe.h"],
-[pg_cv_wi=yes],
-[pg_cv_wi=no])])
-AC_CACHE_CHECK([for ${with_libpq_lib}/libpq.a],[pg_cv_wl],
-[AS_IF([test -f "${with_libpq_lib}/libpq.a"],
-[pg_cv_wl=yes],
-[pg_cv_wl=no])])
-AS_IF([test yes = $pg_cv_wi && test yes = $pg_cv_wl],[
-PQ_CPPFLAGS="-I${with_libpq_includes}"
-PQ_LDFLAGS="-L${with_libpq_lib}"
-])])])
-
-PG_PQ_NOT_YET([
-AC_MSG_FAILURE([Cannot find libpq header and lib; see README])
-])
+NOTE_ENVVAR([PQ_CPPFLAGS])
+NOTE_ENVVAR([PQ_LDFLAGS])
 
 saved_CPPFLAGS="$CPPFLAGS"                  # restoration below
 saved_LDFLAGS="$LDFLAGS"
 CPPFLAGS="$PQ_CPPFLAGS $CPPFLAGS"
 LDFLAGS="$PQ_LDFLAGS -lpq $LDFLAGS"
 
+AC_CHECK_HEADERS([libpq-fe.h libpq/libpq-fs.h])
+AS_IF([! test yes = $ac_cv_header_libpq_fe_h ||
+       ! test yes = $ac_cv_header_libpq_libpq_fs_h],
+[AC_MSG_ERROR([could not find PostgreSQL headers -- see README])])
+
 AC_CHECK_DECLS([pg_encoding_to_char, pg_char_to_encoding],,,[
-#ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
-#include <postgresql/libpq-fe.h>
-#else
 #include <libpq-fe.h>
-#endif
 ])
 
 AC_CHECK_FUNCS(m4_normalize(
@@ -193,9 +147,6 @@ PQ_LDFLAGS="$more $PQ_LDFLAGS"
 AS_UNSET([more])
 ])
 
-# Finally!
-PQ_LDFLAGS="$PQ_LDFLAGS -lpq"
-
 ##----------------------------------------------------------------------------
 ## Compose ‘SUBCPPFLAGS’ and ‘SUBLDFLAGS’, whose names are deliberately
 ## without underscore (info "(automake) Flag Variables Ordering").
@@ -203,7 +154,7 @@ PQ_LDFLAGS="$PQ_LDFLAGS -lpq"
 AS_IF([test "$PQ_CPPFLAGS" = "$GUILE_CFLAGS"],
       [SUBCPPFLAGS="$GUILE_CFLAGS"],
       [SUBCPPFLAGS="$PQ_CPPFLAGS $GUILE_CFLAGS"])
-SUBLDFLAGS="$PQ_LDFLAGS $GUILE_LDFLAGS"
+SUBLDFLAGS="$PQ_LDFLAGS -lpq $GUILE_LDFLAGS"
 AC_SUBST([SUBCPPFLAGS])
 AC_SUBST([SUBLDFLAGS])
 
