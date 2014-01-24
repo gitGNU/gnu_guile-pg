@@ -17,7 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Guile-PG.  If not, see <http://www.gnu.org/licenses/>.
 
-include $(top_srcdir)/build-aux/common.mk
+bx = $(top_srcdir)/build-aux
+include $(bx)/common.mk
 
 schemefrags = resdisp types col-defs resx qcons gxrepl table meta
 schemestems = $(schemefrags:%=postgres-%)
@@ -99,7 +100,7 @@ install-data-hook:
 	done
 if USE_CMOD
 	-rmdir '$(DESTDIR)$(pkglibdir)'
-	$(top_srcdir)/build-aux/sofix $(SOFIXFLAGS) \
+	$(bx)/sofix $(SOFIXFLAGS) \
 	  $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
 	$(MAKE) $(AM_MAKEFLAGS) update-libsite-module-catalog
 else !USE_CMOD
@@ -113,7 +114,7 @@ endif !USE_CMOD
 
 uninstall-hook:
 if USE_CMOD
-	$(top_srcdir)/build-aux/uninstall-sofixed \
+	$(bx)/uninstall-sofixed \
 	  $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
 	$(MAKE) $(AM_MAKEFLAGS) update-libsite-module-catalog
 endif USE_CMOD
