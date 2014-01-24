@@ -91,6 +91,12 @@ update-libsite-module-catalog:
 	$(GUILE_TOOLS) make-module-catalog \
 	  -t '$(DESTDIR)' '$(DESTDIR)$(GUILE_LIBSITE)'
 
+if USE_CMOD
+soargs = $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
+else !USE_CMOD
+soargs = $(DESTDIR)$(pkglibdir) $(pkglib_LTLIBRARIES)
+endif !USE_CMOD
+
 install-data-hook:
 	@for f in $(schemestems) ; do					  \
 	  g="$(ddir)/$$f" ;						  \
@@ -98,10 +104,9 @@ install-data-hook:
 	    echo "WARNING: previously installed $$g.scm may shadow $$f" ; \
 	  fi ;								  \
 	done
+	$(bx)/sofix $(SOFIXFLAGS) $(soargs)
 if USE_CMOD
 	-rmdir '$(DESTDIR)$(pkglibdir)'
-	$(bx)/sofix $(SOFIXFLAGS) \
-	  $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
 	$(MAKE) $(AM_MAKEFLAGS) update-libsite-module-catalog
 else !USE_CMOD
 	@if [ 1 = '$(FOR_MAKE_CHECK)' ] ; then		\
@@ -113,9 +118,8 @@ else !USE_CMOD
 endif !USE_CMOD
 
 uninstall-hook:
+	$(bx)/uninstall-sofixed $(soargs)
 if USE_CMOD
-	$(bx)/uninstall-sofixed \
-	  $(DESTDIR)$(ddir) $(d_LTLIBRARIES)
 	$(MAKE) $(AM_MAKEFLAGS) update-libsite-module-catalog
 endif USE_CMOD
 	-rmdir '$(DESTDIR)$(ddir)'

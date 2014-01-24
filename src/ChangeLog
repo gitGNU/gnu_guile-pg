@@ -1,5 +1,14 @@
 2014-01-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build] Do sofix/uninstall-sofixed unconditionally.
+
+	* Makefile.am (soargs): New var,
+	defined for both ‘USE_CMOD’ and ‘!USE_CMOD’.
+	(install-data-hook): Do sofix unconditionally; use $(soargs).
+	(uninstall-hook): Likewise for uninstall-sofixed.
+
+2014-01-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build] Avoid sofile version.
 
 	* Makefile.am (postgres_la_LDFLAGS):
