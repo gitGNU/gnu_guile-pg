@@ -1,6 +1,6 @@
 /* gi.h
 
-   Copyright (C) 2004, 2005, 2006, 2008, 2009, 2011, 2012 Thien-Thi Nguyen
+   Copyright (C) 2004, 2005, 2006, 2008, 2009, 2011, 2012, 2014 Thien-Thi Nguyen
 
    This file is part of Guile-PG.
 

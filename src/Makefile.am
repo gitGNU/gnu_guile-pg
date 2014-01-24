@@ -1,6 +1,6 @@
 # Makefile.am
 #
-# Copyright (C) 2008, 2009, 2010, 2011 Thien-Thi Nguyen
+# Copyright (C) 2008, 2009, 2010, 2011, 2014 Thien-Thi Nguyen
 #
 # This file is part of Guile-PG.
 #
