@@ -1,163 +1,163 @@
 Welcome! (or "☡ Guile ∘ PostgreSQL ∞")
 ======================================
 
-	Guile-PG is a collection of modules for Guile allowing access to
-	the PostgreSQL RDBMS from Scheme programs.
+  Guile-PG is a collection of modules for Guile allowing access to
+  the PostgreSQL RDBMS from Scheme programs.
 
-	The low-level module ‘(database postgres)’ provides an almost
-	one-to-one correspondence with the PostgreSQL "libpq" C library
-	interface.  The other modules build on it to provide abstractions
-	and convenience procedures:
+  The low-level module ‘(database postgres)’ provides an almost
+  one-to-one correspondence with the PostgreSQL "libpq" C library
+  interface.  The other modules build on it to provide abstractions
+  and convenience procedures:
 
-	  (database postgres-qcons)     -- Query Construction
-	  (database postgres-resdisp)   -- Displaying Results
-	  (database postgres-types)     -- Types Conversion
-	  (database postgres-col-defs)  -- Column Definitions
-	  (database postgres-resx)      -- Result Transforms
-	  (database postgres-table)     -- Single-Table Abstraction
-	  (database postgres-meta)      -- Introspection
-	  (database postgres-gxrepl)    -- Easy Interaction
+    (database postgres-qcons)     -- Query Construction
+    (database postgres-resdisp)   -- Displaying Results
+    (database postgres-types)     -- Types Conversion
+    (database postgres-col-defs)  -- Column Definitions
+    (database postgres-resx)      -- Result Transforms
+    (database postgres-table)     -- Single-Table Abstraction
+    (database postgres-meta)      -- Introspection
+    (database postgres-gxrepl)    -- Easy Interaction
 
-	This is alpha code (pre 1.0 release), tested with various, but
-	not all, versions of Guile and PostgreSQL.  It may have bugs,
-	and the interfaces may change from version to version.
+  This is alpha code (pre 1.0 release), tested with various, but
+  not all, versions of Guile and PostgreSQL.  It may have bugs,
+  and the interfaces may change from version to version.
 
-	To build Guile-PG you need to have installed both the PostgreSQL
-	frontend library libpq, and a version of Guile that can either
-	load binary module (a b c) from file a/b/c.so or a/b/c/libc.la
-	under ‘%load-path’, or provide ‘dynamic-link’ and ‘dynamic-call’.
+  To build Guile-PG you need to have installed both the PostgreSQL
+  frontend library libpq, and a version of Guile that can either
+  load binary module (a b c) from file a/b/c.so or a/b/c/libc.la
+  under ‘%load-path’, or provide ‘dynamic-link’ and ‘dynamic-call’.
 
 
 Building and Installing Guile-PG
 ================================
 
-	Generic install instructions are provided in the file INSTALL.
-	If you're in a hurry:
+  Generic install instructions are provided in the file INSTALL.
+  If you're in a hurry:
 
-	  ./configure [options]
-	  make
-	  make check
-	  make install
-	  make installcheck
+    ./configure [options]
+    make
+    make check
+    make install
+    make installcheck
 
-	Each of the above steps is explained in detail below.
+  Each of the above steps is explained in detail below.
 
 
 Configuration
 -------------
 
-	Normally, the configure script looks in $prefix/include and
-	$prefix/lib for PostgreSQL headers and libraries, under the
-	assumption that everything (Guile-PG, Guile and PostgreSQL)
-	is to be installed there.
+  Normally, the configure script looks in $prefix/include and
+  $prefix/lib for PostgreSQL headers and libraries, under the
+  assumption that everything (Guile-PG, Guile and PostgreSQL)
+  is to be installed there.
 
-	If the ./configure script failed because it couldn't find
-	libpq or the libpq headers then you can use the ‘PQ_CPPFLAGS’
-	and ‘PQ_LDFLAGS’ vars to direct configure to the appropriate
-	directory.  For example, if you installed PostgreSQL with the
-	prefix $HOME/local, then you would invoke configure like so:
+  If the ./configure script failed because it couldn't find
+  libpq or the libpq headers then you can use the ‘PQ_CPPFLAGS’
+  and ‘PQ_LDFLAGS’ vars to direct configure to the appropriate
+  directory.  For example, if you installed PostgreSQL with the
+  prefix $HOME/local, then you would invoke configure like so:
 
-           ./configure                          \
-	      PQ_CPPFLAGS=-I$HOME/local/include \
-	      PQ_LDFLAGS=-L$HOME/local/lib
+    ./configure                         \
+      PQ_CPPFLAGS=-I$HOME/local/include \
+      PQ_LDFLAGS=-L$HOME/local/lib
 
-	If the configure script failed because it couldn't find
-	guile-config, then make sure that script is on your path.
+  If the configure script failed because it couldn't find
+  guile-config, then make sure that script is on your path.
 
-	If libguile is installed in a "non-standard" place, you may need
-	to set the LDFLAGS environment variable to get configure to find
-	it.  For example, if you use GCC with GNU ld and guile is
-	installed under /opt/guile, then this can be achieved with the
-	value: '-Wl,-rpath -Wl/opt/guile/lib' (quotes to protect spaces
-	from the shell).
+  If libguile is installed in a "non-standard" place, you may need
+  to set the LDFLAGS environment variable to get configure to find
+  it.  For example, if you use GCC with GNU ld and guile is
+  installed under /opt/guile, then this can be achieved with the
+  value: '-Wl,-rpath -Wl/opt/guile/lib' (quotes to protect spaces
+  from the shell).
 
-	If your platform needs "-R DIR" for the libpq link command, you
-	can try the experimental configure option --enable-pq-rpath, or
-	alternatively set the LDFLAGS env var as described above.
+  If your platform needs "-R DIR" for the libpq link command, you
+  can try the experimental configure option --enable-pq-rpath, or
+  alternatively set the LDFLAGS env var as described above.
 
-	After configuration, type:
+  After configuration, type:
 
-	    make
+    make
 
-	to build the libraries.
+  to build the libraries.
 
 
 Testing
 -------
 
-	If configuration and "make" are successful, you can now run the
-	tests.  To run the tests type:
+  If configuration and "make" are successful, you can now run the
+  tests.  To run the tests type:
 
-            make check [DEBUG=1] [KEEPD=1] [INITDB=/path/to/initdb]
+    make check [DEBUG=1] [KEEPD=1] [INITDB=/path/to/initdb]
 
-	This creates a temporary installation dir test/fake-install/,
-	creates a cluster test/fake-cluster/, kicks the daemon, runs the
-	tests, and kills the daemon afterwards.
+  This creates a temporary installation dir test/fake-install/,
+  creates a cluster test/fake-cluster/, kicks the daemon, runs the
+  tests, and kills the daemon afterwards.
 
-	Cluster creation uses initdb(1) to do the work.  If that program
-	is not in ‘PATH’, you need to specify it.  (Kicking the daemon
-	uses pg_ctl(1) and psql(1) from the ‘PGPATH’ var output by
-	‘initdb --show’, so there is no need to specify those directly.)
+  Cluster creation uses initdb(1) to do the work.  If that program
+  is not in ‘PATH’, you need to specify it.  (Kicking the daemon
+  uses pg_ctl(1) and psql(1) from the ‘PGPATH’ var output by
+  ‘initdb --show’, so there is no need to specify those directly.)
 
-	The basic tests should all pass.  The large-object tests might
-	fail because of bugs in PostgreSQL.  The abstraction tests are
-	not supposed to fail, but you never know.  If a test fails, the
-	daemon might persist; to kill it "manually", use command:
+  The basic tests should all pass.  The large-object tests might
+  fail because of bugs in PostgreSQL.  The abstraction tests are
+  not supposed to fail, but you never know.  If a test fails, the
+  daemon might persist; to kill it "manually", use command:
 
-           cd test/ && make kill-daemon [INITDB=/path/to/initdb]
+    cd test/ && make kill-daemon [INITDB=/path/to/initdb]
 
-	Note that you may need to specify INITDB here, as well.
-	In any case, the cluster persists, which reduces startup time
-	for subsequent "make check" invocations (if you are in the mood).
-	Use "make clean" to remove it and test/fake-install/ as well.
+  Note that you may need to specify INITDB here, as well.
+  In any case, the cluster persists, which reduces startup time
+  for subsequent "make check" invocations (if you are in the mood).
+  Use "make clean" to remove it and test/fake-install/ as well.
 
-	The DEBUG=1 is optional.  If "make check" fails, please re-run
-	it with DEBUG=1 and see "Reporting Bugs" below.
+  The DEBUG=1 is optional.  If "make check" fails, please re-run
+  it with DEBUG=1 and see "Reporting Bugs" below.
 
-	Likewise, ‘KEEPD=1’ is optional.  If specified, the daemon is
-	not killed, reducing startup time for subsequent runs.
+  Likewise, ‘KEEPD=1’ is optional.  If specified, the daemon is
+  not killed, reducing startup time for subsequent runs.
 
 
 What Goes Where
 ---------------
 
-	If the basic tests passed then you may want to install Guile-PG.
-	To do this type "make install", which puts files in these dirs:
+  If the basic tests passed then you may want to install Guile-PG.
+  To do this type "make install", which puts files in these dirs:
 
-	    modules         -- ${GUILE_LIBSITE}/database
-	    guile-pg.info   -- ${infodir}
+    modules         -- ${GUILE_LIBSITE}/database
+    guile-pg.info   -- ${infodir}
 
-	The ${GUILE_LIBSITE} and ${infodir} values are determined by the
-	configure script.  Typically, these would be, respectively,
-	/usr/local/lib/guile/site and /usr/local/info.  Note that
-	${GUILE_LIBSITE} is based on the ${prefix} used for installing
-	Guile, and may or may not coincide with the one specified by
-	‘configure --prefix’.
+  The ${GUILE_LIBSITE} and ${infodir} values are determined by the
+  configure script.  Typically, these would be, respectively,
+  /usr/local/lib/guile/site and /usr/local/info.  Note that
+  ${GUILE_LIBSITE} is based on the ${prefix} used for installing
+  Guile, and may or may not coincide with the one specified by
+  ‘configure --prefix’.
 
-	Additionally, if the system supports it, "make install" updates
-	each site dir's module catalog.
+  Additionally, if the system supports it, "make install" updates
+  each site dir's module catalog.
 
-	After installation, you may wish to "make installcheck", which
-	is essentially "make check" modified to look for the modules in
-	the install tree instead of the build tree.  Use ‘DEBUG=1’ and
-	look for ";;; loading" lines to verify proper operation.
+  After installation, you may wish to "make installcheck", which
+  is essentially "make check" modified to look for the modules in
+  the install tree instead of the build tree.  Use ‘DEBUG=1’ and
+  look for ";;; loading" lines to verify proper operation.
 
 
 Reporting Bugs
 ==============
 
-	Please send bug reports to the address shown by running command:
+  Please send bug reports to the address shown by running command:
 
-	    ./configure --help
+    ./configure --help
 
-	Include Guile-PG version, the output of the show-platform script,
-	and the log file of the test that failed (all in subdir "test").
+  Include Guile-PG version, the output of the show-platform script,
+  and the log file of the test that failed (all in subdir "test").
 
-	There is one known bug we can't do anything about (we tried but
-	failed): The sourceforge folks don't want to update their site
-	to point to the new Guile-PG homepage:
+  There is one known bug we can't do anything about (we tried but
+  failed): The sourceforge folks don't want to update their site
+  to point to the new Guile-PG homepage:
 
-	    http://www.nongnu.org/guile-pg/
+    http://www.nongnu.org/guile-pg/
 
-	But if there are enough links to the new page, perhaps the
-	relevancy of sourceforge's obstinance will decline over time.
+  But if there are enough links to the new page, perhaps the
+  relevancy of sourceforge's obstinance will decline over time.
