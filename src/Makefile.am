@@ -48,7 +48,7 @@ else
 pkglib_LTLIBRARIES = postgres.la
 endif
 postgres_la_SOURCES = libpq.c gi.h
-postgres_la_LDFLAGS = -export-dynamic -module -version-info 0:0:0
+postgres_la_LDFLAGS = -export-dynamic -module -avoid-version
 postgres_la_LDFLAGS += $(AM_LDFLAGS)
 
 if !USE_CMOD

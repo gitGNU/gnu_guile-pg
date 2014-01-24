@@ -1,5 +1,12 @@
 2014-01-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build] Avoid sofile version.
+
+	* Makefile.am (postgres_la_LDFLAGS):
+	Replace ‘-version-info 0:0:0’ with ‘-avoid-version’.
+
+2014-01-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Add abstraction: bx
 
 	* Makefile.am (bx): New var.
