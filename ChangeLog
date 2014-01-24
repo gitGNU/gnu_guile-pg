@@ -1,3 +1,10 @@
+2014-01-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build int] Use Guile-BAUX for to set {un,}sofix flags.
+
+	* configure.ac: Use ‘SNUGGLE_SET_SOFIXFLAGS’.
+	* build-aux/sofix.m4: Delete file.
+
 2014-01-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[boot] Revamp libpq configury.

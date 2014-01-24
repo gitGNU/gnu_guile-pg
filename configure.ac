@@ -165,7 +165,7 @@ AC_MSG_NOTICE([NOTE: combined cpp and linker flags (see README if wrong):
 ##----------------------------------------------------------------------------
 ## Etc
 
-SET_SOFIXFLAGS
+SNUGGLE_SET_SOFIXFLAGS
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
