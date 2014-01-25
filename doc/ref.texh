@@ -8,6 +8,7 @@
 @node    Database Connections
 @chapter Procedures for managing connections
 
+@cindex connection
 All sessions with a PostgreSQL database require a connection to be opened with
 @code{pg-connectdb}.  When the default values of the options are sufficient,
 you don't need to specify them.  Default values are also useful in creating a
@@ -35,6 +36,8 @@ PostgreSQL.
 @bummer due to bad connection
 @tsin i pg-connectdb
 
+@cindex connection defaults
+@cindex defaults, connection
 @tsin i pg-conndefaults
 
 @heading Example
@@ -49,6 +52,8 @@ PostgreSQL.
          (string->number (pg-getvalue result 0 0)))))
 @end lisp
 
+@cindex unexpected EOF error
+@cindex error, unexpected EOF
 Use @code{pg-finish} to close an open connection.  Although this is not
 strictly necessary (Guile-PG arranges for unreferenced connection
 objects to be properly closed when they are garbage collected), failure
@@ -57,6 +62,8 @@ logfile entry ``unexpected EOF on client connection''.
 
 @tsin i pg-finish
 
+@cindex protocol version
+@cindex version, protocol
 PostgreSQL 7.4 and later support the concept of @dfn{protocol version}.
 @xref{Miscellaneous}, for another way to find installation metainfo.
 
@@ -94,6 +101,8 @@ default, they are sent to the current output port.
 
 @section Asynchronous Notifications
 
+@cindex notifications, asynchronous
+@cindex asynchronous notifications
 The PostgreSQL back-end supports @dfn{asynchronous notifications}
 with the commands @code{LISTEN} and @code{NOTIFY}.  You can use
 @code{pg-notifies} to query the pending notifications queue
@@ -149,6 +158,10 @@ It is a perfect vehicle for hiding information.
 @end flushright
 @end quotation
 
+@cindex parameterized strings
+@cindex strings, parameterized
+@cindex typed parameters
+@cindex parameters, typed
 To reduce this inefficiency for heavily-repeated statements that may
 differ only slightly from one instance to the next, PostgreSQL 7.4
 introduced libpq variants that make use of @dfn{parameterized strings},
@@ -172,6 +185,10 @@ command or statement (parameterized string), a vector of parameters,
 conventionally named @var{parms}.
 
 @heading Restrictions
+@cindex binary parameters
+@cindex parameters, binary
+@cindex text parameters
+@cindex parameters, text
 @bummer bad parameter-vector element
 Guile-PG support for parameters is in its infancy.  All elements of
 @var{parms} @strong{must} be strings otherwise a ``bad parameter-vector
@@ -248,6 +265,7 @@ PostgreSQL @code{declare(l)} and @code{fetch(l)} man pages for more details.
 @node    Asynchronous Retrieval
 @section Asynchronous Retrieval
 
+@cindex asynchronous retrieval
 Sometimes you don't want to wait idly for @code{pg-exec} to complete --- for
 example, the query is complicated and/or the results are large --- instead
 preferring to do some other computation in the meantime.  In these cases, you
@@ -279,6 +297,7 @@ query altogether.
 @node    Processing Results
 @section Processing Results
 
+@cindex result
 The @dfn{result} of a command or query placed by @code{pg-exec} satisfies
 predicate @code{pg-result?}.  It may encapsulate an error, row data, or other
 status.  @xref{Retrieving Data}.
@@ -307,6 +326,7 @@ respectively.  Everything else appears literally as shown here.
 @tsin i pg-result-status
 
 @heading Result Status Values
+@cindex result status
 @table @code
 
 @item PGRES_TUPLES_OK
@@ -447,6 +467,8 @@ arguments are out of range.
 
 @tsin i pg-getisnull
 
+@cindex field type
+@cindex type, field
 @tsin i pg-ftype
 
 @heading Example
@@ -481,6 +503,8 @@ then be associated with each connection for faster subsequent access.
 @node    Writing/Reading Data
 @chapter Procedures for Copying Data
 
+@cindex bulk i/o
+@cindex i/o, bulk
 As of PostgreSQL 7.4, you can send arbitrarily-sized chunks of data after
 issuing the @code{COPY <table> FROM STDIN} command.  Also, both send and
 receive (with the @code{COPY <table> TO STDOUT} command) paths can be
@@ -492,6 +516,8 @@ performed asynchronously.
 
 @tsin i pg-get-copy-data
 
+@c FIXME: Move elsewhere.
+@cindex print options
 Although not readily apparent, another form of data copying is @dfn{formatted
 output}, which is supported by Guile-PG via the @code{pg-print} procedure and
 the accompanying @code{pg-make-print-options}.  Together these loosely mimic
@@ -506,6 +532,8 @@ the @code{PQprint} functionality provided by libpq.
 @node    Large Objects
 @chapter Procedures for Managing Large Objects
 
+@cindex large objects
+@cindex objects, large
 @heading Note
 All of the operations on large objects must be carried out inside a
 @code{BEGIN TRANSACTION/END TRANSACTION} pair.  Failure to do this
@@ -606,6 +634,8 @@ opens the required file and starts/stops the trace.
            (pg-untrace conn))))
 @end lisp
 
+@cindex escape processing
+@cindex processing escapes
 The next three procedures are for @dfn{escape processing}, changing one
 single-quote char into two single-quote chars, and so forth.  The first two
 are for data to be sent to the server, the third for data received from the
@@ -637,6 +667,8 @@ Lastly, the miscellaneous miscellaneous procedures!
 @node    Not Included
 @chapter Not Included
 
+@cindex libpq ignorance
+@cindex ignorance, willful
 This chapter lists @code{libpq} interface elements that are @strong{not}
 provided by module @code{(database postgres)} and explains why they are
 omitted.
@@ -744,6 +776,7 @@ string to describe the client encoding (you can use the value from
 @node    Query Construction
 @chapter Query Construction
 
+@cindex query construction
 Constructing a typical SQL @code{SELECT} query (to be passed to @code{pg-exec})
 can be tedious and error prone due to the many string-munging operations
 involved.  Guile-PG provides some procedures to make things a little easier.
@@ -773,6 +806,8 @@ flattening them to a string on output.
 @node qcons intro
 @section Prefix-Style Expressions
 
+@cindex sexp
+@cindex structured expression
 To be brutally honest, both SQL and Scheme revolve around structured
 expressions (also known as @dfn{sexps}), so ascribing some elevated status to
 the representation that ``supports sexps'' is really not saying much.  In the
@@ -787,6 +822,9 @@ argument(s) can in turn be sub-expressions of their own.  This simplicity
 stands in stark contrast to the myriad rules (and worse: exceptions to the
 rules) that comprise the SQL language specification.
 
+@cindex qcons
+@cindex prefix-style expression
+@cindex expression, prefix-style
 Thus, we call the mini-language described in this chapter @dfn{prefix-style
 expressions} because it borrows from Scheme's regularity even though it is not
 Scheme, per se.  This is the general form of a prefix-style expression:
@@ -813,6 +851,8 @@ into either infix, postfix, functional or other layouts.
 @node qcons special operators
 @section Special Operators
 
+@cindex qcons operators
+@cindex operators, qcons
 Some operators are
 handled specially:
 
@@ -952,6 +992,8 @@ involving some extra specification composed with a single pexp.
 @node qcons extension
 @section Lookup Tables Extension
 
+@cindex qcons extension
+@cindex extension, qcons
 During tree construction, internal lookup tables control the rendering
 transformations.  You can add to them using procedure @code{qcons-declare!}.
 
@@ -967,6 +1009,8 @@ value (if any).  There is no @dfn{undeclare} support.
 @node qcons quoting
 @section Quoting
 
+@cindex qcons quoting
+@cindex quoting, qcons
 Ideally, the tree construction procedures in the following section would
 be powerful enough to do the right thing given a well-formed prefix-style
 expression.  However, sometimes reality intrudes and you need to craft SQL
@@ -989,6 +1033,8 @@ known prosaically as @dfn{quoting}.
 @node qcons strings
 @section Strings
 
+@cindex qcons strings
+@cindex strings, qcons
 Strings are very complicated!
 
 @menu
@@ -1000,6 +1046,9 @@ Strings are very complicated!
 @node std strings
 @subsection standard conforming strings
 
+@cindex standard conforming strings
+@cindex strings, standard conforming
+@cindex auto @samp{E}
 Starting with PostgreSQL 8.2, there is a configuration file and runtime
 parameter @code{standard_conforming_strings} that controls how strictly the
 server parses SQL string syntax.  When its value is @code{on}, strings that
@@ -1037,6 +1086,8 @@ servers with mixed support for @code{standard_conforming_strings}, however
 @node qcons trees
 @section Tree Construction
 
+@cindex qcons trees
+@cindex trees, qcons
 This section describes the tree construction procedures, most of which are
 still (at this time, 2005-02-24) considered @strong{experimental}.  You should
 take this as an invitation to @strong{experiment} and share your observations w/
@@ -1066,6 +1117,8 @@ the Guile-PG maintainer so that we can refine them nicely for the 1.0 release.
 @node qcons output
 @section Output
 
+@cindex qcons output
+@cindex output, qcons
 To get SQL once the tree is constructed, you have to flatten it.
 
 @tsin i sql<-trees
@@ -1092,6 +1145,8 @@ To get started, load the @code{postgres-resdisp} module:
 @node    Types Conversion
 @chapter Types Conversion
 
+@cindex converting types
+@cindex type converters
 Normally, the result of a @code{pg-exec} query is an object from which Scheme
 strings can be extracted to represent the datum from a particular tuple/field
 coordinate, using @code{pg-getvalue} (@pxref{Retrieving Data}).  If this
@@ -1172,6 +1227,7 @@ cannot be done in a random-access manner.  Perhaps this will change in the
 future.
 
 @heading Builtin Converters
+@cindex type converters, builtin
 Here is the set of builtin converters and their default values.
 
 @include coltypes.texi
@@ -1334,6 +1390,7 @@ anyway. ;-)
 @node    Defining New Type Converters
 @section Defining New Type Converters
 
+@cindex type converters, adding
 To define a new non-array type means associating with the type name a
 procedure for converting from a PostgreSQL string representation to a Scheme
 object (the @dfn{objectifier}), a procedure to do the conversion in the
@@ -1352,6 +1409,8 @@ types, use the @code{define-db-col-type-array-variant} procedure.
 @node    Column Definitions
 @chapter Column Definitions
 
+@cindex column definition
+@cindex coldef
 A column definition, or @dfn{def} for short, associates a column name, its
 type and any additional options.  It has the form:
 
@@ -1427,6 +1486,8 @@ Transforms}):
 @node    Result Transforms
 @chapter Result Transforms
 
+@cindex result transforms
+@cindex transforming results
 To support handling of query results in the @dfn{Scheme domain}, Guile-PG
 provides various procedures to walk the result object, to extract Scheme
 objects from the result object, and to collect these in idiomatic data
@@ -1528,6 +1589,8 @@ have the same signature but return the data in different ways.
 @node    Single-Table Abstraction
 @chapter Single-Table Abstraction
 
+@cindex single-table abstraction
+@cindex abstraction, single-table
 Sometimes it is convenient to focus on a single table, adding rows to it or
 drawing queries from it exclusively of any other tables in the database.
 Likewise with a view, except that only queries are possible.  This chapter
@@ -1608,6 +1671,7 @@ Chapter 3: Data Types.)
 @node    Introspection
 @chapter Introspection
 
+@cindex introspection
 This chapter explains the introspection facilities, which admittedly are not
 (yet) very well developed in Guile-PG.  [During the alpha releases, these will
 surely change quite a bit; your feedback is welcome.]
@@ -1629,6 +1693,7 @@ Guile-PG supports standard as well as funky introspection.
 @node    Standard Introspection
 @section Standard Introspection
 
+@cindex introspection, standard
 The PostgreSQL documentation says:
 
 @quotation
@@ -1665,6 +1730,7 @@ To see everything about everything, for example, you can try:
 @node    Funky Introspection
 @section Funky Introspection
 
+@cindex introspection, ``funky''
 @noindent
 The column definitions of an existing table can be discovered to some extent
 by the @code{defs-from-psql}, @code{infer-defs} and @code{describe-table!}
@@ -1709,6 +1775,7 @@ twice because two of the @code{DEFS} have that type.
 @node    Easy Interaction
 @chapter Easy Interaction
 
+@cindex repl
 Sometimes you just want to poke around manually, interacting with a database
 connection by typing in exploratory commands, and the external command-line
 program psql(1) does not provide enough insight or customizability (or perhaps

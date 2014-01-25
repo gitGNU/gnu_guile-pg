@@ -124,6 +124,8 @@ GNU Free Documentation License (@pxref{GNU FDL}).
 @node    Quick Start
 @chapter Quick Start
 
+@cindex quick start
+@cindex @code{use-modules}
 To access a PostgreSQL database from Guile, first load the @code{postgres}
 database module.  This is done using the @code{use-modules} syntax:
 
@@ -138,6 +140,8 @@ database server, we can use the @code{pg-exec} procedure to execute
 queries and the other @code{pg-} procedures to retrieve the results of the
 queries.
 
+@cindex example session
+@cindex session example
 The following Guile session opens a connection and executes an
 SQL statement on the @code{test} database on the default host (either
 @code{localhost} or the host specified in the @code{PGHOST} environment
@@ -201,6 +205,7 @@ guile> (pg-getvalue result 1 1)
 @end example
 @end cartouche
 
+@cindex garbage collection
 Guile-PG connections are closed when Guile's garbage collector
 collects the discarded object.  This only happens when the connection itself
 and all of the results of @code{pg-exec} are unreachable.  So to close the

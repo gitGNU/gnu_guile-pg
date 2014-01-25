@@ -1,5 +1,20 @@
 2014-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Add some @cindex.
+
+	* doc/guile-pg.texi (Quick Start)
+	* doc/ref.texh (Database Connections, Parameters)
+	(Synchronous Retrieval, Asynchronous Retrieval, Processing Results)
+	(Writing/Reading Data, Miscellaneous, Not Included)
+	(Query Construction, qcons intro, qcons special operators)
+	(qcons extension, qcons quoting, qcons strings, string xrep)
+	(qcons trees, Displaying Results, Consulting Existing Type Converters)
+	(Selected Notes About Some Types, Defining New Type Converters)
+	(Column Definitions, , Result Transforms, Single-Table Abstraction)
+	(Standard Introspection, Funky Introspection): ...here.
+
+2014-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Modernize title page.
 
 	* doc/guile-pg.texi (@titlepage): Use @title, @subtitle,
