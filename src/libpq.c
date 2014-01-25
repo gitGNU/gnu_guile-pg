@@ -398,6 +398,8 @@ from @code{pg-lo-creat} or @code{pg-lo-open}.  */)
 #undef FUNC_NAME
 }
 
+static off_t lob_seek (SCM port, off_t offset, int whence);
+
 PRIMPROC
 (pg_lo_tell, "pg-lo-tell", 1, 0, 0,
  (SCM port),
@@ -413,7 +415,9 @@ explain what went wrong.  */)
 #define FUNC_NAME s_pg_lo_tell
   ASSERT_PORT (1, port, OPLOBPORTP);
 
-  return scm_ftell (port);
+  /* We used to use ‘scm_ftell’ here, but that is prone to segfault,
+     at least under Guile 2.0.9.  The price of progress...  */
+  return NUM_LONG (lob_seek (port, 0, SEEK_CUR));
 #undef FUNC_NAME
 }
 

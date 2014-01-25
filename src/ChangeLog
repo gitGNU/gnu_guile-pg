@@ -1,5 +1,12 @@
 2014-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq slog] Avoid ‘scm_ftell’.
+
+	* libpq.c (lob_seek): New static func forward-decl.
+	(pg_lo_tell): Use ‘lob_seek’.
+
+2014-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Consolidate some ‘if !USE_CMOD’ blocks.
 
 	* Makefile.am (d_DATA) [!USE_CMOD]: Move into ‘else’
