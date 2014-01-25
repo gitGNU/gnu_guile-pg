@@ -46,11 +46,10 @@ Texts.  A copy of the license is included in the appendix entitled
 @end direntry
 
 @titlepage
-@sp 10
-@comment The title is printed in a large font.
-@center @titlefont{The (database postgres*) Modules}
-
-@c The following two commands start the copyright page.
+@title Guile-PG Manual
+@subtitle The (database postgres*) Modules
+@author Thien-Thi Nguyen
+@author Ian Grant
 @page
 @vskip 0pt plus 1filll
 @insertcopying
