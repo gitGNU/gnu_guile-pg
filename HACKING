@@ -4,6 +4,16 @@ This file is both a guide for newcomers and a todo list for oldstayers.
 It lives in the repo but is not included in the distribution.
 
 * other stuff to do
+*** towards 1.0
+***** (maybe) get buy-in for Guile bifurcation coping
+***** (maybe) drop support for PostgreSQL 7.4
+***** rename modules
+      (database postgres) => (pg pq)
+      (database postgres-foo) => (pg foo)
+***** drop (pg table)
+***** consolidate types / columns stuff
+***** avoid keywords in (pg pq)
+***** svelten symbols, make them Schemey (avoid underscore)
 *** maintain test/OK as a set of related tables (like, you know, a database!)
 *** fully [[file:src/libpq.org][support]] PostgreSQL 8.x, 9.x
 *** add UPDATE (as comma-command ‘fup’) to gxrepl

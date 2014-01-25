@@ -91,11 +91,12 @@ Testing
     make check [DEBUG=1] [KEEPD=1] [INITDB=/path/to/initdb]
 
   This creates a temporary installation dir test/fake-install/,
-  creates a cluster test/fake-cluster/, kicks the daemon, runs the
+  creates a cluster test/fake-cluster/, creates one database in
+  the cluster named ‘guile_pg_test’, kicks the daemon, runs the
   tests, and kills the daemon afterwards.
 
   Cluster creation uses initdb(1) to do the work.  If that program
-  is not in ‘PATH’, you need to specify it.  (Kicking the daemon
+  is not in ‘PATH’, you need to specify it.  (The remaining init
   uses pg_ctl(1) and psql(1) from the ‘PGPATH’ var output by
   ‘initdb --show’, so there is no need to specify those directly.)
 
