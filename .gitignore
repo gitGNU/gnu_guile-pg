@@ -42,6 +42,7 @@ Makefile.in
 /doc/*.html
 /doc/*.info*
 /doc/coltypes.texi
+/doc/fdl.texi
 /doc/guile-pg.aux
 /doc/guile-pg.cp
 /doc/guile-pg.cps
@@ -57,6 +58,8 @@ Makefile.in
 /doc/qcons-tables.texi
 /doc/ref.texi
 /doc/relinfo.texi
+
+/doc/guile-pg.t2p/
 
 /src/*.la
 /src/*.lo
