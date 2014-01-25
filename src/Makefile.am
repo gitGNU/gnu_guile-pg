@@ -60,7 +60,7 @@ postgres.exports: $(postgres_la_SOURCES)
 
 postgres: postgres.la postgres.exports
 	$(gx) gen-scheme-wrapper \
-	  -o $@ $< -g database -t guile_pg_init_~A_module \
+	  -o $@ $< -g database -t scm_init_~A_module \
 	  -i '$(pkglibdir)'
 endif !USE_CMOD
 
