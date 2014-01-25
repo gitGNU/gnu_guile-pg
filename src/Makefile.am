@@ -46,13 +46,11 @@ if USE_CMOD
 d_LTLIBRARIES = postgres.la
 else
 pkglib_LTLIBRARIES = postgres.la
+d_DATA += postgres
 endif
 postgres_la_SOURCES = libpq.c gi.h
 postgres_la_LDFLAGS = -export-dynamic -module -avoid-version
 postgres_la_LDFLAGS += $(AM_LDFLAGS)
-
-if !USE_CMOD
-d_DATA += postgres
 
 postgres.exports: $(postgres_la_SOURCES)
 	> $@ \
@@ -62,7 +60,6 @@ postgres: postgres.la postgres.exports
 	$(gx) gen-scheme-wrapper \
 	  -o $@ $< -g database -t scm_init_~A_module \
 	  -i '$(pkglibdir)'
-endif !USE_CMOD
 
 snarfcppopts = $(DEFS) $(DEFAULT_INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS)
 

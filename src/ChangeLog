@@ -1,5 +1,13 @@
 2014-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Consolidate some ‘if !USE_CMOD’ blocks.
+
+	* Makefile.am (d_DATA) [!USE_CMOD]: Move into ‘else’
+	branch of the ‘if USE_CMOD’ block that defines ‘d_LTLIBRARIES’.
+	(postgres.exports, postgres): Remove surrounding ‘if !USE_CMOD’.
+
+2014-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq int] De-bifurcate module init flow.
 
 	* libpq.c (MOD_INIT_LINK_THUNK): Remove surrounding
