@@ -10,6 +10,22 @@
 @code{}
 @setchapternewpage odd
 
+@copying
+@include relinfo.texi
+
+Copyright @copyright{} 2003--2014 Thien-Thi Nguyen@*
+Copyright @copyright{} 1998 Ian Grant
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts.  A copy of the license is included in the appendix entitled
+``GNU FDL''.
+@end quotation
+@end copying
+
 @c Error index.
 @defindex er
 @synindex er cp
@@ -29,37 +45,6 @@
 * Guile-PG: (guile-pg).           Access to PostgreSQL databases from Guile.
 @end direntry
 
-@ifinfo
-This file is the Reference Guide for the (database postgres*) Modules.
-
-Copyright @copyright{} 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-2009, 2010, 2011, 2012, 2013, 2014 Thien-Thi Nguyen@*
-Portions Copyright @copyright{} 1998 Ian Grant
-
-Permission is granted to make and distribute verbatim copies of this
-manual provided the copyright notice and this permission notice are
-preserved on all copies.
-
-@ignore
-Permission is granted to process this file through TeX and
-print the results, provided the printed document carries a copying
-permission notice identical to this one except for the removal of this
-paragraph (this paragraph not being relevant to the printed manual).
-
-@end ignore
-Permission is granted to copy and distribute modified versions of this
-manual under the conditions for verbatim copying, provided also that the
-sections entitled ``Copying'' and ``GNU General Public License'' are
-included exactly as in the original, and provided that the entire
-resulting derived work is distributed under the terms of a permission
-notice identical to this one.
-
-Permission is granted to copy and distribute translations of this manual
-into another language, under the above conditions for modified versions,
-except that this permission notice may be stated in a translation
-approved by the Free Software Foundation.
-
-@end ifinfo
 @titlepage
 @sp 10
 @comment The title is printed in a large font.
@@ -68,31 +53,16 @@ approved by the Free Software Foundation.
 @c The following two commands start the copyright page.
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2002--2013 Thien-Thi Nguyen@*
-Portions Copyright @copyright{} 1998 Ian Grant
-
-     Permission is granted to make and distribute verbatim copies of
-this manual provided the copyright notice and this permission notice are
-preserved on all copies.
-
-     Permission is granted to copy and distribute modified versions of
-this manual under the conditions for verbatim copying, provided also
-that the sections entitled ``Copying'' and ``GNU General Public
-License'' are included exactly as in the original, and provided that the
-entire resulting derived work is distributed under the terms of a
-permission notice identical to this one.
-
-     Permission is granted to copy and distribute translations of this
-manual into another language, under the above conditions for modified
-versions, except that this permission notice may be stated in a
-translation approved by the Free Software Foundation.
-
+@insertcopying
 @end titlepage
 @contents
 
+@ifnottex
 @c ---------------------------------------------------------------------------
 @node Top
 @top  The (database postgres*) Modules
+
+@insertcopying
 
 Guile-PG is a collection of modules for Guile allowing access to the
 @uref{http://www.postgresql.org, PostgreSQL RDBMS} from Scheme programs.
@@ -101,8 +71,7 @@ The low-level module @code{(database postgres)} provides an almost one-to-one
 correspondence with the PostgreSQL @code{libpq} C library interface.  Other
 higher-level modules, typically named @code{(database postgres-FOO)}, provide
 abstractions and convenience procedures.
-
-@include relinfo.texi
+@end ifnottex
 
 @menu
 * Legalities::                  Your rights and freedoms.
@@ -124,12 +93,15 @@ abstractions and convenience procedures.
 * Introspection::               Module: (database postgres-meta).
 * Easy Interaction::            Module: (database postgres-gxrepl).
 
+* GNU FDL::
 * Index::
 @end menu
 
 @c ---------------------------------------------------------------------------
 @node    Legalities
 @chapter Legalities
+
+@heading software
 
 Guile-PG is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -143,6 +115,11 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Guile-PG.  If not, see @url{http://www.gnu.org/licenses/}.
+
+@heading documentation
+
+This manual is provided under the terms of the
+GNU Free Documentation License (@pxref{GNU FDL}).
 
 @c ---------------------------------------------------------------------------
 @node    Quick Start
@@ -246,6 +223,13 @@ bindings so the connection will usually be closed soon after the body of the
 @c ---------------------------------------------------------------------------
 
 @include ref.texi
+
+@c ---------------------------------------------------------------------------
+@c ---------------------------------------------------------------------------
+@node       GNU FDL
+@unnumbered GNU FDL
+
+@include fdl.texi
 
 @c ---------------------------------------------------------------------------
 @c ---------------------------------------------------------------------------

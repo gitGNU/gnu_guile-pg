@@ -1,3 +1,17 @@
+2014-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Change license to GNU FDL.
+
+	* autogen.sh (doc/fdl.texi): New ‘actually’ call.
+	* doc/guile-pg.texi (@copying): New pre-Top block.
+	(@titlepage): Use @insertcopying.
+	(Top): Likewise; don't @include relinfo.texi; surround
+	intro blurb w/ @ifnottex..@end; add "GNU FDL" to menu.
+	(Legalities): Add heading "software";
+	add heading "documentation" and blurb.
+	(GNU FDL): New @unnumbered @node, prior to Index.
+	* doc/Makefile.am (EXTRA_DIST): Add fdl.texi.
+
 2014-01-24  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build int] Use Guile-BAUX for to set {un,}sofix flags.

@@ -35,6 +35,7 @@ qcons-tables.texi: $(top_srcdir)/src/postgres-qcons.scm
 
 EXTRA_DIST = ref.texh mkinc guile-pg.html
 EXTRA_DIST += coltypes.texi
+EXTRA_DIST += fdl.texi
 
 if MAINTAINER_MODE
 
