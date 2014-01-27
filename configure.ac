@@ -169,18 +169,6 @@ SNUGGLE_SET_SOFIXFLAGS
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
-## If we're using GCC, ask for aggressive warnings.
-if test x"$GCC" = xyes ; then
-  AGGRESSIVE_WARNINGS="-std=gnu99 -pedantic"
-  for x in all extra float-equal declaration-after-statement \
-           undef shadow pointer-arith cast-qual cast-align aggregate-return \
-           old-style-definition no-missing-field-initializers \
-           nested-externs inline volatile-register-var disabled-optimization
-    do AGGRESSIVE_WARNINGS="$AGGRESSIVE_WARNINGS -W$x"
-  done
-fi
-AC_SUBST([AGGRESSIVE_WARNINGS])
-
 AC_CONFIG_FILES([
   Makefile
   src/Makefile

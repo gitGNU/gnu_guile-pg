@@ -1,5 +1,11 @@
 2014-01-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build] Don't enable GCC warnings in configuration.
+
+	* Makefile.am (AM_CFLAGS): Delete var.
+
+2014-01-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq int] Elide single-use local var.
 
 	* libpq.c (pg_ftype): ...here.

@@ -1,3 +1,12 @@
+2014-01-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[build] Don't enable GCC warnings in configuration.
+
+	This reverts 2008-08-13, "Add infrastructure to
+	more easily tweak GCC warnings for "make all"".
+
+	* configure.ac (AGGRESSIVE_WARNINGS): Delete AC_SUBST.
+
 2014-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc] Add some @cindex.
