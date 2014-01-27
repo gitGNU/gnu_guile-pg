@@ -1,3 +1,11 @@
+2014-01-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[pq int] Avoid ‘NUM_INT’, ‘C_INT’ for oid, size_t.
+
+	* libpq.c (pg_lo_get_oid): Use ‘NUM_ULONG’.
+	(pg_lo_seek): Likewise, and also ‘C_LONG’.
+	(pg_lo_import, pg_oid_value, pg_ftype): Use ‘NUM_ULONG’.
+
 2014-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[pq slog] Avoid ‘scm_ftell’.

@@ -394,7 +394,7 @@ from @code{pg-lo-creat} or @code{pg-lo-open}.  */)
 {
 #define FUNC_NAME s_pg_lo_get_oid
   ASSERT_PORT (1, port, LOBPORTP);
-  return NUM_INT (LOB_STREAM (port)->oid);
+  return NUM_ULONG (LOB_STREAM (port)->oid);
 #undef FUNC_NAME
 }
 
@@ -571,7 +571,7 @@ zero if an error occurred.  */)
 
   lob_flush (port);
 
-  return NUM_INT (lob_seek (port, C_INT (where), cwhence));
+  return NUM_LONG (lob_seek (port, C_LONG (where), cwhence));
 #undef FUNC_NAME
 }
 
@@ -742,7 +742,7 @@ the failure.  */)
   INTSOK ();
 
   return DEFAULT_FALSE (InvalidOid != ret,
-                        NUM_INT (ret));
+                        NUM_ULONG (ret));
 #undef FUNC_NAME
 }
 
@@ -2017,7 +2017,7 @@ return the integer @acronym{OID} of the inserted tuple, otherwise
   INTSOK ();
 
   return DEFAULT_FALSE (InvalidOid != oid_value,
-                        NUM_INT (oid_value));
+                        NUM_ULONG (oid_value));
 #undef FUNC_NAME
 }
 
@@ -2143,7 +2143,7 @@ not valid for the given @code{result}.  */)
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
   ftype = PQftype (res, field);
 
-  return NUM_INT (ftype);
+  return NUM_ULONG (ftype);
 #undef FUNC_NAME
 }
 
