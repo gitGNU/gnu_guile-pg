@@ -2137,13 +2137,11 @@ not valid for the given @code{result}.  */)
 #define FUNC_NAME s_pg_ftype
   PGresult *res;
   int field;
-  int ftype;
 
   VALIDATE_RESULT_UNBOX (1, result, res);
   VALIDATE_FIELD_NUMBER_COPY (2, num, res, field);
-  ftype = PQftype (res, field);
 
-  return NUM_ULONG (ftype);
+  return NUM_ULONG (PQftype (res, field));
 #undef FUNC_NAME
 }
 
