@@ -203,4 +203,7 @@
 (cond ((getenv "DEBUG")
        (set! %load-verbosely #t)))
 
+(or (equal? "1" (getenv "VERBOSE"))
+    (set-current-output-port (open-output-file *null-device*)))
+
 ;;; testing.scm ends here

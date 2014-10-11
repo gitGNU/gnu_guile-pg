@@ -1,5 +1,12 @@
 2014-10-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[v] Add "make check" option ‘VERBOSE=1’.
+
+	* testing.scm <load-time actions>: If env var ‘VERBOSE’
+	has value "1", arrange to send stdout to the null device.
+
+2014-10-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[v] Check well-formedness of types table cache.
 
 	* types-table.scm (test:query-oid/type-name): ...here;

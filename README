@@ -91,6 +91,7 @@ Testing
     make check [options]
 
   Options are one or more of:
+    VERBOSE=1
     DEBUG=1
     KEEPD=1
     INITDB=/path/to/initdb
@@ -117,8 +118,11 @@ Testing
   for subsequent "make check" invocations (if you are in the mood).
   Use "make clean" to remove it and test/fake-install/ as well.
 
+  Normally, "make check" shows only the status of the file-level
+  tests.  To see more fine-grained status, specify ‘VERBOSE=1’.
+
   The DEBUG=1 is optional.  If "make check" fails, please re-run
-  it with DEBUG=1 and see "Reporting Bugs" below.
+  it with DEBUG=1 VERBOSE=1 and see "Reporting Bugs" below.
 
   Likewise, ‘KEEPD=1’ is optional.  If specified, the daemon is
   not killed, reducing startup time for subsequent runs.
