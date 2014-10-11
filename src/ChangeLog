@@ -1,3 +1,10 @@
+2014-10-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[slog] Don't assume ‘(set! (P X) V)’ returns V.
+
+	* postgres-types.scm (oid-type-name-cache fresh!): New proc.
+	(oid-type-name-cache): Use it.
+
 2014-01-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[build] Don't enable GCC warnings in configuration.

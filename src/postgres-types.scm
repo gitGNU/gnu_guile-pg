@@ -78,9 +78,13 @@
                        (acons (string->number (pg-getvalue res n 0))
                               (pg-getvalue res n 1)
                               acc)))))))
-  (cond ((and (not (null? opt)) (car opt)) (set! (o/t conn) (fresh)))
+  (define (fresh!)
+    (let ((alist (fresh)))
+      (set! (o/t conn) alist)
+      alist))
+  (cond ((and (not (null? opt)) (car opt)) (fresh!))
         ((o/t conn))
-        (else (set! (o/t conn) (fresh)))))
+        (else (fresh!))))
 
 ;; column types / definition
 
