@@ -124,8 +124,15 @@
 ;; expect #t
 ;;
 (define (test:query-oid/type-name)
-  (->bool (oid-type-name-cache
-           (pg-connectdb (fs "dbname=~A" db-name)))))
+  (let* ((conn (pg-connectdb (fs "dbname=~A" db-name)))
+         (cache (oid-type-name-cache conn)))
+    (pg-finish conn)
+    (and (pair? cache)
+         (and-map (lambda (ent)
+                    ;; (fso "ent: ~S~%" ent)
+                    (and (integer? (car ent))
+                         (string? (cdr ent))))
+                  cache))))
 
 ;; Test pgtable-manager
 ;; expect #t

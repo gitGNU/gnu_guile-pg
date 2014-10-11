@@ -1,3 +1,10 @@
+2014-10-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v] Check well-formedness of types table cache.
+
+	* types-table.scm (test:query-oid/type-name): ...here;
+	also, ‘pg-finish’ the temporary connection when done.
+
 2014-01-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v] Overcome PostgreSQL 9.3 "CREATE TABLE .. serial" reticence.
