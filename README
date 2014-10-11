@@ -88,7 +88,12 @@ Testing
   If configuration and "make" are successful, you can now run the
   tests.  To run the tests type:
 
-    make check [DEBUG=1] [KEEPD=1] [INITDB=/path/to/initdb]
+    make check [options]
+
+  Options are one or more of:
+    DEBUG=1
+    KEEPD=1
+    INITDB=/path/to/initdb
 
   This creates a temporary installation dir test/fake-install/,
   creates a cluster test/fake-cluster/, creates one database in
