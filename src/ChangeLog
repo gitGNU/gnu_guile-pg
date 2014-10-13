@@ -1,3 +1,9 @@
+2014-10-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[scheme int] Use ‘#:prefix’ instead of ‘#:renamer’.
+
+	* postgres-table.scm: ...here, in ‘define-module’ form.
+
 2014-10-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[slog] Don't assume ‘(set! (P X) V)’ returns V.

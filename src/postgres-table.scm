@@ -53,7 +53,7 @@
                           type-options
                           validate-def
                           objectifiers)
-                #:renamer (symbol-prefix-proc 'def:))
+                #:prefix def:)
   #:use-module ((database postgres-qcons)
                 #:select (sql-pre
                           sql-pre?
