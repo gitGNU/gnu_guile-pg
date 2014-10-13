@@ -1458,12 +1458,12 @@ be loaded like so:
 
 @lisp
 (use-modules ((database postgres-col-defs)
-              #:renamer (symbol-prefix-proc 'def:)))
+              #:prefix def:))
 @end lisp
 
 @noindent
-In this example, we use the @code{#:renamer} clause to systematically prefix
-"def:" to the names that the client module would see (resulting in
+In this example, we use the @code{#:prefix} clause to systematically prefix
+@code{def:} to the names that the client module would see (resulting in
 @code{def:column-name} and so on).
 
 @tsin i column-name
