@@ -143,6 +143,24 @@
                             (read-char port)
                             (read-pgarray-1 objectifier port))))
 
+(define (dimension->string stringifier x)
+  (letrec ((dive (lambda (ls)
+                   (list "{" (dimension->string stringifier (car ls))
+                         (map (lambda (y)
+                                (list "," (dimension->string stringifier y)))
+                              (cdr ls))
+                         "}")))
+           (walk (lambda (x)
+                   (cond ((string? x) (display x))
+                         ((list? x) (for-each walk x))
+                         (else (error "bad type:" x)))))
+           (flatten (lambda (tree)
+                      (with-output-to-string
+                        (lambda () (walk tree))))))
+    (cond ((list? x)   (flatten (dive x)))
+          ((vector? x) (flatten (dive (vector->list x))))
+          (else        (stringifier x)))))
+
 (define (dimension->string-proc stringifier)
   (lambda (ls/vec) (dimension->string stringifier ls/vec)))
 
@@ -166,24 +184,6 @@
   (set! *db-col-types*
         (assq-set! *db-col-types* name
                    (vector stringifier default objectifier))))
-
-(define (dimension->string stringifier x)
-  (letrec ((dive (lambda (ls)
-                   (list "{" (dimension->string stringifier (car ls))
-                         (map (lambda (y)
-                                (list "," (dimension->string stringifier y)))
-                              (cdr ls))
-                         "}")))
-           (walk (lambda (x)
-                   (cond ((string? x) (display x))
-                         ((list? x) (for-each walk x))
-                         (else (error "bad type:" x)))))
-           (flatten (lambda (tree)
-                      (with-output-to-string
-                        (lambda () (walk tree))))))
-    (cond ((list? x)   (flatten (dive x)))
-          ((vector? x) (flatten (dive (vector->list x))))
-          (else        (stringifier x)))))
 
 ;; Register type @var{composed}, an array variant of @var{simple}, with
 ;; optional @var{procs}.  @var{simple} should be a type name already
