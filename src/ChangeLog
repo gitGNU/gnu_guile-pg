@@ -1,3 +1,12 @@
+2014-10-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[scheme int] Use hash table to hold column-type objects.
+
+	* postgres-types.scm (*db-col-types*): Delete data structure.
+	(ALL): New hash table.
+	(dbcoltypes, dbcoltype-lookup, define-db-col-type):
+	Don't use alist access procs; instead, use hash access procs.
+
 2014-10-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[scheme int] Use ‘#:prefix’ instead of ‘#:renamer’.

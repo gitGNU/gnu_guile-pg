@@ -88,18 +88,23 @@
 
 ;; column types / definition
 
-(define *db-col-types* '())     ; (NAME . #(STRINGIFIER DEFAULT OBJECTIFIER))
+(define ALL
+  ;; key: NAME (symbol)
+  ;; val: #(STRINGIFIER DEFAULT OBJECTIFIER)
+  (make-hash-table))
 
 ;; Return names of all registered type converters.
 ;;
 (define (dbcoltypes)
-  (map car *db-col-types*))
+  (hash-fold (lambda (key val ls)
+               (cons key ls))
+             '() ALL))
 
 ;; Return a type-converter object given its @var{type-name}, a symbol.
 ;; Return @code{#f} if no such t-c object by that name exists.
 ;;
 (define (dbcoltype-lookup type-name)
-  (assq-ref *db-col-types* type-name))
+  (hashq-ref ALL type-name))
 
 ;; Extract stringifier from the type-converter object @var{tc}.
 (define (dbcoltype:stringifier tc) (vector-ref tc 0))
@@ -181,9 +186,8 @@
 ;; See also @code{dbcoltype-lookup}.
 ;;
 (define (define-db-col-type name default stringifier objectifier)
-  (set! *db-col-types*
-        (assq-set! *db-col-types* name
-                   (vector stringifier default objectifier))))
+  (hashq-set! ALL name
+              (vector stringifier default objectifier)))
 
 ;; Register type @var{composed}, an array variant of @var{simple}, with
 ;; optional @var{procs}.  @var{simple} should be a type name already
@@ -214,7 +218,7 @@
       (read-array-string-proc objectifier))))
 
 ;;;---------------------------------------------------------------------------
-;;; load-time actions: set up *db-col-types*
+;;; load-time actions: set up built-ins
 
 ;; support
 
