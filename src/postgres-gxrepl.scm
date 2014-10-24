@@ -17,14 +17,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-PG.  If not, see <http://www.gnu.org/licenses/>.
 
-;;; Commentary:
-
-;; This module exports the procedure:
-;;   (gxrepl conn)
-;;
-;; The "gx" stands for "guile extensible".  That is not the case at the
-;; moment, but we have great and humble plans for this module...
-
 ;;; Code:
 
 (define-module (database postgres-gxrepl)

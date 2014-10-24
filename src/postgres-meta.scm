@@ -18,20 +18,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-PG.  If not, see <http://www.gnu.org/licenses/>.
 
-;;; Commentary:
-
-;; This module exports the procs:
-;;   (defs-from-psql PSQL DB-NAME TABLE-NAME) => defs
-;;   (check-type/elaborate TYPE) => #f, or KNOWN-TOBJ, or NEW-TYPE
-;;   (strictly-check-types/elaborate! TABLE-NAME TYPES) => #t, or ERROR
-;;   (infer-defs CONN TABLE-NAME) => defs
-;;   (describe-table! DB-NAME TABLE-NAME)
-;;
-;; DB-NAME and TABLE-NAME are strings.  DEF is a single column def.  DEFS is a
-;; list of column defs.  TYPE and NEW-TYPE are symbols.  KNOWN-TOBJ is the
-;; type object already registered.  CONN is a the result of ‘pg-connectdb’.
-;; ERROR means an error is thrown.  PSQL is either a string, a thunk, or #t.
-
 ;;; Code:
 
 (define-module (database postgres-meta)

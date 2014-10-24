@@ -18,17 +18,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-PG.  If not, see <http://www.gnu.org/licenses/>.
 
-;;; Commentary:
-
-;; This module provides various procedures to translate/transform tuple data
-;; resulting from a query against a PostgreSQL database:
-;;
-;;  (for-each-tuple PROC RESULT) => bool
-;;  (result-field->object-list RESULT FN OBJECTIFIER) => list
-;;  (result->object-alist RESULT OBJECTIFIERS) => alist
-;;  (result->object-alists RESULT OBJECTIFIERS) => list of alists
-;;  (result->object-rows RESULT OBJECTIFIERS) => list of lists
-
 ;;; Code:
 
 (define-module (database postgres-resx)

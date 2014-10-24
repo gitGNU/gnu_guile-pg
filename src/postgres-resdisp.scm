@@ -17,11 +17,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-PG.  If not, see <http://www.gnu.org/licenses/>.
 
-;;; Commentary:
-
-;; This module exports the proc:
-;;   (display-result result [decor [flags...]])
-
 ;;; Code:
 
 (define-module (database postgres-resdisp)

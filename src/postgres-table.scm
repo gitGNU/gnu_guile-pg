@@ -18,14 +18,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-PG.  If not, see <http://www.gnu.org/licenses/>.
 
-;;; Commentary:
-
-;; This module exports these procedures:
-;;   (sql-pre string)
-;;   (pgtable-manager db-spec table-name defs)
-;;   (pgtable-worker db-spec table-name defs)
-;;   (compile-outspec spec defs)
-
 ;;; Code:
 
 (define-module (database postgres-table)

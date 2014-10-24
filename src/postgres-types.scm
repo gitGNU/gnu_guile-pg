@@ -18,34 +18,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-PG.  If not, see <http://www.gnu.org/licenses/>.
 
-;;; Commentary:
-
-;; This module provides the procs:
-;;  (oid-type-name-cache CONN . FRESH?) => ((OID . TYPE-NAME) ...)
-;;  (dbcoltypes) => list of names
-;;  (dbcoltype-lookup NAME) => tobj
-;;  (dbcoltype:stringifier TOBJ) => proc
-;;  (dbcoltype:objectifier TOBJ) => proc
-;;  (dbcoltype:default) => string
-;;  (define-db-col-type NAME DEFAULT STRINGIFY OBJECTIFY)
-;;  (define-db-col-type-array-variant COMPOSED SIMPLE [STRINGIFY [OBJECTIFY]])
-;;
-;; NAME, COMPOSED and SIMPLE are symbols naming a type.  COMPOSED is
-;; conventionally formed by appending square-bracket paris to SIMPLE.  For
-;; example, we can declare a two-dimensional array type of text elements:
-;;
-;;  (define-db-col-type-array-variant 'text[][] 'text ...)
-;;
-;; STRINGIFY is a procedure that takes a Scheme object and returns a string,
-;; suitable for sending to PostgreSQL.  OBJECTIFY does the opposite: it takes
-;; a string from PostgreSQL and returns a Scheme object.
-;;
-;; DEFAULT is a string.  TOBJ is a "type object" which should be considered
-;; opaque (and thus subject to change w/o warning).  Use the dbcoltype:foo
-;; procs to access the components.
-;;
-;; TODO: Look into "user-defined" types from PostgreSQL point of view.
-
 ;;; Code:
 
 (define-module (database postgres-types)

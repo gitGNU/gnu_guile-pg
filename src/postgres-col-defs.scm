@@ -18,21 +18,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-PG.  If not, see <http://www.gnu.org/licenses/>.
 
-;;; Commentary:
-
-;; This module exports the procs:
-;;   (column-name DEF) => symbol
-;;   (type-name DEF) => symbol
-;;   (type-options DEF) => list of option elements
-;;   (objectifiers DEFS) => list of objectifier procedures
-;;   (stringifiers DEFS) => list of stringifier procedures
-;;   (validate-def OBJ [TYPECHECK]) => #t or signal error
-;;
-;; DEF is a single column definition.  DEFS is a list of column definitions.
-;; Each option element is either a string (possibly with embedded spaces),
-;; or a sub-list of numbers and/or symbols.  Typically the sub-list, if any,
-;; will be the first option element.
-
 ;;; Code:
 
 (define-module (database postgres-col-defs)
