@@ -26,8 +26,7 @@
             compile-outspec)
   #:use-module ((ice-9 common-list)
                 #:select (find-if
-                          pick-mappings
-                          remove-if))
+                          pick-mappings))
   #:use-module ((database postgres)
                 #:select (pg-connection?
                           pg-connectdb

@@ -1,3 +1,12 @@
+2014-10-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[scheme int] Decruft: Don't import ‘(ice-9 common-list) remove-if’.
+
+	Omission from 2008-08-06, "Debogify: Make ‘pgtable-manager’
+	INSERTs no longer strip ‘serial’ cols".
+
+	* postgres-table.scm: ...here.
+
 2014-10-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[scheme int] Use hash table to hold column-type objects.
