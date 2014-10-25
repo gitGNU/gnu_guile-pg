@@ -30,7 +30,7 @@
              (srfi srfi-13)
              (srfi srfi-14)
              (ice-9 regex)
-             (ice-9 common-list))
+             (srfi srfi-1))
 
 (define db-name (or (getenv "PGDATABASE")
                     (error "don't know what database to use")))

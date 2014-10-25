@@ -24,9 +24,9 @@
   #:export (pgtable-manager
             pgtable-worker
             compile-outspec)
-  #:use-module ((ice-9 common-list)
-                #:select (find-if
-                          pick-mappings))
+  #:use-module ((srfi srfi-1)
+                #:select (find
+                          filter-map))
   #:use-module ((database postgres)
                 #:select (pg-connection?
                           pg-connectdb
@@ -286,9 +286,9 @@
 
     (define (col-defs defs cols)
       (map (lambda (col)
-             (or (find-if (lambda (def)
-                            (eq? (def:column-name def) col))
-                          defs)
+             (or (find (lambda (def)
+                         (eq? (def:column-name def) col))
+                       defs)
                  (error "invalid field name:" col)))
            cols))
 
@@ -339,7 +339,7 @@
              ;; type.  Apparently, this was not handled automatically in
              ;; old PostgreSQL versions.  See PostgreSQL User Guide: The
              ;; Serial Types.
-             ,@(pick-mappings
+             ,@(filter-map
                 (lambda (def)
                   (and (eq? 'serial (def:type-name def))
                        `(#:SEQUENCE ,(fmt "~A_~A_seq"

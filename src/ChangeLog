@@ -1,5 +1,14 @@
 2014-10-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[scheme int] Use SRFI 1 instead of (ice-9 common-list).
+
+	* postgres-table.scm: Don't import ‘(ice-9 common-list)’
+	procs; instead, from ‘(srfi srfi-1)’, import ‘find’, ‘filter-map’.
+	(pgtable-manager col-defs): Use ‘find’.
+	(pgtable-manager drop): Use ‘filter-map’.
+
+2014-10-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[scheme int] Decruft: Don't import ‘(ice-9 common-list) remove-if’.
 
 	Omission from 2008-08-06, "Debogify: Make ‘pgtable-manager’

@@ -1,3 +1,10 @@
+2014-10-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[scheme int] Use SRFI 1 instead of (ice-9 common-list).
+
+	* types-table.scm: Don't import ‘(ice-9 common-list)’;
+	instead, import ‘(srfi srfi-1)’.
+
 2014-10-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v] Add "make check" option ‘VERBOSE=1’.
