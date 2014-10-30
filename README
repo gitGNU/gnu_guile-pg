@@ -113,6 +113,10 @@ Testing
 
     cd test/ && make kill-daemon [INITDB=/path/to/initdb]
 
+  Alternatively, to ensure that the daemon never persists, you can:
+
+    make check || ( cd test && make kill-daemon )
+
   Note that you may need to specify INITDB here, as well.
   In any case, the cluster persists, which reduces startup time
   for subsequent "make check" invocations (if you are in the mood).
