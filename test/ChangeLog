@@ -1,3 +1,12 @@
+2014-10-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v] Move bulk of ‘pg-guile-pg-loaded’ testing to alive.scm.
+
+	* alive.scm: Check presence and behavior of
+	‘pg-guile-pg-loaded’; display features if ‘VERBOSE=1’.
+	* basic.scm (test:pg-guile-pg-loaded):
+	Simplify to validate ‘symbol?’ elements, only.
+
 2014-10-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[scheme int] Use SRFI 1 instead of (ice-9 common-list).

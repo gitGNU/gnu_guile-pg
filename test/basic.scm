@@ -130,15 +130,7 @@
 (define test:pg-guile-pg-loaded
   (add-test #t
     (lambda ()
-      (and (defined? 'pg-guile-pg-loaded)
-           (let ((x (pg-guile-pg-loaded)))
-             (and (list? x)
-                  (begin
-                    (for-each (lambda (s)
-                                (fso "FEATURE: ~A~%" s))
-                              x)
-                    #t)
-                  (and-map symbol? x)))))))
+      (and-map symbol? (pg-guile-pg-loaded)))))
 
 (define test:pg-conndefaults
   (add-test #t

@@ -27,6 +27,19 @@
 
 (use-modules (database postgres))
 
+(or (defined? 'pg-guile-pg-loaded)
+    (error "failed to load module: (database postgres)"))
+
+(define FEATURES (pg-guile-pg-loaded))
+
+(or (and (list? FEATURES)
+         (and-map symbol? FEATURES))
+    (error "‘pg-guile-pg-loaded’ rv malformed:" FEATURES))
+
+(for-each (lambda (s)
+            (fso "FEATURE: ~A~%" s))
+          FEATURES)
+
 (exit #t)
 
 ;;; alive.scm ends here
