@@ -956,7 +956,11 @@ prep_paramspecs (const char *FUNC_NAME, struct paramspecs *ps, SCM v)
 static void
 drop_paramspecs (struct paramspecs *ps)
 {
+  int i;
+
   free (ps->types);
+  for (i = 0; i < ps->len; i++)
+    free (ps->values[i]);
   free (ps->values);
   free (ps->lengths);
   free (ps->formats);

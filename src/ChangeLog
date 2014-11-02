@@ -1,5 +1,13 @@
 2014-11-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq] Fix bug: Remember to ‘free’ mem allocated in ‘copy_string’.
+
+	Longstanding bug, since inception: Guile-PG 0.30.
+
+	* libpq.c (drop_paramspecs): ...here.
+
+2014-11-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[C int] Add abstraction: copy_string
 
 	* libpq.c (copy_string): New static func.
