@@ -891,6 +891,18 @@ strip_newlines (char *str)
   return BSTRING (str, lc + 1 - str);
 }
 
+static char *
+copy_string (SCM orig)                  /* DWR: needs ‘free’!  */
+{
+  char *rv = NULL;
+  range_t corig;
+
+  FINANGLE (orig);
+  rv = strndup (RS (orig), RLEN (orig));
+  UNFINANGLE (orig);
+  return rv;
+}
+
 
 /*
  * common parameter handling
@@ -936,14 +948,7 @@ prep_paramspecs (const char *FUNC_NAME, struct paramspecs *ps, SCM v)
   if (! ps->values)
     MEMORY_ERROR ();
   for (i = 0; i < len; i++)
-    {
-      range_t celem;
-
-      elem = VECTOR_REF (v, i);
-      FINANGLE (elem);
-      ps->values[i] = strdup (RS (elem));
-      UNFINANGLE (elem);
-    }
+    ps->values[i] = copy_string (VECTOR_REF (v, i));
   ps->lengths = NULL;
   ps->formats = NULL;
 }
@@ -2598,15 +2603,7 @@ option_as_string (SCM alist, SCM key, const char *def)
   SCM maybe = scm_assq_ref (alist, key);
 
   if (NOT_FALSEP (maybe))
-    {
-      range_t cmaybe;
-      char *rv;
-
-      FINANGLE (maybe);
-      rv = strdup (RS (maybe));
-      UNFINANGLE (maybe);
-      return rv;
-    }
+    return copy_string (maybe);
 
   if (def)
     return strdup (def);
@@ -2723,12 +2720,7 @@ To specify a disabled flag, use @dfn{no-FLAG}, e.g.,
       po->fieldName[count] = NULL;
       for (i = 0; i < count; i++)
         {
-          SCM name = CAR (substnames);
-          range_t cname;
-
-          FINANGLE (name);
-          po->fieldName[i] = strdup (RS (name));
-          UNFINANGLE (name);
+          po->fieldName[i] = copy_string (CAR (substnames));
           substnames = CDR (substnames);
         }
     }

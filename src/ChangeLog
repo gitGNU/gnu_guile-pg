@@ -1,3 +1,10 @@
+2014-11-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[C int] Add abstraction: copy_string
+
+	* libpq.c (copy_string): New static func.
+	(prep_paramspecs, option_as_string, pg_make_print_options): Use it.
+
 2014-10-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[scheme int] Use SRFI 1 instead of (ice-9 common-list).
