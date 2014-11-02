@@ -2969,11 +2969,9 @@ Return the current client encoding for @var{conn} as a string.  */)
 {
 #define FUNC_NAME s_pg_client_encoding
   PGconn *dbconn;
-  SCM enc;
 
   VALIDATE_CONNECTION_UNBOX_DBCONN (1, conn, dbconn);
-  enc = STRING (pg_encoding_to_char (PQclientEncoding (dbconn)));
-  return enc;
+  return STRING (pg_encoding_to_char (PQclientEncoding (dbconn)));
 #undef FUNC_NAME
 }
 
