@@ -117,6 +117,10 @@ Testing
 
     make check || ( cd test && make kill-daemon )
 
+  Yet another alternative, much simpler:
+
+    make -k check
+
   Note that you may need to specify INITDB here, as well.
   In any case, the cluster persists, which reduces startup time
   for subsequent "make check" invocations (if you are in the mood).
