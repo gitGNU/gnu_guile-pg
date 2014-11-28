@@ -1,3 +1,13 @@
+2014-11-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v int] Add abstraction: env-1?
+
+	* testing.scm (env-1?): New proc.
+	<top-level>: Use ‘env-1?’ for ‘DEBUG’ and ‘VERBOSE’ handling.
+	* types-table.scm (mgr, command-ok?): Use ‘env-1?’.
+	<top-level>: Likewise, for ‘DEBUG’ handling.
+	(mtest:select-*-error_condition): Use ‘env-1?’.
+
 2014-10-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v] Move bulk of ‘pg-guile-pg-loaded’ testing to alive.scm.

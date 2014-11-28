@@ -38,7 +38,7 @@
 (define (mgr . args)
   (let ((rv (apply pgtable-manager args)))
     (cond ((procedure? rv)
-           (and (getenv "DEBUG")
+           (and (env-1? "DEBUG")
                 ((rv #:trace-exec) *log-file*))
            (let ((scs 'standard_conforming_strings)
                  (conn ((rv #:k) #:connection)))
@@ -75,7 +75,7 @@
   (let ((sym (pg-result-status raw)))
     (case sym
       ((PGRES_COMMAND_OK) #t)
-      (else (and (equal? "1" (getenv "DEBUG"))
+      (else (and (env-1? "DEBUG")
                  (fso "~A: ~A~%" sym (pg-result-error-message raw)))
             #f))))
 
@@ -216,7 +216,7 @@
                           (+ adj (* 2 (apply + (map sel PESKY)))))
                         (fs "~A ~A" (sum car) (sum cadr))))
 
-(and (getenv "DEBUG")
+(and (env-1? "DEBUG")
      (fso "POISON: ~A |~A|~%" POISON-COUNTS POISON))
 
 ;; Test pgtable-manager insert 2
@@ -257,7 +257,7 @@
              (pass-if "size" (check-dim 1 10))
              (pass-if "ec" (let ((counts (tref 0 9))
                                  (string (tref 0 1)))
-                             (and (getenv "DEBUG")
+                             (and (env-1? "DEBUG")
                                   (fso "ec: ~A |~A|~%" counts string))
                              (and (string=? POISON-COUNTS counts)
                                   (string=? POISON string))))

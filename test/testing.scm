@@ -187,6 +187,9 @@
 (use-modules (guile-baux common))
 (use-modules (srfi srfi-13))
 
+(define (env-1? var)
+  (equal? "1" (getenv var)))
+
 (define (temp-table-command name . col-defs)
   (fs "CREATE TEMP TABLE ~A (~A)"
       name
@@ -200,10 +203,10 @@
 
 ;;; load-time actions
 
-(cond ((getenv "DEBUG")
+(cond ((env-1? "DEBUG")
        (set! %load-verbosely #t)))
 
-(or (equal? "1" (getenv "VERBOSE"))
+(or (env-1? "VERBOSE")
     (set-current-output-port (open-output-file *null-device*)))
 
 ;;; testing.scm ends here
