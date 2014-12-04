@@ -121,6 +121,10 @@ Testing
 
     make -k check
 
+  Normally, however, the last "test" arranges to kill the daemon;
+  if you must resort to one of the above methods, that's a bug --
+  please report it!
+
   Note that you may need to specify INITDB here, as well.
   In any case, the cluster persists, which reduces startup time
   for subsequent "make check" invocations (if you are in the mood).

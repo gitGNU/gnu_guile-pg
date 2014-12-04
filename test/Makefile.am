@@ -24,6 +24,8 @@ CTL = $(srcdir)/fake-cluster-control
 TESTS_ENVIRONMENT = sh runtest
 
 TESTS = alive.scm basic.scm large.scm types-table.scm meta.scm
+# NB: This must be last!
+TESTS += cleanup.scm
 
 XFAIL_TESTS =
 

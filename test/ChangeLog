@@ -1,3 +1,10 @@
+2014-12-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v] Add "test" to kill daemon.
+
+	* Makefile.am (TESTS): Add cleanup.scm.
+	* cleanup.scm: New file.
+
 2014-11-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v int] Add abstraction: env-1?
