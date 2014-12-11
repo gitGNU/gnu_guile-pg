@@ -1142,18 +1142,20 @@ To get started, load the @code{postgres-resdisp} module:
 @tsin i display-result
 
 @c ---------------------------------------------------------------------------
-@node    Types Conversion
-@chapter Types Conversion
+@node    Octet Molding/Mashing
+@chapter Octet Molding/Mashing
 
-@cindex converting types
-@cindex type converters
+@cindex converting octets
+@cindex octet converters
 Normally, the result of a @code{pg-exec} query is an object from which Scheme
 strings can be extracted to represent the datum from a particular tuple/field
 coordinate, using @code{pg-getvalue} (@pxref{Retrieving Data}).  If this
 string is sufficient for your needs, you can skip this chapter, which
-describes how to use the PostgreSQL-to-Scheme (and back) type conversion
-support installed with Guile-PG, including how to register new converters.
+describes Guile-PG facilities for transforming those strings to Scheme
+objects (i.e., @dfn{molding}) and back (i.e., @dfn{mashing}).
 
+Which transform (or @dfn{conversion}, used equivalently in this manual)
+to use depends on the SQL type of a particular datum.
 To get started, load the @code{postgres-types} module:
 
 @lisp
@@ -1420,7 +1422,8 @@ type and any additional options.  It has the form:
 
 @noindent
 @var{name} and @var{type} are symbols specifying the name and type of the
-column, respectively (@pxref{Types Conversion}).  @var{options} are strings
+column, respectively (@pxref{Octet Molding/Mashing}).
+@var{options} are strings
 passed directly to PostgreSQL as part of a @code{CREATE TABLE} command.  For
 example, the status output of the rsync(1) program can be specified by the
 form:
@@ -1507,7 +1510,8 @@ on the unconverted result strings.
 
 The rest of the procedures in this chapter combine conversion of the raw
 result strings to Scheme objects, with different collection methods.
-@xref{Types Conversion}.  (For access to the unconverted result strings, use
+@xref{Octet Molding/Mashing}.
+(For access to the unconverted result strings, use
 the procedure @code{identity} as the @dfn{objectifier}, which in effect does
 no conversion at all.)
 

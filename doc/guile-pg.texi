@@ -85,7 +85,7 @@ abstractions and convenience procedures.
 
 * Query Construction::          Module: (database postgres-qcons).
 * Displaying Results::          Module: (database postgres-resdisp).
-* Types Conversion::            Module: (database postgres-types).
+* Octet Molding/Mashing::       Module: (database postgres-types).
 * Column Definitions::          Module: (database postgres-col-defs).
 * Result Transforms::           Module: (database postgres-resx).
 * Single-Table Abstraction::    Module: (database postgres-table).

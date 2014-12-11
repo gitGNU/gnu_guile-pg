@@ -1,3 +1,13 @@
+2014-12-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Rename "Types Conversion" to "Octet Molding/Mashing".
+
+	* doc/guile-pg.texi (Top): Update menu entry.
+	* doc/ref.texh (Octet Molding/Mashing): Rename node/chapter from
+	"Types Conversion"; update intro to define "molding" and "mashing".
+	(Column Definitions): Update @pxref.
+	(Result Transforms): Update @xref.
+
 2014-10-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc] Use ‘#:prefix’ in example, not ‘#:renamer’.
