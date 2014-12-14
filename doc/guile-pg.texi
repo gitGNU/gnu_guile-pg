@@ -37,7 +37,7 @@ Texts.  A copy of the license is included in the appendix entitled
 @end macro
 
 @macro converter{x}
-@cindex @code{\x\} (type converter)
+@vindex \x\ @r{(type converter)}
 @end macro
 
 @dircategory Guile modules
