@@ -1,3 +1,14 @@
+2014-12-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Merge converters table into selected notes.
+
+	* doc/ref.texh (Octet Molding/Mashing): Rename menu entry
+	from "Selected Notes About Some Types" to "Builtin Converters".
+	(Consulting Existing Type Converters):
+	Move tables and associated blurbs from here...
+	(Builtin Converters): ...to here, the node/section
+	renamed from "Selected Notes About Some Types".
+
 2014-12-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc] Fix bug: Use ‘@vindex’ for type converters.

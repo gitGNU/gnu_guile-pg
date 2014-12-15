@@ -1184,7 +1184,7 @@ It uses a bonus procedure in this module:
 
 @menu
 * Consulting Existing Type Converters::
-* Selected Notes About Some Types::
+* Builtin Converters::
 * Defining New Type Converters::
 @end menu
 
@@ -1228,18 +1228,16 @@ PostgreSQL: dimensionality is not stored for array types, so the conversion
 cannot be done in a random-access manner.  Perhaps this will change in the
 future.
 
-@heading Builtin Converters
+@node    Builtin Converters
+@section Builtin Converters
 @cindex type converters, builtin
 Here is the set of builtin converters and their default values.
 
 @include coltypes.texi
 
-@node    Selected Notes About Some Types
-@section Selected Notes About Some Types
-
 For the most part, the built-in converters map Scheme types to PostgreSQL
-types almost transparently (@pxref{Consulting Existing Type Converters}).
-This section lists the PostgreSQL types not (yet) covered, describes the major
+types almost transparently.  The rest of this
+section lists the PostgreSQL types not (yet) covered, describes the major
 weakness in the mapping approach, and then finally touches upon some of the
 rough edges to be found in selected cases.  We hope to resolve these issues
 (and thus be able to revise this section significantly) before Guile-PG 1.0 is
