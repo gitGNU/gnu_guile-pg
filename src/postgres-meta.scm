@@ -629,7 +629,7 @@
           (loop (next) (cons def acc))))))
 
 ;; Check @var{type}, a symbol.  If it not an array variant, return
-;; non-@code{#f} only if its type converters are already registered with
+;; non-@code{#f} only if its converters are already registered with
 ;; Guile-PG.  If @var{type} is an array variant, check the base (non-array)
 ;; type first, and if needed, ensure that the array variant type is
 ;; registered.  Return non-@code{#f} if successful.

@@ -37,7 +37,7 @@ Texts.  A copy of the license is included in the appendix entitled
 @end macro
 
 @macro converter{x}
-@vindex \x\ @r{(type converter)}
+@vindex \x\ @r{(converter)}
 @end macro
 
 @dircategory Guile modules
@@ -190,7 +190,7 @@ guile> (pg-fname result 1)
 To retrieve the data from the result we use the @code{pg-getvalue} procedure.
 This takes a result object along with the row and column numbers and returns a
 string containing that value.  @code{pg-getvalue} always returns a string: it
-is up to the caller to convert this to whatever type they require.
+is up to the caller to convert this to whatever Scheme object they require.
 
 @cartouche
 @example

@@ -1,3 +1,21 @@
+2014-12-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Say simply "converter" instead of "type converter".
+
+	The excruciatingly correct term would be "type-parameterized
+	converter", but that's even worse.  We could also call it an
+	"omm object", but that's weird, too.
+
+	* doc/guile-pg.texi (converter): Omit "type" from expansion text.
+	(Quick Start): Say "Scheme object" instead of "type".
+	* doc/ref.texh (Octet Molding/Mashing): Update menu entries
+	to say "Converters" instead of "Type Converters".
+	(Consulting Existing Converters): Rename from
+	"Consulting Existing Type Converters"; update text.
+	(Builtin Converters): Update @cindex entry and text.
+	(Defining New Converters): Rename from "Defining
+	New Type Converters"; update @cindex entry.
+
 2014-12-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc] Merge converters table into selected notes.

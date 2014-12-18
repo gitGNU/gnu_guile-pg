@@ -1183,16 +1183,16 @@ It uses a bonus procedure in this module:
 @tsin i oid-type-name-cache
 
 @menu
-* Consulting Existing Type Converters::
+* Consulting Existing Converters::
 * Builtin Converters::
-* Defining New Type Converters::
+* Defining New Converters::
 @end menu
 
-@node    Consulting Existing Type Converters
-@section Consulting Existing Type Converters
+@node    Consulting Existing Converters
+@section Consulting Existing Converters
 
-To see what type converters are already defined, use the @code{dbcoltypes}
-procedure.  To get a @dfn{type-converter object} that encapsulates
+To see what converters are already defined, use the @code{dbcoltypes}
+procedure.  To get a @dfn{converter object} that encapsulates
 the @dfn{stringifier}, the @dfn{objectifier} and the @dfn{default}, use
 the procedure
 @code{dbcoltype-lookup}.  The components of the returned object can be read
@@ -1230,7 +1230,7 @@ future.
 
 @node    Builtin Converters
 @section Builtin Converters
-@cindex type converters, builtin
+@cindex converters, builtin
 Here is the set of builtin converters and their default values.
 
 @include coltypes.texi
@@ -1304,7 +1304,7 @@ Pseudo-Types (8.12).
 @end table
 
 The large table above hints at the major weakness in Guile-PG's type mapping
-approach: the names of type converters and the names of the PostgreSQL types
+approach: the names of converters and the names of the PostgreSQL types
 are not decoupled at all.  This has several negative consequences:
 
 @enumerate
@@ -1336,7 +1336,7 @@ it has no way of finding out that this type is based on @code{inet}.
 
 @end enumerate
 
-The rest of this section is a table delving into some of the more quirky type
+The rest of this section is a table delving into some of the more quirky
 converters provided, including those that do not have a PostgreSQL type.
 Entries marked @code{NOCREATE} indicate that the converter is for a synthetic
 type and that it cannot be used in the single-table abstraction to create a
@@ -1387,10 +1387,10 @@ anyway. ;-)
 
 @end table
 
-@node    Defining New Type Converters
-@section Defining New Type Converters
+@node    Defining New Converters
+@section Defining New Converters
 
-@cindex type converters, adding
+@cindex converters, adding
 To define a new non-array type means associating with the type name a
 procedure for converting from a PostgreSQL string representation to a Scheme
 object (the @dfn{objectifier}), a procedure to do the conversion in the

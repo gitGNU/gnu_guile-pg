@@ -1,3 +1,12 @@
+2014-12-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Say simply "converter" instead of "type converter".
+
+	* postgres-meta.scm (check-type/elaborate): Update doc-comment.
+	* postgres-types.scm (dbcoltypes, dbcoltype-lookup)
+	(dbcoltype:stringifier, dbcoltype:default)
+	(dbcoltype:objectifier): Likewise.
+
 2014-11-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[pq int] Elide single-use local var.

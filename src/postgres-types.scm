@@ -65,24 +65,24 @@
   ;; val: #(STRINGIFIER DEFAULT OBJECTIFIER)
   (make-hash-table))
 
-;; Return names of all registered type converters.
+;; Return names of all registered converters.
 ;;
 (define (dbcoltypes)
   (hash-fold (lambda (key val ls)
                (cons key ls))
              '() ALL))
 
-;; Return a type-converter object given its @var{type-name}, a symbol.
-;; Return @code{#f} if no such t-c object by that name exists.
+;; Return a converter object given its @var{type-name}, a symbol.
+;; Return @code{#f} if no such object by that name exists.
 ;;
 (define (dbcoltype-lookup type-name)
   (hashq-ref ALL type-name))
 
-;; Extract stringifier from the type-converter object @var{tc}.
+;; Extract stringifier from the converter object @var{tc}.
 (define (dbcoltype:stringifier tc) (vector-ref tc 0))
-;; Extract default string from the type-converter object @var{tc}.
+;; Extract default string from the converter object @var{tc}.
 (define (dbcoltype:default tc) (vector-ref tc 1))
-;; Extract objectifier from the type-converter object @var{tc}.
+ ;; Extract objectifier from the converter object @var{tc}.
 (define (dbcoltype:objectifier tc) (vector-ref tc 2))
 
 (define (read-pgarray-1 objectifier port)
