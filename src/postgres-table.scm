@@ -34,10 +34,10 @@
                           pg-exec pg-ntuples pg-nfields
                           pg-fname pg-getvalue))
   #:use-module ((database postgres-types)
-                #:select (dbcoltype-lookup
-                          dbcoltype:stringifier
-                          dbcoltype:default
-                          dbcoltype:objectifier))
+                #:select (type-registered?
+                          type-stringifier
+                          type-objectifier
+                          type-default))
   #:use-module ((database postgres-col-defs)
                 #:select (column-name
                           type-name
@@ -105,9 +105,10 @@
   (let ((objectifiers '()))
 
     (define (push! type)
+      (or (type-registered? type)
+          (bad-select-part type))
       (set! objectifiers
-            (cons (dbcoltype:objectifier (or (dbcoltype-lookup type)
-                                             (bad-select-part type)))
+            (cons (type-objectifier type)
                   objectifiers)))
 
     (define (munge x)
@@ -255,7 +256,7 @@
   (or (and (pair? defs) (not (null? defs)))
       (error "malformed defs:" defs))
   (for-each (lambda (def)
-              (def:validate-def def dbcoltype-lookup))
+              (def:validate-def def type-registered?))
             defs)
   (let* ((conn (cond ((pg-connection? db-spec)
                       db-spec)
@@ -311,9 +312,8 @@
     (define (->db-insert-string db-col-type x)
       (or (and (sql-pre? x) x)
           (and (keyword? x) x)
-          (let* ((def (dbcoltype-lookup db-col-type))
-                 (s (or (false-if-exception ((dbcoltype:stringifier def) x))
-                        (dbcoltype:default def))))
+          (let ((s (or (false-if-exception ((type-stringifier db-col-type) x))
+                       (type-default db-col-type))))
             (or (string? s) (error "not a string:" s))
             (sql-pre (sql-quote s)))))
 

@@ -28,9 +28,8 @@
             objectifiers
             stringifiers)
   #:use-module ((database postgres-types)
-                #:select (dbcoltype-lookup
-                          dbcoltype:objectifier
-                          dbcoltype:stringifier)))
+                #:select (type-objectifier
+                          type-stringifier)))
 
 ;; Extract column name, a symbol, from @var{def}.
 ;;
@@ -86,15 +85,13 @@
 ;; Return a list of objectifiers associated with the types in @var{defs}.
 ;;
 (define (objectifiers defs)
-  (map dbcoltype:objectifier
-       (map dbcoltype-lookup
-            (map type-name defs))))
+  (map type-objectifier
+       (map type-name defs)))
 
 ;; Return a list of stringifiers associated with the types in @var{defs}.
 ;;
 (define (stringifiers defs)
-  (map dbcoltype:stringifier
-       (map dbcoltype-lookup
-            (map type-name defs))))
+  (map type-stringifier
+       (map type-name defs)))
 
 ;;; postgres-col-defs.scm ends here

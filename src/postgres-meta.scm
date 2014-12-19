@@ -35,7 +35,7 @@
                 #:select (sql-command<-trees
                           parse+make-SELECT-tree))
   #:use-module ((database postgres-types)
-                #:select (dbcoltype-lookup
+                #:select (type-registered?
                           define-db-col-type
                           define-db-col-type-array-variant))
   #:use-module ((database postgres-resx)
@@ -638,10 +638,10 @@
   (let* ((s (symbol->string type))
          (n (string-index s #\[))
          (base (string->symbol (if n (substring s 0 n) s))))
-    (and (dbcoltype-lookup base)
+    (and (type-registered? base)
          (or (not n)
              (let ((array-variant type))
-               (or (dbcoltype-lookup array-variant)
+               (or (type-registered? array-variant)
                    (begin
                      (define-db-col-type-array-variant array-variant base)
                      array-variant)))))))

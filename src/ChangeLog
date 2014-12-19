@@ -1,5 +1,28 @@
 2014-12-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[int] Use new type-FOO procs.
+
+	* postgres-col-defs.scm: From ‘(database postgres-types)’,
+	don't import ‘dbcoltype-lookup’, ‘dbcoltype:objectifier’,
+	‘dbcoltype:stringifier’; instead, import ‘type-objectifier’
+	and ‘type-stringifier’.
+	(objectifiers): Use ‘type-objectifier’.
+	(stringifiers): Use ‘type-stringifier’.
+	* postgres-meta.scm: From ‘(database postgres-types)’,
+	don't import ‘dbcoltype-lookup’; instead, import ‘type-registered?’.
+	(check-type/elaborate): Use ‘type-registered?’.
+	* postgres-table.scm: From ‘(database postgres-types)’, don't
+	import ‘dbcoltype-lookup’, ‘dbcoltype:objectifier’,
+	dbcoltype:‘default’, ‘dbcoltype:stringifier’; instead, import
+	‘type-registered?’, ‘type-stringifier’, ‘type-objectifier’,
+	‘type-default’.
+	(compile-outspec push!): Use ‘type-registered?’, ‘type-objectifier’.
+	(pgtable-manager): Use ‘type-registered?’, ‘type-objectifier’.
+	(pgtable-manager ->db-insert-string): Use ‘type-stringifier’,
+	‘type-default’.
+
+2014-12-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[omm] Add basic type-FOO procs.
 
 	* postgres-types.scm (type-registered?): New proc, exported.
