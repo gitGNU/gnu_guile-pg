@@ -1,3 +1,10 @@
+2014-12-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[omm] Add basic type-FOO procs.
+
+	* postgres-types.scm (type-registered?): New proc, exported.
+	(type-stringifier, type-default, type-objectifier): Likewise.
+
 2014-12-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc] Say simply "converter" instead of "type converter".

@@ -27,6 +27,10 @@
             dbcoltype:stringifier
             dbcoltype:default
             dbcoltype:objectifier
+            type-registered?
+            type-stringifier
+            type-default
+            type-objectifier
             define-db-col-type
             define-db-col-type-array-variant)
   #:autoload (database postgres) (pg-exec))
@@ -84,6 +88,26 @@
 (define (dbcoltype:default tc) (vector-ref tc 1))
  ;; Extract objectifier from the converter object @var{tc}.
 (define (dbcoltype:objectifier tc) (vector-ref tc 2))
+
+;; Return @code{#t} if @var{type} (a symbol) has registered converters.
+;;
+(define (type-registered? type)
+  (->bool (hashq-get-handle ALL type)))
+
+;; Return the stringifier for @var{type} (a symbol).
+;;
+(define (type-stringifier type)
+  (dbcoltype:stringifier (dbcoltype-lookup type)))
+
+;; Return the default for @var{type} (a symbol).
+;;
+(define (type-default type)
+  (dbcoltype:default (dbcoltype-lookup type)))
+
+;; Return the objectifier for @var{type} (a symbol).
+;;
+(define (type-objectifier type)
+  (dbcoltype:objectifier (dbcoltype-lookup type)))
 
 (define (read-pgarray-1 objectifier port)
   ;; ugh, i hate parsing...  the right thing to do would be find out if

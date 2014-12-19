@@ -1191,8 +1191,22 @@ It uses a bonus procedure in this module:
 @node    Consulting Existing Converters
 @section Consulting Existing Converters
 
-To see what converters are already defined, use the @code{dbcoltypes}
-procedure.  To get a @dfn{converter object} that encapsulates
+To see if a type is ``known'' to Guile-PG, use the @code{type-registered?}
+procedure.  Use @code{type-@var{foo}} procs for particulars.
+
+@tsin i type-registered?
+
+@tsin i type-stringifier
+
+@tsin i type-objectifier
+
+@tsin i type-default
+
+@heading obsolete interface
+
+@emph{NB}: The rest of this section describes an obsolete interface.
+
+To get a @dfn{converter object} that encapsulates
 the @dfn{stringifier}, the @dfn{objectifier} and the @dfn{default}, use
 the procedure
 @code{dbcoltype-lookup}.  The components of the returned object can be read

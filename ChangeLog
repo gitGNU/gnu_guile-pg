@@ -1,3 +1,12 @@
+2014-12-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[omm] Add basic type-FOO procs.
+
+	* doc/ref.texh (Consulting Existing Converters): Add intro
+	blurb and @tsin for ‘type-registered?’, ‘type-stringifier’,
+	‘type-objectifier’, ‘type-default’; add @heading "obsolete
+	interface" and blurb prior to previous contents.
+
 2014-12-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc] Say simply "converter" instead of "type converter".
