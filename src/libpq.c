@@ -966,6 +966,20 @@ drop_paramspecs (struct paramspecs *ps)
   free (ps->formats);
 }
 
+#define PREP_PARAMSPECS(svar)  do               \
+    {                                           \
+      prep_paramspecs (FUNC_NAME, &ps, svar);   \
+      NOINTS ();                                \
+    }                                           \
+  while (0)
+
+#define DROP_PARAMSPECS()  do                   \
+    {                                           \
+      INTSOK ();                                \
+      drop_paramspecs (&ps);                    \
+    }                                           \
+  while (0)
+
 
 /*
  * other abstractions
@@ -1504,15 +1518,13 @@ parameterized string, and @var{parms} is a parameter-vector.  */)
 
   VALIDATE_PARAM_RELATED_ARGS (statement);
 
-  prep_paramspecs (FUNC_NAME, &ps, parms);
-  NOINTS ();
+  PREP_PARAMSPECS (parms);
   result = PQexecParams (dbconn, RS (statement), ps.len,
                          ps.types, ps.values, ps.lengths, ps.formats,
                          RESFMT_TEXT);
   UNFINANGLE (statement);
   z = res_box (result);
-  INTSOK ();
-  drop_paramspecs (&ps);
+  DROP_PARAMSPECS ();
   return z;
 #undef FUNC_NAME
 }
@@ -1536,15 +1548,13 @@ name specified in some prior SQL @code{PREPARE} statement.
 
   VALIDATE_PARAM_RELATED_ARGS (stname);
 
-  prep_paramspecs (FUNC_NAME, &ps, parms);
-  NOINTS ();
+  PREP_PARAMSPECS (parms);
   result = PQexecPrepared (dbconn, RS (stname), ps.len,
                            ps.values, ps.lengths, ps.formats,
                            RESFMT_TEXT);
   UNFINANGLE (stname);
   z = res_box (result);
-  INTSOK ();
-  drop_paramspecs (&ps);
+  DROP_PARAMSPECS ();
   return z;
 #undef FUNC_NAME
 }
@@ -3079,14 +3089,12 @@ parameterized string, and @var{parms} is a parameter-vector.  */)
 
   VALIDATE_PARAM_RELATED_ARGS (query);
 
-  prep_paramspecs (FUNC_NAME, &ps, parms);
-  NOINTS ();
+  PREP_PARAMSPECS (parms);
   result = PQsendQueryParams (dbconn, RS (query), ps.len,
                               ps.types, ps.values, ps.lengths, ps.formats,
                               RESFMT_TEXT);
   UNFINANGLE (query);
-  INTSOK ();
-  drop_paramspecs (&ps);
+  DROP_PARAMSPECS ();
   return BOOLEAN (result);
 #undef FUNC_NAME
 }
@@ -3106,14 +3114,12 @@ Also, return @code{#t} if successful.  */)
 
   VALIDATE_PARAM_RELATED_ARGS (stname);
 
-  prep_paramspecs (FUNC_NAME, &ps, parms);
-  NOINTS ();
+  PREP_PARAMSPECS (parms);
   result = PQsendQueryPrepared (dbconn, RS (stname), ps.len,
                                 ps.values, ps.lengths, ps.formats,
                                 RESFMT_TEXT);
   UNFINANGLE (stname);
-  INTSOK ();
-  drop_paramspecs (&ps);
+  DROP_PARAMSPECS ();
   return BOOLEAN (result);
 #undef FUNC_NAME
 }

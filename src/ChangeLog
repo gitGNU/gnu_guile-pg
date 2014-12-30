@@ -1,3 +1,11 @@
+2014-12-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[int] Add abstractions: {PREP,DROP}_PARAMSPECS
+
+	* libpq.c (PREP_PARAMSPECS, DROP_PARAMSPECS): New macros.
+	(pg_exec_params, pg_exec_prepared, pg_send_query_params)
+	(pg_send_query_prepared): Use them.
+
 2014-12-19  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[int] Use new type-FOO procs.
