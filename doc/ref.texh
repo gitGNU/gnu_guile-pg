@@ -1202,6 +1202,8 @@ procedure.  Use @code{type-@var{foo}} procs for particulars.
 
 @tsin i type-default
 
+@tsin i type-sql-name
+
 @heading obsolete interface
 
 @emph{NB}: The rest of this section describes an obsolete interface.

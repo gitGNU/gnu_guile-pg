@@ -31,6 +31,7 @@
             type-stringifier
             type-default
             type-objectifier
+            type-sql-name
             define-db-col-type
             define-db-col-type-array-variant)
   #:autoload (database postgres) (pg-exec))
@@ -108,6 +109,11 @@
 ;;
 (define (type-objectifier type)
   (dbcoltype:objectifier (dbcoltype-lookup type)))
+
+;; Return the SQL name (a string) of @var{type} (a symbol).
+;;
+(define (type-sql-name type)
+  (symbol->string type))
 
 (define (read-pgarray-1 objectifier port)
   ;; ugh, i hate parsing...  the right thing to do would be find out if

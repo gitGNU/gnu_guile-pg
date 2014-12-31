@@ -1,3 +1,9 @@
+2014-12-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[omm] Add (database postgres-types) proc: type-sql-name
+
+	* postgres-types.scm (type-sql-name): New proc, exported.
+
 2014-12-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[int] Add abstractions: {PREP,DROP}_PARAMSPECS
