@@ -30,7 +30,12 @@ exec ${GUILE-guile} -s $0 "$@" # -*- scheme -*-
 
 ;;; Code:
 
-(primitive-load (list-ref (command-line) 1))
+(symlink (dirname (list-ref (command-line) 1))
+         "database")
+
+(set! %load-path (cons "." %load-path))
+
+(use-modules (database postgres-qcons))
 
 (define-module (database postgres-qcons))
 
@@ -78,5 +83,8 @@ Display aliases exist for these symbols.
 (pp-ls (hash-fold (lambda (k v acc) (cons k acc)) '() ==kw-over-commas) '#{
 These functions render differently depending on the presence of keyword args.
 }#)
+
+(delete-file "database")
+(exit #t)
 
 ;;; mkinc ends here

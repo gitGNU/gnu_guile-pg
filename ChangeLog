@@ -1,5 +1,13 @@
 2014-12-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[build int] Make doc/mkinc more robust.
+
+	* doc/mkinc: Don't ‘primitive-load’ the qcons file; instead,
+	symlink its directory to "database"; add "." to ‘%load-path’, use
+	a normal ‘use-modules’ form, and prior to exit delete the symlink.
+
+2014-12-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[omm] Add (database postgres-types) proc: type-sql-name
 
 	* doc/ref.texh (Consulting Existing Converters):
