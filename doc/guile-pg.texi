@@ -80,7 +80,7 @@ abstractions and convenience procedures.
 * Retrieving Data::             Making queries and accessing results.
 * Writing/Reading Data::        Bulk data movement and I/O.
 * Large Objects::               Large-Object support.
-* Miscellaneous::               Everything else starting with "pg-".
+* Miscellaneous::               Everything else starting with @samp{pg-}.
 * Not Included::                Functions left out for some reason.
 
 * Query Construction::          Module: (database postgres-qcons).
