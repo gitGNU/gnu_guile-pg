@@ -1,5 +1,13 @@
 2014-12-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[qcons] Add intermediary handling for type names.
+
+	* doc/ref.texh (qcons special operators): For ‘::’,
+	mention ‘TYPE’ type restrictions and implications;
+	add @pxref to "Consulting Existing Converters".
+
+2014-12-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[build int] Make doc/mkinc more robust.
 
 	* doc/mkinc: Don't ‘primitive-load’ the qcons file; instead,

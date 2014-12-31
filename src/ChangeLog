@@ -1,5 +1,13 @@
 2014-12-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[qcons] Add intermediary handling for type names.
+
+	* postgres-qcons.scm: Import ‘(database postgres-types) type-sql-name’.
+	(pretty-type-name): New proc.
+	(expr add-noise!): Use it for ‘::’ TYPE expansion.
+
+2014-12-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[omm] Add (database postgres-types) proc: type-sql-name
 
 	* postgres-types.scm (type-sql-name): New proc, exported.

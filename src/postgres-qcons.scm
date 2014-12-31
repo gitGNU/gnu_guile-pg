@@ -41,6 +41,7 @@
             parse+make-SELECT-tree
             sql<-trees
             sql-command<-trees)
+  #:use-module ((database postgres-types) #:select (type-sql-name))
   #:use-module ((srfi srfi-13) #:select (string-index
                                          string-prefix?
                                          string-concatenate-reverse
@@ -425,6 +426,11 @@
                       (xsub (1+ dot) ra)
                       (from ra)))))))
 
+(define (pretty-type-name type)
+  (if (string? type)
+      type
+      (type-sql-name type)))
+
 (define (maybe-dq sym)
   ;; Hmmm, why not use ‘idquote’ also for this?
   (if (eq? '* sym)
@@ -504,7 +510,10 @@
                     (#f ,(caddr rest))))
              #:END))
       ((::)
-       (list #:CAST (paren (as (expr (cadr rest)) (car rest)))))
+       (list #:CAST (paren (as (expr (cadr rest))
+                               ;; Don't bother w/ ‘sql-pre’ here.
+                               (pretty-type-name
+                                (car rest))))))
       ;; special constructs
       ((in/set)
        (list (expr (car rest)) #:IN

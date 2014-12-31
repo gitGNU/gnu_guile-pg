@@ -921,6 +921,11 @@ transform.  Note that the result is identical to using (SQL) suffix
 @code{::TYPE}; the operator @code{::} was actually chosen with this
 mnemonic in mind.
 
+If @code{TYPE} is a string, it is used directly for @code{type}.
+Otherwise, it should be a symbol, in which case @code{type}
+is the result of calling @code{type-sql-name} on @code{TYPE}
+(@pxref{Consulting Existing Converters}).
+
 @item (in/set PEXP0 PEXP1...)
 This maps to the SQL expression:
 
