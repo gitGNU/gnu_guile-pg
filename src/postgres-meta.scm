@@ -1,7 +1,6 @@
 ;;; postgres-meta.scm --- Methods for understanding PostgreSQL data structures
 
-;; Copyright (C) 2002, 2003, 2004, 2005, 2006,
-;;   2007, 2008, 2009, 2011 Thien-Thi Nguyen
+;; Copyright (C) 2002-2009, 2011, 2014 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;

@@ -1,7 +1,6 @@
 ;;; postgres-types.scm --- convert PostgreSQL <-> Scheme objects
 
-;; Copyright (C) 2002, 2003, 2004, 2005, 2006,
-;;   2007, 2008, 2009, 2011, 2012 Thien-Thi Nguyen
+;; Copyright (C) 2002-2009, 2011, 2012, 2014, 2015 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;

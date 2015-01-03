@@ -1,7 +1,6 @@
 ;;; postgres-qcons.scm --- construct SELECT queries
 
-;; Copyright (C) 2005, 2006, 2007, 2008, 2009,
-;;   2010, 2011, 2012 Thien-Thi Nguyen
+;; Copyright (C) 2005-2012, 2014 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;
