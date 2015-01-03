@@ -62,7 +62,7 @@ It lives in the repo but is not included in the distribution.
 
 * copyright update policy
 *** individual files only on change
-*** individual years
+*** (if (< 2 (- END BEGIN)) RANGE INDIVIDUAL)
 
 * repo branch discipline
 *** no ‘master’ -- do not panic!
