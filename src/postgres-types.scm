@@ -36,6 +36,9 @@
             define-db-col-type-array-variant)
   #:autoload (database postgres) (pg-exec))
 
+(define (fs s . args)
+  (apply simple-format #f s args))
+
 (define o/t (make-object-property))     ; oid/type-name info
 
 ;; Query connection @var{conn} for oid/type-name info, caching results.
@@ -433,9 +436,9 @@
 ;; -- network address types
 
 (define (n+m-stringifier n+m)           ; n+m is #(NUMBER MASKCOUNT)
-  (simple-format #f "~A/~A"
-                 (inet-ntoa (vector-ref n+m 0))
-                 (vector-ref n+m 1)))
+  (fs "~A/~A"
+      (inet-ntoa (vector-ref n+m 0))
+      (vector-ref n+m 1)))
 
 (define (n+m-objectifier s)
   (let ((cut (string-index s #\/)))
@@ -457,7 +460,7 @@
   n+m-objectifier)
 
 (define (host-stringifier n)
-  (simple-format #f "~A/32" (inet-ntoa n)))
+  (fs "~A/32" (inet-ntoa n)))
 
 (define (host-objectifier s)
   (vector-ref (n+m-objectifier s) 0))
@@ -470,7 +473,7 @@
   (lambda (n)
     (let loop ((bpos 0) (acc '()) (n n))
       (if (= bpos 48)
-          (apply simple-format #f "~A:~A:~A:~A:~A:~A"
+          (apply fs "~A:~A:~A:~A:~A:~A"
                  (map (lambda (x) (number->string x 16)) acc))
           (loop (+ bpos 8)
                 (cons (logand #xff n) acc)
