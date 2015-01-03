@@ -1,5 +1,14 @@
 2015-01-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[omm] Make ‘define-db-col-type-array-variant’ strict.
+
+	* postgres-types.scm (define-db-col-type-array-variant):
+	Check that COMPOSED is "based on" SIMPLE and that it has
+	trailing square braces.  If these conditions are unmet, signal
+	error.  Emphasize requirement nature of COMPOSE in doc comment.
+
+2015-01-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Add abstraction: fs
 
 	* postgres-types.scm (fs): New proc.

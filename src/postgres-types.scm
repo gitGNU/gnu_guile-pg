@@ -196,8 +196,8 @@
 
 ;; Register type @var{composed}, an array variant of @var{simple}, with
 ;; optional @var{procs}.  @var{simple} should be a type name already
-;; registered using @code{define-db-col-type}.  @var{composed} is
-;; conventionally formed by appending @var{simple} with one or more pairs of
+;; registered using @code{define-db-col-type}.  @var{composed} @strong{must}
+;; be formed by appending @var{simple} with one or more pairs of
 ;; @samp{[]} (square braces), with the number of pairs indicating the array
 ;; dimensionality.  For example, if @var{simple} is @code{text}, a
 ;; two-dimensional text array would be named @code{text[][]}.
@@ -217,7 +217,21 @@
          (objectifier (or (and (not (null? procs))
                                (not (null? (cdr procs)))
                                (cadr procs))
-                          (dbcoltype:objectifier lookup))))
+                          (dbcoltype:objectifier lookup)))
+         (sql-name (symbol->string composed))
+         (neck (or (string-index sql-name #\[)
+                   (error "no ‘[]’ in composed:" composed)))
+         (rank (ash (- (string-length sql-name)
+                       neck)
+                    -1)))
+    ;; sanity checks
+    (or (eq? (string->symbol (substring sql-name 0 neck))
+             simple)
+        (error (fs "composed ‘~A’ not based on simple ‘~A’"
+                   composed simple)))
+    (or (positive? rank)
+        (error "malformed:" composed))
+    ;; do it!
     (define-db-col-type composed "{}"
       (dimension->string-proc stringifier)
       (read-array-string-proc objectifier))))
