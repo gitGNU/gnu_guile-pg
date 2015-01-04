@@ -193,20 +193,21 @@
   (hashq-set! ALL name
               (vector stringifier default objectifier)))
 
-;; Register type @var{composed}, an array variant of @var{simple}, with
-;; optional @var{procs}.  @var{simple} should be a type name already
+;; Register type @var{composed}, an array variant of @var{simple}.
+;; @var{simple} should be a type name already
 ;; registered using @code{define-db-col-type}.  @var{composed} @strong{must}
 ;; be formed by appending @var{simple} with one or more pairs of
 ;; @samp{[]} (square braces), with the number of pairs indicating the array
 ;; dimensionality.  For example, if @var{simple} is @code{text}, a
 ;; two-dimensional text array would be named @code{text[][]}.
 ;;
-;; Optional arg @var{procs} is a list specifying alternative stringifier and
-;; objectifier procedures (in that order).  If unspecified, @var{simple} is
-;; looked up and its stringifier and objectifier are used.  See
-;; @code{dbcoltype-lookup}.
+;; By default, the stringifier and objectifier for @var{composed} are
+;; those of @var{simple}.  If @var{stringifier} and @var{objectifier}
+;; are specified and non-@code{#f}, Guile-PG uses them instead.
 ;;
 ;; The default value of all array types is @samp{@{@}} and cannot be changed.
+;;
+;;-args: (- 2 0 stringifier objectifier)
 ;;
 (define (define-db-col-type-array-variant composed simple . procs)
   (let* ((lookup (dbcoltype-lookup simple))

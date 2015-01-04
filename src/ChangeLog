@@ -1,3 +1,11 @@
+2015-01-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Name the ‘define-db-col-type-array-variant’ rest-args.
+
+	* postgres-types.scm (define-db-col-type-array-variant):
+	Add ‘args’ option to doc comment; don't mention PROCS;
+	rewrite that portion to say STRINGIFIER, OBJECTIFIER directly.
+
 2015-01-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[omm] Make ‘define-db-col-type-array-variant’ strict.
