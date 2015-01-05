@@ -1,5 +1,13 @@
 2015-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Move ‘oid-type-name-cache’ to new section.
+
+	* doc/ref.texh (Octet Molding/Mashing): Add "Miscellaneous OMM"
+	to menu; move ‘oid-type-name-cache’ and its blurb there.
+	(Miscellaneous OMM): New node/section.
+
+2015-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Modernize title.
 
 	Continuation of 2014-01-25, "Modernize title page".

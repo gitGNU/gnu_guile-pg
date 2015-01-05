@@ -1196,30 +1196,11 @@ To get started, load the @code{postgres-types} module:
 (use-modules (database postgres-types))
 @end lisp
 
-@noindent
-But before we get to conversions, recall that the @code{pg-ftype} example
-(@pxref{Processing Results})
-defines a procedure that returns the name of a PostgreSQL type by doing a
-query on the @code{pg_type} (internal) table.  Here is a more efficient
-implementation:
-
-@lisp
-(define CONN (pg-connectdb ...))
-
-(define (pg-ftype-name result fnum)
-  (assq-ref (oid-type-name-cache CONN)
-            (pg-ftype result fnum)))
-@end lisp
-
-@noindent
-It uses a bonus procedure in this module:
-
-@tsin i oid-type-name-cache
-
 @menu
 * Consulting Existing Converters::
 * Builtin Converters::
 * Defining New Converters::
+* Miscellaneous OMM::
 @end menu
 
 @node    Consulting Existing Converters
@@ -1454,6 +1435,26 @@ To express conversion of arrays (no matter the dimensionality) of non-array
 types, use the @code{define-db-col-type-array-variant} procedure.
 
 @tsin i define-db-col-type-array-variant
+
+@node    Miscellaneous OMM
+@section Miscellaneous OMM
+
+Here are some other procedures related to object molding/mashing.
+
+@tsin i oid-type-name-cache
+
+Recall that the @code{pg-ftype} example (@pxref{Processing Results})
+defines a procedure that returns the name of a PostgreSQL type by doing a
+query on the @code{pg_type} (internal) table.  Here is a more efficient
+implementation:
+
+@lisp
+(define CONN (pg-connectdb ...))
+
+(define (pg-ftype-name result fnum)
+  (assq-ref (oid-type-name-cache CONN)
+            (pg-ftype result fnum)))
+@end lisp
 
 @c ---------------------------------------------------------------------------
 @node    Column Definitions
