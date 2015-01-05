@@ -1,5 +1,14 @@
 2015-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[omm] Add (database postgres-types) proc: register-array-variant
+
+	* doc/ref.texh (Octet Molding/Mashing): Update naming
+	intricacies blurb and table of examples.
+	(Defining New Converters): Add @tsin for ‘register-array-variant’;
+	add "obsolete" intro blurb to ‘define-db-col-type-array-variant’.
+
+2015-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Move ‘oid-type-name-cache’ to new section.
 
 	* doc/ref.texh (Octet Molding/Mashing): Add "Miscellaneous OMM"

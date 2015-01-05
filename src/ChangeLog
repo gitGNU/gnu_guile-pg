@@ -1,3 +1,18 @@
+2015-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[omm] Add (database postgres-types) proc: register-array-variant
+
+	* postgres-types.scm (ARRAY-VARIANT-INFO): New hash table.
+	(av-lookup, make-array-variant-info, av-sql-name, av-rank)
+	(av-simple, av-canonical): New procs.
+	(dbcoltype-lookup): Canonicalize ‘ALL’ key.
+	(type-sql-name): If TYPE is an array variant, use
+	the SQL name per its ‘ARRAY-VARIANT-INFO’ entry.
+	(register-array-variant): New proc, exported.
+	(define-db-col-type-array-variant): Use ‘register-array-variant’;
+	afterwards, add COMPOSED as another key to the normal entries in
+	both ‘ALL’ and ‘ARRAY-VARIANT-INFO’.
+
 2015-01-04  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc] Name the ‘define-db-col-type-array-variant’ rest-args.

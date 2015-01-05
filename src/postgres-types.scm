@@ -32,6 +32,7 @@
             type-objectifier
             type-sql-name
             define-db-col-type
+            register-array-variant
             define-db-col-type-array-variant)
   #:autoload (database postgres) (pg-exec))
 
@@ -72,6 +73,22 @@
   ;; val: #(STRINGIFIER DEFAULT OBJECTIFIER)
   (make-hash-table))
 
+(define ARRAY-VARIANT-INFO
+  ;; key: NAME (symbol)
+  ;; val: #(SQL-NAME RANK SIMPLE CANONICAL-NAME)
+  (make-hash-table))
+
+(define (av-lookup symbol)
+  (hashq-ref ARRAY-VARIANT-INFO symbol))
+
+(define (make-array-variant-info sql-name rank simple canonical-name)
+  (vector sql-name rank simple canonical-name))
+
+(define (av-sql-name  v) (vector-ref v 0))
+(define (av-rank      v) (vector-ref v 1))
+(define (av-simple    v) (vector-ref v 2))
+(define (av-canonical v) (vector-ref v 3))
+
 ;; Return names of all registered converters.
 ;;
 (define (dbcoltypes)
@@ -83,7 +100,8 @@
 ;; Return @code{#f} if no such object by that name exists.
 ;;
 (define (dbcoltype-lookup type-name)
-  (hashq-ref ALL type-name))
+  (hashq-ref ALL (cond ((av-lookup type-name) => av-canonical)
+                       (else                     type-name))))
 
 ;; Extract stringifier from the converter object @var{tc}.
 (define (dbcoltype:stringifier tc) (vector-ref tc 0))
@@ -115,7 +133,8 @@
 ;; Return the SQL name (a string) of @var{type} (a symbol).
 ;;
 (define (type-sql-name type)
-  (symbol->string type))
+  (cond ((av-lookup type) => av-sql-name)
+        (else                (symbol->string type))))
 
 (define (read-pgarray-1 objectifier port)
   ;; ugh, i hate parsing...  the right thing to do would be find out if
@@ -193,6 +212,55 @@
   (hashq-set! ALL name
               (vector stringifier default objectifier)))
 
+;; Register an array type of @var{rank} dimensions based on @var{simple}.
+;; @var{rank} is a (typically small) positive integer.
+;; @var{simple} is a type name already
+;; registered using @code{define-db-col-type}.
+;;
+;; By default, the associated stringifier and objectifier are
+;; those of @var{simple}.  If @var{stringifier} and @var{objectifier}
+;; are specified and non-@code{#f}, Guile-PG uses them instead.
+;;
+;; The default value of all array types is @samp{@{@}} and cannot be changed.
+;;
+;; Return the name (a symbol) of the array type.  This is basically
+;; @var{rank} asterisks followed immediately by @var{simple}.  For example,
+;; if @var{rank} is 2 and and @var{simple} is @code{int4}, the name would
+;; be @code{**int4}.
+;;
+;;-args: (- 2 0 stringifier objectifier)
+;;
+(define (register-array-variant rank simple . procs)
+
+  (define (array-variant-name)
+    (string-append (make-string rank #\*)
+                   (symbol->string simple)))
+
+  (define (sql-name)
+    (apply string-append
+           (symbol->string simple)
+           (make-list rank "[]")))
+
+  (or (type-registered? simple)
+      (error "unregistered type:" simple))
+  (let* ((stringifier (and (not (null? procs))
+                           (car procs)))
+         (objectifier (and (not (null? procs))
+                           (not (null? (cdr procs)))
+                           (cadr procs)))
+         (name (string->symbol (array-variant-name))))
+
+    (hashq-set! ARRAY-VARIANT-INFO name
+                (make-array-variant-info
+                 (sql-name) rank simple name))
+
+    (define-db-col-type name "{}"
+      (dimension->string-proc (or stringifier (type-stringifier simple)))
+      (read-array-string-proc (or objectifier (type-objectifier simple))))
+
+    ;; rv
+    name))
+
 ;; Register type @var{composed}, an array variant of @var{simple}.
 ;; @var{simple} should be a type name already
 ;; registered using @code{define-db-col-type}.  @var{composed} @strong{must}
@@ -210,15 +278,7 @@
 ;;-args: (- 2 0 stringifier objectifier)
 ;;
 (define (define-db-col-type-array-variant composed simple . procs)
-  (let* ((lookup (dbcoltype-lookup simple))
-         (stringifier (or (and (not (null? procs))
-                               (car procs))
-                          (dbcoltype:stringifier lookup)))
-         (objectifier (or (and (not (null? procs))
-                               (not (null? (cdr procs)))
-                               (cadr procs))
-                          (dbcoltype:objectifier lookup)))
-         (sql-name (symbol->string composed))
+  (let* ((sql-name (symbol->string composed))
          (neck (or (string-index sql-name #\[)
                    (error "no ‘[]’ in composed:" composed)))
          (rank (ash (- (string-length sql-name)
@@ -232,9 +292,11 @@
     (or (positive? rank)
         (error "malformed:" composed))
     ;; do it!
-    (define-db-col-type composed "{}"
-      (dimension->string-proc stringifier)
-      (read-array-string-proc objectifier))))
+    (let ((name (apply register-array-variant rank simple procs)))
+      (define (add-ref ht)
+        (hashq-set! ht composed (hashq-ref ht name)))
+      (add-ref ALL)
+      (add-ref ARRAY-VARIANT-INFO))))
 
 ;;;---------------------------------------------------------------------------
 ;;; load-time actions: set up built-ins

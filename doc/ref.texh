@@ -1165,7 +1165,8 @@ a Scheme symbol used in Scheme programs,
 and the @dfn{type SQL name}, a Scheme string intended for
 eventual inclusion in a string to be passed to @code{pg-exec}
 (@pxref{Query Construction}).
-The type name and the type SQL name have the ``same spelling'', however.
+For non-array types, these have the ``same spelling'';
+for array types, they are different.
 Some examples:
 
 @multitable @columnfractions .4 .3 .3
@@ -1179,13 +1180,15 @@ Some examples:
 @tab @t{float8}
 @tab @t{"float8"}
 @item @t{text} ``matrix''
-@tab @t{text[][]}
+@tab @t{**text}
 @tab @t{"text[][]"}
 @end multitable
 
 @noindent
 Note how @samp{DOUBLE PRECISION} has a seemingly unrelated spelling
 for concept and type name.
+Also, the type name and the type SQL name differ for the
+@code{text} (two-dimensional) array type.
 Guile-PG procedures generally take the type name (symbol), so for
 brevity some of the parameter names in this chapter are called
 @var{type} instead of @var{type-name}.
@@ -1432,7 +1435,12 @@ use the @code{define-db-col-type} procedure.
 @tsin i define-db-col-type
 
 To express conversion of arrays (no matter the dimensionality) of non-array
-types, use the @code{define-db-col-type-array-variant} procedure.
+types, use the @code{register-array-variant} procedure.
+
+@tsin i register-array-variant
+
+@noindent
+The following is obsolete.
 
 @tsin i define-db-col-type-array-variant
 
