@@ -1,7 +1,7 @@
 \input texinfo  @c -*- mode: texinfo; coding: utf-8; -*-
 @c %**start of header
 @setfilename guile-pg.info
-@settitle The (database postgres*) Modules
+@settitle Guile-PG Manual
 @documentencoding UTF-8
 @ifinfo
 @paragraphindent 0
@@ -13,7 +13,7 @@
 @copying
 @include relinfo.texi
 
-Copyright @copyright{} 2003--2014 Thien-Thi Nguyen@*
+Copyright @copyright{} 2003--2015 Thien-Thi Nguyen@*
 Copyright @copyright{} 1998 Ian Grant
 
 @quotation

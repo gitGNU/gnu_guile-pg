@@ -1,5 +1,14 @@
 2015-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Modernize title.
+
+	Continuation of 2014-01-25, "Modernize title page".
+
+	* doc/guile-pg.texi: Set title to "Guile-PG Manual".
+	(copying): Update year.
+
+2015-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Define "type name" and "type SQL name".
 
 	* doc/ref.texh (Octet Molding/Mashing): ...here; add a
