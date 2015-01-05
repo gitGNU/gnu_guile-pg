@@ -1442,6 +1442,7 @@ types, use the @code{register-array-variant} procedure.
 @noindent
 The following is obsolete.
 
+@bummer composed type name malformed
 @tsin i define-db-col-type-array-variant
 
 @node    Miscellaneous OMM

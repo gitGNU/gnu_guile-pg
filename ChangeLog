@@ -1,5 +1,15 @@
 2015-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Index ‘define-db-col-type-array-variant’ errors.
+
+	Omission from 2015-01-03, "Make
+	‘define-db-col-type-array-variant’ strict".
+
+	* doc/ref.texh (Defining New Converters):
+	Add @bummer for ‘define-db-col-type-array-variant’.
+
+2015-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[omm] Add (database postgres-types) proc: register-array-variant
 
 	* doc/ref.texh (Octet Molding/Mashing): Update naming
