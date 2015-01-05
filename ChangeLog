@@ -1,3 +1,10 @@
+2015-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Define "type name" and "type SQL name".
+
+	* doc/ref.texh (Octet Molding/Mashing): ...here; add a
+	table of examples; mention "type name" / "type" conflation.
+
 2014-12-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[qcons] Add intermediary handling for type names.

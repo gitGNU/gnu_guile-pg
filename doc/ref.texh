@@ -1,5 +1,5 @@
 @c ref.texh
-@c Copyright (C) 2002-2014 Thien-Thi Nguyen
+@c Copyright (C) 2002-2015 Thien-Thi Nguyen
 @c
 @c This file is provided under the same terms as guile-pg.texi.
 
@@ -1159,7 +1159,37 @@ describes Guile-PG facilities for transforming those strings to Scheme
 objects (i.e., @dfn{molding}) and back (i.e., @dfn{mashing}).
 
 Which transform (or @dfn{conversion}, used equivalently in this manual)
-to use depends on the SQL type of a particular datum.
+to use depends on the ``SQL type'' of a particular datum.
+Guile-PG distinguishes between the @dfn{type name},
+a Scheme symbol used in Scheme programs,
+and the @dfn{type SQL name}, a Scheme string intended for
+eventual inclusion in a string to be passed to @code{pg-exec}
+(@pxref{Query Construction}).
+The type name and the type SQL name have the ``same spelling'', however.
+Some examples:
+
+@multitable @columnfractions .4 .3 .3
+@headitem SQL type@*(concept)
+@tab type name@*(symbol)
+@tab type SQL name@*(string)
+@item @t{int4}
+@tab @t{int4}
+@tab @t{"int4"}
+@item @t{DOUBLE PRECISION}
+@tab @t{float8}
+@tab @t{"float8"}
+@item @t{text} ``matrix''
+@tab @t{text[][]}
+@tab @t{"text[][]"}
+@end multitable
+
+@noindent
+Note how @samp{DOUBLE PRECISION} has a seemingly unrelated spelling
+for concept and type name.
+Guile-PG procedures generally take the type name (symbol), so for
+brevity some of the parameter names in this chapter are called
+@var{type} instead of @var{type-name}.
+
 To get started, load the @code{postgres-types} module:
 
 @lisp
