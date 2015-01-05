@@ -36,7 +36,8 @@
                 #:select (type-registered?
                           type-stringifier
                           type-objectifier
-                          type-default))
+                          type-default
+                          type-sql-name))
   #:use-module ((database postgres-col-defs)
                 #:select (column-name
                           type-name
@@ -350,7 +351,7 @@
       (xt #:CREATE #:TABLE dq-table-name
           (cseptree (lambda (def)
                       (list (symbol->qstring (def:column-name def))
-                            (symbol->string (def:type-name def))
+                            (type-sql-name (def:type-name def))
                             (def:type-options def)))
                     defs #t)))
 

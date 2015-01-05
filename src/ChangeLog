@@ -1,5 +1,12 @@
 2015-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[int] Use ‘type-sql-name’ more.
+
+	* postgres-table.scm: Import ‘(database postgres-types) type-sql-name’.
+	(pgtable-manager create): Use ‘type-sql-name’.
+
+2015-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[omm] Add (database postgres-types) proc: register-array-variant
 
 	* postgres-types.scm (ARRAY-VARIANT-INFO): New hash table.
