@@ -40,6 +40,9 @@
 
 #define TRUE_ENOUGH(svar)   (GIVENP (svar) && NOT_FALSEP (svar))
 
+#define DECLARE_SMOB_NAME(cpre,string)                  \
+  static const char cpre ## _name[] = "PG-" string
+
 /*
  * smob: connection
  */
@@ -70,7 +73,7 @@ xc_unbox (SCM obj)
 
 #define CONN_CONN(conn)  (xc_unbox (conn)->dbconn)
 
-static char xc_name[] = "PG-CONN";
+DECLARE_SMOB_NAME (xc, "CONN");
 
 static int
 xc_display (SCM exp, SCM port, UNUSED scm_print_state *pstate)
@@ -180,7 +183,7 @@ extract_mode_bits (SCM modes, int *appendp)
     }                                           \
   while (0)
 
-static char lob_name[] = "PG-LO-PORT";
+DECLARE_SMOB_NAME (lob, "LO-PORT");
 
 static SCM
 lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *FUNC_NAME)
@@ -832,7 +835,7 @@ res_box (PGresult *res)
     RETURN_FALSE ();
 }
 
-static char res_name[] = "PG-RESULT";
+DECLARE_SMOB_NAME (res, "RESULT");
 
 static int
 res_display (SCM exp, SCM port, UNUSED scm_print_state *pstate)
@@ -2538,7 +2541,7 @@ sepo_unbox (SCM obj)
   return SMOBDATA (obj);
 }
 
-static char sepo_name[] = "PG-PRINT-OPTION";
+DECLARE_SMOB_NAME (sepo, "PRINT-OPTION");
 
 static size_t
 sepo_free (SCM obj)

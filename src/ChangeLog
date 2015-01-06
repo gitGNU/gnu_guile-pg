@@ -1,5 +1,12 @@
 2015-01-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq int] Add abstraction: DECLARE_SMOB_NAME
+
+	* libpq.c (DECLARE_SMOB_NAME): New macro.
+	(xc_name, lob_name, res_name, sepo_name): Use it.
+
+2015-01-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Convert array type names from trailing "[]" to leading "*".
 
 	* postgres-meta.scm (infer-defs): ...here, in doc-comment.
