@@ -1,5 +1,13 @@
 2015-01-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Convert array type names from trailing "[]" to leading "*".
+
+	* doc/ref.texh (Consulting Existing Converters)
+	(Column Definitions, Result Transforms)
+	(Single-Table Abstraction): ...here, in examples and blurbs.
+
+2015-01-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Move, update objectifier example.
 
 	* doc/ref.texh (Consulting Existing Converters):

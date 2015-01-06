@@ -1229,7 +1229,7 @@ a two-dimensional @code{text} array value into a nested list:
 
 @lisp
 (let ((raw (pg-getvalue result 0 0))
-      (conv (type-objectifier 'text[][])))
+      (conv (type-objectifier '**text)))
   (format #t "~A~%~S~%" raw (conv raw)))
 
 @print{} @{@{a,b@},@{c,d@}@}
@@ -1237,8 +1237,8 @@ a two-dimensional @code{text} array value into a nested list:
 @end lisp
 
 @noindent
-Note that even though the type is an ``array'', as implied by the square
-brackets, the result is a list.  This is mostly due to a limitation in
+Note that even though the type is an ``array'', as implied by the leading
+asterisks, the result is a list.  This is mostly due to a limitation in
 PostgreSQL: dimensionality is not stored for array types, so the conversion
 cannot be done in a random-access manner.  Perhaps this will change in the
 future.
@@ -1491,13 +1491,13 @@ form:
 (define rsync-defs
         '((time            timestamp)
           (error_condition text)
-          (files           text[])
+          (files           *text)
           (wrote           int4)          ; bytes
-          (read            text[][])
+          (read            **text)
           (rate            float4)
           (total           int4)          ; bytes
           (speedup         float4)
-          (etc             int4[])))
+          (etc             *int4)))
 @end lisp
 
 @noindent
@@ -1510,7 +1510,7 @@ monetary values):
         '((i       serial)
           (date    timestamp)
           (amount  float4)
-          (details text[])))
+          (details *text)))
 @end lisp
 
 @noindent
@@ -1596,7 +1596,7 @@ The examples are based upon a result object that can briefly described as:
 The defs (@pxref{Column Definitions}) for the examples are:
 
 @lisp
-(define defs '((date timestamp) (note text[])))
+(define defs '((date timestamp) (note *text)))
 @end lisp
 
 @noindent
@@ -1617,7 +1617,7 @@ queries.
 (1-col result 0 'timestamp)
 @result{} (1042531200 1042444800)
 
-(1-col result 1 'text[])
+(1-col result 1 '*text)
 @result{} (("now" "the present") ("yesterday" "the past"))
 @end lisp
 
@@ -1691,7 +1691,7 @@ The rest of this chapter is an extended example showing some of the uses of
                              (date       timestamp)
                              (amount     float4)
                              (catcode    text)
-                             (details    text[]))))
+                             (details    *text))))
 
 ((m #:create))
 @result{} #<PG-RESULT:COMMAND_OK:0:0>

@@ -1,6 +1,6 @@
 ;;; postgres-meta.scm --- Methods for understanding PostgreSQL data structures
 
-;; Copyright (C) 2002-2009, 2011, 2014 Thien-Thi Nguyen
+;; Copyright (C) 2002-2009, 2011, 2014, 2015 Thien-Thi Nguyen
 ;;
 ;; This file is part of Guile-PG.
 ;;
@@ -727,7 +727,7 @@
 ;; connection @var{conn} and @var{table-name}.  The column names are exact.
 ;; The column types are incorrect for array types, which are described as
 ;; @code{_FOO}; there is currently no way to infer whether this means
-;; @code{FOO[]} or @code{FOO[][]}, etc, without looking at the table's data.
+;; @code{*FOO} or @code{**FOO}, etc, without looking at the table's data.
 ;; No type options are checked at this time.
 ;;
 (define (infer-defs conn table-name)
