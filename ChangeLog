@@ -1,3 +1,11 @@
+2015-01-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Move, update objectifier example.
+
+	* doc/ref.texh (Consulting Existing Converters):
+	Move objectifier example prior to "obsolete interface" heading;
+	update to use ‘type-objectifier’; add heading "example".
+
 2015-01-05  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc] Index ‘define-db-col-type-array-variant’ errors.

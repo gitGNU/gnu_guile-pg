@@ -1222,6 +1222,27 @@ procedure.  Use @code{type-@var{foo}} procs for particulars.
 
 @tsin i type-sql-name
 
+@heading example
+
+Here is a simple example that uses @code{type-objectifier} to convert
+a two-dimensional @code{text} array value into a nested list:
+
+@lisp
+(let ((raw (pg-getvalue result 0 0))
+      (conv (type-objectifier 'text[][])))
+  (format #t "~A~%~S~%" raw (conv raw)))
+
+@print{} @{@{a,b@},@{c,d@}@}
+@print{} (("a" "b") ("c" "d"))
+@end lisp
+
+@noindent
+Note that even though the type is an ``array'', as implied by the square
+brackets, the result is a list.  This is mostly due to a limitation in
+PostgreSQL: dimensionality is not stored for array types, so the conversion
+cannot be done in a random-access manner.  Perhaps this will change in the
+future.
+
 @heading obsolete interface
 
 @emph{NB}: The rest of this section describes an obsolete interface.
@@ -1241,26 +1262,6 @@ using the @code{dbcoltype:FOO} procedures.
 @tsin i dbcoltype:objectifier
 
 @tsin i dbcoltype:default
-
-Here is a simple example that uses @code{dbcoltype-lookup} and
-@code{dbcoltype:objectifier} to convert a @code{text[][]} value
-into a nested list:
-
-@lisp
-(let ((raw (pg-getvalue result 0 0))
-      (conv (dbcoltype:objectifier (dbcoltype-lookup 'text[][]))))
-  (format #t "~A\n~A\n" raw (conv raw)))
-
-@print{} @{@{a,b@},@{c,d@}@}
-@print{} (("a" "b") ("c" "d"))
-@end lisp
-
-@noindent
-Note that even though the type is an "array", as implied by the square
-brackets, the result is a list.  This is mostly due to a limitation in
-PostgreSQL: dimensionality is not stored for array types, so the conversion
-cannot be done in a random-access manner.  Perhaps this will change in the
-future.
 
 @node    Builtin Converters
 @section Builtin Converters
