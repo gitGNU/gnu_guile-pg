@@ -147,13 +147,13 @@
             ;;                        application that wrapped rsync)
             '((time            timestamp)
               (error_condition text)
-              (files           text[])
+              (files           *text)
               (wrote           int4)
-              (read            text[][])
+              (read            **text)
               (rate            float4)
               (total           int4)
               (speedup         float4)
-              (etc             int4[])))))
+              (etc             *int4)))))
   (procedure? m))
 
 ;; Test pgtable-manager procs
