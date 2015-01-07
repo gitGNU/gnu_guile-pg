@@ -1,3 +1,13 @@
+2015-01-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Generate leading "*" for array types.
+
+	This is a conceptual continuation of 2015-01-06,
+	"Convert array type names from trailing "[]" to leading "*"".
+
+	* doc/Makefile.am (coltypes.texi): Update sed script to
+	output array type names w/ leading "*" instead of trailing "[]".
+
 2015-01-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[doc] Convert array type names from trailing "[]" to leading "*".

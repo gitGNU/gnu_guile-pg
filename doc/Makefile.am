@@ -1,6 +1,6 @@
 # Makefile.am
 #
-# Copyright (C) 2003-2009, 2011, 2014 Thien-Thi Nguyen
+# Copyright (C) 2003-2009, 2011, 2014, 2015 Thien-Thi Nguyen
 # Portions Copyright (C) 1998 Ian Grant
 #
 # This file is part of Guile-PG.
@@ -65,7 +65,9 @@ coltypes.texi: $(top_srcdir)/src/postgres-types.scm
 	  echo '@example' ;			\
 	  < $< sed				\
 	    -e "/^.def.*-array-variant '/!d"	\
-	    -e 's///' -e 's/ .*//' ;		\
+	    -e 's///' -e 's/ .*//' 		\
+	    -e 's/\[\]/*/g'			\
+	    -e 's/\([^*]*\)\(.*\)/\2\1/' ;	\
 	  echo '@end example' ;			\
 	} > $@
 	rm -f $@T
