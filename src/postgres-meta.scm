@@ -686,7 +686,7 @@
       (relhaspkey     boolean ,nn)
       (relhasrules    boolean ,nn)
       (relhassubclass boolean ,nn)
-      (relacl         aclitem[]))))
+      (relacl         *aclitem))))
 
 (define (make-M:pg-class db-name)
   (pgtable-manager db-name "pg_class" *class-defs*))
