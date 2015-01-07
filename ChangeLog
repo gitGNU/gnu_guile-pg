@@ -1,5 +1,11 @@
 2015-01-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[omm] Allow string COMPOSED for ‘define-db-col-type-array-variant’.
+
+	* doc/Makefile.am (coltypes.texi): Update to handle string COMPOSED.
+
+2015-01-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Generate leading "*" for array types.
 
 	This is a conceptual continuation of 2015-01-06,

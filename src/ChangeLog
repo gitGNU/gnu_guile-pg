@@ -1,5 +1,14 @@
 2015-01-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[omm] Allow string COMPOSED for ‘define-db-col-type-array-variant’.
+
+	* postgres-types.scm (define-db-col-type-array-variant):
+	...here, converting it internally to a symbol if necessary.
+	<top-level>: Use string in ‘define-db-col-type-array-variant’
+	calls for ‘text[]’, ‘text[][]’, ‘int4[]’ and ‘aclitem[]’.
+
+2015-01-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[int] Convert array type names from trailing "[]" to leading "*".
 
 	* postgres-meta.scm (*class-defs*): ...here.

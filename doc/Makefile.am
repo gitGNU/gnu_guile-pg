@@ -64,8 +64,8 @@ coltypes.texi: $(top_srcdir)/src/postgres-types.scm
 	    'Here are the array variants:' ;	\
 	  echo '@example' ;			\
 	  < $< sed				\
-	    -e "/^.def.*-array-variant '/!d"	\
-	    -e 's///' -e 's/ .*//' 		\
+	    -e '/^.def.*-array-variant "/!d'	\
+	    -e 's///' -e 's/".*//' 		\
 	    -e 's/\[\]/*/g'			\
 	    -e 's/\([^*]*\)\(.*\)/\2\1/' ;	\
 	  echo '@end example' ;			\

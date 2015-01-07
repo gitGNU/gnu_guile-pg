@@ -261,7 +261,8 @@
     ;; rv
     name))
 
-;; Register type @var{composed}, an array variant of @var{simple}.
+;; Register type @var{composed} (string or symbol)
+;; as an array variant of @var{simple}.
 ;; @var{simple} should be a type name already
 ;; registered using @code{define-db-col-type}.  @var{composed} @strong{must}
 ;; be formed by appending @var{simple} with one or more pairs of
@@ -278,6 +279,8 @@
 ;;-args: (- 2 0 stringifier objectifier)
 ;;
 (define (define-db-col-type-array-variant composed simple . procs)
+  (and (string? composed)
+       (set! composed (string->symbol composed)))
   (let* ((sql-name (symbol->string composed))
          (neck (or (string-index sql-name #\[)
                    (error "no ‘[]’ in composed:" composed)))
@@ -582,9 +585,9 @@
 
 ;; array variants
 
-(define-db-col-type-array-variant 'text[]   'text double-quote identity)
-(define-db-col-type-array-variant 'text[][] 'text double-quote identity)
-(define-db-col-type-array-variant 'int4[]   'int4)
-(define-db-col-type-array-variant 'aclitem[] 'aclitem double-quote identity)
+(define-db-col-type-array-variant "text[]"    'text double-quote identity)
+(define-db-col-type-array-variant "text[][]"  'text double-quote identity)
+(define-db-col-type-array-variant "int4[]"    'int4)
+(define-db-col-type-array-variant "aclitem[]" 'aclitem double-quote identity)
 
 ;;; postgres-types.scm ends here
