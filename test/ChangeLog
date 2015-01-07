@@ -1,3 +1,9 @@
+2015-01-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v slog] Instruct Guile 2 not to conflate "[]" w/ "()".
+
+	* types-table.scm [guile-2]: Disable ‘square-brackets’ read option.
+
 2015-01-06  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v] Convert array type names from trailing "[]" to leading "*".

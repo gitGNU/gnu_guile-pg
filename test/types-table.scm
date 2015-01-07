@@ -22,6 +22,9 @@
            (newline)
            (exit #f)))
 
+(cond-expand (guile-2 (read-disable 'square-brackets))
+             (else #f))
+
 (use-modules (database postgres)
              (database postgres-qcons)
              (database postgres-types)
