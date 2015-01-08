@@ -962,7 +962,7 @@ drop_paramspecs (struct paramspecs *ps)
 
   free (ps->types);
   for (i = 0; i < ps->len; i++)
-    free (ps->values[i]);
+    free ((void *) ps->values[i]);
   free (ps->values);
   free (ps->lengths);
   free (ps->formats);

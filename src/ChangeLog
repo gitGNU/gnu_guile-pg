@@ -1,5 +1,12 @@
 2015-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq int] Silence "discards ‘const’ qualifier" warning.
+
+	* libpq.c (drop_paramspecs): ...here,
+	by casting free(3) arg through ‘void *’.
+
+2015-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[slog] Avoid ‘apply-to-args’.
 
 	* postgres-table.scm (compile-outspec three-part): New proc.
