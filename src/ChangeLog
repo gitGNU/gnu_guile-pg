@@ -1,5 +1,12 @@
 2015-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[slog] Avoid ‘apply-to-args’.
+
+	* postgres-table.scm (compile-outspec three-part): New proc.
+	(compile-outspec munge): Use ‘three-part’.
+
+2015-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq slog] Add abstraction: OFF_T
 
 	* gi.h (OFF_T): New #define, bifurcated on ‘GI_LEVEL (1, 9)’.
