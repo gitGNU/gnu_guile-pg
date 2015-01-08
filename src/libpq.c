@@ -400,7 +400,7 @@ from @code{pg-lo-creat} or @code{pg-lo-open}.  */)
 #undef FUNC_NAME
 }
 
-static off_t lob_seek (SCM port, off_t offset, int whence);
+static OFF_T lob_seek (SCM port, OFF_T offset, int whence);
 
 PRIMPROC
 (pg_lo_tell, "pg-lo-tell", 1, 0, 0,
@@ -516,13 +516,13 @@ lob_end_input (SCM port, int offset)
 #undef FUNC_NAME
 }
 
-static off_t
-lob_seek (SCM port, off_t offset, int whence)
+static OFF_T
+lob_seek (SCM port, OFF_T offset, int whence)
 {
 #define FUNC_NAME __func__
   lob_stream *lobp = LOB_STREAM (port);
   PGconn *conn = LOB_CONN (lobp);
-  off_t ret;
+  OFF_T ret;
 
   NOINTS ();
   ret = lo_lseek (conn, lobp->alod, offset, whence);

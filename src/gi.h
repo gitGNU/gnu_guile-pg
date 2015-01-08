@@ -30,6 +30,14 @@
 #include "snuggle/defsmob.h"
 #include "snuggle/modsup.h"
 
+/* Maybe some of the following will eventually move into Guile-BAUX.  */
+
+#if GI_LEVEL (1, 9)
+#define OFF_T  scm_t_off
+#else
+#define OFF_T  off_t
+#endif
+
 #if !GI_LEVEL_1_8
 #define CHARACTER         gh_char2scm
 #define NEWCELL_X(svar)   SCM_NEWCELL (svar)

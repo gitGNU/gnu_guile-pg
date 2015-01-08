@@ -1,5 +1,12 @@
 2015-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[pq slog] Add abstraction: OFF_T
+
+	* gi.h (OFF_T): New #define, bifurcated on ‘GI_LEVEL (1, 9)’.
+	* libpq.c (lob_seek): Use ‘OFF_T’ in decl and definition.
+
+2015-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[pq slog] Use ‘KEYWORD’ from Guile-BAUX.
 
 	* libpq.c (pg_conndefaults): ...here.
