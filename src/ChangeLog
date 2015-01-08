@@ -1,3 +1,9 @@
+2015-01-08  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[pq slog] Use ‘KEYWORD’ from Guile-BAUX.
+
+	* libpq.c (pg_conndefaults): ...here.
+
 2015-01-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[omm] Allow string COMPOSED for ‘define-db-col-type-array-variant’.
