@@ -1,3 +1,12 @@
+2015-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[v slog] Add abstraction: excruciatingly-correct-string-filter
+
+	* types-table.scm (excruciatingly-correct-string-filter):
+	New alias or proc, depending on ‘(cond-expand (guile-2 ...))’.
+	(POISON-COUNTS): Use ‘excruciatingly-correct-string-filter’,
+	and arrange for CHAR-PRED to precede STRING in its arglist.
+
 2015-01-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v slog] Instruct Guile 2 not to conflate "[]" w/ "()".

@@ -205,14 +205,19 @@
                           (display ")")))
                       (map cddr PESKY)))
 
+(define excruciatingly-correct-string-filter
+  (cond-expand (guile-2 string-filter)
+               (else (lambda (pred s . rest)
+                       (apply string-filter s pred rest)))))
+
 (define POISON-COUNTS (let ((adj (+ (string-length
                                      (object->string
                                       (make-list (length PESKY)
                                                  "")))
                                     (string-length
-                                     (string-filter
-                                      POISON
+                                     (excruciatingly-correct-string-filter
                                       (char-set #\\ #\")
+                                      POISON
                                       (string-index POISON #\)))))))
                         (define (sum sel)
                           (+ adj (* 2 (apply + (map sel PESKY)))))
