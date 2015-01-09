@@ -651,6 +651,14 @@ lob_input_waiting_p (UNUSED SCM port)
   return 1;
 }
 
+/* Define this here because ‘pg-lo-read’ is going away RSN; there's
+   no point in (even eventually) bubbling this up to Guile-BAUX.  */
+#if GI_LEVEL (1, 9)
+#define TAKE_STR  scm_take_locale_stringn
+#else
+#define TAKE_STR  scm_take_str
+#endif
+
 PRIMPROC
 (pg_lo_read, "pg-lo-read", 3, 0, 0,
  (SCM siz, SCM num, SCM port),
@@ -674,7 +682,8 @@ Return a string containing the data read from the port or
   while (len-- && (EOF != (c = scm_getc (port))))
     *wp++ = c;
   *wp = '\0';
-  return scm_take_str (stage, wp - stage);
+  /* TODO: Cascade zonking to ‘TAKE_STR’ definition, too.  */
+  return TAKE_STR (stage, wp - stage);
 #undef FUNC_NAME
 }
 
