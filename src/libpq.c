@@ -185,23 +185,37 @@ extract_mode_bits (SCM modes, int *appendp)
 
 DECLARE_SMOB_NAME (lob, "LO-PORT");
 
+/* This actually appeared somewhere between Guile 1.6.0 and 1.6.8,
+   but the exact release number is too much bother to dig up at the
+   moment.  */
+#if !GI_LEVEL_1_8
+static SCM
+scm_new_port_table_entry (long tag)
+{
+  SCM z;
+  scm_port *pt;
+
+  NEWCELL_X (z);
+  SCM_SET_CELL_WORD_0 (z, tag);
+  pt = scm_add_to_port_table (z);
+  SCM_SETPTAB_ENTRY (z, pt);
+  return z;
+}
+#endif
+
 static SCM
 lob_mklobport (SCM conn, Oid oid, int alod, long modes, const char *FUNC_NAME)
 {
-  SCM port;
+  SCM port = scm_new_port_table_entry (lobp_tag);
   lob_stream *lobp;
-  scm_port *pt;
+  scm_port *pt = SCM_PTAB_ENTRY (port);;
 
   lobp = GCMALLOC (sizeof (lob_stream), lob_name);
-
-  NEWCELL_X (port);
 
   NOINTS ();
   lobp->conn = conn;
   lobp->oid = oid;
   lobp->alod = alod;
-  pt = scm_add_to_port_table (port);
-  SCM_SETPTAB_ENTRY (port, pt);
   SCM_SET_CELL_WORD_0 (port, lobp_tag | modes);
   SCM_SETSTREAM (port, (SCM) lobp);
 

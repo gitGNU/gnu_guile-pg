@@ -35,3 +35,6 @@ Thanks go to these people for their help in improving Guile-PG.
 
 - David Pirotte
   - string xrep info
+
+- Ludovic Courtès
+  - port-table portability hint
