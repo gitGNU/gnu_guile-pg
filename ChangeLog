@@ -1,3 +1,12 @@
+2015-01-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[boot] Use ‘AC_CONFIG_MACRO_DIR’.
+
+	Actually, autoreconf suggests ‘AC_CONFIG_MACRO_DIRS’, but that's
+	only available w/ Autoconf 2.70, which is not yet released.
+
+	* configure.ac: ...here, immediately following ‘AC_INIT’.
+
 2015-01-07  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[omm] Allow string COMPOSED for ‘define-db-col-type-array-variant’.

@@ -1,6 +1,6 @@
 dnl configure.ac
 dnl
-dnl Copyright (C) 2002-2014 Thien-Thi Nguyen
+dnl Copyright (C) 2002-2015 Thien-Thi Nguyen
 dnl Portions Copyright (C) 1998 Ian Grant
 dnl
 dnl This file is part of Guile-PG.
@@ -19,6 +19,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with Guile-PG.  If not, see <http://www.gnu.org/licenses/>.
 
 AC_INIT([Guile-PG],[0.46],[guile-user@gnu.org])
+AC_CONFIG_MACRO_DIR([build-aux])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([1.12.2 -Wall no-dist-gzip dist-xz serial-tests])
 
