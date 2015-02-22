@@ -7,6 +7,8 @@ Thien-Thi Nguyen <ttn@gnuvola.org> wrote:
       postgres-gxrepl.scm     postgres-resx.scm
       postgres-meta.scm       postgres-table.scm
       postgres-qcons.scm      postgres-types.scm
+  doc/
+      mkinc   ref.texh
   test/
       alive.scm   basic.scm   large.scm   meta.scm
       runtest.in   show-platform   testing.scm   types-table.scm
