@@ -2,8 +2,6 @@ AUTHORS of Guile-PG
 
 
 Thien-Thi Nguyen <ttn@gnuvola.org> wrote:
-  build-aux/
-      guile-pg.m4
   src/
       postgres-col-defs.scm   postgres-resdisp.scm
       postgres-gxrepl.scm     postgres-resx.scm
@@ -19,8 +17,6 @@ and modified:
 Ian Grant <Ian.Grant@cl.cam.ac.uk> wrote:
   ./
       configure.ac (originally named configure.in)
-  build-aux/
-      guile-pg.m4
   src/
       libpq.c (originally libpostgres.h, libpostgres.c, postgres.scm.in)
   doc/
