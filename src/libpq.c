@@ -1712,7 +1712,7 @@ PRIMPROC
  doc: /***********
 Return the most-recent error message that occurred on the
 connection @var{conn}, or an empty string.
-For backward compatability, if @var{conn} is actually
+For backward compatibility, if @var{conn} is actually
 a result object returned from calling @code{pg-exec},
 delegate the call to @code{pg-result-error-message}
 transparently (new code should call that procedure
