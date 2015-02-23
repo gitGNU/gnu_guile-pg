@@ -40,6 +40,10 @@ Texts.  A copy of the license is included in the appendix entitled
 @vindex \x\ @r{(converter)}
 @end macro
 
+@macro zonkable{date,category}
+@strong{NB}: This \category\ @strong{will be removed} by \date\.
+@end macro
+
 @dircategory Guile modules
 @direntry
 * Guile-PG: (guile-pg).           Access to PostgreSQL databases from Guile.
