@@ -677,6 +677,8 @@ PRIMPROC
 (pg_lo_read, "pg-lo-read", 3, 0, 0,
  (SCM siz, SCM num, SCM port),
  doc: /***********
+@zonkable{2015-12-31,procedure}
+
 Read @var{num} objects each of length @var{siz} from @var{port}.
 Return a string containing the data read from the port or
 @code{#f} if an error occurred.  */)

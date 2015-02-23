@@ -1,3 +1,12 @@
+2015-02-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Mark zonkable items.
+
+	* libpq.c (pg_lo_read): Add @zonkable to doc comment.
+	* postgres-types.scm (dbcoltypes, dbcoltype-lookup)
+	(dbcoltype:stringifier, dbcoltype:default, dbcoltype:objectifier)
+	(define-db-col-type-array-variant): Likewise.
+
 2015-02-22  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[pq] Spell "compatibility" correctly!

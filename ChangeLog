@@ -1,5 +1,12 @@
 2015-02-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	[doc] Mark zonkable items.
+
+	* doc/ref.texh (Displaying Results): Add @zonkable
+	for module ‘(database postgres-resdisp)’.
+
+2015-02-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc int] Add abstraction: zonkable
 
 	* doc/guile-pg.texi (zonkable): New @macro.

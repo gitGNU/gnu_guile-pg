@@ -1137,6 +1137,8 @@ If procedure @code{pg-print} does not do what you want (@pxref{Writing/Reading
 Data}), you can try a slightly more customizable method for displaying
 results.
 
+@zonkable{2015-12-31,module}
+
 To get started, load the @code{postgres-resdisp} module:
 
 @lisp

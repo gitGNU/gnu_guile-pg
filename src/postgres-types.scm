@@ -89,6 +89,8 @@
 (define (av-simple    v) (vector-ref v 2))
 (define (av-canonical v) (vector-ref v 3))
 
+;; @zonkable{2015-12-31,procedure}
+;;
 ;; Return names of all registered converters.
 ;;
 (define (dbcoltypes)
@@ -96,6 +98,8 @@
                (cons key ls))
              '() ALL))
 
+;; @zonkable{2015-12-31,procedure}
+;;
 ;; Return a converter object given its @var{type-name}, a symbol.
 ;; Return @code{#f} if no such object by that name exists.
 ;;
@@ -103,11 +107,22 @@
   (hashq-ref ALL (cond ((av-lookup type-name) => av-canonical)
                        (else                     type-name))))
 
+;; @zonkable{2015-12-31,procedure}
+;;
 ;; Extract stringifier from the converter object @var{tc}.
+;;
 (define (dbcoltype:stringifier tc) (vector-ref tc 0))
+
+;; @zonkable{2015-12-31,procedure}
+;;
 ;; Extract default string from the converter object @var{tc}.
+;;
 (define (dbcoltype:default tc) (vector-ref tc 1))
- ;; Extract objectifier from the converter object @var{tc}.
+
+;; @zonkable{2015-12-31,procedure}
+;;
+;; Extract objectifier from the converter object @var{tc}.
+;;
 (define (dbcoltype:objectifier tc) (vector-ref tc 2))
 
 ;; Return @code{#t} if @var{type} (a symbol) has registered converters.
@@ -261,6 +276,8 @@
     ;; rv
     name))
 
+;; @zonkable{2015-12-31,procedure}
+;;
 ;; Register type @var{composed} (string or symbol)
 ;; as an array variant of @var{simple}.
 ;; @var{simple} should be a type name already
