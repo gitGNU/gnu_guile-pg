@@ -1,3 +1,7 @@
+2015-02-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Release: 0.47 (tag v0.47)
+
 2015-01-09  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	[v slog] Add abstraction: excruciatingly-correct-string-filter

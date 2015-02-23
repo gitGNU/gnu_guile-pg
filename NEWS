@@ -2,6 +2,294 @@ NEWS for Guile-PG
 See the end for copying conditions.
 
 
+- 0.47 | 2015-02-23
+
+  - bug-report address changed
+
+    Please send bug reports to the address shown by running command:
+
+     ./configure --help
+
+    Mail sent to the previous address is likely to be misplaced.
+
+  - changes in configuration
+
+    - env vars ‘PQ_CPPFLAGS’ and ‘PQ_LDFLAGS’ precious
+
+      That is, they are now declared with ‘AC_ARG_VAR’ and thus
+      documented (in ‘--help’ output), checked for change on next
+      invocation, etc (info "(autoconf) Setting Output Variables").
+
+    - dropped ‘configure’ script options
+
+      The configure script no longer supports ‘--with-libpq=DIR’,
+      ‘--with-libpq-includes=DIR’ and ‘--with-libpq-lib=DIR’.  You
+      should use ‘PQ_CPPFLAGS’ and ‘PQ_LDFLAGS’ for this.
+
+    - error if PostgreSQL headers not found
+
+      No ‘libpq-fe.h’ and ‘libpq/libpq-fs.h’?  Configuration fails.
+
+    - error if sane libpq not found
+
+      Here, sanity means "from PostgreSQL 7.4 or later", as evidenced
+      by libpq having func ‘PQfreemem’.
+
+  - bugfixes
+
+    - memory leak in parameterized-exec procs
+
+      Since their introduction w/ Guile-PG 0.30 (2006-04-04), the
+      ‘(database postgres)’ procs:
+
+       pg-exec-params
+       pg-exec-prepared
+       pg-send-query-params
+       pg-send-query-prepared
+
+      would leak memory proportional to the number of parameters in
+      the call.  Now, that memory is properly ‘free’d.
+
+    - ‘pg-result-error-field’ works as advertized
+
+      Since its introduction w/ Guile-PG 0.30 (2006-04-04), this proc
+      would always return ‘#f’, i.e., discarding the proper value!
+      Now, it returns an integer, a symbol or a string, depending on
+      the field-specified, and ‘#f’ only when the result has no info.
+
+    - non-integer exact numbers no longer accepted
+
+      Previously, ‘(database postgres)’ procs would silently accept
+      and perhaps behave strangely because of, non-integer exact
+      numbers (e.g., rational numbers).  Now, such usage results in a
+      "wrong type arg" error.
+
+    - (doc) type converters properly indexed
+
+      Guile-PG 0.45 (released 2013-03-10) introduced a regression in
+      the guile-pg.info indexing of type converters, including the
+      (pretty) single-quotes in the index, e.g.:
+
+       ‘float4’ (type converter)
+
+      such that typing ‘i float4’ in Emacs Info node could not find
+      the entry.  This is arguably a bug in Texinfo.  Now, indexing
+      once again produces an entry in guile-pg.info w/o quotes:
+
+       float (type converter)
+
+      Hopefully this is immune to future Texinfo changes, if any.
+
+  - portability fix: don't assume ‘(set! (P O) V)’ returns ‘V’
+
+    Proc ‘(database postgres-types) oid-type-name-cache’ used to
+    return the unspecified object for some versions of Guile.
+
+  - retired ‘(database postgres)’ procs
+
+    These procs are no longer available.
+
+     pg-getline
+     pg-getlineasync
+     pg-putline
+     pg-endcopy
+
+    This was pre-announced in Guile-PG 0.46 (2013-03-14) NEWS.
+
+  - planned retirement
+
+    These items WILL BE REMOVED by 2015-12-31.
+
+    - proc ‘(database postgres) pg-lo-read’
+
+      This returns a string, which is often inconvenient or worse,
+      unsuitable, and anyway Guile already provides various procs for
+      reading from a port.
+
+    - module ‘(database postgres-resdisp)’
+
+      Not very useful; will not be missed.
+
+    - obsolete ‘(database postgres-types)’ procs
+
+      The proc ‘dbcoltypes’ was deemed "not so useful", and the
+      rest are obsoleted by new abstractions:
+
+       dbcoltypes
+       dbcoltype-lookup
+       dbcoltype:stringifier
+       dbcoltype:default
+       dbcoltype:objectifier
+       define-db-col-type-array-variant
+
+      There is no migration path for ‘dbcoltypes’ -- sorry.  For the
+      rest, code of the form:
+
+       (dbcoltype:FOO (dbcoltype-lookup TYPE))
+
+      can be replaced with:
+
+       (type-FOO TYPE)
+
+      where FOO is one of "stringifier", "default", "objectifier".
+      For ‘define-db-col-type-array-variant’, you should change calls
+      of the form:
+
+       (define-db-col-type-array-variant COMPOSED SIMPLE ...)
+
+      where COMPOSED is SIMPLE followed by N "[]" pairs, to:
+
+       (register-array-variant N SIMPLE ...)
+
+      and furthermore change symbols that are spelled with N "[]"
+      pairs to those with N leading "*".  For example:
+
+       ;; was
+       (define-db-col-type-array-variant 'int4[][] 'int4 ...)
+       ;; now
+       (register-array-variant 2 'int4 ...)
+
+      A defs form (for ‘pgtable-manager’) would use ‘**int4’ instead
+      of ‘int4[][]’.  The latter spelling is still supported for the
+      time being, but will probably be phased out later as Guile 2
+      becomes more widespread.  (Guile 2 can handle square braces in
+      symbol names but that requires modification to ‘read’, i.e.,
+      ‘(read-disable 'square-brackets)’.  This is the method used by
+      test/table-types.scm, for example.)
+
+  - ‘define-db-col-type-array-variant’ more/less strict
+
+    This ‘(database postgres-types)’ proc now throws an error if arg
+    COMPOSED is not "based on" arg SIMPLE, or if COMPOSED does not
+    have square braces.  Thus, what was documented previously as
+    mere convention is now elevated to requirement.
+
+    On the other hand, COMPOSED may now be a string, as well as a
+    symbol.  (This is the "less strict" part.)
+
+    NB: This proc is obsolete (see above).
+
+  - new ‘(database postgres-types)’ procs
+
+    These are new:
+
+     type-registered?
+     type-stringifier
+     type-objectifier
+     type-default
+     type-sql-name
+     register-array-variant
+
+  - changes in testing
+
+    - bugfix: test ‘alive.scm’ checks ‘pg-guile-pg-loaded’
+
+      Previously, if the shared-object library failed to load, the
+      test would display the "dynamic-link: file not found" message
+      and then (bogusly) pass anyway.  How lengthly lameness lasts!
+
+    - bugfix: ‘INITDB’ value propagated
+
+      Previously, for "make check INITDB=/some/dir/initdb", the
+      specified ‘INITDB’ was ignored.  Now it DTRT.
+
+    - bugfix: adherence to cancellation protocol
+
+      The ‘pg-request-cancel’ test now does "COMMIT TRANSACTION" to
+      finish, and validates that command's success as well.  Not doing
+      so did not cause problems before because the test is the last
+      one immediately prior to disconnect (see test/basic.scm).
+
+    - ‘pg-result-error-field’ rv checked
+
+      Had this been in place earlier, the bug (above) would not have
+      stood so long.  Sigh.
+
+    - ‘COPY’..‘STDIN’ no longer sends "\\.\n"
+
+      This is "deprecated" in protocol version 3.0, and probably will
+      be removed in the future.
+
+    - delays precise
+
+      Previously, the test machinery would use delays to effect
+      synchronization between client code and the daemon, and
+      furthermore relied solely on pidfile existence.  How lame!  Now,
+      it uses the recommended method, i.e., successful execution of
+      "psql -l".  See README section "Testing".
+
+    - test database ‘guile_pg_test’ created once
+
+      Previously, each test did "CREATE DATABASE" and "DROP DATABASE",
+      a huge time-consuming redundancy.  Now, database creation is
+      done once on cluster init, and tests take care to delete the
+      tables that they use, either explicitly with "DROP TABLE", or by
+      using "CREATE TEMPORARY TABLE" in the first place.
+
+      Should a test fail, leaving stray tables behind, you can use new
+      command "make drop-database" in test/ to rid yourself of the
+      evidence (after filing a bug report, right!? :-D); the database
+      will be freshly created on next "make check".
+
+    - PostgreSQL 9.3 accomodations
+
+      - server config var ‘unix_socket_directories’
+
+        PostgreSQL 9.3 replaces config var ‘unix_socket_directory’ w/
+        ‘unix_socket_directories’.  No problem!
+
+      - overcome "CREATE TABLE .. serial" spew reticence
+
+        PostgreSQL prior to 9.3 emits a notice on "CREATE TABLE" w/ a
+        ‘serial’ column.  As of 9.3, the message is suppressed by
+        default and only emitted if the client verbosity is at least
+        ‘DEBUG1’.  Details in test/basic.scm ‘test:set-notice-out!-1’.
+
+    - less output by default / new option ‘VERBOSE=1’
+
+      By default, "make check" now inhibits fine-grained status
+      output.  To re-enable it, use ‘make check VERBOSE=1’.
+
+    - daemon killed even on "make check" failure
+
+      Previously, if "make check" failed, the daemon would be left up,
+      necessitating manual "make kill-daemon" invocation.  Now, there
+      is test/cleanup.scm, which does not actually test anything;
+      instead, it kills the daemon (unless ‘KEEPD=1’ is specified).
+      See README.
+
+  - documentation changes
+
+    - license now GNU FDL
+
+      The previous text was a weird conglomeration of old
+      best-practices blurbs (probably).
+
+    - title now "Guile-PG Manual"
+
+      Subtitle is the old title: "The (database postgres*) Modules".
+
+    - index expanded
+
+      The index has grown by several dozen items.
+
+  - bootstrap tools
+
+    upgraded:
+
+     Guile-BAUX 20150108.1006.f6573e4
+     GNU Texinfo 5.2
+     GNU Automake 1.15
+     GNU gnulib 2015-02-17 05:38:02
+     GNU Libtool 2.4.6
+
+    as before:
+
+     GNU Autoconf 2.69
+
+    Note that SNUGGLE functionality is now provided by Guile-BAUX.
+
+
 - 0.46 | 2013-03-14
 
   - bugfix: handle connection options w/o "backup" env var
@@ -1523,7 +1811,7 @@ outline-regexp: "\\([ ][ ]\\)*- "
 End:
 
 __________________________________________
-Copyright (C) 2002-2014 Thien-Thi Nguyen
+Copyright (C) 2002-2015 Thien-Thi Nguyen
 
 Copying and distribution of this file, with or without modification,
 are permitted provided the copyright notice and this notice are preserved.

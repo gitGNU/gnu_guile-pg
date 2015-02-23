@@ -1,5 +1,9 @@
 2015-02-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
+	Release: 0.47 (tag v0.47)
+
+2015-02-23  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
 	[doc] Mark zonkable items.
 
 	* libpq.c (pg_lo_read): Add @zonkable to doc comment.
